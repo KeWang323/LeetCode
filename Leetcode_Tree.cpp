@@ -512,6 +512,39 @@ public:
 };
 /*
 
+108. Convert Sorted Array to Binary Search Tree (Medium)
+
+Given an array where elements are sorted in ascending order, convert it to a height balanced BST.
+
+*/
+/**
+* Definition for a binary tree node.
+* struct TreeNode {
+*     int val;
+*     TreeNode *left;
+*     TreeNode *right;
+*     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+* };
+*/
+class Solution {
+public:
+	TreeNode* sortedArrayToBST(vector<int>& nums) {
+		return sortedArrayToBST(nums, 0, nums.size() - 1);
+	}
+private:
+	TreeNode* sortedArrayToBST(vector<int>& nums, int l, int r) {
+		if (l > r) {
+			return NULL;
+		}
+		int mid = l + (r - l) / 2;
+		TreeNode* root = new TreeNode(nums[mid]);
+		root->left = sortedArrayToBST(nums, l, mid - 1);
+		root->right = sortedArrayToBST(nums, mid + 1, r);
+		return root;
+	}
+};
+/*
+
 110. Balanced Binary Tree (Easy)
 
 Given a binary tree, determine if it is height-balanced.
@@ -719,6 +752,69 @@ private:
 		r = r < 0 ? 0 : r;
 		max = max > l + r + root->val ? max : l + r + root->val;
 		return l > r ? l + root->val : r + root->val;
+	}
+};
+/*
+
+129. Sum Root to Leaf Numbers (Medium)
+
+Given a binary tree containing digits from 0-9 only, each root-to-leaf path could represent a number.
+
+An example is the root-to-leaf path 1->2->3 which represents the number 123.
+
+Find the total sum of all root-to-leaf numbers.
+
+For example,
+
+  1
+ / \
+2   3
+The root-to-leaf path 1->2 represents the number 12.
+The root-to-leaf path 1->3 represents the number 13.
+
+Return the sum = 12 + 13 = 25.
+
+*/
+/**
+* Definition for a binary tree node.
+* struct TreeNode {
+*     int val;
+*     TreeNode *left;
+*     TreeNode *right;
+*     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+* };
+*/
+class Solution {
+public:
+	int sumNumbers(TreeNode* root) {
+		vector<int> nums;
+		int num = 0;
+		sumNumber(root, nums, num);
+		num = 0;
+		for (int i : nums) {
+			num += i;
+		}
+		return num;
+	}
+private:
+	void sumNumber(TreeNode* root, vector<int>& nums, int& num) {
+		if (root == NULL) {
+			nums.push_back(0);
+			return;
+		}
+		num = 10 * num + root->val;
+		if (root->left == NULL && root->right == NULL) {
+			nums.push_back(num);
+			num /= 10;
+			return;
+		}
+		if (root->left != NULL) {
+			sumNumber(root->left, nums, num);
+		}
+		if (root->right != NULL) {
+			sumNumber(root->right, nums, num);
+		}
+		num /= 10;
 	}
 };
 /*
@@ -1203,5 +1299,120 @@ public:
 			}
 		}
 		return res;
+	}
+};
+/*
+
+366. Find Leaves of Binary Tree (Medium)
+
+Given a binary tree, collect a tree's nodes as if you were doing this: Collect and remove all leaves, repeat until the tree is empty.
+
+Example:
+Given binary tree
+1
+/ \
+2   3
+/ \
+4   5
+Returns [4, 5, 3], [2], [1].
+
+Explanation:
+1. Removing the leaves [4, 5, 3] would result in this tree:
+
+1
+/
+2
+2. Now removing the leaf [2] would result in this tree:
+
+1
+3. Now removing the leaf [1] would result in the empty tree:
+
+[]
+Returns [4, 5, 3], [2], [1].
+
+*/
+/**
+* Definition for a binary tree node.
+* struct TreeNode {
+*     int val;
+*     TreeNode *left;
+*     TreeNode *right;
+*     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+* };
+*/
+class Solution {
+public:
+	vector<vector<int>> findLeaves(TreeNode* root) {
+		vector<vector<int>> res;
+		findLeaves(root, res);
+		return res;
+	}
+
+	int findLeaves(TreeNode* root, vector<vector<int>>& res) {
+		if (root == NULL) {
+			return 0;
+		}
+		int value = root->val, height = max(findLeaves(root->left, res), findLeaves(root->right, res)) + 1;
+		if (height > res.size()) {
+			vector<int> res_sub;
+			res_sub.push_back(value);
+			res.push_back(res_sub);
+		}
+		else {
+			res[height - 1].push_back(value);
+		}
+		return height;
+	}
+};
+/**
+* Definition for a binary tree node.
+* struct TreeNode {
+*     int val;
+*     TreeNode *left;
+*     TreeNode *right;
+*     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+* };
+*/
+class Solution {
+public:
+	vector<vector<int>> findLeaves(TreeNode* root) {
+		if (root == NULL) {
+			return{};
+		}
+		vector<vector<int>> res;
+		while (root->right != NULL || root->left != NULL) {
+			vector<int> res_sub = helper(root);
+			res.push_back(res_sub);
+		}
+		res.push_back({ root->val });
+		return res;
+	}
+private:
+	vector<int> helper(TreeNode* root) {
+		if (root == NULL) {
+			return{};
+		}
+		vector<int> res_sub, l, r;
+		if (root->left != NULL && root->left->left == NULL && root->left->right == NULL) {
+			res_sub.push_back(root->left->val);
+			root->left = NULL;
+		}
+		else {
+			l = helper(root->left);
+		}
+		if (root->right != NULL && root->right->left == NULL && root->right->right == NULL) {
+			res_sub.push_back(root->right->val);
+			root->right = NULL;
+		}
+		else {
+			r = helper(root->right);
+		}
+		for (int i : l) {
+			res_sub.push_back(i);
+		}
+		for (int i : r) {
+			res_sub.push_back(i);
+		}
+		return res_sub;
 	}
 };
