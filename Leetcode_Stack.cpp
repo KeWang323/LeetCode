@@ -590,6 +590,34 @@ public:
 };
 /*
 
+255. Verify Preorder Sequence in Binary Search Tree (Medium)
+
+Given an array of numbers, verify whether it is the correct preorder traversal sequence of a binary search tree.
+
+You may assume each number in the sequence is unique.
+
+Follow up:
+Could you do it using only constant space complexity?
+
+*/
+class Solution {
+public:
+	bool verifyPreorder(vector<int>& preorder) {
+		int i = 0;
+		verifyPreorder(preorder, i, INT_MIN, INT_MAX);
+		return i >= preorder.size() ? true : false;
+	}
+private:
+	void verifyPreorder(vector<int>& nums, int& i, int low, int high) {
+		if (i >= nums.size() || nums[i] > high || nums[i] < low) return;
+		int cur = nums[i++];
+		verifyPreorder(nums, i, low, cur);
+		verifyPreorder(nums, i, cur, high);
+		return;
+	}
+};
+/*
+
 331. Verify Preorder Serialization of a Binary Tree (Medium)
 
 One way to serialize a binary tree is to use pre-order traversal. When we encounter a non-null node, we record the node's value. If it is a null node, we record using a sentinel value such as #.

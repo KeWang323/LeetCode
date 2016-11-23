@@ -6830,6 +6830,34 @@ public:
 };
 /*
 
+255. Verify Preorder Sequence in Binary Search Tree (Medium)
+
+Given an array of numbers, verify whether it is the correct preorder traversal sequence of a binary search tree.
+
+You may assume each number in the sequence is unique.
+
+Follow up:
+Could you do it using only constant space complexity?
+
+*/
+class Solution {
+public:
+	bool verifyPreorder(vector<int>& preorder) {
+		int i = 0;
+		verifyPreorder(preorder, i, INT_MIN, INT_MAX);
+		return i >= preorder.size() ? true : false;
+	}
+private:
+	void verifyPreorder(vector<int>& nums, int& i, int low, int high) {
+		if (i >= nums.size() || nums[i] > high || nums[i] < low) return;
+		int cur = nums[i++];
+		verifyPreorder(nums, i, low, cur);
+		verifyPreorder(nums, i, cur, high);
+		return;
+	}
+};
+/*
+
 257. Binary Tree Paths (Easy)
 
 Given a binary tree, return all root-to-leaf paths.
