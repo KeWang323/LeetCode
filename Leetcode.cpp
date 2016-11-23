@@ -3792,6 +3792,51 @@ public:
 };
 /*
 
+124. Binary Tree Maximum Path Sum (Hard)
+
+Given a binary tree, find the maximum path sum.
+
+For this problem, a path is defined as any sequence of nodes from some starting node to any node in the tree along the parent-child connections. The path must contain at least one node and does not need to go through the root.
+
+For example:
+Given the below binary tree,
+
+       1
+      / \
+     2   3
+Return 6.
+
+*/
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+class Solution {
+public:
+    int maxPathSum(TreeNode* root) {
+        int res = INT_MIN;
+        maxPathSum(root, res);
+        return res;
+    }
+private:
+    int maxPathSum(TreeNode* root, int& max) {
+        if (root == NULL) {
+            return 0;
+        }
+        int l = maxPathSum(root->left, max), r = maxPathSum(root->right, max);
+        l = l < 0 ? 0 : l;
+        r = r < 0 ? 0 : r;
+        max = max > l + r + root->val ? max : l + r + root->val;
+        return l > r ? l + root->val : r + root->val;
+    }
+};
+/*
+
 125. Valid Palindrome (Easy)
 
 Given a string, determine if it is a palindrome, considering only alphanumeric characters and ignoring cases.
