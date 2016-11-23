@@ -6,13 +6,13 @@ Given a binary tree, check whether it is a mirror of itself (ie, symmetric aroun
 
 For example, this binary tree [1,2,2,3,4,4,3] is symmetric:
 
-    1
+	1
    / \
   2   2
  / \ / \
 3  4 4  3
 But the following [1,2,2,null,3,null,3] is not:
-    1
+	1
    / \
   2   2
    \   \
@@ -30,19 +30,19 @@ Bonus points if you could solve it both recursively and iteratively.
  *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
  * };
  */
- class Solution {
- public:
-    bool isSymmetric(TreeNode* root) {
-        if (!root) return true;
-        return check(root -> left, root -> right);
-    }
-    bool check(TreeNode* L, TreeNode* R) {
-        if (!L || !R) {
-            if (L || R) return false;
-            return true;
-        }
-        return L -> val == R -> val && check(L -> left, R -> right) && check(L -> right, R -> left);
-    }
+class Solution {
+public:
+	bool isSymmetric(TreeNode* root) {
+		if (!root) return true;
+		return check(root->left, root->right);
+	}
+	bool check(TreeNode* L, TreeNode* R) {
+		if (!L || !R) {
+			if (L || R) return false;
+			return true;
+		}
+		return L->val == R->val && check(L->left, R->right) && check(L->right, R->left);
+	}
 };
 /*
 
@@ -52,10 +52,10 @@ Given a binary tree, return the level order traversal of its nodes' values. (ie,
 
 For example:
 Given binary tree [3,9,20,null,null,15,7],
-    3
+	3
    / \
   9  20
-    /  \
+	/  \
    15   7
 return its level order traversal as:
 [
@@ -74,27 +74,27 @@ return its level order traversal as:
  *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
  * };
  */
- class Solution {
- public:
-    vector<vector<int>> levelOrder(TreeNode* root) {
-        vector<vector<int>> res;
-        if (!root) return res;
-        queue<TreeNode*> q;
-        q.push(root);
-        while (!q.empty()) {
-            vector<int> lev;
-            int _size = q.size();
-            for (int i = 0; i < _size; i++) {
-                TreeNode *temp = q.front();
-                q.pop();
-                lev.push_back(temp -> val);
-                if (temp -> left) q.push(temp -> left);
-                if (temp -> right) q.push(temp -> right);
-            }
-            res.push_back(lev);
-        }
-        return res;
-    }
+class Solution {
+public:
+	vector<vector<int>> levelOrder(TreeNode* root) {
+		vector<vector<int>> res;
+		if (!root) return res;
+		queue<TreeNode*> q;
+		q.push(root);
+		while (!q.empty()) {
+			vector<int> lev;
+			int _size = q.size();
+			for (int i = 0; i < _size; i++) {
+				TreeNode *temp = q.front();
+				q.pop();
+				lev.push_back(temp->val);
+				if (temp->left) q.push(temp->left);
+				if (temp->right) q.push(temp->right);
+			}
+			res.push_back(lev);
+		}
+		return res;
+	}
 };
 /*
 
@@ -104,10 +104,10 @@ Given a binary tree, return the zigzag level order traversal of its nodes' value
 
 For example:
 Given binary tree [3,9,20,null,null,15,7],
-    3
+	3
    / \
   9  20
-    /  \
+	/  \
    15   7
 return its zigzag level order traversal as:
 [
@@ -126,30 +126,30 @@ return its zigzag level order traversal as:
  *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
  * };
  */
- class Solution {
- public:
-    vector<vector<int>> zigzagLevelOrder(TreeNode* root) {
-        vector<vector<int>> res;
-        if (!root) return res;
-        queue<TreeNode*> q;
-        q.push(root);
-        int level = 0;
-        while (!q.empty()) {
-            vector<int> lev;
-            int _size = q.size();
-            for (int i = 0; i < _size; i++) {
-                TreeNode *temp = q.front();
-                q.pop();
-                lev.push_back(temp -> val);
-                if (temp -> left) q.push(temp -> left);
-                if (temp -> right) q.push(temp -> right);
-            }
-            if (level % 2) reverse(lev.begin(), lev.end());
-            res.push_back(lev);
-            level++;
-        }
-        return res;
-    }
+class Solution {
+public:
+	vector<vector<int>> zigzagLevelOrder(TreeNode* root) {
+		vector<vector<int>> res;
+		if (!root) return res;
+		queue<TreeNode*> q;
+		q.push(root);
+		int level = 0;
+		while (!q.empty()) {
+			vector<int> lev;
+			int _size = q.size();
+			for (int i = 0; i < _size; i++) {
+				TreeNode *temp = q.front();
+				q.pop();
+				lev.push_back(temp->val);
+				if (temp->left) q.push(temp->left);
+				if (temp->right) q.push(temp->right);
+			}
+			if (level % 2) reverse(lev.begin(), lev.end());
+			res.push_back(lev);
+			level++;
+		}
+		return res;
+	}
 };
 /*
 
@@ -159,10 +159,10 @@ Given a binary tree, return the bottom-up level order traversal of its nodes' va
 
 For example:
 Given binary tree [3,9,20,null,null,15,7],
-    3
+	3
    / \
   9  20
-    /  \
+	/  \
    15   7
 return its bottom-up level order traversal as:
 [
@@ -181,28 +181,28 @@ return its bottom-up level order traversal as:
  *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
  * };
  */
- class Solution {
- public:
-    vector<vector<int>> levelOrderBottom(TreeNode* root) {
-        vector<vector<int>> res;
-        if (!root) return res;
-        queue<TreeNode*> q;
-        q.push(root);
-        while (!q.empty()) {
-            vector<int> lev;
-            int _size = q.size();
-            for (int i = 0; i < _size; i++) {
-                TreeNode *temp = q.front();
-                q.pop();
-                lev.push_back(temp -> val);
-                if (temp -> left) q.push(temp -> left);
-                if (temp -> right) q.push(temp -> right);
-            }
-            res.push_back(lev);
-        }
-        reverse(res.begin(), res.end());
-        return res;
-    }
+class Solution {
+public:
+	vector<vector<int>> levelOrderBottom(TreeNode* root) {
+		vector<vector<int>> res;
+		if (!root) return res;
+		queue<TreeNode*> q;
+		q.push(root);
+		while (!q.empty()) {
+			vector<int> lev;
+			int _size = q.size();
+			for (int i = 0; i < _size; i++) {
+				TreeNode *temp = q.front();
+				q.pop();
+				lev.push_back(temp->val);
+				if (temp->left) q.push(temp->left);
+				if (temp->right) q.push(temp->right);
+			}
+			res.push_back(lev);
+		}
+		reverse(res.begin(), res.end());
+		return res;
+	}
 };
 /*
 
@@ -222,20 +222,20 @@ The minimum depth is the number of nodes along the shortest path from the root n
  *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
  * };
  */
- class Solution {
- public:
-    int minDepth(TreeNode* root) {
-        if (!root) return 0;
-        else if (!root -> left && !root -> right) return 1;
-        else {
-            int depth_L, depth_R;
-            if (root -> left) depth_L = minDepth(root -> left);
-            else depth_L = INT_MAX;
-            if (root -> right) depth_R = minDepth(root -> right);
-            else depth_R = INT_MAX;
-            return min(depth_L, depth_R) + 1;
-        }
-    }
+class Solution {
+public:
+	int minDepth(TreeNode* root) {
+		if (!root) return 0;
+		else if (!root->left && !root->right) return 1;
+		else {
+			int depth_L, depth_R;
+			if (root->left) depth_L = minDepth(root->left);
+			else depth_L = INT_MAX;
+			if (root->right) depth_R = minDepth(root->right);
+			else depth_R = INT_MAX;
+			return min(depth_L, depth_R) + 1;
+		}
+	}
 };
 /*
 
@@ -248,16 +248,16 @@ For example, given n = 12, return 3 because 12 = 4 + 4 + 4; given n = 13, return
 */
 class Solution {
 public:
-    int numSquares(int n) {
-        if (n <= 0) return 0;
-        static vector<int> table{(0)};
-        while (table.size() <= n) {
-            int _size = table.size();
-            int temp = INT_MAX;
-            for (int i = 1; i * i <= _size; i++)
-                temp = min(temp, table[_size - i * i] + 1);
-            table.push_back(temp);
-        }
-        return table[n];
-    }
+	int numSquares(int n) {
+		if (n <= 0) return 0;
+		static vector<int> table{ (0) };
+		while (table.size() <= n) {
+			int _size = table.size();
+			int temp = INT_MAX;
+			for (int i = 1; i * i <= _size; i++)
+				temp = min(temp, table[_size - i * i] + 1);
+			table.push_back(temp);
+		}
+		return table[n];
+	}
 };

@@ -10,75 +10,76 @@ set(key, value) - Set or insert the value if the key is not already present. Whe
 */
 class KeyValue {
 public:
-    int key, value;
-    KeyValue *next;
-    KeyValue (int key, int value) {
-        next = NULL;
-        this->key = key;
-        this->value = value;
-    }
-    KeyValue() {
-        this->next = NULL;
-        this->key = 0;
-        this->value = 0;
-    }
+	int key, value;
+	KeyValue *next;
+	KeyValue(int key, int value) {
+		next = NULL;
+		this->key = key;
+		this->value = value;
+	}
+	KeyValue() {
+		this->next = NULL;
+		this->key = 0;
+		this->value = 0;
+	}
 };
-class LRUCache{
+class LRUCache {
 public:
-    unordered_map<int, KeyValue*> mapping;
-    KeyValue *head, *tail;
-    int capacity, size;
-    LRUCache(int capacity) {
-        this->head = new KeyValue(0, 0);
-        this->tail = head;
-        this->capacity = capacity;
-        this->size = 0;
-        mapping.clear();
-    }
+	unordered_map<int, KeyValue*> mapping;
+	KeyValue *head, *tail;
+	int capacity, size;
+	LRUCache(int capacity) {
+		this->head = new KeyValue(0, 0);
+		this->tail = head;
+		this->capacity = capacity;
+		this->size = 0;
+		mapping.clear();
+	}
 
-    int get(int key) {
-        if (mapping.find(key) == mapping.end()) {
-            return -1;
-        }
-        moveToTail(mapping[key]);
-        return mapping[key]->next->value;
-    }
+	int get(int key) {
+		if (mapping.find(key) == mapping.end()) {
+			return -1;
+		}
+		moveToTail(mapping[key]);
+		return mapping[key]->next->value;
+	}
 
-    void set(int key, int value) {
-        if (mapping.find(key) != mapping.end()) {
-            mapping[key]->next->value = value;
-            moveToTail(mapping[key]);
-        } else {
-            KeyValue *node = new KeyValue(key, value);
-            tail->next = node;
-            mapping[key] = tail;
-            tail = node;
-            size++;
-            if (size > capacity) {
-                mapping.erase(head->next->key);
-                head->next = head->next->next;
-                if (head->next != NULL) {
-                    mapping[head->next->key] = head;
-                }
-                size--;
-            }
-        }
-    }
+	void set(int key, int value) {
+		if (mapping.find(key) != mapping.end()) {
+			mapping[key]->next->value = value;
+			moveToTail(mapping[key]);
+		}
+		else {
+			KeyValue *node = new KeyValue(key, value);
+			tail->next = node;
+			mapping[key] = tail;
+			tail = node;
+			size++;
+			if (size > capacity) {
+				mapping.erase(head->next->key);
+				head->next = head->next->next;
+				if (head->next != NULL) {
+					mapping[head->next->key] = head;
+				}
+				size--;
+			}
+		}
+	}
 private:
-    void moveToTail(KeyValue *prev) {
-        if (prev->next == tail) {
-            return;
-        }
-        KeyValue *node = prev->next;
-        prev->next = node->next;
-        if (node->next != NULL) {
-            mapping[node->next->key] = prev;
-        }
-        tail->next = node;
-        node->next = NULL;
-        mapping[node->key] = tail;
-        tail = node;
-    }
+	void moveToTail(KeyValue *prev) {
+		if (prev->next == tail) {
+			return;
+		}
+		KeyValue *node = prev->next;
+		prev->next = node->next;
+		if (node->next != NULL) {
+			mapping[node->next->key] = prev;
+		}
+		tail->next = node;
+		node->next = NULL;
+		mapping[node->key] = tail;
+		tail = node;
+	}
 };
 /*
 
@@ -105,7 +106,7 @@ minStack.getMin();   --> Returns -2.
 class MinStack {
 public:
 	stack<int> s, min;
-    /** initialize your data structure here. */
+	/** initialize your data structure here. */
 	MinStack() {
 
 	}
@@ -114,23 +115,23 @@ public:
 		s.push(x);
 		if (min.empty() || x <= min.top()) {
 			min.push(x);
-        }
-    }
+		}
+	}
 
-    void pop() {
-        if (s.top() == min.top()) {
-            min.pop();
-        }
-        s.pop();
-    }
+	void pop() {
+		if (s.top() == min.top()) {
+			min.pop();
+		}
+		s.pop();
+	}
 
-    int top() {
-        return s.top();
-    }
+	int top() {
+		return s.top();
+	}
 
-    int getMin() {
-        return min.top();
-    }
+	int getMin() {
+		return min.top();
+	}
 };
 /**
  * Your MinStack object will be instantiated and called as such:
@@ -140,52 +141,52 @@ public:
  * int param_3 = obj.top();
  * int param_4 = obj.getMin();
  */
-/*
+ /*
 
-173. Binary Search Tree Iterator (Medium)
+ 173. Binary Search Tree Iterator (Medium)
 
-Implement an iterator over a binary search tree (BST). Your iterator will be initialized with the root node of a BST.
+ Implement an iterator over a binary search tree (BST). Your iterator will be initialized with the root node of a BST.
 
-Calling next() will return the next smallest number in the BST.
+ Calling next() will return the next smallest number in the BST.
 
-Note: next() and hasNext() should run in average O(1) time and uses O(h) memory, where h is the height of the tree.
+ Note: next() and hasNext() should run in average O(1) time and uses O(h) memory, where h is the height of the tree.
 
-*/
-/**
- * Definition for binary tree
- * struct TreeNode {
- *     int val;
- *     TreeNode *left;
- *     TreeNode *right;
- *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
- * };
  */
+ /**
+  * Definition for binary tree
+  * struct TreeNode {
+  *     int val;
+  *     TreeNode *left;
+  *     TreeNode *right;
+  *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+  * };
+  */
 class BSTIterator {
 private:
-  stack<int> s;
-  void traversal(TreeNode* root, stack<int>& s) {
-     if (root) {
-        traversal(root -> right, s);
-        s.push(root -> val);
-        traversal(root -> left, s);
-    }
-}
+	stack<int> s;
+	void traversal(TreeNode* root, stack<int>& s) {
+		if (root) {
+			traversal(root->right, s);
+			s.push(root->val);
+			traversal(root->left, s);
+		}
+	}
 public:
-  BSTIterator(TreeNode *root) {
-     traversal(root, s);
- }
+	BSTIterator(TreeNode *root) {
+		traversal(root, s);
+	}
 
-    /** @return whether we have a next smallest number */
- bool hasNext() {
-     return !s.empty();
- }
+	/** @return whether we have a next smallest number */
+	bool hasNext() {
+		return !s.empty();
+	}
 
-    /** @return the next smallest number */
- int next() {
-     int num = s.top();
-     s.pop();
-     return num;
- }
+	/** @return the next smallest number */
+	int next() {
+		int num = s.top();
+		s.pop();
+		return num;
+	}
 };
 
 /**
@@ -193,74 +194,75 @@ public:
  * BSTIterator i = BSTIterator(root);
  * while (i.hasNext()) cout << i.next();
  */
-/*
+ /*
 
-225. Implement Stack using Queues (Easy)
+ 225. Implement Stack using Queues (Easy)
 
-Implement the following operations of a stack using queues.
+ Implement the following operations of a stack using queues.
 
-push(x) -- Push element x onto stack.
+ push(x) -- Push element x onto stack.
 
-pop() -- Removes the element on top of the stack.
+ pop() -- Removes the element on top of the stack.
 
-top() -- Get the top element.
+ top() -- Get the top element.
 
-empty() -- Return whether the stack is empty.
+ empty() -- Return whether the stack is empty.
 
-Notes:
+ Notes:
 
-You must use only standard operations of a queue -- which means only push to back, peek/pop from front, size, and is empty operations are valid.
+ You must use only standard operations of a queue -- which means only push to back, peek/pop from front, size, and is empty operations are valid.
 
-Depending on your language, queue may not be supported natively. You may simulate a queue by using a list or deque (double-ended queue), as long as you use only standard operations of a queue.
+ Depending on your language, queue may not be supported natively. You may simulate a queue by using a list or deque (double-ended queue), as long as you use only standard operations of a queue.
 
-You may assume that all operations are valid (for example, no pop or top operations will be called on an empty stack).
+ You may assume that all operations are valid (for example, no pop or top operations will be called on an empty stack).
 
-*/
+ */
 class Stack {
 public:
-    queue<int> q1,q2;
-    // Push element x onto stack.
-    void push(int x) {
-        if (q1.empty()) {
-            q1.push(x);
-            while (!q2.empty()) {
-                q1.push(q2.front());
-                q2.pop();
-            }
-        } else {
-            q2.push(x);
-            while (!q1.empty()) {
-                q2.push(q1.front());
-                q1.pop();
-            }
-        }
-    }
+	queue<int> q1, q2;
+	// Push element x onto stack.
+	void push(int x) {
+		if (q1.empty()) {
+			q1.push(x);
+			while (!q2.empty()) {
+				q1.push(q2.front());
+				q2.pop();
+			}
+		}
+		else {
+			q2.push(x);
+			while (!q1.empty()) {
+				q2.push(q1.front());
+				q1.pop();
+			}
+		}
+	}
 
-    // Removes the element on top of the stack.
-    void pop() {
-        if (!q1.empty()) {
-            q1.pop();
-        }
-        if (!q2.empty()) {
-            q2.pop();
-        }
-    }
+	// Removes the element on top of the stack.
+	void pop() {
+		if (!q1.empty()) {
+			q1.pop();
+		}
+		if (!q2.empty()) {
+			q2.pop();
+		}
+	}
 
-    // Get the top element.
-    int top() {
-        if (!q1.empty()) {
-            return q1.front();  
-        }
-        if (!q2.empty()) {
-            return q2.front();
-        }
-        return -1;
-    }
+	// Get the top element.
+	int top() {
+		if (!q1.empty()) {
+			return q1.front();
+		}
+		if (!q2.empty()) {
+			return q2.front();
+		}
+		return -1;
+	}
 
-    // Return whether the stack is empty.
-    bool empty() {
-        return q1.empty() && q2.empty(); 
-    }
+	// Return whether the stack is empty.
+	bool empty() {
+		return q1.empty() && q2.empty();
+	}
 };
 /*
 
@@ -282,34 +284,34 @@ You may assume that all operations are valid (for example, no pop or peek operat
 */
 class Queue {
 public:
-    stack<int> s1, s2;
-    // Push element x to the back of queue.
-    void push(int x) {
-        while (!s2.empty()) {
-            s1.push(s2.top());
-            s2.pop();
-        }
-        s1.push(x);
-        while (!s1.empty()) {
-            s2.push(s1.top());
-            s1.pop();
-        }
-    }
+	stack<int> s1, s2;
+	// Push element x to the back of queue.
+	void push(int x) {
+		while (!s2.empty()) {
+			s1.push(s2.top());
+			s2.pop();
+		}
+		s1.push(x);
+		while (!s1.empty()) {
+			s2.push(s1.top());
+			s1.pop();
+		}
+	}
 
-    // Removes the element from in front of queue.
-    void pop(void) {
-        s2.pop();
-    }
+	// Removes the element from in front of queue.
+	void pop(void) {
+		s2.pop();
+	}
 
-    // Get the front element.
-    int peek(void) {
-        return s2.top();
-    }
+	// Get the front element.
+	int peek(void) {
+		return s2.top();
+	}
 
-    // Return whether the queue is empty.
-    bool empty(void) {
-        return s2.empty();
-    }
+	// Return whether the queue is empty.
+	bool empty(void) {
+		return s2.empty();
+	}
 };
 /*
 
@@ -354,22 +356,22 @@ class Twitter {
 	{
 		int time;
 		int id;
-		Tweet(int time, int id): time(time), id(id) {}
-		
+		Tweet(int time, int id) : time(time), id(id) {}
+
 	};
 	unordered_map<int, vector<Tweet>> tweets;
 	unordered_map<int, set<int>> following;
 	int time;
 public:
-    /** Initialize your data structure here. */
+	/** Initialize your data structure here. */
 	Twitter() : time(0) {}
 
-    /** Compose a new tweet. */
+	/** Compose a new tweet. */
 	void postTweet(int userId, int tweetId) {
 		tweets[userId].emplace_back(time++, tweetId);
 	}
 
-    /** Retrieve the 10 most recent tweet ids in the user's news feed. Each item in the news feed must be posted by users who the user followed or by the user herself. Tweets must be ordered from most recent to least recent. */
+	/** Retrieve the 10 most recent tweet ids in the user's news feed. Each item in the news feed must be posted by users who the user followed or by the user herself. Tweets must be ordered from most recent to least recent. */
 	vector<int> getNewsFeed(int userId) {
 		vector<pair<Tweet*, Tweet*>> h;
 		for (auto& u : following[userId]) {
@@ -379,7 +381,7 @@ public:
 		auto& t = tweets[userId];
 		if (t.size()) h.emplace_back(t.data(), t.data() + t.size() - 1);
 		auto f = [](const pair<Tweet*, Tweet*>& x, const pair<Tweet*, Tweet*>& y) {
-			return x.second -> time < y.second -> time;
+			return x.second->time < y.second->time;
 		};
 		make_heap(h.begin(), h.end(), f);
 
@@ -389,19 +391,19 @@ public:
 		for (int i = 0; i < n && !h.empty(); i++) {
 			pop_heap(h.begin(), h.end(), f);
 			auto& hb = h.back();
-			o.push_back(hb.second -> id);
+			o.push_back(hb.second->id);
 			if (hb.first == hb.second--) h.pop_back();
 			else push_heap(h.begin(), h.end(), f);
 		}
 		return o;
 	}
 
-    /** Follower follows a followee. If the operation is invalid, it should be a no-op. */
+	/** Follower follows a followee. If the operation is invalid, it should be a no-op. */
 	void follow(int followerId, int followeeId) {
 		if (followerId != followeeId) following[followerId].insert(followeeId);
 	}
 
-    /** Follower unfollows a followee. If the operation is invalid, it should be a no-op. */
+	/** Follower unfollows a followee. If the operation is invalid, it should be a no-op. */
 	void unfollow(int followerId, int followeeId) {
 		if (followerId != followeeId) following[followerId].erase(followeeId);
 	}

@@ -15,33 +15,33 @@ Merge k sorted linked lists and return it as one sorted list. Analyze and descri
  */
 class Comp {
 public:
-    bool operator()(pair<ListNode*, int> p1, pair<ListNode*, int> p2) {
-        return p1.first->val > p2.first->val;
-    }
+	bool operator()(pair<ListNode*, int> p1, pair<ListNode*, int> p2) {
+		return p1.first->val > p2.first->val;
+	}
 };
 class Solution {
 public:
-    ListNode* mergeKLists(vector<ListNode*>& lists) {
-        priority_queue<pair<ListNode*, int>, vector<pair<ListNode*, int>>, Comp> pq;
-        ListNode *dummy = new ListNode(-1);
-        ListNode *cur = dummy;
-        for (int i = 0; i < lists.size();i++) {
-            if (lists[i] != NULL) {
-                pq.push(make_pair(lists[i], i));
-            }
-        }
-        while (!pq.empty()) {
-            pair<ListNode*, int> p = pq.top();
-            pq.pop();
-            cur->next = p.first;
-            cur = cur->next;
-            lists[p.second] = lists[p.second]->next;
-            if (lists[p.second] != NULL) {
-                pq.push(make_pair(lists[p.second], p.second));
-            } 
-        }
-        return dummy->next;
-    }
+	ListNode* mergeKLists(vector<ListNode*>& lists) {
+		priority_queue<pair<ListNode*, int>, vector<pair<ListNode*, int>>, Comp> pq;
+		ListNode *dummy = new ListNode(-1);
+		ListNode *cur = dummy;
+		for (int i = 0; i < lists.size();i++) {
+			if (lists[i] != NULL) {
+				pq.push(make_pair(lists[i], i));
+			}
+		}
+		while (!pq.empty()) {
+			pair<ListNode*, int> p = pq.top();
+			pq.pop();
+			cur->next = p.first;
+			cur = cur->next;
+			lists[p.second] = lists[p.second]->next;
+			if (lists[p.second] != NULL) {
+				pq.push(make_pair(lists[p.second], p.second));
+			}
+		}
+		return dummy->next;
+	}
 };
 /*
 
@@ -52,16 +52,16 @@ Find the kth largest element in an unsorted array. Note that it is the kth large
 For example,
 Given [3,2,1,5,6,4] and k = 2, return 5.
 
-Note: 
+Note:
 You may assume k is always valid, 1 ≤ k ≤ array's length.
 
 */
 class Solution {
 public:
-    int findKthLargest(vector<int>& nums, int k) {
-        sort(nums.begin(), nums.end(), greater<int>());
-        return nums[k-1];
-    }
+	int findKthLargest(vector<int>& nums, int k) {
+		sort(nums.begin(), nums.end(), greater<int>());
+		return nums[k - 1];
+	}
 };
 /*
 
@@ -83,20 +83,20 @@ Assume you have Uk, the kth ugly number. Then Uk+1 must be Min(L1 * 2, L2 * 3, L
 */
 class Solution {
 public:
-    int nthUglyNumber(int n) {
-        if (!n) return 0;
-        static vector<int> table(1,1);
-        static int i2 = 0,i3 = 0, i5 =0;
-        int k(table.size());
-        for (; k < n; k++) {
-            int tmp = min(table[i2] * 2, min(table[i3] * 3, table[i5] * 5));
-            if (!(tmp % 2)) i2++;
-            if (!(tmp % 3)) i3++;
-            if (!(tmp % 5)) i5++;
-            table.push_back(tmp);
-        }
-        return table[n-1];
-    }
+	int nthUglyNumber(int n) {
+		if (!n) return 0;
+		static vector<int> table(1, 1);
+		static int i2 = 0, i3 = 0, i5 = 0;
+		int k(table.size());
+		for (; k < n; k++) {
+			int tmp = min(table[i2] * 2, min(table[i3] * 3, table[i5] * 5));
+			if (!(tmp % 2)) i2++;
+			if (!(tmp % 3)) i3++;
+			if (!(tmp % 5)) i5++;
+			table.push_back(tmp);
+		}
+		return table[n - 1];
+	}
 };
 /*
 
@@ -107,29 +107,29 @@ Given a non-empty array of integers, return the k most frequent elements.
 For example,
 Given [1,1,1,2,2,3] and k = 2, return [1,2].
 
-Note: 
+Note:
 You may assume k is always valid, 1 ≤ k ≤ number of unique elements.
 Your algorithm's time complexity must be better than O(n log n), where n is the array's size
 
 */
 class Solution {
 public:
-    vector<int> topKFrequent(vector<int>& nums, int k) {
-        vector<int> res;
-        unordered_map<int, int> mapping;
-        for (auto i : nums) { 
-            mapping[i]++;
-        }
-        priority_queue<pair<int, int>> q;
-        for (auto i = mapping.begin(); i != mapping.end(); i++) {
-            q.push(make_pair(i -> second, i -> first));
-            if (q.size() > (int)mapp.size() - k) {
-                res.push_back(q.top().second);
-                q.pop();
-            }
-        }
-        return res;
-    }
+	vector<int> topKFrequent(vector<int>& nums, int k) {
+		vector<int> res;
+		unordered_map<int, int> mapping;
+		for (auto i : nums) {
+			mapping[i]++;
+		}
+		priority_queue<pair<int, int>> q;
+		for (auto i = mapping.begin(); i != mapping.end(); i++) {
+			q.push(make_pair(i->second, i->first));
+			if (q.size() > (int)mapp.size() - k) {
+				res.push_back(q.top().second);
+				q.pop();
+			}
+		}
+		return res;
+	}
 };
 /*
 
@@ -170,61 +170,61 @@ twitter.getNewsFeed(1);
 
 */
 class Twitter {
-    struct Tweet
-    {
-        int time;
-        int id;
-        Tweet(int time, int id): time(time), id(id) {}
-        
-    };
-    unordered_map<int, vector<Tweet>> tweets;
-    unordered_map<int, set<int>> following;
-    int time;
+	struct Tweet
+	{
+		int time;
+		int id;
+		Tweet(int time, int id) : time(time), id(id) {}
+
+	};
+	unordered_map<int, vector<Tweet>> tweets;
+	unordered_map<int, set<int>> following;
+	int time;
 public:
-    /** Initialize your data structure here. */
-    Twitter() : time(0) {}
+	/** Initialize your data structure here. */
+	Twitter() : time(0) {}
 
-    /** Compose a new tweet. */
-    void postTweet(int userId, int tweetId) {
-        tweets[userId].emplace_back(time++, tweetId);
-    }
+	/** Compose a new tweet. */
+	void postTweet(int userId, int tweetId) {
+		tweets[userId].emplace_back(time++, tweetId);
+	}
 
-    /** Retrieve the 10 most recent tweet ids in the user's news feed. Each item in the news feed must be posted by users who the user followed or by the user herself. Tweets must be ordered from most recent to least recent. */
-    vector<int> getNewsFeed(int userId) {
-        vector<pair<Tweet*, Tweet*>> h;
-        for (auto& u : following[userId]) {
-            auto& t = tweets[u];
-            if (t.size()) h.emplace_back(t.data(), t.data() + t.size() - 1);
-        }
-        auto& t = tweets[userId];
-        if (t.size()) h.emplace_back(t.data(), t.data() + t.size() - 1);
-        auto f = [](const pair<Tweet*, Tweet*>& x, const pair<Tweet*, Tweet*>& y) {
-            return x.second -> time < y.second -> time;
-        };
-        make_heap(h.begin(), h.end(), f);
+	/** Retrieve the 10 most recent tweet ids in the user's news feed. Each item in the news feed must be posted by users who the user followed or by the user herself. Tweets must be ordered from most recent to least recent. */
+	vector<int> getNewsFeed(int userId) {
+		vector<pair<Tweet*, Tweet*>> h;
+		for (auto& u : following[userId]) {
+			auto& t = tweets[u];
+			if (t.size()) h.emplace_back(t.data(), t.data() + t.size() - 1);
+		}
+		auto& t = tweets[userId];
+		if (t.size()) h.emplace_back(t.data(), t.data() + t.size() - 1);
+		auto f = [](const pair<Tweet*, Tweet*>& x, const pair<Tweet*, Tweet*>& y) {
+			return x.second->time < y.second->time;
+		};
+		make_heap(h.begin(), h.end(), f);
 
-        const int n = 10;
-        vector<int> o;
-        o.reserve(n);
-        for (int i = 0; i < n && !h.empty(); i++) {
-            pop_heap(h.begin(), h.end(), f);
-            auto& hb = h.back();
-            o.push_back(hb.second -> id);
-            if (hb.first == hb.second--) h.pop_back();
-            else push_heap(h.begin(), h.end(), f);
-        }
-        return o;
-    }
+		const int n = 10;
+		vector<int> o;
+		o.reserve(n);
+		for (int i = 0; i < n && !h.empty(); i++) {
+			pop_heap(h.begin(), h.end(), f);
+			auto& hb = h.back();
+			o.push_back(hb.second->id);
+			if (hb.first == hb.second--) h.pop_back();
+			else push_heap(h.begin(), h.end(), f);
+		}
+		return o;
+	}
 
-    /** Follower follows a followee. If the operation is invalid, it should be a no-op. */
-    void follow(int followerId, int followeeId) {
-        if (followerId != followeeId) following[followerId].insert(followeeId);
-    }
+	/** Follower follows a followee. If the operation is invalid, it should be a no-op. */
+	void follow(int followerId, int followeeId) {
+		if (followerId != followeeId) following[followerId].insert(followeeId);
+	}
 
-    /** Follower unfollows a followee. If the operation is invalid, it should be a no-op. */
-    void unfollow(int followerId, int followeeId) {
-        if (followerId != followeeId) following[followerId].erase(followeeId);
-    }
+	/** Follower unfollows a followee. If the operation is invalid, it should be a no-op. */
+	void unfollow(int followerId, int followeeId) {
+		if (followerId != followeeId) following[followerId].erase(followeeId);
+	}
 };
 
 /**
@@ -235,38 +235,38 @@ public:
  * obj.follow(followerId,followeeId);
  * obj.unfollow(followerId,followeeId);
  */
-/*
+ /*
 
-378. Kth Smallest Element in a Sorted Matrix (Medium)
+ 378. Kth Smallest Element in a Sorted Matrix (Medium)
 
-Given a n x n matrix where each of the rows and columns are sorted in ascending order, find the kth smallest element in the matrix.
+ Given a n x n matrix where each of the rows and columns are sorted in ascending order, find the kth smallest element in the matrix.
 
-Note that it is the kth smallest element in the sorted order, not the kth distinct element.
+ Note that it is the kth smallest element in the sorted order, not the kth distinct element.
 
-Example:
+ Example:
 
-matrix = [
-   [ 1,  5,  9],
-   [10, 11, 13],
-   [12, 13, 15]
-],
-k = 8,
+ matrix = [
+	[ 1,  5,  9],
+	[10, 11, 13],
+	[12, 13, 15]
+ ],
+ k = 8,
 
-return 13.
-Note: 
-You may assume k is always valid, 1 ≤ k ≤ n2.
+ return 13.
+ Note:
+ You may assume k is always valid, 1 ≤ k ≤ n2.
 
-*/
+ */
 class Solution {
 public:
-    int kthSmallest(vector<vector<int>>& matrix, int k) {
-        int r = matrix.size() - 1, min = matrix[0][0], max = matrix[r][r];
-        while (min < max) {
-            int cnt = 0, mid = (min + max) / 2;
-            for (int i = 0; i <= r && matrix[i][0] <= mid; i++)
-                cnt += upper_bound(matrix[i].begin(), matrix[i].end(), mid) - matrix[i].begin();
-            k <= cnt ? max = mid : min = mid + 1;
-        }
-        return min;
-    }
+	int kthSmallest(vector<vector<int>>& matrix, int k) {
+		int r = matrix.size() - 1, min = matrix[0][0], max = matrix[r][r];
+		while (min < max) {
+			int cnt = 0, mid = (min + max) / 2;
+			for (int i = 0; i <= r && matrix[i][0] <= mid; i++)
+				cnt += upper_bound(matrix[i].begin(), matrix[i].end(), mid) - matrix[i].begin();
+			k <= cnt ? max = mid : min = mid + 1;
+		}
+		return min;
+	}
 };

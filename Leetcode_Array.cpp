@@ -24,12 +24,12 @@ public:
 		for (int i = 0; i < nums.size(); i++) {
 			int gap = target - nums[i];
 			if (mapping.count(gap)) {
-                return {i, mapping[gap]};
-            }
-            mapping[nums[i]] = i;
-        }
-        return {};
-    }
+				return{ i, mapping[gap] };
+			}
+			mapping[nums[i]] = i;
+		}
+		return{};
+	}
 };
 /*
 
@@ -53,34 +53,37 @@ The median is (2 + 3)/2 = 2.5
 */
 class Solution {
 public:
-    double findMedianSortedArrays(vector<int>& nums1, vector<int>& nums2) {
-        int sum = nums1.size() + nums2.size();
-        double res;
-        if (sum % 2) {
-            res = findKth(nums1, nums2, 0, 0, sum / 2 + 1);
-        } else {
-            res = (findKth(nums1, nums2, 0, 0, sum / 2) + findKth(nums1, nums2, 0, 0, sum / 2 + 1)) / 2.0;
-        }
-        return res;
-    }
+	double findMedianSortedArrays(vector<int>& nums1, vector<int>& nums2) {
+		int sum = nums1.size() + nums2.size();
+		double res;
+		if (sum % 2) {
+			res = findKth(nums1, nums2, 0, 0, sum / 2 + 1);
+		}
+		else {
+			res = (findKth(nums1, nums2, 0, 0, sum / 2) + findKth(nums1, nums2, 0, 0, sum / 2 + 1)) / 2.0;
+		}
+		return res;
+	}
 private:
-    double findKth(vector<int>& nums1, vector<int>& nums2, int s1, int s2, int k) {
-        if (s1 >= nums1.size()) {
-            return nums2[s2 + k - 1];
-        } else if (s2 >= nums2.size()) {
-            return nums1[s1 + k - 1];
-        }
-        if (k == 1) {
-            return min(nums1[s1], nums2[s2]);
-        }
-        int mid1 = s1 + k / 2 - 1 >= nums1.size() ? INT_MAX : nums1[s1 + k / 2 - 1];
-        int mid2 = s2 + k / 2 - 1 >= nums2.size() ? INT_MAX : nums2[s2 + k / 2 - 1];
-        if (mid1 < mid2) {
-            return findKth(nums1, nums2, s1 + k / 2, s2, k - k / 2);
-        } else {
-            return findKth(nums1, nums2, s1, s2 + k / 2, k - k / 2);
-        }
-    }
+	double findKth(vector<int>& nums1, vector<int>& nums2, int s1, int s2, int k) {
+		if (s1 >= nums1.size()) {
+			return nums2[s2 + k - 1];
+		}
+		else if (s2 >= nums2.size()) {
+			return nums1[s1 + k - 1];
+		}
+		if (k == 1) {
+			return min(nums1[s1], nums2[s2]);
+		}
+		int mid1 = s1 + k / 2 - 1 >= nums1.size() ? INT_MAX : nums1[s1 + k / 2 - 1];
+		int mid2 = s2 + k / 2 - 1 >= nums2.size() ? INT_MAX : nums2[s2 + k / 2 - 1];
+		if (mid1 < mid2) {
+			return findKth(nums1, nums2, s1 + k / 2, s2, k - k / 2);
+		}
+		else {
+			return findKth(nums1, nums2, s1, s2 + k / 2, k - k / 2);
+		}
+	}
 };
 /*
 
@@ -99,14 +102,14 @@ public:
 			int h_min = min(height[i], height[j]);
 			water = max(water, h_min * (j - i));
 			while (height[j] <= h_min && i < j) {
-                j--;
-            }
-            while (height[i] <= h_min && i < j) {
-                i++;
-            }
-        }
-        return water;
-    }
+				j--;
+			}
+			while (height[i] <= h_min && i < j) {
+				i++;
+			}
+		}
+		return water;
+	}
 };
 /*
 
@@ -131,38 +134,38 @@ public:
 		vector<vector<int>> res;
 		int _size = nums.size();
 		if (_size < 3) {
-            return res;
-        }
-        sort(nums.begin(), nums.end());
-        for (int i = 0; i < _size - 2; i++) {
-            if (i > 0 && nums[i - 1] == nums[i] || nums[i] + nums[_size - 1] + nums[_size - 2] < 0) {
-                continue;
-            }
-            if (nums[i] + nums[i + 1] + nums[i + 2] > 0) {
-                break;
-            }
-            int j = i + 1, k = _size - 1;
-            while (j < k) {
-                int _sum = nums[i] + nums[j] + nums[k];
-                if (_sum == 0) {
-                    res.push_back(vector<int>{nums[i], nums[j], nums[k]});
-                    do {
-                        j++;
-                    } while (nums[j] == nums[j - 1] && j < k);
-                    do {
-                        k--;
-                    } while (nums[k] == nums[k + 1] && j < k);
-                }
-                else if (_sum > 0) {
-                    k--;
-                }
-                else {
-                    j++;
-                }
-            }
-        }
-        return res;
-    }
+			return res;
+		}
+		sort(nums.begin(), nums.end());
+		for (int i = 0; i < _size - 2; i++) {
+			if (i > 0 && nums[i - 1] == nums[i] || nums[i] + nums[_size - 1] + nums[_size - 2] < 0) {
+				continue;
+			}
+			if (nums[i] + nums[i + 1] + nums[i + 2] > 0) {
+				break;
+			}
+			int j = i + 1, k = _size - 1;
+			while (j < k) {
+				int _sum = nums[i] + nums[j] + nums[k];
+				if (_sum == 0) {
+					res.push_back(vector<int>{nums[i], nums[j], nums[k]});
+					do {
+						j++;
+					} while (nums[j] == nums[j - 1] && j < k);
+					do {
+						k--;
+					} while (nums[k] == nums[k + 1] && j < k);
+				}
+				else if (_sum > 0) {
+					k--;
+				}
+				else {
+					j++;
+				}
+			}
+		}
+		return res;
+	}
 };
 /*
 
@@ -179,30 +182,30 @@ class Solution {
 public:
 	int threeSumClosest(vector<int>& nums, int target) {
 		if (nums.size() < 3) {
-            return 0;
-        }
-        sort(nums.begin(), nums.end());
-        int res = nums[0] + nums[1] + nums[2];
-        for (int i = 0; i < nums.size() - 2; i++) {
-            int j = i + 1, k = nums.size() - 1;
-            while (j < k) {
-                int _sum = nums[i] + nums[j] + nums[k];
-                if (_sum == target) {
-                    return _sum;
-                }
-                else if (abs(_sum - target) < abs(res - target)) {
-                    res = _sum;
-                }
-                else if (_sum > target) {
-                    k--;
-                }
-                else {
-                    j++;
-                }
-            }
-        }
-        return res;
-    }
+			return 0;
+		}
+		sort(nums.begin(), nums.end());
+		int res = nums[0] + nums[1] + nums[2];
+		for (int i = 0; i < nums.size() - 2; i++) {
+			int j = i + 1, k = nums.size() - 1;
+			while (j < k) {
+				int _sum = nums[i] + nums[j] + nums[k];
+				if (_sum == target) {
+					return _sum;
+				}
+				else if (abs(_sum - target) < abs(res - target)) {
+					res = _sum;
+				}
+				else if (_sum > target) {
+					k--;
+				}
+				else {
+					j++;
+				}
+			}
+		}
+		return res;
+	}
 };
 /*
 
@@ -224,52 +227,52 @@ A solution set is:
 */
 class Solution {
 public:
-    vector<vector<int>> fourSum(vector<int>& nums, int target) {
-        vector<vector<int>> res;
-        int _size = nums.size();
-        if (_size < 4) {
-            return res;
-        }
-        sort(nums.begin(), nums.end());
-        for (int i = 0; i < _size - 3; i++) {
-            if (i > 0 && nums[i] == nums[i-1] || nums[i] + nums[_size - 3] + nums[_size - 2] + nums[_size - 1] < target) {
-                continue;
-            }
-            if (nums[i] + nums[i + 1] + nums[i + 2] + nums[i + 3] > target) {
-                break;
-            }
-            for (int j = i + 1; j < _size - 2; j++) {
-                if (j > i + 1 && nums[j] == nums[j - 1] || nums[i] + nums[j] + nums[_size - 2] + nums[_size - 1] < target) {
-                    continue;
-                }
-                if (nums[i] + nums[j] + nums[j + 1] + nums[j + 2] > target) {
-                    break;
-                }
-                int k = j + 1, l = _size - 1;
-                while (k < l) {
-                    int _sum = nums[i] + nums[j] + nums[k] + nums[l];
-                    if (_sum == target) {
-                        res.push_back(vector<int>{nums[i], nums[j], nums[k], nums[l]});
-                        k++;
-                        l--;
-                        while (nums[k] == nums[k - 1] && k < l) {
-                            k++;
-                        }
-                        while (nums[l] == nums[l + 1] && k < l) {
-                            l--;
-                        }
-                    }
-                    else if (_sum > target) {
-                        l--;
-                    }
-                    else {
-                        k++;
-                    }
-                }
-            }
-        }
-        return res;
-    }
+	vector<vector<int>> fourSum(vector<int>& nums, int target) {
+		vector<vector<int>> res;
+		int _size = nums.size();
+		if (_size < 4) {
+			return res;
+		}
+		sort(nums.begin(), nums.end());
+		for (int i = 0; i < _size - 3; i++) {
+			if (i > 0 && nums[i] == nums[i - 1] || nums[i] + nums[_size - 3] + nums[_size - 2] + nums[_size - 1] < target) {
+				continue;
+			}
+			if (nums[i] + nums[i + 1] + nums[i + 2] + nums[i + 3] > target) {
+				break;
+			}
+			for (int j = i + 1; j < _size - 2; j++) {
+				if (j > i + 1 && nums[j] == nums[j - 1] || nums[i] + nums[j] + nums[_size - 2] + nums[_size - 1] < target) {
+					continue;
+				}
+				if (nums[i] + nums[j] + nums[j + 1] + nums[j + 2] > target) {
+					break;
+				}
+				int k = j + 1, l = _size - 1;
+				while (k < l) {
+					int _sum = nums[i] + nums[j] + nums[k] + nums[l];
+					if (_sum == target) {
+						res.push_back(vector<int>{nums[i], nums[j], nums[k], nums[l]});
+						k++;
+						l--;
+						while (nums[k] == nums[k - 1] && k < l) {
+							k++;
+						}
+						while (nums[l] == nums[l + 1] && k < l) {
+							l--;
+						}
+					}
+					else if (_sum > target) {
+						l--;
+					}
+					else {
+						k++;
+					}
+				}
+			}
+		}
+		return res;
+	}
 };
 /*
 
@@ -287,18 +290,18 @@ Your function should return length = 2, with the first two elements of nums bein
 */
 class Solution {
 public:
-    int removeDuplicates(vector<int>& nums) {
-        if (nums.empty()) {
-            return 0;
-        }
-        int index = 0;
-        for (int i = 1; i < nums.size(); i++) {
-            if (nums[index] != nums[i]) {
-                nums[++index] = nums[i];
-            }
-        }
-        return index + 1;
-    }
+	int removeDuplicates(vector<int>& nums) {
+		if (nums.empty()) {
+			return 0;
+		}
+		int index = 0;
+		for (int i = 1; i < nums.size(); i++) {
+			if (nums[index] != nums[i]) {
+				nums[++index] = nums[i];
+			}
+		}
+		return index + 1;
+	}
 };
 /*
 
@@ -328,11 +331,11 @@ public:
 		int index = 0;
 		for (int i = 0; i < nums.size(); i++) {
 			if (nums[i] != val) {
-                nums[index++] = nums[i];
-            }
-        }
-        return index;
-    }
+				nums[index++] = nums[i];
+			}
+		}
+		return index;
+	}
 };
 class Solution {
 public:
@@ -359,30 +362,30 @@ Here are some examples. Inputs are in the left-hand column and its corresponding
 class Solution {
 public:
 	void nextPermutation(vector<int>& nums) {
-		int i = nums.size() - 1, j = i; 
+		int i = nums.size() - 1, j = i;
 		for (; i > 0; i--) {
 			if (nums[i] > nums[i - 1]) {
-                break;
-            }
-        }
-        if(i == 0) {
-            sort(nums.begin(), nums.end());
-            return;
-        }
-        for (; j > i; j--) {
-            if (nums[j] > nums[i-1]) {
-                break;
-            }
-            
-        }
-        swap(nums[i-1], nums[j]);
-        sort(nums.begin() + i, nums.end());
-    }
+				break;
+			}
+		}
+		if (i == 0) {
+			sort(nums.begin(), nums.end());
+			return;
+		}
+		for (; j > i; j--) {
+			if (nums[j] > nums[i - 1]) {
+				break;
+			}
+
+		}
+		swap(nums[i - 1], nums[j]);
+		sort(nums.begin() + i, nums.end());
+	}
 };
 class Solution {
 public:
 	void nextPermutation(vector<int>& nums) {
-		next_permutation(nums.begin(), nums.end());  
+		next_permutation(nums.begin(), nums.end());
 	}
 };
 /*
@@ -403,27 +406,27 @@ public:
 		while (l <= r) {
 			int mid = l + (r - l) / 2;
 			if (nums[mid] == target) {
-                return mid;
-            }
-            else if (nums[l] <= nums[mid]) {
-                if (nums[l] <= target && target < nums[mid]) {
-                    r = mid - 1;
-                }
-                else {
-                    l = mid + 1;
-                }
-            }
-            else {
-                if (nums[mid] < target && target <= nums[r]) {
-                    l = mid + 1;
-                }
-                else {
-                    r = mid - 1;
-                }
-            }
-        }
-        return -1;
-    }
+				return mid;
+			}
+			else if (nums[l] <= nums[mid]) {
+				if (nums[l] <= target && target < nums[mid]) {
+					r = mid - 1;
+				}
+				else {
+					l = mid + 1;
+				}
+			}
+			else {
+				if (nums[mid] < target && target <= nums[r]) {
+					l = mid + 1;
+				}
+				else {
+					r = mid - 1;
+				}
+			}
+		}
+		return -1;
+	}
 };
 /*
 
@@ -448,25 +451,25 @@ public:
 		while (l <= r) {
 			int mid = l + (r - l) / 2;
 			if (nums[mid] < target) {
-                l = mid + 1;
-            }
-            else if (target < nums[mid]) {
-                r = mid - 1;
-            }
-            else {
-                while (nums[l] != target) {
-                    l++;
-                }
-                while (nums[r] != target) {
-                    r--;
-                }
-                res[0] = l;
-                res[1] = r;
-                return res;
-            }
-        }
-        return res;
-    }
+				l = mid + 1;
+			}
+			else if (target < nums[mid]) {
+				r = mid - 1;
+			}
+			else {
+				while (nums[l] != target) {
+					l++;
+				}
+				while (nums[r] != target) {
+					r--;
+				}
+				res[0] = l;
+				res[1] = r;
+				return res;
+			}
+		}
+		return res;
+	}
 };
 /*
 
@@ -485,20 +488,20 @@ Here are few examples.
 */
 class Solution {
 public:
-    int searchInsert(vector<int>& nums, int target) {
-        int l = 0, r = nums.size() - 1;
-        while (l <= r) {
-            int mid = l + (r - l) / 2;
-            if (nums[mid] == target) return mid;
-            else if (nums[mid] > target) {
-                r = mid - 1;
-            }
-            else {
-                l = mid + 1;
-            }
-        }
-        return l;
-    }
+	int searchInsert(vector<int>& nums, int target) {
+		int l = 0, r = nums.size() - 1;
+		while (l <= r) {
+			int mid = l + (r - l) / 2;
+			if (nums[mid] == target) return mid;
+			else if (nums[mid] > target) {
+				r = mid - 1;
+			}
+			else {
+				l = mid + 1;
+			}
+		}
+		return l;
+	}
 };
 /*
 
@@ -511,8 +514,8 @@ The same repeated number may be chosen from C unlimited number of times.
 Note:
 All numbers (including target) will be positive integers.
 The solution set must not contain duplicate combinations.
-For example, given candidate set [2, 3, 6, 7] and target 7, 
-A solution set is: 
+For example, given candidate set [2, 3, 6, 7] and target 7,
+A solution set is:
 [
   [7],
   [2, 2, 3]
@@ -521,27 +524,28 @@ A solution set is:
 */
 class Solution {
 public:
-    vector<vector<int>> combinationSum(vector<int>& candidates, int target) {
-        vector<vector<int>> res;
-        vector<int> res_sub;
-        sort(candidates.begin(), candidates.end());
-        combinationSum(candidates, target, 0, res_sub, res);
-        return res;
-    }
+	vector<vector<int>> combinationSum(vector<int>& candidates, int target) {
+		vector<vector<int>> res;
+		vector<int> res_sub;
+		sort(candidates.begin(), candidates.end());
+		combinationSum(candidates, target, 0, res_sub, res);
+		return res;
+	}
 private:
-    void combinationSum(vector<int>& candidates, int target, int start, vector<int>& res_sub, vector<vector<int>>& res) {
-        if (target < 0 || start > candidates.size()) {
-            return;
-        } else if (target == 0) {
-            res.push_back(res_sub);
-            return;
-        }
-        for (int i = start; i < candidates.size() && candidates[i] <= target; i++) {
-            res_sub.push_back(candidates[i]);
-            combinationSum(candidates, target - candidates[i], i, res_sub, res);
-            res_sub.pop_back();
-        }
-    }
+	void combinationSum(vector<int>& candidates, int target, int start, vector<int>& res_sub, vector<vector<int>>& res) {
+		if (target < 0 || start > candidates.size()) {
+			return;
+		}
+		else if (target == 0) {
+			res.push_back(res_sub);
+			return;
+		}
+		for (int i = start; i < candidates.size() && candidates[i] <= target; i++) {
+			res_sub.push_back(candidates[i]);
+			combinationSum(candidates, target - candidates[i], i, res_sub, res);
+			res_sub.pop_back();
+		}
+	}
 };
 /*
 
@@ -554,8 +558,8 @@ Each number in C may only be used once in the combination.
 Note:
 All numbers (including target) will be positive integers.
 The solution set must not contain duplicate combinations.
-For example, given candidate set [10, 1, 2, 7, 6, 1, 5] and target 8, 
-A solution set is: 
+For example, given candidate set [10, 1, 2, 7, 6, 1, 5] and target 8,
+A solution set is:
 [
   [1, 7],
   [1, 2, 5],
@@ -566,28 +570,29 @@ A solution set is:
 */
 class Solution {
 public:
-    vector<vector<int>> combinationSum2(vector<int>& candidates, int target) {
-        vector<vector<int>> res;
-        vector<int> res_sub;
-        sort(candidates.begin(), candidates.end());
-        combinationSum2(candidates, target, 0, res_sub, res);
-        return res;
-    }
+	vector<vector<int>> combinationSum2(vector<int>& candidates, int target) {
+		vector<vector<int>> res;
+		vector<int> res_sub;
+		sort(candidates.begin(), candidates.end());
+		combinationSum2(candidates, target, 0, res_sub, res);
+		return res;
+	}
 private:
-    void combinationSum2(vector<int>& candidates, int target, int start, vector<int>& res_sub, vector<vector<int>>& res) {
-        if (target < 0 || start > candidates.size()) {
-            return;
-        } else if (target == 0) {
-            res.push_back(res_sub);
-            return;
-        }
-        for (int i = start; i < candidates.size() && candidates[i] <= target; i++) {
-            if (i > start && candidates[i] == candidates[i- 1]) continue;
-            res_sub.push_back(candidates[i]);
-            combinationSum2(candidates, target - candidates[i], i + 1, res_sub, res);
-            res_sub.pop_back();
-        }
-    }
+	void combinationSum2(vector<int>& candidates, int target, int start, vector<int>& res_sub, vector<vector<int>>& res) {
+		if (target < 0 || start > candidates.size()) {
+			return;
+		}
+		else if (target == 0) {
+			res.push_back(res_sub);
+			return;
+		}
+		for (int i = start; i < candidates.size() && candidates[i] <= target; i++) {
+			if (i > start && candidates[i] == candidates[i - 1]) continue;
+			res_sub.push_back(candidates[i]);
+			combinationSum2(candidates, target - candidates[i], i + 1, res_sub, res);
+			res_sub.pop_back();
+		}
+	}
 };
 /*
 
@@ -595,7 +600,7 @@ private:
 
 Given n non-negative integers representing an elevation map where the width of each bar is 1, compute how much water it is able to trap after raining.
 
-For example, 
+For example,
 Given [0,1,0,2,1,0,1,3,2,1,2,1], return 6.
 
 
@@ -604,28 +609,28 @@ The above elevation map is represented by array [0,1,0,2,1,0,1,3,2,1,2,1]. In th
 */
 class Solution {
 public:
-    int trap(vector<int>& height) {
-        if (height.size() < 3) {
-            return 0;
-        }
-        int res = 0, i = 0, j = height.size() - 1;
-        while (i < j - 1) {
-            int bar = min(height[i], height[j]);
-            for (int k = i + 1; k < j; k++) {
-                if (height[k] < bar) {
-                    res += bar - height[k];
-                    height[k] = bar;
-                }
-            }
-            while (height[i] == bar) {
-                i++;
-            }
-            while (height[j] == bar) {
-                j--;
-            }
-        }
-        return res;
-    }
+	int trap(vector<int>& height) {
+		if (height.size() < 3) {
+			return 0;
+		}
+		int res = 0, i = 0, j = height.size() - 1;
+		while (i < j - 1) {
+			int bar = min(height[i], height[j]);
+			for (int k = i + 1; k < j; k++) {
+				if (height[k] < bar) {
+					res += bar - height[k];
+					height[k] = bar;
+				}
+			}
+			while (height[i] == bar) {
+				i++;
+			}
+			while (height[j] == bar) {
+				j--;
+			}
+		}
+		return res;
+	}
 };
 /*
 
@@ -646,7 +651,7 @@ public:
 		for (int i = 0; i < (n + 2) / 2; i++) {
 			for (int j = i; j < n - i; j++) {
 				swap(matrix[i][j], matrix[j][n - i]);
-				swap(matrix[i][j], matrix[n - i][n -j]);
+				swap(matrix[i][j], matrix[n - i][n - j]);
 				swap(matrix[i][j], matrix[n - j][i]);
 			}
 		}
@@ -701,37 +706,37 @@ public:
 	vector<int> spiralOrder(vector<vector<int>>& matrix) {
 		vector<int> res;
 		if (matrix.empty()) {
-            return res;
-        }
-        int m = matrix.size() - 1, n = matrix[0].size() - 1, h = 0, l = 0;
-        while (true) {
-            for (int col = l; col <= n; col++) {
-                res.push_back(matrix[h][col]);
-            }
-            if (++h > m) {
-                break;
-            }
-            for (int row = h; row <= m; row++) {
-                res.push_back(matrix[row][n]);
-            }
-            if (--n < l) {
-                break;
-            }
-            for (int col = n; col >= l; col--) {
-                res.push_back(matrix[m][col]);
-            }
-            if (--m < h) {
-                break;
-            }
-            for (int row = m; row >= h; row--) {
-                res.push_back(matrix[row][l]);
-            }
-            if (++l > n) {
-                break;
-            }
-        }
-        return res;
-    }
+			return res;
+		}
+		int m = matrix.size() - 1, n = matrix[0].size() - 1, h = 0, l = 0;
+		while (true) {
+			for (int col = l; col <= n; col++) {
+				res.push_back(matrix[h][col]);
+			}
+			if (++h > m) {
+				break;
+			}
+			for (int row = h; row <= m; row++) {
+				res.push_back(matrix[row][n]);
+			}
+			if (--n < l) {
+				break;
+			}
+			for (int col = n; col >= l; col--) {
+				res.push_back(matrix[m][col]);
+			}
+			if (--m < h) {
+				break;
+			}
+			for (int row = m; row >= h; row--) {
+				res.push_back(matrix[row][l]);
+			}
+			if (++l > n) {
+				break;
+			}
+		}
+		return res;
+	}
 };
 /*
 
@@ -751,18 +756,19 @@ A = [3,2,1,0,4], return false.
 */
 class Solution {
 public:
-    bool canJump(vector<int>& nums) {
-        int steps = 0, _size = nums.size();
-        for (int i = 0; i < _size; i++) {
-            steps = steps > nums[i] ? steps : nums[i];
-            if (steps >= _size - 1 - i) {
-                return true;
-            } else if (--steps < 0) {
-                return false;
-            }
-        }
-        return false;
-    }
+	bool canJump(vector<int>& nums) {
+		int steps = 0, _size = nums.size();
+		for (int i = 0; i < _size; i++) {
+			steps = steps > nums[i] ? steps : nums[i];
+			if (steps >= _size - 1 - i) {
+				return true;
+			}
+			else if (--steps < 0) {
+				return false;
+			}
+		}
+		return false;
+	}
 };
 /*
 
@@ -786,26 +792,27 @@ return [1,6],[8,10],[15,18].
  */
 class Solution {
 public:
-    vector<Interval> merge(vector<Interval>& intervals) {
-        if (intervals.empty()) {
-            return {};
-        }
-        sort(intervals.begin(), intervals.end(), [] (Interval a, Interval b) {return a.start < b.start;});
-        vector<Interval> res;
-        res.push_back(intervals[0]);
-        int i = 0, j = 1;
-        while (j < intervals.size()) {
-            if (res[i].end >= intervals[j].start) {
-                res[i].start = min(res[i].start, intervals[j].start);
-                res[i].end = max(res[i].end, intervals[j].end);
-                j++;
-            } else {
-                res.push_back(intervals[j++]);
-                i++;
-            }
-        }
-        return res;
-    }
+	vector<Interval> merge(vector<Interval>& intervals) {
+		if (intervals.empty()) {
+			return{};
+		}
+		sort(intervals.begin(), intervals.end(), [](Interval a, Interval b) {return a.start < b.start;});
+		vector<Interval> res;
+		res.push_back(intervals[0]);
+		int i = 0, j = 1;
+		while (j < intervals.size()) {
+			if (res[i].end >= intervals[j].start) {
+				res[i].start = min(res[i].start, intervals[j].start);
+				res[i].end = max(res[i].end, intervals[j].end);
+				j++;
+			}
+			else {
+				res.push_back(intervals[j++]);
+				i++;
+			}
+		}
+		return res;
+	}
 };
 /*
 
@@ -835,30 +842,33 @@ This is because the new interval [4,9] overlaps with [3,5],[6,7],[8,10].
  */
 class Solution {
 public:
-    vector<Interval> insert(vector<Interval>& intervals, Interval newInterval) {
-        vector<Interval> res;
-        bool flag = false;
-        for (Interval inter : intervals) {
-            if (flag) {
-                res.push_back(inter);
-            } else {
-                if (newInterval.end < inter.start) {
-                    res.push_back(newInterval);
-                    flag = true;
-                    res.push_back(inter);
-                } else if (inter.end < newInterval.start) {
-                    res.push_back(inter);
-                } else {
-                    newInterval.start = min(newInterval.start, inter.start);
-                    newInterval.end = max(newInterval.end, inter.end);
-                }
-            }
-        } 			
-        if (!flag) {
-            res.push_back(newInterval);
-        }
-        return res;
-    }
+	vector<Interval> insert(vector<Interval>& intervals, Interval newInterval) {
+		vector<Interval> res;
+		bool flag = false;
+		for (Interval inter : intervals) {
+			if (flag) {
+				res.push_back(inter);
+			}
+			else {
+				if (newInterval.end < inter.start) {
+					res.push_back(newInterval);
+					flag = true;
+					res.push_back(inter);
+				}
+				else if (inter.end < newInterval.start) {
+					res.push_back(inter);
+				}
+				else {
+					newInterval.start = min(newInterval.start, inter.start);
+					newInterval.end = max(newInterval.end, inter.end);
+				}
+			}
+		}
+		if (!flag) {
+			res.push_back(newInterval);
+		}
+		return res;
+	}
 };
 /*
 
@@ -881,38 +891,38 @@ class Solution {
 public:
 	vector<vector<int>> generateMatrix(int n) {
 		if (n < 1) {
-            return {};
-        }
-        vector<vector<int>> res(n, vector<int>(n));
-        int i = n - 1, j = n - 1, k = 1, h = 0, l = 0;
-        while (k <= n * n) {
-            for (int col = l; col <= j; col++) {
-                res[h][col] = k++;
-            }
-            if (++h > i) {
-                break;
-            }
-            for (int row = h; row <= i; row++) {
-                res[row][j] = k++;
-            }
-            if (--j < l) {
-                break;
-            }
-            for (int col = j; col >= l; col--) {
-                res[i][col] = k++;
-            }
-            if (--i < h) {
-                break;
-            }
-            for (int row = i; row >= h; row--) {
-                res[row][l] = k++;
-            }
-            if (++l > j) {
-                break;
-            }
-        }
-        return res;
-    }
+			return{};
+		}
+		vector<vector<int>> res(n, vector<int>(n));
+		int i = n - 1, j = n - 1, k = 1, h = 0, l = 0;
+		while (k <= n * n) {
+			for (int col = l; col <= j; col++) {
+				res[h][col] = k++;
+			}
+			if (++h > i) {
+				break;
+			}
+			for (int row = h; row <= i; row++) {
+				res[row][j] = k++;
+			}
+			if (--j < l) {
+				break;
+			}
+			for (int col = j; col >= l; col--) {
+				res[i][col] = k++;
+			}
+			if (--i < h) {
+				break;
+			}
+			for (int row = i; row >= h; row--) {
+				res[row][l] = k++;
+			}
+			if (++l > j) {
+				break;
+			}
+		}
+		return res;
+	}
 };
 /*
 
@@ -927,18 +937,18 @@ How many possible unique paths are there?
 */
 class Solution {
 public:
-    int uniquePaths(int m, int n) {
-        if (m == 0 || n == 0) {
-            return 0;
-        }
-        vector<int> res(n, 1);
-        for (int i = 1; i < m; i++) {
-            for (int j = 1; j < n; j++) {
-                res[j] = res[j - 1] + res[j];
-            }
-        }
-        return res[n - 1];
-    }
+	int uniquePaths(int m, int n) {
+		if (m == 0 || n == 0) {
+			return 0;
+		}
+		vector<int> res(n, 1);
+		for (int i = 1; i < m; i++) {
+			for (int j = 1; j < n; j++) {
+				res[j] = res[j - 1] + res[j];
+			}
+		}
+		return res[n - 1];
+	}
 };
 /*
 
@@ -965,24 +975,25 @@ Note: m and n will be at most 100.
 */
 class Solution {
 public:
-    int uniquePathsWithObstacles(vector<vector<int>>& obstacleGrid) {
-        if (obstacleGrid.empty()) {
-            return 0;
-        }
-        int _size = obstacleGrid[0].size();
-        vector<int> res(_size, 0);
-        res[0] = 1;
-        for (int i = 0; i < obstacleGrid.size(); i++) {
-            for (int j = 0; j < _size; j++) {
-                if (obstacleGrid[i][j] == 1) {
-                    res[j] = 0;
-                } else if (j > 0) {
-                    res[j] = res[j - 1] + res[j];
-                }
-            }
-        }
-        return res[_size - 1];
-    }
+	int uniquePathsWithObstacles(vector<vector<int>>& obstacleGrid) {
+		if (obstacleGrid.empty()) {
+			return 0;
+		}
+		int _size = obstacleGrid[0].size();
+		vector<int> res(_size, 0);
+		res[0] = 1;
+		for (int i = 0; i < obstacleGrid.size(); i++) {
+			for (int j = 0; j < _size; j++) {
+				if (obstacleGrid[i][j] == 1) {
+					res[j] = 0;
+				}
+				else if (j > 0) {
+					res[j] = res[j - 1] + res[j];
+				}
+			}
+		}
+		return res[_size - 1];
+	}
 };
 /*
 
@@ -995,21 +1006,21 @@ Note: You can only move either down or right at any point in time.
 */
 class Solution {
 public:
-    int minPathSum(vector<vector<int>>& grid) {
-        if (grid.empty()) {
-            return 0;
-        }
-        int _size = grid[0].size();
-        vector<int> res(_size, INT_MAX);
-        res[0] = 0;
-        for (int i = 0; i < grid.size(); i++) {
-            res[0] += grid[i][0];
-            for (int j = 1; j < _size; j++) {
-                res[j] = min(res[j - 1], res[j]) + grid[i][j];
-            }
-        }
-        return res[_size - 1];
-    }
+	int minPathSum(vector<vector<int>>& grid) {
+		if (grid.empty()) {
+			return 0;
+		}
+		int _size = grid[0].size();
+		vector<int> res(_size, INT_MAX);
+		res[0] = 0;
+		for (int i = 0; i < grid.size(); i++) {
+			res[0] += grid[i][0];
+			for (int j = 1; j < _size; j++) {
+				res[j] = min(res[j - 1], res[j]) + grid[i][j];
+			}
+		}
+		return res[_size - 1];
+	}
 };
 /*
 
@@ -1031,11 +1042,11 @@ public:
 			digits[i] %= 10;
 		}
 		if (flag) {
-            digits.push_back(1);
-        }
-        reverse(digits.begin(), digits.end());
-        return digits;
-    }
+			digits.push_back(1);
+		}
+		reverse(digits.begin(), digits.end());
+		return digits;
+	}
 };
 /*
 
@@ -1060,34 +1071,34 @@ public:
 			for (int j = 0; j < matrix[0].size(); j++) {
 				if (matrix[i][j] == 0) {
 					if (i == 0) {
-                        row = true;
-                    }
-                    if (j == 0) {
-                        col = true;
-                    }
-                    matrix[i][0] = 0;
-                    matrix[0][j] = 0;
-                }
-            }
-        }
-        for (int i = 1; i < matrix.size(); i++) {
-            for (int j = 1; j < matrix[0].size(); j++) {
-                if (matrix[i][0] == 0 || matrix[0][j] == 0) {
-                    matrix[i][j] = 0;
-                }
-            }
-        }
-        if(row) {
-            for(int j = 0; j < matrix[0].size(); j++) {
-                matrix[0][j] = 0;
-            }
-        }
-        if(col) {
-            for(int i = 0; i < matrix.size(); i++) {
-                matrix[i][0] = 0;
-            }
-        }
-    }
+						row = true;
+					}
+					if (j == 0) {
+						col = true;
+					}
+					matrix[i][0] = 0;
+					matrix[0][j] = 0;
+				}
+			}
+		}
+		for (int i = 1; i < matrix.size(); i++) {
+			for (int j = 1; j < matrix[0].size(); j++) {
+				if (matrix[i][0] == 0 || matrix[0][j] == 0) {
+					matrix[i][j] = 0;
+				}
+			}
+		}
+		if (row) {
+			for (int j = 0; j < matrix[0].size(); j++) {
+				matrix[0][j] = 0;
+			}
+		}
+		if (col) {
+			for (int i = 0; i < matrix.size(); i++) {
+				matrix[i][0] = 0;
+			}
+		}
+	}
 };
 /*
 
@@ -1111,22 +1122,24 @@ Given target = 3, return true.
 */
 class Solution {
 public:
-    bool searchMatrix(vector<vector<int>>& matrix, int target) {
-        int m = matrix.size(), n = matrix[0].size();
-        int l = 0, r = m * n - 1;
-        while (l <= r) {
-            int mid = l + (r - l) / 2;
-            int i = mid / n, j = mid % n;
-            if (matrix[i][j] < target) {
-                l = mid + 1;
-            } else if (target < matrix[i][j]) {
-                r = mid - 1;
-            } else {
-                return true;
-            }
-        }
-        return false;
-    }
+	bool searchMatrix(vector<vector<int>>& matrix, int target) {
+		int m = matrix.size(), n = matrix[0].size();
+		int l = 0, r = m * n - 1;
+		while (l <= r) {
+			int mid = l + (r - l) / 2;
+			int i = mid / n, j = mid % n;
+			if (matrix[i][j] < target) {
+				l = mid + 1;
+			}
+			else if (target < matrix[i][j]) {
+				r = mid - 1;
+			}
+			else {
+				return true;
+			}
+		}
+		return false;
+	}
 };
 /*
 
@@ -1154,16 +1167,16 @@ public:
 		int i = 0, k = 0, j = nums.size() - 1;
 		while (k <= j) {
 			if (nums[k] == 0) {
-                swap(nums[i++], nums[k++]);
-            }
-            else if (nums[k] == 2) {
-                swap(nums[k], nums[j--]);
-            }
-            else {
-                k++;
-            }
-        }
-    }
+				swap(nums[i++], nums[k++]);
+			}
+			else if (nums[k] == 2) {
+				swap(nums[k], nums[j--]);
+			}
+			else {
+				k++;
+			}
+		}
+	}
 };
 /*
 
@@ -1190,24 +1203,24 @@ If nums = [1,2,3], a solution is:
 */
 class Solution {
 public:
-    vector<vector<int>> subsets(vector<int>& nums) {
-        vector<vector<int>> res;
-        vector<int> res_sub;
-        res.push_back(res_sub);
-        generate(nums, 0, res, res_sub);
-        return res;
-    }
-    void generate(vector<int>& nums, int start, vector<vector<int>>& res, vector<int>& res_sub) {
-        if (start >= nums.size()) {
-            return;
-        }
-        for (int i = start; i < nums.size(); i++) {
-            res_sub.push_back(nums[i]);
-            res.push_back(res_sub);
-            generate(nums, i + 1, res, res_sub);
-            res_sub.pop_back();
-        }
-    }
+	vector<vector<int>> subsets(vector<int>& nums) {
+		vector<vector<int>> res;
+		vector<int> res_sub;
+		res.push_back(res_sub);
+		generate(nums, 0, res, res_sub);
+		return res;
+	}
+	void generate(vector<int>& nums, int start, vector<vector<int>>& res, vector<int>& res_sub) {
+		if (start >= nums.size()) {
+			return;
+		}
+		for (int i = start; i < nums.size(); i++) {
+			res_sub.push_back(nums[i]);
+			res.push_back(res_sub);
+			generate(nums, i + 1, res, res_sub);
+			res_sub.pop_back();
+		}
+	}
 };
 /*
 
@@ -1235,7 +1248,7 @@ public:
 	bool exist(vector<vector<char>>& board, string word) {
 		row = board.size();
 		col = board[0].size();
-		for (int i = 0; i < row; i ++) {
+		for (int i = 0; i < row; i++) {
 			for (int j = 0; j < col; j++) {
 				if (search(board, word.c_str(), i, j)) return true;
 			}
@@ -1250,7 +1263,7 @@ private:
 		else {
 			char t = board[i][j];
 			board[i][j] = '\0';
-			if (search(board, w + 1, i + 1, j) || search(board, w + 1, i - 1, j) || search(board, w + 1, i, j - 1) ||search(board, w + 1, i, j + 1))
+			if (search(board, w + 1, i + 1, j) || search(board, w + 1, i - 1, j) || search(board, w + 1, i, j - 1) || search(board, w + 1, i, j + 1))
 				return true;
 			board[i][j] = t;
 		}
@@ -1273,48 +1286,48 @@ Your function should return length = 5, with the first five elements of nums bei
 class Solution {
 public:
 	int removeDuplicates(vector<int>& nums) {
-		if(nums.size() <= 2) {
-            return nums.size();
-        }
-        int index = 2;
-        for(int i = 2; i < nums.size(); i++) {
-            if(nums[index - 2] != nums[i]) {
-                nums[index++] = nums[i];
-            }
-        }
-        return index;
-    }
+		if (nums.size() <= 2) {
+			return nums.size();
+		}
+		int index = 2;
+		for (int i = 2; i < nums.size(); i++) {
+			if (nums[index - 2] != nums[i]) {
+				nums[index++] = nums[i];
+			}
+		}
+		return index;
+	}
 };
 ////no duplicates as follows
 class Solution {
 public:
-    int removeDuplicates(vector<int>& nums) {
-        if (nums.empty()) {
-            return 0;
-        }
-        int index = 1;
-        for (int i = 1; i < nums.size(); i++) {
-            if (nums[index - 1] != nums[i]) {
-                nums[index++] = nums[i];
-            }
-        }
-        return index;
-    }
+	int removeDuplicates(vector<int>& nums) {
+		if (nums.empty()) {
+			return 0;
+		}
+		int index = 1;
+		for (int i = 1; i < nums.size(); i++) {
+			if (nums[index - 1] != nums[i]) {
+				nums[index++] = nums[i];
+			}
+		}
+		return index;
+	}
 };
 class Solution {
 public:
-    int removeDuplicates(vector<int>& nums) {
-        if (nums.empty()) {
-            return 0;
-        }
-        int index = 0;
-        for (int i = 1; i < nums.size(); i++) {
-            if (nums[index] != nums[i]) {
-                nums[++index] = nums[i];
-            }
-        }
-        return index + 1;
-    }
+	int removeDuplicates(vector<int>& nums) {
+		if (nums.empty()) {
+			return 0;
+		}
+		int index = 0;
+		for (int i = 1; i < nums.size(); i++) {
+			if (nums[index] != nums[i]) {
+				nums[++index] = nums[i];
+			}
+		}
+		return index + 1;
+	}
 };
 /*
 
@@ -1336,25 +1349,30 @@ public:
 		while (l <= r) {
 			int mid = l + (r - l) / 2;
 			if (nums[mid] == target) {
-                return true;
-            } else if (nums[l] < nums[mid]) {
-                if (nums[l] <= target && target < nums[mid]) {
-                    r = mid - 1;
-                } else {
-                    l = mid + 1;
-                }
-            } else if (nums[l] > nums[mid]) {
-                if (nums[mid] < target && target <= nums[r]) {
-                    l = mid + 1;
-                } else {
-                    r = mid -1;
-                }
-            } else {
-                l++;
-            }
-        }
-        return false;
-    }
+				return true;
+			}
+			else if (nums[l] < nums[mid]) {
+				if (nums[l] <= target && target < nums[mid]) {
+					r = mid - 1;
+				}
+				else {
+					l = mid + 1;
+				}
+			}
+			else if (nums[l] > nums[mid]) {
+				if (nums[mid] < target && target <= nums[r]) {
+					l = mid + 1;
+				}
+				else {
+					r = mid - 1;
+				}
+			}
+			else {
+				l++;
+			}
+		}
+		return false;
+	}
 };
 /*
 88. Merge Sorted Array (Easy)
@@ -1370,14 +1388,14 @@ public:
 	void merge(vector<int>& nums1, int m, vector<int>& nums2, int n) {
 		int i = m - 1, j = n - 1, k = m + n - 1;
 		while (j >= 0) {
-			if (i >=0 && nums1[i] > nums2[j]) {
-                nums1[k--] = nums1[i--];
-            }
-            else {
-                nums1[k--] = nums2[j--];
-            }
-        }
-    }
+			if (i >= 0 && nums1[i] > nums2[j]) {
+				nums1[k--] = nums1[i--];
+			}
+			else {
+				nums1[k--] = nums2[j--];
+			}
+		}
+	}
 };
 /*
 
@@ -1402,26 +1420,26 @@ If nums = [1,2,2], a solution is:
 */
 class Solution {
 public:
-    vector<vector<int>> subsetsWithDup(vector<int>& nums) {
-        vector<vector<int>> res;
-        vector<int> res_sub;
-        res.push_back(res_sub);
-        sort(nums.begin(), nums.end());
-        generate(nums, 0, res, res_sub);
-        return res;
-    }
-    void generate(vector<int>& nums, int start, vector<vector<int>>& res, vector<int>& res_sub) {
-        if (start >= nums.size()) {
-            return;
-        }
-        for (int i = start; i < nums.size(); i++) {
-            if (i - start > 0 && nums[i] == nums[i - 1]) continue;
-            res_sub.push_back(nums[i]);
-            res.push_back(res_sub);
-            generate(nums, i + 1, res, res_sub);
-            res_sub.pop_back();
-        }
-    }
+	vector<vector<int>> subsetsWithDup(vector<int>& nums) {
+		vector<vector<int>> res;
+		vector<int> res_sub;
+		res.push_back(res_sub);
+		sort(nums.begin(), nums.end());
+		generate(nums, 0, res, res_sub);
+		return res;
+	}
+	void generate(vector<int>& nums, int start, vector<vector<int>>& res, vector<int>& res_sub) {
+		if (start >= nums.size()) {
+			return;
+		}
+		for (int i = start; i < nums.size(); i++) {
+			if (i - start > 0 && nums[i] == nums[i - 1]) continue;
+			res_sub.push_back(nums[i]);
+			res.push_back(res_sub);
+			generate(nums, i + 1, res, res_sub);
+			res_sub.pop_back();
+		}
+	}
 };
 /*
 
@@ -1444,25 +1462,25 @@ You may assume that duplicates do not exist in the tree.
  */
 class Solution {
 public:
-    TreeNode* buildTree(vector<int>& preorder, vector<int>& inorder) {
-        return BT(preorder, 0, preorder.size() - 1, inorder, 0, inorder.size() - 1);
-    }
-    TreeNode* BT(vector<int>& preorder, int pl, int pr, vector<int>& inorder, int il, int ir) {
-        if (il > ir) {
-            return NULL;
-        }
-        int val = preorder[pl];
-        TreeNode *root = new TreeNode(val);
-        int i = il;
-        for (; i < ir; i++) {
-            if (val == inorder[i]) {
-                break;
-            }
-        }
-        root -> left = BT(preorder, pl + 1, pl + i - il, inorder, il, i - 1);
-        root -> right = BT(preorder, pl + i - il + 1, pr, inorder, i + 1, ir);
-        return root;
-    }
+	TreeNode* buildTree(vector<int>& preorder, vector<int>& inorder) {
+		return BT(preorder, 0, preorder.size() - 1, inorder, 0, inorder.size() - 1);
+	}
+	TreeNode* BT(vector<int>& preorder, int pl, int pr, vector<int>& inorder, int il, int ir) {
+		if (il > ir) {
+			return NULL;
+		}
+		int val = preorder[pl];
+		TreeNode *root = new TreeNode(val);
+		int i = il;
+		for (; i < ir; i++) {
+			if (val == inorder[i]) {
+				break;
+			}
+		}
+		root->left = BT(preorder, pl + 1, pl + i - il, inorder, il, i - 1);
+		root->right = BT(preorder, pl + i - il + 1, pr, inorder, i + 1, ir);
+		return root;
+	}
 };
 /*
 
@@ -1485,25 +1503,25 @@ You may assume that duplicates do not exist in the tree.
  */
 class Solution {
 public:
-    TreeNode* buildTree(vector<int>& inorder, vector<int>& postorder) {
-        return BT(inorder, 0, inorder.size() - 1, postorder, 0, postorder.size() - 1);
-    }
-    TreeNode* BT(vector<int>& inorder, int il, int ir, vector<int>& postorder, int pl, int pr) {
-        if (il > ir) {
-            return NULL;
-        }
-        int val = postorder[pr];
-        TreeNode *root = new TreeNode(val);
-        int i = il;
-        for (; i < ir; i++) {
-            if (val == inorder[i]) {
-                break;
-            }
-        }
-        root -> left = BT(inorder, il, i - 1, postorder, pl, pl - il + i - 1);
-        root -> right = BT(inorder, i + 1, ir, postorder, pl - il + i, pr - 1);
-        return root;
-    }
+	TreeNode* buildTree(vector<int>& inorder, vector<int>& postorder) {
+		return BT(inorder, 0, inorder.size() - 1, postorder, 0, postorder.size() - 1);
+	}
+	TreeNode* BT(vector<int>& inorder, int il, int ir, vector<int>& postorder, int pl, int pr) {
+		if (il > ir) {
+			return NULL;
+		}
+		int val = postorder[pr];
+		TreeNode *root = new TreeNode(val);
+		int i = il;
+		for (; i < ir; i++) {
+			if (val == inorder[i]) {
+				break;
+			}
+		}
+		root->left = BT(inorder, il, i - 1, postorder, pl, pl - il + i - 1);
+		root->right = BT(inorder, i + 1, ir, postorder, pl - il + i, pr - 1);
+		return root;
+	}
 };
 /*
 
@@ -1515,8 +1533,8 @@ For example, given numRows = 5,
 Return
 
 [
-     [1],
-    [1,1],
+	 [1],
+	[1,1],
    [1,2,1],
   [1,3,3,1],
  [1,4,6,4,1]
@@ -1528,19 +1546,19 @@ public:
 	vector<vector<int>> generate(int numRows) {
 		vector<vector<int>> vec;
 		if (numRows <= 0) {
-            return vec;
-        }
-        vec.push_back(vector<int>(1, 1));
-        for (int i = 1; i < numRows; i++) {
-            vector<int> res(1, 1);
-            for (int j = 0, k = 1; k < vec[i - 1].size(); j++, k++) {
-                res.push_back(vec[i - 1][j] + vec[i - 1][k]);
-            }
-            res.push_back(1);
-            vec.push_back(res);
-        }
-        return vec;
-    }
+			return vec;
+		}
+		vec.push_back(vector<int>(1, 1));
+		for (int i = 1; i < numRows; i++) {
+			vector<int> res(1, 1);
+			for (int j = 0, k = 1; k < vec[i - 1].size(); j++, k++) {
+				res.push_back(vec[i - 1][j] + vec[i - 1][k]);
+			}
+			res.push_back(1);
+			vec.push_back(res);
+		}
+		return vec;
+	}
 };
 /*
 
@@ -1552,24 +1570,24 @@ For example, given k = 3,
 Return [1,3,3,1].
 
 */
-class Solution {  
-public:  
-	vector<int> getRow(int rowIndex) {  
-		vector<int> res(1, 1);  
+class Solution {
+public:
+	vector<int> getRow(int rowIndex) {
+		vector<int> res(1, 1);
 		if (rowIndex == 0) {
-            return res;  
-        }
-        for (int i = 1; i <= rowIndex; i++) {
-            vector<int> tmp = res;  
-            res.clear();  
-            res.push_back(1);  
-            for (int i = 0; i < tmp.size() - 1; i++) {
-                res.push_back(tmp[i] + tmp[i + 1]);  
-            }
-            res.push_back(1);  
-        }  
-        return res;  
-    }  
+			return res;
+		}
+		for (int i = 1; i <= rowIndex; i++) {
+			vector<int> tmp = res;
+			res.clear();
+			res.push_back(1);
+			for (int i = 0; i < tmp.size() - 1; i++) {
+				res.push_back(tmp[i] + tmp[i + 1]);
+			}
+			res.push_back(1);
+		}
+		return res;
+	}
 };
 /*
 
@@ -1579,8 +1597,8 @@ Given a triangle, find the minimum path sum from top to bottom. Each step you ma
 
 For example, given the following triangle
 [
-     [2],
-    [3,4],
+	 [2],
+	[3,4],
    [6,5,7],
   [4,1,8,3]
 ]
@@ -1597,10 +1615,10 @@ public:
 		for (int i = triangle.size() - 2; i >= 0; i--) {
 			for (int j = 0; j < triangle[i].size(); j++) {
 				res[j] = min(res[j], res[j + 1]) + triangle[i][j];
-            }
-        }
-        return res[0];
-    }
+			}
+		}
+		return res[0];
+	}
 };
 /*
 
@@ -1626,18 +1644,19 @@ class Solution {
 public:
 	int maxProfit(vector<int>& prices) {
 		if (!prices.size()) {
-            return 0;
-        }
-        int pro, low = prices[0];
-        for (int i = 0; i < prices.size(); i++) {
-            if (low > prices[i]) {
-                low = prices[i];
-            } else {
-                pro = max(prices[i] - low, pro);
-            }
-        }
-        return pro;
-    }
+			return 0;
+		}
+		int pro, low = prices[0];
+		for (int i = 0; i < prices.size(); i++) {
+			if (low > prices[i]) {
+				low = prices[i];
+			}
+			else {
+				pro = max(prices[i] - low, pro);
+			}
+		}
+		return pro;
+	}
 };
 /*
 
@@ -1654,9 +1673,9 @@ public:
 		int res = 0;
 		for (int i = 1; i < prices.size(); i++) {
 			res += max(prices[i] - prices[i - 1], 0);
-        }
-        return res;
-    }
+		}
+		return res;
+	}
 };
 /*
 
@@ -1671,18 +1690,18 @@ the contiguous subarray [2,3] has the largest product = 6.
 class Solution {
 public:
 	int maxProduct(vector<int>& nums) {
-		if(nums.empty()) {
-            return 0;
-        }
-        int cur_max = nums[0], cur_min = nums[0], maxProduct = nums[0];
-        for(int i = 1; i < nums.size(); i++) {
-            int prev_min = cur_min, prev_max = cur_max;
-            cur_max = max(nums[i], max(prev_max * nums[i], prev_min * nums[i]));
-            cur_min = min(nums[i], min(prev_max * nums[i], prev_min * nums[i]));
-            maxProduct = max(cur_max, maxProduct);
-        }
-        return maxProduct;
-    }
+		if (nums.empty()) {
+			return 0;
+		}
+		int cur_max = nums[0], cur_min = nums[0], maxProduct = nums[0];
+		for (int i = 1; i < nums.size(); i++) {
+			int prev_min = cur_min, prev_max = cur_max;
+			cur_max = max(nums[i], max(prev_max * nums[i], prev_min * nums[i]));
+			cur_min = min(nums[i], min(prev_max * nums[i], prev_min * nums[i]));
+			maxProduct = max(cur_max, maxProduct);
+		}
+		return maxProduct;
+	}
 };
 /*
 
@@ -1704,13 +1723,14 @@ public:
 		while (l < r) {
 			int mid = l + (r - l) / 2;
 			if (nums[mid] < nums[r]) {
-                r = mid;
-            } else {
-                l = mid + 1;
-            }
-        }
-        return nums[l];
-    }
+				r = mid;
+			}
+			else {
+				l = mid + 1;
+			}
+		}
+		return nums[l];
+	}
 };
 /*
 
@@ -1737,15 +1757,16 @@ public:
 	int findPeakElement(vector<int>& nums) {
 		int l = 0, r = nums.size() - 1;
 		while (l < r) {
-            int mid = l + (r - l) / 2;
-            if (nums[mid] < nums[mid + 1]) {
-                l = mid +1;
-            } else {
-                r = mid;
-            }
-        }
-        return l;
-    }
+			int mid = l + (r - l) / 2;
+			if (nums[mid] < nums[mid + 1]) {
+				l = mid + 1;
+			}
+			else {
+				r = mid;
+			}
+		}
+		return l;
+	}
 };
 /*
 
@@ -1758,23 +1779,23 @@ For example, given [0, 1, 3, 50, 75], lower = 0 and upper = 99, return ["2", "4-
 */
 class Solution {
 public:
-    vector<string> findMissingRanges(vector<int>& nums, int lower, int upper) {
-        vector<string> res;
-        for (int i = 0; i < nums.size(); i++) {
-            if (lower < nums[i]) {
-                res.push_back(range(lower, nums[i] - 1));
-            }
-            lower = nums[i] + 1;
-        }
-        if (nums.empty() || nums.back() < upper) {
-            res.push_back(range(lower, upper));
-        }
-        return res;
-    }
+	vector<string> findMissingRanges(vector<int>& nums, int lower, int upper) {
+		vector<string> res;
+		for (int i = 0; i < nums.size(); i++) {
+			if (lower < nums[i]) {
+				res.push_back(range(lower, nums[i] - 1));
+			}
+			lower = nums[i] + 1;
+		}
+		if (nums.empty() || nums.back() < upper) {
+			res.push_back(range(lower, upper));
+		}
+		return res;
+	}
 private:
-    string range(int lower, int upper) {
-        return lower == upper ? to_string(lower) : to_string(lower) + "->" + to_string(upper);
-    }
+	string range(int lower, int upper) {
+		return lower == upper ? to_string(lower) : to_string(lower) + "->" + to_string(upper);
+	}
 };
 /*
 
@@ -1792,47 +1813,51 @@ Output: index1=1, index2=2
 */
 class Solution {
 public:
-    vector<int> twoSum(vector<int>& numbers, int target) {
-        if (numbers.size() < 2) {
-            return {-1, -1};
-        }
-        for (int i = 0; i < numbers.size() - 1; i++) {
-            if (numbers[i] + numbers[i + 1] > target) {
-                break;
-            }
-            int l = i + 1, r = numbers.size() - 1;
-            while (l <= r) {
-                int mid = l + (r - l) / 2;
-                if (numbers[mid] > target - numbers[i]) {
-                    r = mid - 1;
-                } else if (numbers[mid] < target - numbers[i]) {
-                    l = mid + 1;
-                } else {
-                    return {i + 1, mid + 1};
-                }
-            }
-        }
-        return {-1, -1};
-    }
+	vector<int> twoSum(vector<int>& numbers, int target) {
+		if (numbers.size() < 2) {
+			return{ -1, -1 };
+		}
+		for (int i = 0; i < numbers.size() - 1; i++) {
+			if (numbers[i] + numbers[i + 1] > target) {
+				break;
+			}
+			int l = i + 1, r = numbers.size() - 1;
+			while (l <= r) {
+				int mid = l + (r - l) / 2;
+				if (numbers[mid] > target - numbers[i]) {
+					r = mid - 1;
+				}
+				else if (numbers[mid] < target - numbers[i]) {
+					l = mid + 1;
+				}
+				else {
+					return{ i + 1, mid + 1 };
+				}
+			}
+		}
+		return{ -1, -1 };
+	}
 };
 class Solution {
 public:
-    vector<int> twoSum(vector<int>& numbers, int target) {
-        if (numbers.size() < 2) {
-            return {-1, -1};
-        }
-        int l = 0, r = numbers.size() - 1;
-        while (l < r) {
-            if (numbers[l] + numbers[r] > target) {
-                r--;
-            } else if (numbers[l] + numbers[r] < target) {
-                l++;
-            } else {
-                return {++l, ++r};
-            }
-        }
-        return {-1, -1};
-    }
+	vector<int> twoSum(vector<int>& numbers, int target) {
+		if (numbers.size() < 2) {
+			return{ -1, -1 };
+		}
+		int l = 0, r = numbers.size() - 1;
+		while (l < r) {
+			if (numbers[l] + numbers[r] > target) {
+				r--;
+			}
+			else if (numbers[l] + numbers[r] < target) {
+				l++;
+			}
+			else {
+				return{ ++l, ++r };
+			}
+		}
+		return{ -1, -1 };
+	}
 };
 /*
 
@@ -1845,24 +1870,25 @@ You may assume that the array is non-empty and the majority element always exist
 */
 class Solution {
 public:
-    int majorityElement(vector<int>& nums) {
-        if (nums.size() == 1) {
-            return nums[0];
-        }
-        int cnt = 0, majority;
-        for (int i =0; i < nums.size(); i++) {
-            if (cnt == 0) {
-                majority = nums[i];
-                cnt++;
-            } else {
-                majority == nums[i] ? cnt++ : cnt--;
-                if (cnt > nums.size() / 2) {
-                    return majority;
-                }
-            }
-        }
-        return majority;
-    }
+	int majorityElement(vector<int>& nums) {
+		if (nums.size() == 1) {
+			return nums[0];
+		}
+		int cnt = 0, majority;
+		for (int i = 0; i < nums.size(); i++) {
+			if (cnt == 0) {
+				majority = nums[i];
+				cnt++;
+			}
+			else {
+				majority == nums[i] ? cnt++ : cnt--;
+				if (cnt > nums.size() / 2) {
+					return majority;
+				}
+			}
+		}
+		return majority;
+	}
 };
 /*
 
@@ -1881,13 +1907,13 @@ public:
 	void rotate(vector<int>& nums, int k) {
 		int n = nums.size();
 		if (n <= 1) {
-            return;
-        }
-        k %= n;
-        reverse(nums.begin(), nums.begin() + (n - k));
-        reverse(nums.begin() + (n - k), nums.end());
-        reverse(nums.begin(), nums.end());
-    }
+			return;
+		}
+		k %= n;
+		reverse(nums.begin(), nums.begin() + (n - k));
+		reverse(nums.begin() + (n - k), nums.end());
+		reverse(nums.begin(), nums.end());
+	}
 };
 /*
 
@@ -1907,19 +1933,19 @@ If you have figured out the O(n) solution, try coding another solution of which 
 */
 class Solution {
 public:
-    int minSubArrayLen(int s, vector<int>& nums) {
-        int l = 0, r = 0, _sum = 0, _size = nums.size(), len_min = _size + 1;
-        while (r < _size) {
-            while (r < _size && _sum < s) {
-                _sum += nums[r++];
-            }
-            while (_sum >= s) {
-                _sum -= nums[l++];
-            }
-            len_min = min(len_min, r - l + 1);
-        }
-        return len_min > _size ? 0 : len_min;
-    }
+	int minSubArrayLen(int s, vector<int>& nums) {
+		int l = 0, r = 0, _sum = 0, _size = nums.size(), len_min = _size + 1;
+		while (r < _size) {
+			while (r < _size && _sum < s) {
+				_sum += nums[r++];
+			}
+			while (_sum >= s) {
+				_sum -= nums[l++];
+			}
+			len_min = min(len_min, r - l + 1);
+		}
+		return len_min > _size ? 0 : len_min;
+	}
 };
 /*
 
@@ -1974,16 +2000,16 @@ Given an array of integers, find if the array contains any duplicates. Your func
 */
 class Solution {
 public:
-    bool containsDuplicate(vector<int>& nums) {
-        unordered_map<int, bool> mapping;
-        for (int i : nums) {
-            if (mapping[i]) {
-                return true;
-            }
-            mapping[i] = true;
-        }
-        return false;
-    }
+	bool containsDuplicate(vector<int>& nums) {
+		unordered_map<int, bool> mapping;
+		for (int i : nums) {
+			if (mapping[i]) {
+				return true;
+			}
+			mapping[i] = true;
+		}
+		return false;
+	}
 };
 /*
 219. Contains Duplicate II (Easy)
@@ -1993,19 +2019,19 @@ Given an array of integers and an integer k, find out whether there are two dist
 */
 class Solution {
 public:
-    bool containsNearbyDuplicate(vector<int>& nums, int k) {
-        if (nums.size() < 2 || k < 1) {
-            return false;
-        }
-        unordered_map<int, int> mapping;
-        for (int i = 0; i < nums.size(); ++i) {
-            if (mapping.count(nums[i]) && i - mapping[nums[i]] <= k) {
-                return true;
-            }
-            mapping[nums[i]] = i;
-        }
-        return false;
-    }
+	bool containsNearbyDuplicate(vector<int>& nums, int k) {
+		if (nums.size() < 2 || k < 1) {
+			return false;
+		}
+		unordered_map<int, int> mapping;
+		for (int i = 0; i < nums.size(); ++i) {
+			if (mapping.count(nums[i]) && i - mapping[nums[i]] <= k) {
+				return true;
+			}
+			mapping[nums[i]] = i;
+		}
+		return false;
+	}
 };
 /*
 
@@ -2048,38 +2074,43 @@ Do you have a better hint? Suggest it!
 */
 class Solution {
 public:
-    vector<int> majorityElement(vector<int>& nums) {
-        vector<int> res;
-        int res1, res2, num1 = 0, num2 = 0;
-        for (int i = 0; i < nums.size(); i++) {
-            if (res1 == nums[i]) {
-                num1++;
-            } else if (res2 == nums[i]) {
-                num2++;
-            } else if (num1 == 0) {
-                res1 = nums[i];
-                num1++;
-            } else if (num2 == 0) {
-                res2 = nums[i];
-                num2++;
-            } else {
-                num1--;
-                num2--;
-            }
-        }
-        num1 = 0;
-        num2 = 0;
-        for (int i = 0; i < nums.size(); i++) {
-            if (res1 == nums[i]) {
-                num1++;
-            } else if (res2 == nums[i]) {
-                num2++;
-            }
-        }
-        if (num1 > nums.size() / 3) res.push_back(res1);  
-        if (num2 > nums.size() / 3) res.push_back(res2);
-        return res;
-    }
+	vector<int> majorityElement(vector<int>& nums) {
+		vector<int> res;
+		int res1, res2, num1 = 0, num2 = 0;
+		for (int i = 0; i < nums.size(); i++) {
+			if (res1 == nums[i]) {
+				num1++;
+			}
+			else if (res2 == nums[i]) {
+				num2++;
+			}
+			else if (num1 == 0) {
+				res1 = nums[i];
+				num1++;
+			}
+			else if (num2 == 0) {
+				res2 = nums[i];
+				num2++;
+			}
+			else {
+				num1--;
+				num2--;
+			}
+		}
+		num1 = 0;
+		num2 = 0;
+		for (int i = 0; i < nums.size(); i++) {
+			if (res1 == nums[i]) {
+				num1++;
+			}
+			else if (res2 == nums[i]) {
+				num2++;
+			}
+		}
+		if (num1 > nums.size() / 3) res.push_back(res1);
+		if (num2 > nums.size() / 3) res.push_back(res2);
+		return res;
+	}
 };
 /*
 
@@ -2103,12 +2134,12 @@ public:
 		res[0] = 1;
 		for (int i = 1; i < _size; i++) {
 			res[i] = res[i - 1] * nums[i - 1];
-        }
-        for (int i = _size - 2; i >= 0; i--) {
-            res[i] *= (temp *= nums[i + 1]);
-        }
-        return res;
-    }
+		}
+		for (int i = _size - 2; i >= 0; i--) {
+			res[i] *= (temp *= nums[i + 1]);
+		}
+		return res;
+	}
 };
 /*
 
@@ -2128,36 +2159,37 @@ You may assume that word1 does not equal to word2, and word1 and word2 are both 
 */
 class Solution {
 public:
-    int shortestDistance(vector<string>& words, string word1, string word2) {
-        int p1 = -1, p2 = -1, mindis = INT_MAX;
-        for (int k = 0; k < words.size(); k++) {
-            if (isMatched(words[k], word1)) {
-                p1 = k;
-            } else if (isMatched(words[k], word2)) {
-                p2 = k;
-            }
-            if (p1 != -1 && p2 != -1) {
-                mindis = min(mindis, abs(p1 - p2));
-            }
-        }
-        return mindis;
-    }
+	int shortestDistance(vector<string>& words, string word1, string word2) {
+		int p1 = -1, p2 = -1, mindis = INT_MAX;
+		for (int k = 0; k < words.size(); k++) {
+			if (isMatched(words[k], word1)) {
+				p1 = k;
+			}
+			else if (isMatched(words[k], word2)) {
+				p2 = k;
+			}
+			if (p1 != -1 && p2 != -1) {
+				mindis = min(mindis, abs(p1 - p2));
+			}
+		}
+		return mindis;
+	}
 private:
-    bool isMatched(string words, string word1) {
-        int len = words.length();
-        if (len == word1.length()) {
-            int i = 0;
-            for (; i < len; i++) {
-                if (words[i] != word1[i]) {
-                    break;
-                }
-            }
-            if (i == len) {
-                return true;
-            }
-        }
-        return false;
-    }
+	bool isMatched(string words, string word1) {
+		int len = words.length();
+		if (len == word1.length()) {
+			int i = 0;
+			for (; i < len; i++) {
+				if (words[i] != word1[i]) {
+					break;
+				}
+			}
+			if (i == len) {
+				return true;
+			}
+		}
+		return false;
+	}
 };
 /*
 
@@ -2181,44 +2213,45 @@ You may assume word1 and word2 are both in the list.
 */
 class Solution {
 public:
-    int shortestWordDistance(vector<string>& words, string word1, string word2) {
-        int p1 = -1, p2 = -1, mindis = INT_MAX, prep1;
-        for (int k = 0; k < words.size(); k++) {
-            if (isMatched(words[k], word1)) {
-                prep1 = p1;
-                p1 = k;
-            }
-            if (isMatched(words[k], word2)) {
-                p2 = k;
-            }
-            if (p1 != -1 && p2 != -1) {
-                if (p1 == p2) {
-                    if (prep1 != -1) {
-                        mindis = min(mindis, abs(prep1 - p2));
-                    }
-                } else {
-                    mindis = min(mindis, abs(p1 - p2));
-                }
-            }
-        }
-        return mindis;
-    }
+	int shortestWordDistance(vector<string>& words, string word1, string word2) {
+		int p1 = -1, p2 = -1, mindis = INT_MAX, prep1;
+		for (int k = 0; k < words.size(); k++) {
+			if (isMatched(words[k], word1)) {
+				prep1 = p1;
+				p1 = k;
+			}
+			if (isMatched(words[k], word2)) {
+				p2 = k;
+			}
+			if (p1 != -1 && p2 != -1) {
+				if (p1 == p2) {
+					if (prep1 != -1) {
+						mindis = min(mindis, abs(prep1 - p2));
+					}
+				}
+				else {
+					mindis = min(mindis, abs(p1 - p2));
+				}
+			}
+		}
+		return mindis;
+	}
 private:
-    bool isMatched(string words, string word1) {
-        int len = words.length();
-        if (len == word1.length()) {
-            int i = 0;
-            for (; i < len; i++) {
-                if (words[i] != word1[i]) {
-                    break;
-                }
-            }
-            if (i == len) {
-                return true;
-            }
-        }
-        return false;
-    }
+	bool isMatched(string words, string word1) {
+		int len = words.length();
+		if (len == word1.length()) {
+			int i = 0;
+			for (; i < len; i++) {
+				if (words[i] != word1[i]) {
+					break;
+				}
+			}
+			if (i == len) {
+				return true;
+			}
+		}
+		return false;
+	}
 };
 /*
 
@@ -2238,28 +2271,29 @@ Could you solve it in O(n2) runtime?
 */
 class Solution {
 public:
-    int threeSumSmaller(vector<int>& nums, int target) {
-        sort(nums.begin(), nums.end());
-        if (nums.size() < 3) {
-            return 0;
-        }
-        int res = 0;
-        for (int i = 0; i < nums.size() - 2; i++) {
-            if (nums[i] + nums[i + 1] + nums[i + 2] >= target) {
-                return res;
-            }
-            int j = i + 1, k = nums.size() - 1;
-            while (j < k) {
-                if (nums[i] + nums[j] + nums[k] < target) {
-                    res += k - j;
-                    j++;
-                } else {
-                    k--;
-                }
-            }
-        }
-        return res;
-    }
+	int threeSumSmaller(vector<int>& nums, int target) {
+		sort(nums.begin(), nums.end());
+		if (nums.size() < 3) {
+			return 0;
+		}
+		int res = 0;
+		for (int i = 0; i < nums.size() - 2; i++) {
+			if (nums[i] + nums[i + 1] + nums[i + 2] >= target) {
+				return res;
+			}
+			int j = i + 1, k = nums.size() - 1;
+			while (j < k) {
+				if (nums[i] + nums[j] + nums[k] < target) {
+					res += k - j;
+					j++;
+				}
+				else {
+					k--;
+				}
+			}
+		}
+		return res;
+	}
 };
 /*
 
@@ -2276,13 +2310,13 @@ Your algorithm should run in linear runtime complexity. Could you implement it u
 */
 class Solution {
 public:
-    int missingNumber(vector<int>& nums) {
-        int _sum = nums.size() * (nums.size() + 1) / 2;
-        for (int i : nums) {
-            _sum -= i;
-        }
-        return _sum;
-    }
+	int missingNumber(vector<int>& nums) {
+		int _sum = nums.size() * (nums.size() + 1) / 2;
+		for (int i : nums) {
+			_sum -= i;
+		}
+		return _sum;
+	}
 };
 /*
 
@@ -2302,24 +2336,26 @@ bool knows(int a, int b);
 
 class Solution {
 public:
-    int findCelebrity(int n) {
-        int l = 0, r = n - 1;
-        while (l < r) {
-            if (knows(l, r)) {
-                l++;
-            } else {
-                r--;
-            }
-        }
-        for (int i = 0; i < n; i++) {
-            if (i == l || knows(i, l) && !knows(l, i)) {
-                continue;
-            } else {
-                return -1;
-            }
-        }
-        return l;
-    }
+	int findCelebrity(int n) {
+		int l = 0, r = n - 1;
+		while (l < r) {
+			if (knows(l, r)) {
+				l++;
+			}
+			else {
+				r--;
+			}
+		}
+		for (int i = 0; i < n; i++) {
+			if (i == l || knows(i, l) && !knows(l, i)) {
+				continue;
+			}
+			else {
+				return -1;
+			}
+		}
+		return l;
+	}
 };
 /*
 
@@ -2332,39 +2368,40 @@ For example, given nums = [3, 5, 2, 1, 6, 4], one possible answer is [1, 6, 2, 5
 */
 class Solution {
 public:
-    void wiggleSort(vector<int>& nums) {
-        for (int i = 1; i < nums.size(); i++) {
-            if ((i % 2 == 1 && nums[i] < nums[i - 1]) || (i % 2 == 0 && nums[i] > nums[i - 1])) {
-                swap(nums[i], nums[i - 1]);
-            }
-        }
-    }
+	void wiggleSort(vector<int>& nums) {
+		for (int i = 1; i < nums.size(); i++) {
+			if ((i % 2 == 1 && nums[i] < nums[i - 1]) || (i % 2 == 0 && nums[i] > nums[i - 1])) {
+				swap(nums[i], nums[i - 1]);
+			}
+		}
+	}
 };
 class Solution {
 public:
-    void wiggleSort(vector<int>& nums) {
-        if (nums.empty()) {
-            return;
-        }
-        sort(nums.begin(), nums.end());
-        swap(nums.back(), nums[nums.size() / 2]);
-        if (nums.size() % 2) {
-            wiggleSort(nums, 0, nums.size() - 2);
-        } else {
-            wiggleSort(nums, 0, nums.size() - 1);
-        }
-    }
+	void wiggleSort(vector<int>& nums) {
+		if (nums.empty()) {
+			return;
+		}
+		sort(nums.begin(), nums.end());
+		swap(nums.back(), nums[nums.size() / 2]);
+		if (nums.size() % 2) {
+			wiggleSort(nums, 0, nums.size() - 2);
+		}
+		else {
+			wiggleSort(nums, 0, nums.size() - 1);
+		}
+	}
 private:
-    void wiggleSort(vector<int>& nums, int l, int r) {
-        if (l < r - 1) {
-            int _size = r - l + 1, i = l + _size / 4, mid = l + _size / 2, j = l + 3 * _size / 4;
-            reverse(nums.begin() + i, nums.begin() + mid);
-            reverse(nums.begin() + mid, nums.begin() + j);
-            reverse(nums.begin() + i, nums.begin() + j);
-            wiggleSort(nums, l, l + 2 * (i - l) - 1);
-            wiggleSort(nums, l + 2 * (i - l), r);
-        }
-    }
+	void wiggleSort(vector<int>& nums, int l, int r) {
+		if (l < r - 1) {
+			int _size = r - l + 1, i = l + _size / 4, mid = l + _size / 2, j = l + 3 * _size / 4;
+			reverse(nums.begin() + i, nums.begin() + mid);
+			reverse(nums.begin() + mid, nums.begin() + j);
+			reverse(nums.begin() + i, nums.begin() + j);
+			wiggleSort(nums, l, l + 2 * (i - l) - 1);
+			wiggleSort(nums, l + 2 * (i - l), r);
+		}
+	}
 };
 /*
 
@@ -2404,34 +2441,34 @@ There is only one duplicate number in the array, but it could be repeated more t
 */
 class Solution {
 public:
-    int findDuplicate(vector<int>& nums) {
-        int s = 0, f = 0;
-        int finder = 0;
-        while (true) {
-            s = nums[s];
-            f = nums[nums[f]];
-            if (s == f) {
-                break;
-            }
-        }
-        while (true) {
-            s = nums[s];
-            finder = nums[finder];
-            if (s == finder) {
-                return s;
-            }
-        }
-    }
+	int findDuplicate(vector<int>& nums) {
+		int s = 0, f = 0;
+		int finder = 0;
+		while (true) {
+			s = nums[s];
+			f = nums[nums[f]];
+			if (s == f) {
+				break;
+			}
+		}
+		while (true) {
+			s = nums[s];
+			finder = nums[finder];
+			if (s == finder) {
+				return s;
+			}
+		}
+	}
 };
 /*
 
 289. Game of Life (Medium)
 
-According to the Wikipedia's article: "The Game of Life, also known simply as Life, 
+According to the Wikipedia's article: "The Game of Life, also known simply as Life,
 is a cellular automaton devised by the British mathematician John Horton Conway in 1970."
 
-Given a board with m by n cells, each cell has an initial state live (1) or dead (0). 
-Each cell interacts with its eight neighbors (horizontal, vertical, diagonal) using the 
+Given a board with m by n cells, each cell has an initial state live (1) or dead (0).
+Each cell interacts with its eight neighbors (horizontal, vertical, diagonal) using the
 following four rules (taken from the above Wikipedia article):
 
 Any live cell with fewer than two live neighbors dies, as if caused by under-population.
@@ -2440,10 +2477,10 @@ Any live cell with more than three live neighbors dies, as if by over-population
 Any dead cell with exactly three live neighbors becomes a live cell, as if by reproduction.
 Write a function to compute the next state (after one update) of the board given its current state.
 
-Follow up: 
-Could you solve it in-place? Remember that the board needs to be updated at the same time: 
+Follow up:
+Could you solve it in-place? Remember that the board needs to be updated at the same time:
 You cannot update some cells first and then use their updated values to update other cells.
-In this question, we represent the board using a 2D array. In principle, the board is infinite, 
+In this question, we represent the board using a 2D array. In principle, the board is infinite,
 which would cause problems when the active area encroaches the border of the array. How would you address these problems?
 
 */
@@ -2454,30 +2491,30 @@ public:
 			for (int j = 0; j < board[0].size(); j++) {
 				int cnt = lives(board, i, j);
 				if (cnt == 3 || (cnt == 2 && board[i][j] == 1)) {
-                    board[i][j] += 10;
-                }
-            }
-        }
-        update(board);
-    }
-    int lives(vector<vector<int>>& board, int i, int j) {
-        int cnt = 0;
-        for (int row = max(0, i - 1); row <= min((int)board.size() - 1, i + 1); row++) {
-            for (int col = max(0, j - 1); col <= min((int)board[0].size() - 1, j + 1); col++) {
-                if (row != i || col != j) {
-                    cnt += board[row][col] % 10;
-                }
-            }
-        }
-        return cnt;
-    }
-    void update(vector<vector<int>>& board) {
-        for (int i = 0; i < board.size(); i++) {
-            for (int j = 0; j < board[0].size(); j++) {
-                board[i][j] = board[i][j] / 10;
-            }
-        }
-    }
+					board[i][j] += 10;
+				}
+			}
+		}
+		update(board);
+	}
+	int lives(vector<vector<int>>& board, int i, int j) {
+		int cnt = 0;
+		for (int row = max(0, i - 1); row <= min((int)board.size() - 1, i + 1); row++) {
+			for (int col = max(0, j - 1); col <= min((int)board[0].size() - 1, j + 1); col++) {
+				if (row != i || col != j) {
+					cnt += board[row][col] % 10;
+				}
+			}
+		}
+		return cnt;
+	}
+	void update(vector<vector<int>>& board) {
+		for (int i = 0; i < board.size(); i++) {
+			for (int j = 0; j < board[0].size(); j++) {
+				board[i][j] = board[i][j] / 10;
+			}
+		}
+	}
 };
 /*
 
@@ -2493,16 +2530,16 @@ Example:
 
 Given:
 
-    length = 5,
-    updates = [
-        [1,  3,  2],
-        [2,  4,  3],
-        [0,  2, -2]
-    ]
+	length = 5,
+	updates = [
+		[1,  3,  2],
+		[2,  4,  3],
+		[0,  2, -2]
+	]
 
 Output:
 
-    [-2, 0, 3, 5, 3]
+	[-2, 0, 3, 5, 3]
 Explanation:
 
 Initial state:
@@ -2526,19 +2563,19 @@ The optimal time complexity is O(k + n) and uses O(1) extra space.
 */
 class Solution {
 public:
-    vector<int> getModifiedArray(int length, vector<vector<int>>& updates) {
-        vector<int> res(length, 0);
-        for (vector<int> v : updates) {
-            res[v[0]] += v[2];
-            if (v[1] < length - 1) {
-                res[v[1] + 1] -= v[2];
-            }
-        }
-        for (int i = 1; i < length; i++) {
-            res[i] += res[i - 1];
-        }
-        return res;
-    }
+	vector<int> getModifiedArray(int length, vector<vector<int>>& updates) {
+		vector<int> res(length, 0);
+		for (vector<int> v : updates) {
+			res[v[0]] += v[2];
+			if (v[1] < length - 1) {
+				res[v[1] + 1] -= v[2];
+			}
+		}
+		for (int i = 1; i < length; i++) {
+			res[i] += res[i - 1];
+		}
+		return res;
+	}
 };
 /*
 
@@ -2569,22 +2606,22 @@ So the maximum value of F(0), F(1), F(2), F(3) is F(3) = 26.
 */
 class Solution {
 public:
-    int maxRotateFunction(vector<int>& A) {
-        if (A.empty()) {
-            return 0;
-        }
-        int sum = 0, res = INT_MIN, temp = 0;
-        for (int i = 0; i < A.size(); i++) {
-            sum += A[i];
-            temp += i * A[i];
-        }
-        res = temp;
-        for (int i = 1; i < A.size(); i++) {
-            temp = sum - A.size() * A[A.size() - i] + temp;
-            res = max(res, temp);
-        }
-        return res;
-    }
+	int maxRotateFunction(vector<int>& A) {
+		if (A.empty()) {
+			return 0;
+		}
+		int sum = 0, res = INT_MIN, temp = 0;
+		for (int i = 0; i < A.size(); i++) {
+			sum += A[i];
+			temp += i * A[i];
+		}
+		res = temp;
+		for (int i = 1; i < A.size(); i++) {
+			temp = sum - A.size() * A[A.size() - i] + temp;
+			res = max(res, temp);
+		}
+		return res;
+	}
 };
 /*
 
@@ -2615,17 +2652,17 @@ Both numbers with value 2 are both considered as second maximum.
 */
 class Solution {
 public:
-    int thirdMax(vector<int>& nums) {
-        set<int> s;
-        for(int i = 0; i < nums.size(); ++i) {
-            s.insert(nums[i]);
-            if(s.size() > 3) {
-                s.erase(s.begin());
-            }
-        }
-        if(s.size() < 3) {
-            return *(--s.end());
-        }
-        return *s.begin();
-    }
+	int thirdMax(vector<int>& nums) {
+		set<int> s;
+		for (int i = 0; i < nums.size(); ++i) {
+			s.insert(nums[i]);
+			if (s.size() > 3) {
+				s.erase(s.begin());
+			}
+		}
+		if (s.size() < 3) {
+			return *(--s.end());
+		}
+		return *s.begin();
+	}
 };

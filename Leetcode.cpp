@@ -19,17 +19,17 @@ The return format had been changed to zero-based indices. Please read the above 
 */
 class Solution {
 public:
-    vector<int> twoSum(vector<int>& nums, int target) {
-        unordered_map<int, int> mapping;
-        for (int i = 0; i < nums.size(); i++) {
-            int gap = target - nums[i];
-            if (mapping.count(gap)) {
-                return {i, mapping[gap]};
-            }
-            mapping[nums[i]] = i;
-        }
-        return {};
-    }
+	vector<int> twoSum(vector<int>& nums, int target) {
+		unordered_map<int, int> mapping;
+		for (int i = 0; i < nums.size(); i++) {
+			int gap = target - nums[i];
+			if (mapping.count(gap)) {
+				return{ i, mapping[gap] };
+			}
+			mapping[nums[i]] = i;
+		}
+		return{};
+	}
 };
 /*
 
@@ -53,23 +53,23 @@ Output: 7 -> 0 -> 8
  */
 class Solution {
 public:
-    ListNode* addTwoNumbers(ListNode* l1, ListNode* l2) {
-        int carry = 0;
-        ListNode *dummy = new ListNode(-1), *p = dummy;
-        for (ListNode *pa = l1, *pb = l2; pa || pb; p = p -> next) {
-            int ai = pa != NULL ? pa -> val : 0;
-            int bi = pb != NULL ? pb -> val : 0;
-            carry = ai + bi + carry;
-            p -> next = new ListNode(carry % 10);
-            carry /= 10;
-            pa = pa != NULL ? pa -> next : NULL;
-            pb = pb != NULL ? pb -> next : NULL;
-        }
-        if (carry) {
-            p -> next = new ListNode(carry);
-        }
-        return dummy -> next;
-    }
+	ListNode* addTwoNumbers(ListNode* l1, ListNode* l2) {
+		int carry = 0;
+		ListNode *dummy = new ListNode(-1), *p = dummy;
+		for (ListNode *pa = l1, *pb = l2; pa || pb; p = p->next) {
+			int ai = pa != NULL ? pa->val : 0;
+			int bi = pb != NULL ? pb->val : 0;
+			carry = ai + bi + carry;
+			p->next = new ListNode(carry % 10);
+			carry /= 10;
+			pa = pa != NULL ? pa->next : NULL;
+			pb = pb != NULL ? pb->next : NULL;
+		}
+		if (carry) {
+			p->next = new ListNode(carry);
+		}
+		return dummy->next;
+	}
 };
 /*
 
@@ -88,18 +88,18 @@ Given "pwwkew", the answer is "wke", with the length of 3. Note that the answer 
 */
 class Solution {
 public:
-    int lengthOfLongestSubstring(string s) {
-        int start = 0, max_len = 0;
-        vector<int> last_position(255, -1);
-        for (int i = 0; i < s.size(); i++){
-            if (last_position[s[i]] >= start){
-                max_len = max(i - start, max_len);
-                start = last_position[s[i]] + 1;
-            }
-            last_position[s[i]] = i;
-        }
-        return max((int)s.size() - start, max_len);
-    }
+	int lengthOfLongestSubstring(string s) {
+		int start = 0, max_len = 0;
+		vector<int> last_position(255, -1);
+		for (int i = 0; i < s.size(); i++) {
+			if (last_position[s[i]] >= start) {
+				max_len = max(i - start, max_len);
+				start = last_position[s[i]] + 1;
+			}
+			last_position[s[i]] = i;
+		}
+		return max((int)s.size() - start, max_len);
+	}
 };
 /*
 
@@ -123,40 +123,43 @@ The median is (2 + 3)/2 = 2.5
 */
 class Solution {
 public:
-    double findMedianSortedArrays(vector<int>& nums1, vector<int>& nums2) {
-        int sum = nums1.size() + nums2.size();
-        double res;
-        if (sum % 2) {
-            res = findKth(nums1, nums2, 0, 0, sum / 2 + 1);
-        } else {
-            res = (findKth(nums1, nums2, 0, 0, sum / 2) + findKth(nums1, nums2, 0, 0, sum / 2 + 1)) / 2.0;
-        }
-        return res;
-    }
+	double findMedianSortedArrays(vector<int>& nums1, vector<int>& nums2) {
+		int sum = nums1.size() + nums2.size();
+		double res;
+		if (sum % 2) {
+			res = findKth(nums1, nums2, 0, 0, sum / 2 + 1);
+		}
+		else {
+			res = (findKth(nums1, nums2, 0, 0, sum / 2) + findKth(nums1, nums2, 0, 0, sum / 2 + 1)) / 2.0;
+		}
+		return res;
+	}
 private:
-    double findKth(vector<int>& nums1, vector<int>& nums2, int s1, int s2, int k) {
-        if (s1 >= nums1.size()) {
-            return nums2[s2 + k - 1];
-        } else if (s2 >= nums2.size()) {
-            return nums1[s1 + k - 1];
-        }
-        if (k == 1) {
-            return min(nums1[s1], nums2[s2]);
-        }
-        int mid1 = s1 + k / 2 - 1 >= nums1.size() ? INT_MAX : nums1[s1 + k / 2 - 1];
-        int mid2 = s2 + k / 2 - 1 >= nums2.size() ? INT_MAX : nums2[s2 + k / 2 - 1];
-        if (mid1 < mid2) {
-            return findKth(nums1, nums2, s1 + k / 2, s2, k - k / 2);
-        } else {
-            return findKth(nums1, nums2, s1, s2 + k / 2, k - k / 2);
-        }
-    }
+	double findKth(vector<int>& nums1, vector<int>& nums2, int s1, int s2, int k) {
+		if (s1 >= nums1.size()) {
+			return nums2[s2 + k - 1];
+		}
+		else if (s2 >= nums2.size()) {
+			return nums1[s1 + k - 1];
+		}
+		if (k == 1) {
+			return min(nums1[s1], nums2[s2]);
+		}
+		int mid1 = s1 + k / 2 - 1 >= nums1.size() ? INT_MAX : nums1[s1 + k / 2 - 1];
+		int mid2 = s2 + k / 2 - 1 >= nums2.size() ? INT_MAX : nums2[s2 + k / 2 - 1];
+		if (mid1 < mid2) {
+			return findKth(nums1, nums2, s1 + k / 2, s2, k - k / 2);
+		}
+		else {
+			return findKth(nums1, nums2, s1, s2 + k / 2, k - k / 2);
+		}
+	}
 };
 /*
 
 5. Longest Palindromic Substring (Medium)
 
-Given a string S, find the longest palindromic substring in S. You may assume that the maximum 
+Given a string S, find the longest palindromic substring in S. You may assume that the maximum
 length of S is 1000, and there exists one unique longest palindromic substring.
 
 */
@@ -248,17 +251,17 @@ Test cases had been added to test the overflow behavior.
 */
 class Solution {
 public:
-    int reverse(int x) {
-        long long num_rev = 0;
-        while (x) {
-            num_rev = num_rev * 10 + x % 10;
-            x /= 10;
-        }
-        if(num_rev < INT_MIN || num_rev > INT_MAX) {
-            return 0;
-        }
-        return num_rev; 
-    }
+	int reverse(int x) {
+		long long num_rev = 0;
+		while (x) {
+			num_rev = num_rev * 10 + x % 10;
+			x /= 10;
+		}
+		if (num_rev < INT_MIN || num_rev > INT_MAX) {
+			return 0;
+		}
+		return num_rev;
+	}
 };
 /*
 
@@ -287,26 +290,26 @@ If no valid conversion could be performed, a zero value is returned. If the corr
 */
 class Solution {
 public:
-    int myAtoi(string str) {
-        if (str.empty()) {
-            return 0;
-        }
-        long long num = 0;
-        int i = 0, sign = 1;
-        for (; str[i] == ' '; i++) {
-        }
-        if (str[i] == '-' || str[i] == '+') sign = 1 - 2 * (str[i++] == '-');
-        for(; i < str.length(); i++) {  
-            if(isdigit(str[i])) {  
-                num = num * 10 + (str[i] - '0');  
-                if(num > INT_MAX) {
-                    return sign > 0 ? INT_MAX : INT_MIN;  
-                }
-            }  
-            else break;  
-        }  
-        return (int)num * sign;
-    }
+	int myAtoi(string str) {
+		if (str.empty()) {
+			return 0;
+		}
+		long long num = 0;
+		int i = 0, sign = 1;
+		for (; str[i] == ' '; i++) {
+		}
+		if (str[i] == '-' || str[i] == '+') sign = 1 - 2 * (str[i++] == '-');
+		for (; i < str.length(); i++) {
+			if (isdigit(str[i])) {
+				num = num * 10 + (str[i] - '0');
+				if (num > INT_MAX) {
+					return sign > 0 ? INT_MAX : INT_MIN;
+				}
+			}
+			else break;
+		}
+		return (int)num * sign;
+	}
 };
 /*
 
@@ -328,22 +331,22 @@ There is a more generic way of solving this problem.
 */
 class Solution {
 public:
-    bool isPalindrome(int x) {
-        if (x < 0) {
-            return false;
-        }
-        int len = 1;
-        for (; x / len >= 10; len *= 10) {
-        }
-        while (x != 0) {
-            if (x / len != x % 10) {
-                return false;
-            }
-            x = x % len / 10;
-            len /= 100;
-        }
-        return true;
-    }
+	bool isPalindrome(int x) {
+		if (x < 0) {
+			return false;
+		}
+		int len = 1;
+		for (; x / len >= 10; len *= 10) {
+		}
+		while (x != 0) {
+			if (x / len != x % 10) {
+				return false;
+			}
+			x = x % len / 10;
+			len /= 100;
+		}
+		return true;
+	}
 };
 /*
 
@@ -361,8 +364,8 @@ public:
 		while (i < j) {
 			int h_min = min(height[i], height[j]);
 			water = max(water, h_min * (j - i));
-			while (height[j] <= h_min && i < j) j--; 
-			while (height[i] <= h_min && i < j) i++; 
+			while (height[j] <= h_min && i < j) j--;
+			while (height[i] <= h_min && i < j) i++;
 		}
 		return water;
 	}
@@ -378,20 +381,20 @@ Input is guaranteed to be within the range from 1 to 3999.
 */
 class Solution {
 public:
-    string intToRoman(int num) {
-        string res;
-        char* c[4][10] = {
-            {"", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX"},
-            {"", "X", "XX", "XXX", "XL", "L", "LX", "LXX", "LXXX", "XC"},
-            {"", "C", "CC", "CCC", "CD", "D", "DC", "DCC", "DCCC", "CM"},
-            {"", "M", "MM", "MMM"}
-        };
-        res += c[3][num / 1000 % 10];
-        res += c[2][num / 100  % 10];
-        res += c[1][num / 10   % 10];
-        res += c[0][num        % 10];
-        return res;
-    }
+	string intToRoman(int num) {
+		string res;
+		char* c[4][10] = {
+			{"", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX"},
+			{"", "X", "XX", "XXX", "XL", "L", "LX", "LXX", "LXXX", "XC"},
+			{"", "C", "CC", "CCC", "CD", "D", "DC", "DCC", "DCCC", "CM"},
+			{"", "M", "MM", "MMM"}
+		};
+		res += c[3][num / 1000 % 10];
+		res += c[2][num / 100 % 10];
+		res += c[1][num / 10 % 10];
+		res += c[0][num % 10];
+		return res;
+	}
 };
 /*
 
@@ -404,30 +407,30 @@ Input is guaranteed to be within the range from 1 to 3999.
 */
 class Solution {
 public:
-    int romanToInt(string s) {
-        int num = ChatoNum(s[0]);
-        for (int i = 1; i < s.length(); i++) {
-            if (ChatoNum(s[i]) > ChatoNum(s[i - 1])) {
-                num += ChatoNum(s[i]) - 2 * ChatoNum(s[i - 1]);
-            }
-            else {
-                num += ChatoNum(s[i]);
-            }
-        }
-        return num;
-    }
-    int ChatoNum(char cha) {
-        switch (cha) {
-            case 'I': return 1;
-            case 'V': return 5;
-            case 'X': return 10;
-            case 'L': return 50;
-            case 'C': return 100;
-            case 'D': return 500;
-            case 'M': return 1000;
-        }
-        return 0;  
-    }
+	int romanToInt(string s) {
+		int num = ChatoNum(s[0]);
+		for (int i = 1; i < s.length(); i++) {
+			if (ChatoNum(s[i]) > ChatoNum(s[i - 1])) {
+				num += ChatoNum(s[i]) - 2 * ChatoNum(s[i - 1]);
+			}
+			else {
+				num += ChatoNum(s[i]);
+			}
+		}
+		return num;
+	}
+	int ChatoNum(char cha) {
+		switch (cha) {
+		case 'I': return 1;
+		case 'V': return 5;
+		case 'X': return 10;
+		case 'L': return 50;
+		case 'C': return 100;
+		case 'D': return 500;
+		case 'M': return 1000;
+		}
+		return 0;
+	}
 };
 /*
 
@@ -444,7 +447,7 @@ public:
 		int i, j;
 		for (i = 1; i < strs.size(); i++) {
 			for (j = 0; j < len; j++) {
-				if (strs[i-1][j] != strs[i][j]) {
+				if (strs[i - 1][j] != strs[i][j]) {
 					len = min(len, j);
 					break;
 				}
@@ -472,42 +475,42 @@ A solution set is:
 */
 class Solution {
 public:
-    vector<vector<int>> threeSum(vector<int>& nums) {
-        vector<vector<int>> res;
-        int _size = nums.size();
-        if (_size < 3) {
-            return res;
-        }
-        sort(nums.begin(), nums.end());
-        for (int i = 0; i < _size - 2; i++) {
-            if (i > 0 && nums[i - 1] == nums[i] || nums[i] + nums[_size - 1] + nums[_size - 2] < 0) {
-                continue;
-            }
-            if (nums[i] + nums[i + 1] + nums[i + 2] > 0) {
-                break;
-            }
-            int j = i + 1, k = _size - 1;
-            while (j < k) {
-                int _sum = nums[i] + nums[j] + nums[k];
-                if (_sum == 0) {
-                    res.push_back(vector<int>{nums[i], nums[j], nums[k]});
-                    do {
-                        j++;
-                    } while (nums[j] == nums[j - 1] && j < k);
-                    do {
-                        k--;
-                    } while (nums[k] == nums[k + 1] && j < k);
-                }
-                else if (_sum > 0) {
-                    k--;
-                }
-                else {
-                    j++;
-                }
-            }
-        }
-        return res;
-    }
+	vector<vector<int>> threeSum(vector<int>& nums) {
+		vector<vector<int>> res;
+		int _size = nums.size();
+		if (_size < 3) {
+			return res;
+		}
+		sort(nums.begin(), nums.end());
+		for (int i = 0; i < _size - 2; i++) {
+			if (i > 0 && nums[i - 1] == nums[i] || nums[i] + nums[_size - 1] + nums[_size - 2] < 0) {
+				continue;
+			}
+			if (nums[i] + nums[i + 1] + nums[i + 2] > 0) {
+				break;
+			}
+			int j = i + 1, k = _size - 1;
+			while (j < k) {
+				int _sum = nums[i] + nums[j] + nums[k];
+				if (_sum == 0) {
+					res.push_back(vector<int>{nums[i], nums[j], nums[k]});
+					do {
+						j++;
+					} while (nums[j] == nums[j - 1] && j < k);
+					do {
+						k--;
+					} while (nums[k] == nums[k + 1] && j < k);
+				}
+				else if (_sum > 0) {
+					k--;
+				}
+				else {
+					j++;
+				}
+			}
+		}
+		return res;
+	}
 };
 /*
 
@@ -522,32 +525,32 @@ The sum that is closest to the target is 2. (-1 + 2 + 1 = 2).
 */
 class Solution {
 public:
-    int threeSumClosest(vector<int>& nums, int target) {
-        if (nums.size() < 3) {
-            return 0;
-        }
-        sort(nums.begin(), nums.end());
-        int res = nums[0] + nums[1] + nums[2];
-        for (int i = 0; i < nums.size() - 2; i++) {
-            int j = i + 1, k = nums.size() - 1;
-            while (j < k) {
-                int _sum = nums[i] + nums[j] + nums[k];
-                if (_sum == target) {
-                    return _sum;
-                }
-                else if (abs(_sum - target) < abs(res - target)) {
-                    res = _sum;
-                }
-                else if (_sum > target) {
-                    k--;
-                }
-                else {
-                    j++;
-                }
-            }
-        }
-        return res;
-    }
+	int threeSumClosest(vector<int>& nums, int target) {
+		if (nums.size() < 3) {
+			return 0;
+		}
+		sort(nums.begin(), nums.end());
+		int res = nums[0] + nums[1] + nums[2];
+		for (int i = 0; i < nums.size() - 2; i++) {
+			int j = i + 1, k = nums.size() - 1;
+			while (j < k) {
+				int _sum = nums[i] + nums[j] + nums[k];
+				if (_sum == target) {
+					return _sum;
+				}
+				else if (abs(_sum - target) < abs(res - target)) {
+					res = _sum;
+				}
+				else if (_sum > target) {
+					k--;
+				}
+				else {
+					j++;
+				}
+			}
+		}
+		return res;
+	}
 };
 /*
 
@@ -569,7 +572,7 @@ public:
 	vector<string> letterCombinations(string digits) {
 		vector<string> res;
 		if (digits.empty()) return res;
-		vector<string> letters = {"", "", "abc", "def", "ghi", "jkl", "mno", "pqrs", "tuv", "wxyz"};
+		vector<string> letters = { "", "", "abc", "def", "ghi", "jkl", "mno", "pqrs", "tuv", "wxyz" };
 		string s;
 		generate(digits, res, 0, s, letters);
 		return res;
@@ -607,52 +610,52 @@ A solution set is:
 */
 class Solution {
 public:
-    vector<vector<int>> fourSum(vector<int>& nums, int target) {
-        vector<vector<int>> res;
-        int _size = nums.size();
-        if (_size < 4) {
-            return res;
-        }
-        sort(nums.begin(), nums.end());
-        for (int i = 0; i < _size - 3; i++) {
-            if (i > 0 && nums[i] == nums[i-1] || nums[i] + nums[_size - 3] + nums[_size - 2] + nums[_size - 1] < target) {
-                continue;
-            }
-            if (nums[i] + nums[i + 1] + nums[i + 2] + nums[i + 3] > target) {
-                break;
-            }
-            for (int j = i + 1; j < _size - 2; j++) {
-                if (j > i + 1 && nums[j] == nums[j - 1] || nums[i] + nums[j] + nums[_size - 2] + nums[_size - 1] < target) {
-                    continue;
-                }
-                if (nums[i] + nums[j] + nums[j + 1] + nums[j + 2] > target) {
-                    break;
-                }
-                int k = j + 1, l = _size - 1;
-                while (k < l) {
-                    int _sum = nums[i] + nums[j] + nums[k] + nums[l];
-                    if (_sum == target) {
-                        res.push_back(vector<int>{nums[i], nums[j], nums[k], nums[l]});
-                        k++;
-                        l--;
-                        while (nums[k] == nums[k - 1] && k < l) {
-                            k++;
-                        }
-                        while (nums[l] == nums[l + 1] && k < l) {
-                            l--;
-                        }
-                    }
-                    else if (_sum > target) {
-                        l--;
-                    }
-                    else {
-                        k++;
-                    }
-                }
-            }
-        }
-        return res;
-    }
+	vector<vector<int>> fourSum(vector<int>& nums, int target) {
+		vector<vector<int>> res;
+		int _size = nums.size();
+		if (_size < 4) {
+			return res;
+		}
+		sort(nums.begin(), nums.end());
+		for (int i = 0; i < _size - 3; i++) {
+			if (i > 0 && nums[i] == nums[i - 1] || nums[i] + nums[_size - 3] + nums[_size - 2] + nums[_size - 1] < target) {
+				continue;
+			}
+			if (nums[i] + nums[i + 1] + nums[i + 2] + nums[i + 3] > target) {
+				break;
+			}
+			for (int j = i + 1; j < _size - 2; j++) {
+				if (j > i + 1 && nums[j] == nums[j - 1] || nums[i] + nums[j] + nums[_size - 2] + nums[_size - 1] < target) {
+					continue;
+				}
+				if (nums[i] + nums[j] + nums[j + 1] + nums[j + 2] > target) {
+					break;
+				}
+				int k = j + 1, l = _size - 1;
+				while (k < l) {
+					int _sum = nums[i] + nums[j] + nums[k] + nums[l];
+					if (_sum == target) {
+						res.push_back(vector<int>{nums[i], nums[j], nums[k], nums[l]});
+						k++;
+						l--;
+						while (nums[k] == nums[k - 1] && k < l) {
+							k++;
+						}
+						while (nums[l] == nums[l + 1] && k < l) {
+							l--;
+						}
+					}
+					else if (_sum > target) {
+						l--;
+					}
+					else {
+						k++;
+					}
+				}
+			}
+		}
+		return res;
+	}
 };
 /*
 
@@ -680,25 +683,25 @@ Try to do this in one pass.
  */
 class Solution {
 public:
-    ListNode* removeNthFromEnd(ListNode* head, int n) {
-        if (head == NULL) {
-            return head;
-        }
-        ListNode *p = head, *q = head, *q_prev = NULL;
-        for (int i = 0; i < n - 1; i++) {
-            p = p -> next;
-        }
-        while (p -> next != NULL) {
-            p = p -> next;
-            q_prev = q;
-            q = q -> next;
-        }
-        if (!q_prev) {
-            return head -> next;
-        }
-        q_prev -> next = q -> next;
-        return head;
-    }
+	ListNode* removeNthFromEnd(ListNode* head, int n) {
+		if (head == NULL) {
+			return head;
+		}
+		ListNode *p = head, *q = head, *q_prev = NULL;
+		for (int i = 0; i < n - 1; i++) {
+			p = p->next;
+		}
+		while (p->next != NULL) {
+			p = p->next;
+			q_prev = q;
+			q = q->next;
+		}
+		if (!q_prev) {
+			return head->next;
+		}
+		q_prev->next = q->next;
+		return head;
+	}
 };
 /*
 
@@ -743,19 +746,20 @@ Merge two sorted linked lists and return it as a new list. The new list should b
  */
 class Solution {
 public:
-    ListNode* mergeTwoLists(ListNode* l1, ListNode* l2) {
-        ListNode* dummy = new ListNode(-1);
-        for (ListNode* p = dummy; l1 != NULL || l2 != NULL; p = p -> next) {
-            if (l1 == NULL || l2 != NULL && l2 -> val < l1 -> val) {
-                p -> next = l2;
-                l2 = l2 -> next;
-            } else {
-                p -> next = l1;
-                l1 = l1 -> next;
-            }
-        }
-        return dummy -> next;
-    }
+	ListNode* mergeTwoLists(ListNode* l1, ListNode* l2) {
+		ListNode* dummy = new ListNode(-1);
+		for (ListNode* p = dummy; l1 != NULL || l2 != NULL; p = p->next) {
+			if (l1 == NULL || l2 != NULL && l2->val < l1->val) {
+				p->next = l2;
+				l2 = l2->next;
+			}
+			else {
+				p->next = l1;
+				l1 = l1->next;
+			}
+		}
+		return dummy->next;
+	}
 };
 /*
 
@@ -776,33 +780,36 @@ For example, given n = 3, a solution set is:
 */
 class Solution {
 public:
-    vector<string> generateParenthesis(int n) {
-        vector<string> res;
-        string s;
-        generate(n, n, res, s);
-        return res;
-    }
-    void generate(int p, int q, vector<string>& res, string s) {
-        if (!p) {
-            if (q) {
-                s.push_back(')');
-                generate(0, q - 1, res, s);
-            } else {
-                res.push_back(s);
-                return;
-            }
-        } else if (p == q) {
-            s.push_back('(');
-            generate(p - 1, q, res, s);
-        } else {
-            s.push_back('(');
-            generate(p - 1, q, res, s);
-            s.pop_back();
-            s.push_back(')');
-            generate(p, q - 1, res, s);
-            s.pop_back();
-        }
-    }
+	vector<string> generateParenthesis(int n) {
+		vector<string> res;
+		string s;
+		generate(n, n, res, s);
+		return res;
+	}
+	void generate(int p, int q, vector<string>& res, string s) {
+		if (!p) {
+			if (q) {
+				s.push_back(')');
+				generate(0, q - 1, res, s);
+			}
+			else {
+				res.push_back(s);
+				return;
+			}
+		}
+		else if (p == q) {
+			s.push_back('(');
+			generate(p - 1, q, res, s);
+		}
+		else {
+			s.push_back('(');
+			generate(p - 1, q, res, s);
+			s.pop_back();
+			s.push_back(')');
+			generate(p, q - 1, res, s);
+			s.pop_back();
+		}
+	}
 };
 /*
 
@@ -821,33 +828,33 @@ Merge k sorted linked lists and return it as one sorted list. Analyze and descri
  */
 class Comp {
 public:
-    bool operator()(pair<ListNode*, int> p1, pair<ListNode*, int> p2) {
-        return p1.first->val > p2.first->val;
-    }
+	bool operator()(pair<ListNode*, int> p1, pair<ListNode*, int> p2) {
+		return p1.first->val > p2.first->val;
+	}
 };
 class Solution {
 public:
-    ListNode* mergeKLists(vector<ListNode*>& lists) {
-        priority_queue<pair<ListNode*, int>, vector<pair<ListNode*, int>>, Comp> pq;
-        ListNode *dummy = new ListNode(-1);
-        ListNode *cur = dummy;
-        for (int i = 0; i < lists.size();i++) {
-            if (lists[i] != NULL) {
-                pq.push(make_pair(lists[i], i));
-            }
-        }
-        while (!pq.empty()) {
-            pair<ListNode*, int> p = pq.top();
-            pq.pop();
-            cur->next = p.first;
-            cur = cur->next;
-            lists[p.second] = lists[p.second]->next;
-            if (lists[p.second] != NULL) {
-                pq.push(make_pair(lists[p.second], p.second));
-            } 
-        }
-        return dummy->next;
-    }
+	ListNode* mergeKLists(vector<ListNode*>& lists) {
+		priority_queue<pair<ListNode*, int>, vector<pair<ListNode*, int>>, Comp> pq;
+		ListNode *dummy = new ListNode(-1);
+		ListNode *cur = dummy;
+		for (int i = 0; i < lists.size();i++) {
+			if (lists[i] != NULL) {
+				pq.push(make_pair(lists[i], i));
+			}
+		}
+		while (!pq.empty()) {
+			pair<ListNode*, int> p = pq.top();
+			pq.pop();
+			cur->next = p.first;
+			cur = cur->next;
+			lists[p.second] = lists[p.second]->next;
+			if (lists[p.second] != NULL) {
+				pq.push(make_pair(lists[p.second], p.second));
+			}
+		}
+		return dummy->next;
+	}
 };
 /*
 
@@ -871,15 +878,15 @@ Your algorithm should use only constant space. You may not modify the values in 
  */
 class Solution {
 public:
-    ListNode* swapPairs(ListNode* head) {
-        if(head == NULL || head -> next == NULL) {
-            return head;
-        }
-        ListNode* temp = head -> next;
-        head -> next = swapPairs(temp -> next);
-        temp -> next = head;
-        return temp;
-    }
+	ListNode* swapPairs(ListNode* head) {
+		if (head == NULL || head->next == NULL) {
+			return head;
+		}
+		ListNode* temp = head->next;
+		head->next = swapPairs(temp->next);
+		temp->next = head;
+		return temp;
+	}
 };
 /*
 
@@ -897,18 +904,18 @@ Your function should return length = 2, with the first two elements of nums bein
 */
 class Solution {
 public:
-    int removeDuplicates(vector<int>& nums) {
-        if (nums.empty()) {
-            return 0;
-        }
-        int index = 0;
-        for (int i = 1; i < nums.size(); i++) {
-            if (nums[index] != nums[i]) {
-                nums[++index] = nums[i];
-            }
-        }
-        return index + 1;
-    }
+	int removeDuplicates(vector<int>& nums) {
+		if (nums.empty()) {
+			return 0;
+		}
+		int index = 0;
+		for (int i = 1; i < nums.size(); i++) {
+			if (nums[index] != nums[i]) {
+				nums[++index] = nums[i];
+			}
+		}
+		return index + 1;
+	}
 };
 /*
 
@@ -934,21 +941,21 @@ What happens when the elements to remove are rare?
 */
 class Solution {
 public:
-    int removeElement(vector<int>& nums, int val) {
-        int index = 0;
-        for (int i = 0; i < nums.size(); i++) {
-            if (nums[i] != val) {
-                nums[index++] = nums[i];
-            }
-        }
-        return index;
-    }
+	int removeElement(vector<int>& nums, int val) {
+		int index = 0;
+		for (int i = 0; i < nums.size(); i++) {
+			if (nums[i] != val) {
+				nums[index++] = nums[i];
+			}
+		}
+		return index;
+	}
 };
 class Solution {
 public:
-    int removeElement(vector<int>& nums, int val) {
-        return distance(nums.begin(), remove(nums.begin(), nums.end(), val));
-    }
+	int removeElement(vector<int>& nums, int val) {
+		return distance(nums.begin(), remove(nums.begin(), nums.end(), val));
+	}
 };
 /*
 
@@ -961,15 +968,15 @@ Returns the index of the first occurrence of needle in haystack, or -1 if needle
 */
 class Solution {
 public:
- int strStr(string haystack, string needle) {
-  int haylen = haystack.length(), neelen = needle.length();
-  for (int i = 0, j; i <= haylen - neelen; i++) {
-   for (j = 0; j < neelen && haystack[i + j] == needle[j]; j++) {
-   }
-   if (j == neelen) return i;
-}
-return -1;        
-}
+	int strStr(string haystack, string needle) {
+		int haylen = haystack.length(), neelen = needle.length();
+		for (int i = 0, j; i <= haylen - neelen; i++) {
+			for (j = 0; j < neelen && haystack[i + j] == needle[j]; j++) {
+			}
+			if (j == neelen) return i;
+		}
+		return -1;
+	}
 };
 /*
 
@@ -982,36 +989,36 @@ If it is overflow, return MAX_INT.
 */
 class Solution {
 public:
-    int divide(int dividend, int divisor) {
-        if (!dividend) {
-            return 0;
-        }
-        if (!divisor || dividend == INT_MIN && divisor == -1) {
-            return INT_MAX;
-        }
-        int sign = (dividend > 0 ^ divisor > 0) ? -1 : 1;
-        long dd = labs((long)dividend), dr = labs((long)divisor);
-        if (dd < dr) {
-            return 0;
-        }
-        int h = 0;
-        long t = dr;
-        while (t <= dd) {
-            t <<= 1;
-            h++;
-        }
-        long ret = 1 << --h;
-        dd -= (t >>= 1);
-        while (dd >= dr) {
-            while (t > dd){
-                t >>= 1;
-                h--;
-            }
-            ret |= 1 << h;
-            dd -= t;
-        }
-        return sign < 0 ? -ret : ret;
-    }
+	int divide(int dividend, int divisor) {
+		if (!dividend) {
+			return 0;
+		}
+		if (!divisor || dividend == INT_MIN && divisor == -1) {
+			return INT_MAX;
+		}
+		int sign = (dividend > 0 ^ divisor > 0) ? -1 : 1;
+		long dd = labs((long)dividend), dr = labs((long)divisor);
+		if (dd < dr) {
+			return 0;
+		}
+		int h = 0;
+		long t = dr;
+		while (t <= dd) {
+			t <<= 1;
+			h++;
+		}
+		long ret = 1 << --h;
+		dd -= (t >>= 1);
+		while (dd >= dr) {
+			while (t > dd) {
+				t >>= 1;
+				h--;
+			}
+			ret |= 1 << h;
+			dd -= t;
+		}
+		return sign < 0 ? -ret : ret;
+	}
 };
 /*
 
@@ -1029,42 +1036,43 @@ You should return the indices: [0,9].
 */
 class Solution {
 public:
-    vector<int> findSubstring(string s, vector<string>& words) {
-        if (words.empty()) {
-            return{};
-        }
-        unordered_map<string, int> mapping;
-        for (string str : words) {
-            mapping[str]++;
-        }
-        vector<int> res;
-        int wsize = words[0].size();
-        for (int i = 0; i < wsize; i++) {
-            int wcnt = 0, slow = i, fast = i;
-            unordered_map<string, int> mapping2;
-            while (fast + wsize <= s.size()) {
-                string str = s.substr(fast, wsize);
-                if (mapping.find(str) == mapping.end()) {
-                    mapping2.clear();
-                    wcnt = 0;
-                    slow = fast + wsize;
-                } else {
-                    wcnt++;
-                    mapping2[str]++;
-                    while (mapping[str] < mapping2[str]) {
-                        mapping2[s.substr(slow, wsize)]--;
-                        wcnt--;
-                        slow += wsize;
-                    }
-                }
-                if (wcnt == words.size()) {
-                    res.push_back(slow);
-                }
-                fast += wsize;
-            }
-        }
-        return res;
-    }
+	vector<int> findSubstring(string s, vector<string>& words) {
+		if (words.empty()) {
+			return{};
+		}
+		unordered_map<string, int> mapping;
+		for (string str : words) {
+			mapping[str]++;
+		}
+		vector<int> res;
+		int wsize = words[0].size();
+		for (int i = 0; i < wsize; i++) {
+			int wcnt = 0, slow = i, fast = i;
+			unordered_map<string, int> mapping2;
+			while (fast + wsize <= s.size()) {
+				string str = s.substr(fast, wsize);
+				if (mapping.find(str) == mapping.end()) {
+					mapping2.clear();
+					wcnt = 0;
+					slow = fast + wsize;
+				}
+				else {
+					wcnt++;
+					mapping2[str]++;
+					while (mapping[str] < mapping2[str]) {
+						mapping2[s.substr(slow, wsize)]--;
+						wcnt--;
+						slow += wsize;
+					}
+				}
+				if (wcnt == words.size()) {
+					res.push_back(slow);
+				}
+				fast += wsize;
+			}
+		}
+		return res;
+	}
 };
 /*
 
@@ -1084,32 +1092,32 @@ Here are some examples. Inputs are in the left-hand column and its corresponding
 */
 class Solution {
 public:
-    void nextPermutation(vector<int>& nums) {
-        int i = nums.size() - 1, j = i; 
-        for (; i > 0; i--) {
-            if (nums[i] > nums[i - 1]) {
-                break;
-            }
-        }
-        if(i == 0) {
-            sort(nums.begin(), nums.end());
-            return;
-        }
-        for (; j > i; j--) {
-            if (nums[j] > nums[i-1]) {
-                break;
-            }
-            
-        }
-        swap(nums[i-1], nums[j]);
-        sort(nums.begin() + i, nums.end());
-    }
+	void nextPermutation(vector<int>& nums) {
+		int i = nums.size() - 1, j = i;
+		for (; i > 0; i--) {
+			if (nums[i] > nums[i - 1]) {
+				break;
+			}
+		}
+		if (i == 0) {
+			sort(nums.begin(), nums.end());
+			return;
+		}
+		for (; j > i; j--) {
+			if (nums[j] > nums[i - 1]) {
+				break;
+			}
+
+		}
+		swap(nums[i - 1], nums[j]);
+		sort(nums.begin() + i, nums.end());
+	}
 };
 class Solution {
 public:
-    void nextPermutation(vector<int>& nums) {
-        next_permutation(nums.begin(), nums.end());  
-    }
+	void nextPermutation(vector<int>& nums) {
+		next_permutation(nums.begin(), nums.end());
+	}
 };
 /*
 33. Search in Rotated Sorted Array (Hard)
@@ -1124,32 +1132,32 @@ You may assume no duplicate exists in the array.
 */
 class Solution {
 public:
-    int search(vector<int>& nums, int target) {
-        int l = 0, r = nums.size() - 1;
-        while (l <= r) {
-            int mid = l + (r - l) / 2;
-            if (nums[mid] == target) {
-                return mid;
-            }
-            else if (nums[l] <= nums[mid]) {
-                if (nums[l] <= target && target < nums[mid]) {
-                    r = mid - 1;
-                }
-                else {
-                    l = mid + 1;
-                }
-            }
-            else {
-                if (nums[mid] < target && target <= nums[r]) {
-                    l = mid + 1;
-                }
-                else {
-                    r = mid - 1;
-                }
-            }
-        }
-        return -1;
-    }
+	int search(vector<int>& nums, int target) {
+		int l = 0, r = nums.size() - 1;
+		while (l <= r) {
+			int mid = l + (r - l) / 2;
+			if (nums[mid] == target) {
+				return mid;
+			}
+			else if (nums[l] <= nums[mid]) {
+				if (nums[l] <= target && target < nums[mid]) {
+					r = mid - 1;
+				}
+				else {
+					l = mid + 1;
+				}
+			}
+			else {
+				if (nums[mid] < target && target <= nums[r]) {
+					l = mid + 1;
+				}
+				else {
+					r = mid - 1;
+				}
+			}
+		}
+		return -1;
+	}
 };
 /*
 
@@ -1168,31 +1176,31 @@ return [3, 4].
 */
 class Solution {
 public:
-    vector<int> searchRange(vector<int>& nums, int target) {
-        int l = 0, r = nums.size() - 1;
-        vector<int> res(2, -1);
-        while (l <= r) {
-            int mid = l + (r - l) / 2;
-            if (nums[mid] < target) {
-                l = mid + 1;
-            }
-            else if (target < nums[mid]) {
-                r = mid - 1;
-            }
-            else {
-                while (nums[l] != target) {
-                    l++;
-                }
-                while (nums[r] != target) {
-                    r--;
-                }
-                res[0] = l;
-                res[1] = r;
-                return res;
-            }
-        }
-        return res;
-    }
+	vector<int> searchRange(vector<int>& nums, int target) {
+		int l = 0, r = nums.size() - 1;
+		vector<int> res(2, -1);
+		while (l <= r) {
+			int mid = l + (r - l) / 2;
+			if (nums[mid] < target) {
+				l = mid + 1;
+			}
+			else if (target < nums[mid]) {
+				r = mid - 1;
+			}
+			else {
+				while (nums[l] != target) {
+					l++;
+				}
+				while (nums[r] != target) {
+					r--;
+				}
+				res[0] = l;
+				res[1] = r;
+				return res;
+			}
+		}
+		return res;
+	}
 };
 /*
 
@@ -1211,20 +1219,20 @@ Here are few examples.
 */
 class Solution {
 public:
-    int searchInsert(vector<int>& nums, int target) {
-        int l = 0, r = nums.size() - 1;
-        while (l <= r) {
-            int mid = l + (r - l) / 2;
-            if (nums[mid] == target) return mid;
-            else if (nums[mid] > target) {
-                r = mid - 1;
-            }
-            else {
-                l = mid + 1;
-            }
-        }
-        return l;
-    }
+	int searchInsert(vector<int>& nums, int target) {
+		int l = 0, r = nums.size() - 1;
+		while (l <= r) {
+			int mid = l + (r - l) / 2;
+			if (nums[mid] == target) return mid;
+			else if (nums[mid] > target) {
+				r = mid - 1;
+			}
+			else {
+				l = mid + 1;
+			}
+		}
+		return l;
+	}
 };
 /*
 
@@ -1243,57 +1251,60 @@ A valid Sudoku board (partially filled) is not necessarily solvable. Only the fi
 */
 class Solution {
 public:
-    bool isValidSudoku(vector<vector<char>>& board) {
-        for (int i = 0; i < 9; i++) {
-            unordered_map<char, bool> mapping1;
-            unordered_map<char, bool> mapping2;
-            unordered_map<char, bool> mapping3;
-            for (int j = 0; j < 9; j++) {
-                if (board[i][j] != '.') {
-                    if (mapping1[board[i][j]] == true) {
-                        return false;
-                    } else {
-                        mapping1[board[i][j]] = true;
-                    }                
-                }
-                if (board[j][i] != '.') {
-                    if (mapping2[board[j][i]] == true) {
-                        return false;
-                    } else {
-                        mapping2[board[j][i]] = true;
-                    }
-                }
-                if (board[i / 3 * 3 + j / 3][i % 3 * 3 + j % 3] != '.') {
-                    if (mapping3[board[i / 3 * 3 + j / 3][i % 3 * 3 + j % 3]] == true) {
-                        return false;
-                    } else {
-                        mapping3[board[i / 3 * 3 + j / 3][i % 3 * 3 + j % 3]] = true;
-                    }
-                }
-            }
-        }
-        return true;
-    }
+	bool isValidSudoku(vector<vector<char>>& board) {
+		for (int i = 0; i < 9; i++) {
+			unordered_map<char, bool> mapping1;
+			unordered_map<char, bool> mapping2;
+			unordered_map<char, bool> mapping3;
+			for (int j = 0; j < 9; j++) {
+				if (board[i][j] != '.') {
+					if (mapping1[board[i][j]] == true) {
+						return false;
+					}
+					else {
+						mapping1[board[i][j]] = true;
+					}
+				}
+				if (board[j][i] != '.') {
+					if (mapping2[board[j][i]] == true) {
+						return false;
+					}
+					else {
+						mapping2[board[j][i]] = true;
+					}
+				}
+				if (board[i / 3 * 3 + j / 3][i % 3 * 3 + j % 3] != '.') {
+					if (mapping3[board[i / 3 * 3 + j / 3][i % 3 * 3 + j % 3]] == true) {
+						return false;
+					}
+					else {
+						mapping3[board[i / 3 * 3 + j / 3][i % 3 * 3 + j % 3]] = true;
+					}
+				}
+			}
+		}
+		return true;
+	}
 };
 class Solution {
 public:
-    bool isValidSudoku(vector<vector<char>>& board) {
-        int mapping1[9][9] = {0};
-        int mapping2[9][9] = {0};
-        int mapping3[9][9] = {0};
-        for (int i = 0; i < 9; i++) {
-            for (int j = 0; j < 9; j++) {
-                if (board[i][j] != '.') {
-                    int num = board[i][j] - '0' - 1, k = i / 3 * 3 + j / 3;
-                    if (mapping1[i][num] || mapping2[j][num] || mapping3[k][num]) {
-                        return false;
-                    }
-                    mapping1[i][num] = mapping2[j][num] = mapping3[k][num] = 1;
-                }
-            }
-        }
-        return true;
-    }
+	bool isValidSudoku(vector<vector<char>>& board) {
+		int mapping1[9][9] = { 0 };
+		int mapping2[9][9] = { 0 };
+		int mapping3[9][9] = { 0 };
+		for (int i = 0; i < 9; i++) {
+			for (int j = 0; j < 9; j++) {
+				if (board[i][j] != '.') {
+					int num = board[i][j] - '0' - 1, k = i / 3 * 3 + j / 3;
+					if (mapping1[i][num] || mapping2[j][num] || mapping3[k][num]) {
+						return false;
+					}
+					mapping1[i][num] = mapping2[j][num] = mapping3[k][num] = 1;
+				}
+			}
+		}
+		return true;
+	}
 };
 /*
 
@@ -1341,8 +1352,8 @@ The same repeated number may be chosen from C unlimited number of times.
 Note:
 All numbers (including target) will be positive integers.
 The solution set must not contain duplicate combinations.
-For example, given candidate set [2, 3, 6, 7] and target 7, 
-A solution set is: 
+For example, given candidate set [2, 3, 6, 7] and target 7,
+A solution set is:
 [
   [7],
   [2, 2, 3]
@@ -1351,27 +1362,28 @@ A solution set is:
 */
 class Solution {
 public:
-    vector<vector<int>> combinationSum(vector<int>& candidates, int target) {
-        vector<vector<int>> res;
-        vector<int> res_sub;
-        sort(candidates.begin(), candidates.end());
-        combinationSum(candidates, target, 0, res_sub, res);
-        return res;
-    }
+	vector<vector<int>> combinationSum(vector<int>& candidates, int target) {
+		vector<vector<int>> res;
+		vector<int> res_sub;
+		sort(candidates.begin(), candidates.end());
+		combinationSum(candidates, target, 0, res_sub, res);
+		return res;
+	}
 private:
-    void combinationSum(vector<int>& candidates, int target, int start, vector<int>& res_sub, vector<vector<int>>& res) {
-        if (target < 0 || start > candidates.size()) {
-            return;
-        } else if (target == 0) {
-            res.push_back(res_sub);
-            return;
-        }
-        for (int i = start; i < candidates.size() && candidates[i] <= target; i++) {
-            res_sub.push_back(candidates[i]);
-            combinationSum(candidates, target - candidates[i], i, res_sub, res);
-            res_sub.pop_back();
-        }
-    }
+	void combinationSum(vector<int>& candidates, int target, int start, vector<int>& res_sub, vector<vector<int>>& res) {
+		if (target < 0 || start > candidates.size()) {
+			return;
+		}
+		else if (target == 0) {
+			res.push_back(res_sub);
+			return;
+		}
+		for (int i = start; i < candidates.size() && candidates[i] <= target; i++) {
+			res_sub.push_back(candidates[i]);
+			combinationSum(candidates, target - candidates[i], i, res_sub, res);
+			res_sub.pop_back();
+		}
+	}
 };
 /*
 
@@ -1384,8 +1396,8 @@ Each number in C may only be used once in the combination.
 Note:
 All numbers (including target) will be positive integers.
 The solution set must not contain duplicate combinations.
-For example, given candidate set [10, 1, 2, 7, 6, 1, 5] and target 8, 
-A solution set is: 
+For example, given candidate set [10, 1, 2, 7, 6, 1, 5] and target 8,
+A solution set is:
 [
   [1, 7],
   [1, 2, 5],
@@ -1396,28 +1408,29 @@ A solution set is:
 */
 class Solution {
 public:
-    vector<vector<int>> combinationSum2(vector<int>& candidates, int target) {
-        vector<vector<int>> res;
-        vector<int> res_sub;
-        sort(candidates.begin(), candidates.end());
-        combinationSum2(candidates, target, 0, res_sub, res);
-        return res;
-    }
+	vector<vector<int>> combinationSum2(vector<int>& candidates, int target) {
+		vector<vector<int>> res;
+		vector<int> res_sub;
+		sort(candidates.begin(), candidates.end());
+		combinationSum2(candidates, target, 0, res_sub, res);
+		return res;
+	}
 private:
-    void combinationSum2(vector<int>& candidates, int target, int start, vector<int>& res_sub, vector<vector<int>>& res) {
-        if (target < 0 || start > candidates.size()) {
-            return;
-        } else if (target == 0) {
-            res.push_back(res_sub);
-            return;
-        }
-        for (int i = start; i < candidates.size() && candidates[i] <= target; i++) {
-            if (i > start && candidates[i] == candidates[i- 1]) continue;
-            res_sub.push_back(candidates[i]);
-            combinationSum2(candidates, target - candidates[i], i + 1, res_sub, res);
-            res_sub.pop_back();
-        }
-    }
+	void combinationSum2(vector<int>& candidates, int target, int start, vector<int>& res_sub, vector<vector<int>>& res) {
+		if (target < 0 || start > candidates.size()) {
+			return;
+		}
+		else if (target == 0) {
+			res.push_back(res_sub);
+			return;
+		}
+		for (int i = start; i < candidates.size() && candidates[i] <= target; i++) {
+			if (i > start && candidates[i] == candidates[i - 1]) continue;
+			res_sub.push_back(candidates[i]);
+			combinationSum2(candidates, target - candidates[i], i + 1, res_sub, res);
+			res_sub.pop_back();
+		}
+	}
 };
 /*
 
@@ -1425,7 +1438,7 @@ private:
 
 Given n non-negative integers representing an elevation map where the width of each bar is 1, compute how much water it is able to trap after raining.
 
-For example, 
+For example,
 Given [0,1,0,2,1,0,1,3,2,1,2,1], return 6.
 
 
@@ -1434,28 +1447,28 @@ The above elevation map is represented by array [0,1,0,2,1,0,1,3,2,1,2,1]. In th
 */
 class Solution {
 public:
-    int trap(vector<int>& height) {
-        if (height.size() < 3) {
-            return 0;
-        }
-        int res = 0, i = 0, j = height.size() - 1;
-        while (i < j - 1) {
-            int bar = min(height[i], height[j]);
-            for (int k = i + 1; k < j; k++) {
-                if (height[k] < bar) {
-                    res += bar - height[k];
-                    height[k] = bar;
-                }
-            }
-            while (height[i] == bar) {
-                i++;
-            }
-            while (height[j] == bar) {
-                j--;
-            }
-        }
-        return res;
-    }
+	int trap(vector<int>& height) {
+		if (height.size() < 3) {
+			return 0;
+		}
+		int res = 0, i = 0, j = height.size() - 1;
+		while (i < j - 1) {
+			int bar = min(height[i], height[j]);
+			for (int k = i + 1; k < j; k++) {
+				if (height[k] < bar) {
+					res += bar - height[k];
+					height[k] = bar;
+				}
+			}
+			while (height[i] == bar) {
+				i++;
+			}
+			while (height[j] == bar) {
+				j--;
+			}
+		}
+		return res;
+	}
 };
 /*
 
@@ -1471,29 +1484,29 @@ You should NOT use internal library such as BigInteger.
 */
 class Solution {
 public:
-    string multiply(string num1, string num2) {
-        if (num1 == "0" || num2 == "0") {
-            return "0";
-        }
-        int s1 = num1.size() - 1, s2 = num2.size() - 1;
-        int i = s1 + s2, j = 0, carry = 0;
-        string res;
-        while (j <= i) {
-            for (int k = 0; k <= j; k++) {
-                if (s1 >= k && s2 >= (j - k)) {
-                    carry += (num1[s1 - k] - '0') * (num2[s2 - (j - k)] - '0'); 
-                }
-            }
-            res = char(carry % 10 + '0') + res;
-            carry /= 10;
-            j++;
-        }
-        while (carry) {
-            res = char(carry % 10 + '0') + res;
-            carry /= 10;
-        }
-        return res;
-    }
+	string multiply(string num1, string num2) {
+		if (num1 == "0" || num2 == "0") {
+			return "0";
+		}
+		int s1 = num1.size() - 1, s2 = num2.size() - 1;
+		int i = s1 + s2, j = 0, carry = 0;
+		string res;
+		while (j <= i) {
+			for (int k = 0; k <= j; k++) {
+				if (s1 >= k && s2 >= (j - k)) {
+					carry += (num1[s1 - k] - '0') * (num2[s2 - (j - k)] - '0');
+				}
+			}
+			res = char(carry % 10 + '0') + res;
+			carry /= 10;
+			j++;
+		}
+		while (carry) {
+			res = char(carry % 10 + '0') + res;
+			carry /= 10;
+		}
+		return res;
+	}
 };
 /*
 
@@ -1509,16 +1522,16 @@ Could you do this in-place?
 */
 class Solution {
 public:
-    void rotate(vector<vector<int>>& matrix) {
-        int n = matrix.size() - 1;
-        for (int i = 0; i < (n + 2) / 2; i++) {
-            for (int j = i; j < n - i; j++) {
-                swap(matrix[i][j], matrix[j][n - i]);
-                swap(matrix[i][j], matrix[n - i][n -j]);
-                swap(matrix[i][j], matrix[n - j][i]);
-            }
-        }
-    }
+	void rotate(vector<vector<int>>& matrix) {
+		int n = matrix.size() - 1;
+		for (int i = 0; i < (n + 2) / 2; i++) {
+			for (int j = i; j < n - i; j++) {
+				swap(matrix[i][j], matrix[j][n - i]);
+				swap(matrix[i][j], matrix[n - i][n - j]);
+				swap(matrix[i][j], matrix[n - j][i]);
+			}
+		}
+	}
 };
 /*
 
@@ -1526,7 +1539,7 @@ public:
 
 Given an array of strings, group anagrams together.
 
-For example, given: ["eat", "tea", "tan", "ate", "nat", "bat"], 
+For example, given: ["eat", "tea", "tan", "ate", "nat", "bat"],
 Return:
 
 [
@@ -1539,29 +1552,31 @@ Note: All inputs will be in lower-case.
 */
 class Solution {
 public:
-    vector<vector<string>> groupAnagrams(vector<string>& strs) {
-        vector<vector<string>> res;
-        vector<int> primes = {2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 41, 43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89, 97, 101, 103, 107};
-        unordered_map<long, int> mapping;
-        int pos = 0;
-        for (auto s : strs) {
-            long temp = 1;
-            if (s != "") {
-                for (auto cha : s) {
-                    temp *= primes[cha - 'a'];
-                }
-            } else {
-                temp = 107;
-            }
-            if (mapping.find(temp) == mapping.end()) {
-                mapping[temp] = pos++;
-                res.push_back(vector<string>{s});
-            } else {
-                res[mapping[temp]].push_back(s);
-            }
-        }
-        return res;
-    }
+	vector<vector<string>> groupAnagrams(vector<string>& strs) {
+		vector<vector<string>> res;
+		vector<int> primes = { 2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 41, 43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89, 97, 101, 103, 107 };
+		unordered_map<long, int> mapping;
+		int pos = 0;
+		for (auto s : strs) {
+			long temp = 1;
+			if (s != "") {
+				for (auto cha : s) {
+					temp *= primes[cha - 'a'];
+				}
+			}
+			else {
+				temp = 107;
+			}
+			if (mapping.find(temp) == mapping.end()) {
+				mapping[temp] = pos++;
+				res.push_back(vector<string>{s});
+			}
+			else {
+				res[mapping[temp]].push_back(s);
+			}
+		}
+		return res;
+	}
 };
 /*
 
@@ -1572,20 +1587,20 @@ Implement pow(x, n).
 */
 class Solution {
 public:
-    double myPow(double x, int n) {
-        if (n == 0) {
-            return 1;
-        }
-        if (n < 0) {
-            if (n == INT_MIN) {
-                return 1 / x * myPow(x, n + 1);
-            }
-            x = 1 / x;
-            n = -n;
-        }
-        double temp = myPow(x, n / 2);
-        return n % 2 ? x * temp * temp : temp * temp;
-    }
+	double myPow(double x, int n) {
+		if (n == 0) {
+			return 1;
+		}
+		if (n < 0) {
+			if (n == INT_MIN) {
+				return 1 / x * myPow(x, n + 1);
+			}
+			x = 1 / x;
+			n = -n;
+		}
+		double temp = myPow(x, n / 2);
+		return n % 2 ? x * temp * temp : temp * temp;
+	}
 };
 /*
 
@@ -1604,14 +1619,14 @@ If you have figured out the O(n) solution, try coding another solution using the
 */
 class Solution {
 public:
-    int maxSubArray(vector<int>& nums) {
-        int _sum = INT_MIN, prev = 0;
-        for (int i = 0; i < nums.size(); i++) {
-            prev = max(prev + nums[i], nums[i]);
-            _sum = max(_sum, prev);
-        }
-        return _sum;
-    }
+	int maxSubArray(vector<int>& nums) {
+		int _sum = INT_MIN, prev = 0;
+		for (int i = 0; i < nums.size(); i++) {
+			prev = max(prev + nums[i], nums[i]);
+			_sum = max(_sum, prev);
+		}
+		return _sum;
+	}
 };
 /*
 
@@ -1633,40 +1648,40 @@ You should return [1,2,3,6,9,8,7,4,5].
 */
 class Solution {
 public:
-    vector<int> spiralOrder(vector<vector<int>>& matrix) {
-        vector<int> res;
-        if (matrix.empty()) {
-            return res;
-        }
-        int m = matrix.size() - 1, n = matrix[0].size() - 1, h = 0, l = 0;
-        while (true) {
-            for (int col = l; col <= n; col++) {
-                res.push_back(matrix[h][col]);
-            }
-            if (++h > m) {
-                break;
-            }
-            for (int row = h; row <= m; row++) {
-                res.push_back(matrix[row][n]);
-            }
-            if (--n < l) {
-                break;
-            }
-            for (int col = n; col >= l; col--) {
-                res.push_back(matrix[m][col]);
-            }
-            if (--m < h) {
-                break;
-            }
-            for (int row = m; row >= h; row--) {
-                res.push_back(matrix[row][l]);
-            }
-            if (++l > n) {
-                break;
-            }
-        }
-        return res;
-    }
+	vector<int> spiralOrder(vector<vector<int>>& matrix) {
+		vector<int> res;
+		if (matrix.empty()) {
+			return res;
+		}
+		int m = matrix.size() - 1, n = matrix[0].size() - 1, h = 0, l = 0;
+		while (true) {
+			for (int col = l; col <= n; col++) {
+				res.push_back(matrix[h][col]);
+			}
+			if (++h > m) {
+				break;
+			}
+			for (int row = h; row <= m; row++) {
+				res.push_back(matrix[row][n]);
+			}
+			if (--n < l) {
+				break;
+			}
+			for (int col = n; col >= l; col--) {
+				res.push_back(matrix[m][col]);
+			}
+			if (--m < h) {
+				break;
+			}
+			for (int row = m; row >= h; row--) {
+				res.push_back(matrix[row][l]);
+			}
+			if (++l > n) {
+				break;
+			}
+		}
+		return res;
+	}
 };
 /*
 
@@ -1718,26 +1733,27 @@ return [1,6],[8,10],[15,18].
  */
 class Solution {
 public:
-    vector<Interval> merge(vector<Interval>& intervals) {
-        if (intervals.empty()) {
-            return {};
-        }
-        sort(intervals.begin(), intervals.end(), [] (Interval a, Interval b) {return a.start < b.start;});
-        vector<Interval> res;
-        res.push_back(intervals[0]);
-        int i = 0, j = 1;
-        while (j < intervals.size()) {
-            if (res[i].end >= intervals[j].start) {
-                res[i].start = min(res[i].start, intervals[j].start);
-                res[i].end = max(res[i].end, intervals[j].end);
-                j++;
-            } else {
-                res.push_back(intervals[j++]);
-                i++;
-            }
-        }
-        return res;
-    }
+	vector<Interval> merge(vector<Interval>& intervals) {
+		if (intervals.empty()) {
+			return{};
+		}
+		sort(intervals.begin(), intervals.end(), [](Interval a, Interval b) {return a.start < b.start;});
+		vector<Interval> res;
+		res.push_back(intervals[0]);
+		int i = 0, j = 1;
+		while (j < intervals.size()) {
+			if (res[i].end >= intervals[j].start) {
+				res[i].start = min(res[i].start, intervals[j].start);
+				res[i].end = max(res[i].end, intervals[j].end);
+				j++;
+			}
+			else {
+				res.push_back(intervals[j++]);
+				i++;
+			}
+		}
+		return res;
+	}
 };
 /*
 
@@ -1767,30 +1783,33 @@ This is because the new interval [4,9] overlaps with [3,5],[6,7],[8,10].
  */
 class Solution {
 public:
-    vector<Interval> insert(vector<Interval>& intervals, Interval newInterval) {
-        vector<Interval> res;
-        bool flag = false;
-        for (Interval inter : intervals) {
-            if (flag) {
-                res.push_back(inter);
-            } else {
-                if (newInterval.end < inter.start) {
-                    res.push_back(newInterval);
-                    flag = true;
-                    res.push_back(inter);
-                } else if (inter.end < newInterval.start) {
-                    res.push_back(inter);
-                } else {
-                    newInterval.start = min(newInterval.start, inter.start);
-                    newInterval.end = max(newInterval.end, inter.end);
-                }
-            }
-        }           
-        if (!flag) {
-            res.push_back(newInterval);
-        }
-        return res;
-    }
+	vector<Interval> insert(vector<Interval>& intervals, Interval newInterval) {
+		vector<Interval> res;
+		bool flag = false;
+		for (Interval inter : intervals) {
+			if (flag) {
+				res.push_back(inter);
+			}
+			else {
+				if (newInterval.end < inter.start) {
+					res.push_back(newInterval);
+					flag = true;
+					res.push_back(inter);
+				}
+				else if (inter.end < newInterval.start) {
+					res.push_back(inter);
+				}
+				else {
+					newInterval.start = min(newInterval.start, inter.start);
+					newInterval.end = max(newInterval.end, inter.end);
+				}
+			}
+		}
+		if (!flag) {
+			res.push_back(newInterval);
+		}
+		return res;
+	}
 };
 /*
 
@@ -1802,7 +1821,7 @@ If the last word does not exist, return 0.
 
 Note: A word is defined as a character sequence consists of non-space characters only.
 
-For example, 
+For example,
 Given s = "Hello World",
 return 5.
 
@@ -1811,7 +1830,7 @@ class Solution {
 public:
 	int lengthOfLastWord(string s) {
 		int len = s.length() - 1, res = 0;
-		while(len > -1) {
+		while (len > -1) {
 			if (s[len] != ' ') res++;
 			else if (res) return res;
 			len--;
@@ -1838,40 +1857,40 @@ You should return the following matrix:
 */
 class Solution {
 public:
-    vector<vector<int>> generateMatrix(int n) {
-        if (n < 1) {
-            return {};
-        }
-        vector<vector<int>> res(n, vector<int>(n));
-        int i = n - 1, j = n - 1, k = 1, h = 0, l = 0;
-        while (k <= n * n) {
-            for (int col = l; col <= j; col++) {
-                res[h][col] = k++;
-            }
-            if (++h > i) {
-                break;
-            }
-            for (int row = h; row <= i; row++) {
-                res[row][j] = k++;
-            }
-            if (--j < l) {
-                break;
-            }
-            for (int col = j; col >= l; col--) {
-                res[i][col] = k++;
-            }
-            if (--i < h) {
-                break;
-            }
-            for (int row = i; row >= h; row--) {
-                res[row][l] = k++;
-            }
-            if (++l > j) {
-                break;
-            }
-        }
-        return res;
-    }
+	vector<vector<int>> generateMatrix(int n) {
+		if (n < 1) {
+			return{};
+		}
+		vector<vector<int>> res(n, vector<int>(n));
+		int i = n - 1, j = n - 1, k = 1, h = 0, l = 0;
+		while (k <= n * n) {
+			for (int col = l; col <= j; col++) {
+				res[h][col] = k++;
+			}
+			if (++h > i) {
+				break;
+			}
+			for (int row = h; row <= i; row++) {
+				res[row][j] = k++;
+			}
+			if (--j < l) {
+				break;
+			}
+			for (int col = j; col >= l; col--) {
+				res[i][col] = k++;
+			}
+			if (--i < h) {
+				break;
+			}
+			for (int row = i; row >= h; row--) {
+				res[row][l] = k++;
+			}
+			if (++l > j) {
+				break;
+			}
+		}
+		return res;
+	}
 };
 /*
 
@@ -1894,51 +1913,51 @@ return 4->5->1->2->3->NULL.
  */
 class Solution {
 public:
-    ListNode* rotateRight(ListNode* head, int k) {
-        if (head == NULL || head -> next == NULL) {
-            return head;
-        }
-        int len = 1;
-        ListNode *p = head, *q = head;
-        while (p -> next != NULL) {
-            p = p -> next;
-            len++;
-        }
-        k %= len;
-        p = head;
-        for (int i = 0; i < k; i++) {
-            p = p -> next;
-        }
-        while (p -> next != NULL) {
-            p = p -> next;
-            q = q -> next;
-        }
-        p -> next = head;
-        ListNode *newh = q -> next;
-        q -> next = NULL;
-        return newh;
-    }
+	ListNode* rotateRight(ListNode* head, int k) {
+		if (head == NULL || head->next == NULL) {
+			return head;
+		}
+		int len = 1;
+		ListNode *p = head, *q = head;
+		while (p->next != NULL) {
+			p = p->next;
+			len++;
+		}
+		k %= len;
+		p = head;
+		for (int i = 0; i < k; i++) {
+			p = p->next;
+		}
+		while (p->next != NULL) {
+			p = p->next;
+			q = q->next;
+		}
+		p->next = head;
+		ListNode *newh = q->next;
+		q->next = NULL;
+		return newh;
+	}
 };
 class Solution {
 public:
-    ListNode* rotateRight(ListNode* head, int k) {
-        if (!head) {
-            return head;
-        }
-        int len = 1;
-        ListNode *p = head;
-        while (p -> next != NULL) {
-            len++;
-            p = p -> next;
-        }
-        p -> next = head;
-        k %= len;
-        for (int i = 0; i < len - k; i++, p = p -> next){
-        }
-        ListNode *head_new = p -> next;
-        p -> next = NULL;
-        return head_new;
-    }
+	ListNode* rotateRight(ListNode* head, int k) {
+		if (!head) {
+			return head;
+		}
+		int len = 1;
+		ListNode *p = head;
+		while (p->next != NULL) {
+			len++;
+			p = p->next;
+		}
+		p->next = head;
+		k %= len;
+		for (int i = 0; i < len - k; i++, p = p->next) {
+		}
+		ListNode *head_new = p->next;
+		p->next = NULL;
+		return head_new;
+	}
 };
 /*
 
@@ -1953,18 +1972,18 @@ How many possible unique paths are there?
 */
 class Solution {
 public:
-    int uniquePaths(int m, int n) {
-        if (m == 0 || n == 0) {
-            return 0;
-        }
-        vector<int> res(n, 1);
-        for (int i = 1; i < m; i++) {
-            for (int j = 1; j < n; j++) {
-                res[j] = res[j - 1] + res[j];
-            }
-        }
-        return res[n - 1];
-    }
+	int uniquePaths(int m, int n) {
+		if (m == 0 || n == 0) {
+			return 0;
+		}
+		vector<int> res(n, 1);
+		for (int i = 1; i < m; i++) {
+			for (int j = 1; j < n; j++) {
+				res[j] = res[j - 1] + res[j];
+			}
+		}
+		return res[n - 1];
+	}
 };
 /*
 
@@ -1991,24 +2010,25 @@ Note: m and n will be at most 100.
 */
 class Solution {
 public:
-    int uniquePathsWithObstacles(vector<vector<int>>& obstacleGrid) {
-        if (obstacleGrid.empty()) {
-            return 0;
-        }
-        int _size = obstacleGrid[0].size();
-        vector<int> res(_size, 0);
-        res[0] = 1;
-        for (int i = 0; i < obstacleGrid.size(); i++) {
-            for (int j = 0; j < _size; j++) {
-                if (obstacleGrid[i][j] == 1) {
-                    res[j] = 0;
-                } else if (j > 0) {
-                    res[j] = res[j - 1] + res[j];
-                }
-            }
-        }
-        return res[_size - 1];
-    }
+	int uniquePathsWithObstacles(vector<vector<int>>& obstacleGrid) {
+		if (obstacleGrid.empty()) {
+			return 0;
+		}
+		int _size = obstacleGrid[0].size();
+		vector<int> res(_size, 0);
+		res[0] = 1;
+		for (int i = 0; i < obstacleGrid.size(); i++) {
+			for (int j = 0; j < _size; j++) {
+				if (obstacleGrid[i][j] == 1) {
+					res[j] = 0;
+				}
+				else if (j > 0) {
+					res[j] = res[j - 1] + res[j];
+				}
+			}
+		}
+		return res[_size - 1];
+	}
 };
 /*
 
@@ -2021,21 +2041,21 @@ Note: You can only move either down or right at any point in time.
 */
 class Solution {
 public:
-    int minPathSum(vector<vector<int>>& grid) {
-        if (grid.empty()) {
-            return 0;
-        }
-        int _size = grid[0].size();
-        vector<int> res(_size, INT_MAX);
-        res[0] = 0;
-        for (int i = 0; i < grid.size(); i++) {
-            res[0] += grid[i][0];
-            for (int j = 1; j < _size; j++) {
-                res[j] = min(res[j - 1], res[j]) + grid[i][j];
-            }
-        }
-        return res[_size - 1];
-    }
+	int minPathSum(vector<vector<int>>& grid) {
+		if (grid.empty()) {
+			return 0;
+		}
+		int _size = grid[0].size();
+		vector<int> res(_size, INT_MAX);
+		res[0] = 0;
+		for (int i = 0; i < grid.size(); i++) {
+			res[0] += grid[i][0];
+			for (int j = 1; j < _size; j++) {
+				res[j] = min(res[j - 1], res[j]) + grid[i][j];
+			}
+		}
+		return res[_size - 1];
+	}
 };
 /*
 
@@ -2048,20 +2068,20 @@ The digits are stored such that the most significant digit is at the head of the
 */
 class Solution {
 public:
-    vector<int> plusOne(vector<int>& digits) {
-        reverse(digits.begin(), digits.end());
-        int flag = 1;
-        for (int i = 0; i < digits.size(); i++) {
-            digits[i] += flag;
-            flag = digits[i] / 10;
-            digits[i] %= 10;
-        }
-        if (flag) {
-            digits.push_back(1);
-        }
-        reverse(digits.begin(), digits.end());
-        return digits;
-    }
+	vector<int> plusOne(vector<int>& digits) {
+		reverse(digits.begin(), digits.end());
+		int flag = 1;
+		for (int i = 0; i < digits.size(); i++) {
+			digits[i] += flag;
+			flag = digits[i] / 10;
+			digits[i] %= 10;
+		}
+		if (flag) {
+			digits.push_back(1);
+		}
+		reverse(digits.begin(), digits.end());
+		return digits;
+	}
 };
 /*
 
@@ -2077,17 +2097,17 @@ Return "100".
 */
 class Solution {
 public:
-    string addBinary(string a, string b) {
-        int i = a.size(), j = b.size(), carry = 0;
-        string res;
-        while (i > 0 || j > 0 || carry > 0) {
-            int num1 = i > 0 ? a[(i--) - 1] - '0' : 0, num2 = j > 0 ? b[(j--) - 1] - '0' : 0;
-            carry += num1 + num2;
-            res = char(carry % 2 + '0') + res;
-            carry /= 2;
-        }
-        return res;
-    }
+	string addBinary(string a, string b) {
+		int i = a.size(), j = b.size(), carry = 0;
+		string res;
+		while (i > 0 || j > 0 || carry > 0) {
+			int num1 = i > 0 ? a[(i--) - 1] - '0' : 0, num2 = j > 0 ? b[(j--) - 1] - '0' : 0;
+			carry += num1 + num2;
+			res = char(carry % 2 + '0') + res;
+			carry /= 2;
+		}
+		return res;
+	}
 };
 /*
 
@@ -2100,21 +2120,22 @@ Compute and return the square root of x.
 */
 class Solution {
 public:
-    int mySqrt(int x) {
-        if (x < 2) {
-            return x;
-        }
-        int l = 1, r = x;
-        while (l < r) {
-            int mid = l + (r - l) / 2;
-            if (x / mid < mid) {
-                r = mid;
-            } else {
-                l = mid + 1;
-            }
-        }
-        return r - 1;
-    }
+	int mySqrt(int x) {
+		if (x < 2) {
+			return x;
+		}
+		int l = 1, r = x;
+		while (l < r) {
+			int mid = l + (r - l) / 2;
+			if (x / mid < mid) {
+				r = mid;
+			}
+			else {
+				l = mid + 1;
+			}
+		}
+		return r - 1;
+	}
 };
 /*
 
@@ -2165,15 +2186,15 @@ public:
 		string res = "", token;
 		stringstream ss(path);
 		vector<string> pos;
-		while(getline(ss, token, '/')){
-			if(token == "." || token == "") continue;
-			else if(token==".."){
-				if(!pos.empty())  pos.pop_back();
+		while (getline(ss, token, '/')) {
+			if (token == "." || token == "") continue;
+			else if (token == "..") {
+				if (!pos.empty())  pos.pop_back();
 			}
 			else pos.push_back(token);
 		}
-		if(pos.empty()) return "/";
-		for(string i : pos)
+		if (pos.empty()) return "/";
+		for (string i : pos)
 			res = res + '/' + i;
 		return res;
 	}
@@ -2193,24 +2214,27 @@ c) Replace a character
 */
 class Solution {
 public:
-    int minDistance(string word1, string word2) {
-        int row = word1.size(), col = word2.size();
-        vector<vector<int>> t(row + 1, vector<int>(col + 1, 0));
-        for (int i = 0; i < row + 1; i++) {
-            for (int j = 0; j < col + 1; j++) {
-                if (i == 0) {
-                    t[i][j] = j;
-                } else if (j == 0) {
-                    t[i][j] = i;
-                } else if (word1[i - 1] == word2[j - 1]) {
-                    t[i][j] = t[i - 1][j - 1];
-                } else {
-                    t[i][j] = min(min(t[i - 1][j - 1], t[i][j - 1]), t[i - 1][j]) + 1;
-                }
-            }
-        }
-        return t.back().back();
-    }
+	int minDistance(string word1, string word2) {
+		int row = word1.size(), col = word2.size();
+		vector<vector<int>> t(row + 1, vector<int>(col + 1, 0));
+		for (int i = 0; i < row + 1; i++) {
+			for (int j = 0; j < col + 1; j++) {
+				if (i == 0) {
+					t[i][j] = j;
+				}
+				else if (j == 0) {
+					t[i][j] = i;
+				}
+				else if (word1[i - 1] == word2[j - 1]) {
+					t[i][j] = t[i - 1][j - 1];
+				}
+				else {
+					t[i][j] = min(min(t[i - 1][j - 1], t[i][j - 1]), t[i - 1][j]) + 1;
+				}
+			}
+		}
+		return t.back().back();
+	}
 };
 /*
 
@@ -2229,40 +2253,40 @@ Could you devise a constant space solution?
 */
 class Solution {
 public:
-    void setZeroes(vector<vector<int>>& matrix) {
-        bool row = false, col = false;
-        for (int i = 0; i < matrix.size(); i++) {
-            for (int j = 0; j < matrix[0].size(); j++) {
-                if (matrix[i][j] == 0) {
-                    if (i == 0) {
-                        row = true;
-                    }
-                    if (j == 0) {
-                        col = true;
-                    }
-                    matrix[i][0] = 0;
-                    matrix[0][j] = 0;
-                }
-            }
-        }
-        for (int i = 1; i < matrix.size(); i++) {
-            for (int j = 1; j < matrix[0].size(); j++) {
-                if (matrix[i][0] == 0 || matrix[0][j] == 0) {
-                    matrix[i][j] = 0;
-                }
-            }
-        }
-        if(row) {
-            for(int j = 0; j < matrix[0].size(); j++) {
-                matrix[0][j] = 0;
-            }
-        }
-        if(col) {
-            for(int i = 0; i < matrix.size(); i++) {
-                matrix[i][0] = 0;
-            }
-        }
-    }
+	void setZeroes(vector<vector<int>>& matrix) {
+		bool row = false, col = false;
+		for (int i = 0; i < matrix.size(); i++) {
+			for (int j = 0; j < matrix[0].size(); j++) {
+				if (matrix[i][j] == 0) {
+					if (i == 0) {
+						row = true;
+					}
+					if (j == 0) {
+						col = true;
+					}
+					matrix[i][0] = 0;
+					matrix[0][j] = 0;
+				}
+			}
+		}
+		for (int i = 1; i < matrix.size(); i++) {
+			for (int j = 1; j < matrix[0].size(); j++) {
+				if (matrix[i][0] == 0 || matrix[0][j] == 0) {
+					matrix[i][j] = 0;
+				}
+			}
+		}
+		if (row) {
+			for (int j = 0; j < matrix[0].size(); j++) {
+				matrix[0][j] = 0;
+			}
+		}
+		if (col) {
+			for (int i = 0; i < matrix.size(); i++) {
+				matrix[i][0] = 0;
+			}
+		}
+	}
 };
 /*
 
@@ -2286,22 +2310,24 @@ Given target = 3, return true.
 */
 class Solution {
 public:
-    bool searchMatrix(vector<vector<int>>& matrix, int target) {
-        int m = matrix.size(), n = matrix[0].size();
-        int l = 0, r = m * n - 1;
-        while (l <= r) {
-            int mid = l + (r - l) / 2;
-            int i = mid / n, j = mid % n;
-            if (matrix[i][j] < target) {
-                l = mid + 1;
-            } else if (target < matrix[i][j]) {
-                r = mid - 1;
-            } else {
-                return true;
-            }
-        }
-        return false;
-    }
+	bool searchMatrix(vector<vector<int>>& matrix, int target) {
+		int m = matrix.size(), n = matrix[0].size();
+		int l = 0, r = m * n - 1;
+		while (l <= r) {
+			int mid = l + (r - l) / 2;
+			int i = mid / n, j = mid % n;
+			if (matrix[i][j] < target) {
+				l = mid + 1;
+			}
+			else if (target < matrix[i][j]) {
+				r = mid - 1;
+			}
+			else {
+				return true;
+			}
+		}
+		return false;
+	}
 };
 /*
 
@@ -2325,20 +2351,20 @@ Could you come up with an one-pass algorithm using only constant space?
 */
 class Solution {
 public:
-    void sortColors(vector<int>& nums) {
-        int i = 0, k = 0, j = nums.size() - 1;
-        while (k <= j) {
-            if (nums[k] == 0) {
-                swap(nums[i++], nums[k++]);
-            }
-            else if (nums[k] == 2) {
-                swap(nums[k], nums[j--]);
-            }
-            else {
-                k++;
-            }
-        }
-    }
+	void sortColors(vector<int>& nums) {
+		int i = 0, k = 0, j = nums.size() - 1;
+		while (k <= j) {
+			if (nums[k] == 0) {
+				swap(nums[i++], nums[k++]);
+			}
+			else if (nums[k] == 2) {
+				swap(nums[k], nums[j--]);
+			}
+			else {
+				k++;
+			}
+		}
+	}
 };
 /*
 
@@ -2402,24 +2428,24 @@ If nums = [1,2,3], a solution is:
 */
 class Solution {
 public:
-    vector<vector<int>> subsets(vector<int>& nums) {
-        vector<vector<int>> res;
-        vector<int> res_sub;
-        res.push_back(res_sub);
-        generate(nums, 0, res, res_sub);
-        return res;
-    }
-    void generate(vector<int>& nums, int start, vector<vector<int>>& res, vector<int>& res_sub) {
-        if (start >= nums.size()) {
-            return;
-        }
-        for (int i = start; i < nums.size(); i++) {
-            res_sub.push_back(nums[i]);
-            res.push_back(res_sub);
-            generate(nums, i + 1, res, res_sub);
-            res_sub.pop_back();
-        }
-    }
+	vector<vector<int>> subsets(vector<int>& nums) {
+		vector<vector<int>> res;
+		vector<int> res_sub;
+		res.push_back(res_sub);
+		generate(nums, 0, res, res_sub);
+		return res;
+	}
+	void generate(vector<int>& nums, int start, vector<vector<int>>& res, vector<int>& res_sub) {
+		if (start >= nums.size()) {
+			return;
+		}
+		for (int i = start; i < nums.size(); i++) {
+			res_sub.push_back(nums[i]);
+			res.push_back(res_sub);
+			generate(nums, i + 1, res, res_sub);
+			res_sub.pop_back();
+		}
+	}
 };
 /*
 
@@ -2447,7 +2473,7 @@ public:
 	bool exist(vector<vector<char>>& board, string word) {
 		row = board.size();
 		col = board[0].size();
-		for (int i = 0; i < row; i ++) {
+		for (int i = 0; i < row; i++) {
 			for (int j = 0; j < col; j++) {
 				if (search(board, word.c_str(), i, j)) return true;
 			}
@@ -2462,7 +2488,7 @@ private:
 		else {
 			char t = board[i][j];
 			board[i][j] = '\0';
-			if (search(board, w + 1, i + 1, j) || search(board, w + 1, i - 1, j) || search(board, w + 1, i, j - 1) ||search(board, w + 1, i, j + 1))
+			if (search(board, w + 1, i + 1, j) || search(board, w + 1, i - 1, j) || search(board, w + 1, i, j - 1) || search(board, w + 1, i, j + 1))
 				return true;
 			board[i][j] = t;
 		}
@@ -2484,49 +2510,49 @@ Your function should return length = 5, with the first five elements of nums bei
 */
 class Solution {
 public:
-    int removeDuplicates(vector<int>& nums) {
-        if(nums.size() <= 2) {
-            return nums.size();
-        }
-        int index = 2;
-        for(int i = 2; i < nums.size(); i++) {
-            if(nums[index - 2] != nums[i]) {
-                nums[index++] = nums[i];
-            }
-        }
-        return index;
-    }
+	int removeDuplicates(vector<int>& nums) {
+		if (nums.size() <= 2) {
+			return nums.size();
+		}
+		int index = 2;
+		for (int i = 2; i < nums.size(); i++) {
+			if (nums[index - 2] != nums[i]) {
+				nums[index++] = nums[i];
+			}
+		}
+		return index;
+	}
 };
 ////no duplicates as follows
 class Solution {
 public:
-    int removeDuplicates(vector<int>& nums) {
-        if (nums.empty()) {
-            return 0;
-        }
-        int index = 1;
-        for (int i = 1; i < nums.size(); i++) {
-            if (nums[index - 1] != nums[i]) {
-                nums[index++] = nums[i];
-            }
-        }
-        return index;
-    }
+	int removeDuplicates(vector<int>& nums) {
+		if (nums.empty()) {
+			return 0;
+		}
+		int index = 1;
+		for (int i = 1; i < nums.size(); i++) {
+			if (nums[index - 1] != nums[i]) {
+				nums[index++] = nums[i];
+			}
+		}
+		return index;
+	}
 };
 class Solution {
 public:
-    int removeDuplicates(vector<int>& nums) {
-        if (nums.empty()) {
-            return 0;
-        }
-        int index = 0;
-        for (int i = 1; i < nums.size(); i++) {
-            if (nums[index] != nums[i]) {
-                nums[++index] = nums[i];
-            }
-        }
-        return index + 1;
-    }
+	int removeDuplicates(vector<int>& nums) {
+		if (nums.empty()) {
+			return 0;
+		}
+		int index = 0;
+		for (int i = 1; i < nums.size(); i++) {
+			if (nums[index] != nums[i]) {
+				nums[++index] = nums[i];
+			}
+		}
+		return index + 1;
+	}
 };
 /*
 
@@ -2554,7 +2580,7 @@ public:
 			}
 			else if (nums[l] > nums[mid]) {
 				if (nums[mid] < target && target <= nums[r]) l = mid + 1;
-				else r = mid -1;
+				else r = mid - 1;
 			}
 			else l++;
 		}
@@ -2582,28 +2608,29 @@ Given 1->1->1->2->3, return 2->3.
  */
 class Solution {
 public:
-    ListNode* deleteDuplicates(ListNode* head) {
-        if (head == NULL || head -> next == NULL) {
-            return head;
-        }
-        ListNode *dummy = new ListNode(-1);
-        dummy -> next = head;
-        ListNode *p = dummy;
-        while (head != NULL) {
-            ListNode *post = head -> next;
-            if (post != NULL && post -> val == head -> val) {
-                while (post != NULL && post -> val == head -> val) {
-                    post = post -> next;
-                } 
-                head = post;
-                p -> next = head;
-            } else {
-                p = head;
-                head = head -> next;
-            }
-        }
-        return dummy -> next;
-    }
+	ListNode* deleteDuplicates(ListNode* head) {
+		if (head == NULL || head->next == NULL) {
+			return head;
+		}
+		ListNode *dummy = new ListNode(-1);
+		dummy->next = head;
+		ListNode *p = dummy;
+		while (head != NULL) {
+			ListNode *post = head->next;
+			if (post != NULL && post->val == head->val) {
+				while (post != NULL && post->val == head->val) {
+					post = post->next;
+				}
+				head = post;
+				p->next = head;
+			}
+			else {
+				p = head;
+				head = head->next;
+			}
+		}
+		return dummy->next;
+	}
 };
 /*
 
@@ -2626,20 +2653,21 @@ Given 1->1->2->3->3, return 1->2->3.
  */
 class Solution {
 public:
-    ListNode* deleteDuplicates(ListNode* head) {
-        if(head != NULL|| head -> next != NULL) {
-            return head;
-        }
-        ListNode *p = head;
-        while (p != NULL && p -> next != NULL) {
-            if(p -> val == p -> next -> val) {
-                p -> next = p -> next -> next;
-            } else {
-                p = p -> next; 
-            }
-        }
-        return head;
-    }
+	ListNode* deleteDuplicates(ListNode* head) {
+		if (head != NULL || head->next != NULL) {
+			return head;
+		}
+		ListNode *p = head;
+		while (p != NULL && p->next != NULL) {
+			if (p->val == p->next->val) {
+				p->next = p->next->next;
+			}
+			else {
+				p = p->next;
+			}
+		}
+		return head;
+	}
 };
 /*
 
@@ -2685,26 +2713,27 @@ return 1->2->2->4->3->5.
  */
 class Solution {
 public:
-    ListNode* partition(ListNode* head, int x) {
-        if (head == NULL || head -> next == NULL) {
-            return head;
-        }
-        ListNode *s = new ListNode(-1), *g = new ListNode(-1);
-        ListNode *p = s, *q = g;
-        while (head != NULL) {
-            if (head -> val < x) {
-                p -> next = head;
-                p = p-> next;
-            } else {
-                q -> next = head;
-                q = q -> next;
-            }
-            head = head -> next;
-        }
-        p -> next = g -> next;
-        q -> next = NULL;
-        return s -> next;
-    }
+	ListNode* partition(ListNode* head, int x) {
+		if (head == NULL || head->next == NULL) {
+			return head;
+		}
+		ListNode *s = new ListNode(-1), *g = new ListNode(-1);
+		ListNode *p = s, *q = g;
+		while (head != NULL) {
+			if (head->val < x) {
+				p->next = head;
+				p = p->next;
+			}
+			else {
+				q->next = head;
+				q = q->next;
+			}
+			head = head->next;
+		}
+		p->next = g->next;
+		q->next = NULL;
+		return s->next;
+	}
 };
 /*
 88. Merge Sorted Array (Easy)
@@ -2717,17 +2746,17 @@ You may assume that nums1 has enough space (size that is greater or equal to m +
 */
 class Solution {
 public:
-    void merge(vector<int>& nums1, int m, vector<int>& nums2, int n) {
-        int i = m - 1, j = n - 1, k = m + n - 1;
-        while (j >= 0) {
-            if (i >=0 && nums1[i] > nums2[j]) {
-                nums1[k--] = nums1[i--];
-            }
-            else {
-                nums1[k--] = nums2[j--];
-            }
-        }
-    }
+	void merge(vector<int>& nums1, int m, vector<int>& nums2, int n) {
+		int i = m - 1, j = n - 1, k = m + n - 1;
+		while (j >= 0) {
+			if (i >= 0 && nums1[i] > nums2[j]) {
+				nums1[k--] = nums1[i--];
+			}
+			else {
+				nums1[k--] = nums2[j--];
+			}
+		}
+	}
 };
 /*
 
@@ -2752,26 +2781,26 @@ If nums = [1,2,2], a solution is:
 */
 class Solution {
 public:
-    vector<vector<int>> subsetsWithDup(vector<int>& nums) {
-        vector<vector<int>> res;
-        vector<int> res_sub;
-        res.push_back(res_sub);
-        sort(nums.begin(), nums.end());
-        generate(nums, 0, res, res_sub);
-        return res;
-    }
-    void generate(vector<int>& nums, int start, vector<vector<int>>& res, vector<int>& res_sub) {
-        if (start >= nums.size()) {
-            return;
-        }
-        for (int i = start; i < nums.size(); i++) {
-            if (i - start > 0 && nums[i] == nums[i - 1]) continue;
-            res_sub.push_back(nums[i]);
-            res.push_back(res_sub);
-            generate(nums, i + 1, res, res_sub);
-            res_sub.pop_back();
-        }
-    }
+	vector<vector<int>> subsetsWithDup(vector<int>& nums) {
+		vector<vector<int>> res;
+		vector<int> res_sub;
+		res.push_back(res_sub);
+		sort(nums.begin(), nums.end());
+		generate(nums, 0, res, res_sub);
+		return res;
+	}
+	void generate(vector<int>& nums, int start, vector<vector<int>>& res, vector<int>& res_sub) {
+		if (start >= nums.size()) {
+			return;
+		}
+		for (int i = start; i < nums.size(); i++) {
+			if (i - start > 0 && nums[i] == nums[i - 1]) continue;
+			res_sub.push_back(nums[i]);
+			res.push_back(res_sub);
+			generate(nums, i + 1, res, res_sub);
+			res_sub.pop_back();
+		}
+	}
 };
 /*
 
@@ -2831,24 +2860,25 @@ Given m, n satisfy the following condition:
  */
 class Solution {
 public:
-    ListNode* reverseBetween(ListNode* head, int m, int n) {
-        ListNode *head_new = new ListNode(0);
-        head_new -> next = head;
-        ListNode *p = head_new;
-        int i = 1;
-        while (i < n) {
-            if (i++ < m) {
-                p = head;
-                head = head -> next;
-            } else {
-                ListNode *post = head -> next;
-                head -> next = head -> next -> next;
-                post -> next = p -> next;
-                p -> next = post;
-            }
-        }
-        return head_new -> next;
-    }
+	ListNode* reverseBetween(ListNode* head, int m, int n) {
+		ListNode *head_new = new ListNode(0);
+		head_new->next = head;
+		ListNode *p = head_new;
+		int i = 1;
+		while (i < n) {
+			if (i++ < m) {
+				p = head;
+				head = head->next;
+			}
+			else {
+				ListNode *post = head->next;
+				head->next = head->next->next;
+				post->next = p->next;
+				p->next = post;
+			}
+		}
+		return head_new->next;
+	}
 };
 /*
 
@@ -2876,7 +2906,7 @@ public:
 			res.push_back(res_sub);
 			return;
 		}
-		if(s.length() - start > 3 * cnt) return;
+		if (s.length() - start > 3 * cnt) return;
 		for (int i = 0; i + start < s.length() && i < 3; i++) {
 			if (i == 0) generate(s, start + 1, cnt - 1, res, res_sub + s.substr(start, 1) + ".");
 			if (i == 1 && s[start] != '0') generate(s, start + 2, cnt - 1, res, res_sub + s.substr(start, 2) + ".");
@@ -2893,9 +2923,9 @@ Given a binary tree, return the inorder traversal of its nodes' values.
 For example:
 Given binary tree [1,null,2,3],
    1
-    \
-     2
-    /
+	\
+	 2
+	/
    3
 return [1,3,2].
 
@@ -2913,19 +2943,19 @@ Note: Recursive solution is trivial, could you do it iteratively?
  */
 class Solution {
 public:
-    vector<int> inorderTraversal(TreeNode* root) {
-        vector<int> res;
-        inorderTraversal(root, res);
-        return res;
-    }
+	vector<int> inorderTraversal(TreeNode* root) {
+		vector<int> res;
+		inorderTraversal(root, res);
+		return res;
+	}
 private:
-    void inorderTraversal(TreeNode* root, vector<int>& res) {
-        if (root) {
-            inorderTraversal(root -> left, res);
-            res.push_back(root -> val);
-            inorderTraversal(root -> right, res);
-        }
-    }
+	void inorderTraversal(TreeNode* root, vector<int>& res) {
+		if (root) {
+			inorderTraversal(root->left, res);
+			res.push_back(root->val);
+			inorderTraversal(root->right, res);
+		}
+	}
 };
 /*
 
@@ -2954,30 +2984,30 @@ Given n = 3, your program should return all 5 unique BST's shown below.
  */
 class Solution {
 private:
-  vector<vector<vector<TreeNode*>>> table;
-  vector<TreeNode*> generate(int l, int r) {
-   if (l > r) return {NULL};
-   if (table[l][r].empty()) {
-    for (int mid = l; mid <= r; mid++) {
-     vector<TreeNode*> left = generate(l, mid - 1), right = generate(mid + 1, r);
-     for (auto a : left) {
-      for (auto b : right) {
-       TreeNode* cur = new TreeNode(mid);
-       cur -> left = a;
-       cur -> right = b;
-       table[l][r].push_back(cur);
-   }
-}
-}
-}
-return table[l][r];
-}
+	vector<vector<vector<TreeNode*>>> table;
+	vector<TreeNode*> generate(int l, int r) {
+		if (l > r) return{ NULL };
+		if (table[l][r].empty()) {
+			for (int mid = l; mid <= r; mid++) {
+				vector<TreeNode*> left = generate(l, mid - 1), right = generate(mid + 1, r);
+				for (auto a : left) {
+					for (auto b : right) {
+						TreeNode* cur = new TreeNode(mid);
+						cur->left = a;
+						cur->right = b;
+						table[l][r].push_back(cur);
+					}
+				}
+			}
+		}
+		return table[l][r];
+	}
 public:
-  vector<TreeNode*> generateTrees(int n) {
-   if (n < 1) return {};
-   table = vector<vector<vector<TreeNode*>>> (n + 1, vector<vector<TreeNode*>>(n + 1, vector<TreeNode*>()));
-   return generate(1, n);
-}
+	vector<TreeNode*> generateTrees(int n) {
+		if (n < 1) return{};
+		table = vector<vector<vector<TreeNode*>>>(n + 1, vector<vector<TreeNode*>>(n + 1, vector<TreeNode*>()));
+		return generate(1, n);
+	}
 };
 /*
 
@@ -2990,22 +3020,22 @@ Given n = 3, there are a total of 5 unique BST's.
 
   1         3     3      2      1
    \       /     /      / \      \
-    3     2     1      1   3      2
+	3     2     1      1   3      2
    /     /       \                 \
   2     1         2                 3
 
 */
 class Solution {
 public:
-   int numTrees(int n) {
-    vector<int> table(n + 1, 0);
-    table[0] = 1;
-    for (int i = 1; i <= n; i++) {
-     for (int j = 1; j <= i; j++)
-      table[i] += table[j - 1] * table[i - j];
-}
-return table[n];
-}
+	int numTrees(int n) {
+		vector<int> table(n + 1, 0);
+		table[0] = 1;
+		for (int i = 1; i <= n; i++) {
+			for (int j = 1; j <= i; j++)
+				table[i] += table[j - 1] * table[i - j];
+		}
+		return table[n];
+	}
 };
 /*
 
@@ -3019,12 +3049,12 @@ The left subtree of a node contains only nodes with keys less than the node's ke
 The right subtree of a node contains only nodes with keys greater than the node's key.
 Both the left and right subtrees must also be binary search trees.
 Example 1:
-    2
+	2
    / \
   1   3
 Binary tree [2,1,3], return true.
 Example 2:
-    1
+	1
    / \
   2   3
 Binary tree [1,2,3], return false.
@@ -3041,22 +3071,24 @@ Binary tree [1,2,3], return false.
  */
 class Solution {
 public:
-    bool isValidBST(TreeNode* root) {
-        TreeNode* prev = NULL;
-        return validate(root, prev);
-    }
+	bool isValidBST(TreeNode* root) {
+		TreeNode* prev = NULL;
+		return validate(root, prev);
+	}
 private:
-    bool validate(TreeNode* root, TreeNode* &prev) {
-        if (root == NULL) {
-            return true;
-        } else if (!validate(root->left, prev)) {
-            return false;
-        } else if (prev != NULL && prev->val >= root->val) {
-            return false;
-        }
-        prev = root;
-        return validate(root->right, prev);
-    }
+	bool validate(TreeNode* root, TreeNode* &prev) {
+		if (root == NULL) {
+			return true;
+		}
+		else if (!validate(root->left, prev)) {
+			return false;
+		}
+		else if (prev != NULL && prev->val >= root->val) {
+			return false;
+		}
+		prev = root;
+		return validate(root->right, prev);
+	}
 };
 /*
 
@@ -3078,13 +3110,13 @@ Two binary trees are considered equal if they are structurally identical and the
  */
 class Solution {
 public:
-  bool isSameTree(TreeNode* p, TreeNode* q) {
-   if (!p || !q) {
-    if (p || q) return false;
-    return true;
-}
-return p -> val == q -> val && isSameTree(p -> left, q -> left) && isSameTree(p -> right, q -> right);
-}
+	bool isSameTree(TreeNode* p, TreeNode* q) {
+		if (!p || !q) {
+			if (p || q) return false;
+			return true;
+		}
+		return p->val == q->val && isSameTree(p->left, q->left) && isSameTree(p->right, q->right);
+	}
 };
 /*
 
@@ -3094,13 +3126,13 @@ Given a binary tree, check whether it is a mirror of itself (ie, symmetric aroun
 
 For example, this binary tree [1,2,2,3,4,4,3] is symmetric:
 
-    1
+	1
    / \
   2   2
  / \ / \
 3  4 4  3
 But the following [1,2,2,null,3,null,3] is not:
-    1
+	1
    / \
   2   2
    \   \
@@ -3120,17 +3152,17 @@ Bonus points if you could solve it both recursively and iteratively.
  */
 class Solution {
 public:
-  bool isSymmetric(TreeNode* root) {
-   if (!root) return true;
-   return check(root -> left, root -> right);
-}
-bool check(TreeNode* L, TreeNode* R) {
-   if (!L || !R) {
-    if (L || R) return false;
-    return true;
-}
-return L -> val == R -> val && check(L -> left, R -> right) && check(L -> right, R -> left);
-}
+	bool isSymmetric(TreeNode* root) {
+		if (!root) return true;
+		return check(root->left, root->right);
+	}
+	bool check(TreeNode* L, TreeNode* R) {
+		if (!L || !R) {
+			if (L || R) return false;
+			return true;
+		}
+		return L->val == R->val && check(L->left, R->right) && check(L->right, R->left);
+	}
 };
 /*
 
@@ -3140,10 +3172,10 @@ Given a binary tree, return the level order traversal of its nodes' values. (ie,
 
 For example:
 Given binary tree [3,9,20,null,null,15,7],
-    3
+	3
    / \
   9  20
-    /  \
+	/  \
    15   7
 return its level order traversal as:
 [
@@ -3164,25 +3196,25 @@ return its level order traversal as:
  */
 class Solution {
 public:
-  vector<vector<int>> levelOrder(TreeNode* root) {
-   vector<vector<int>> res;
-   if (!root) return res;
-   queue<TreeNode*> q;
-   q.push(root);
-   while (!q.empty()) {
-    vector<int> lev;
-    int _size = q.size();
-    for (int i = 0; i < _size; i++) {
-     TreeNode *temp = q.front();
-     q.pop();
-     lev.push_back(temp -> val);
-     if (temp -> left) q.push(temp -> left);
-     if (temp -> right) q.push(temp -> right);
- }
- res.push_back(lev);
-}
-return res;
-}
+	vector<vector<int>> levelOrder(TreeNode* root) {
+		vector<vector<int>> res;
+		if (!root) return res;
+		queue<TreeNode*> q;
+		q.push(root);
+		while (!q.empty()) {
+			vector<int> lev;
+			int _size = q.size();
+			for (int i = 0; i < _size; i++) {
+				TreeNode *temp = q.front();
+				q.pop();
+				lev.push_back(temp->val);
+				if (temp->left) q.push(temp->left);
+				if (temp->right) q.push(temp->right);
+			}
+			res.push_back(lev);
+		}
+		return res;
+	}
 };
 /*
 
@@ -3192,10 +3224,10 @@ Given a binary tree, return the zigzag level order traversal of its nodes' value
 
 For example:
 Given binary tree [3,9,20,null,null,15,7],
-    3
+	3
    / \
   9  20
-    /  \
+	/  \
    15   7
 return its zigzag level order traversal as:
 [
@@ -3216,28 +3248,28 @@ return its zigzag level order traversal as:
  */
 class Solution {
 public:
-  vector<vector<int>> zigzagLevelOrder(TreeNode* root) {
-   vector<vector<int>> res;
-   if (!root) return res;
-   queue<TreeNode*> q;
-   q.push(root);
-   int level = 0;
-   while (!q.empty()) {
-    vector<int> lev;
-    int _size = q.size();
-    for (int i = 0; i < _size; i++) {
-     TreeNode *temp = q.front();
-     q.pop();
-     lev.push_back(temp -> val);
-     if (temp -> left) q.push(temp -> left);
-     if (temp -> right) q.push(temp -> right);
- }
- if (level % 2) reverse(lev.begin(), lev.end());
- res.push_back(lev);
- level++;
-}
-return res;
-}
+	vector<vector<int>> zigzagLevelOrder(TreeNode* root) {
+		vector<vector<int>> res;
+		if (!root) return res;
+		queue<TreeNode*> q;
+		q.push(root);
+		int level = 0;
+		while (!q.empty()) {
+			vector<int> lev;
+			int _size = q.size();
+			for (int i = 0; i < _size; i++) {
+				TreeNode *temp = q.front();
+				q.pop();
+				lev.push_back(temp->val);
+				if (temp->left) q.push(temp->left);
+				if (temp->right) q.push(temp->right);
+			}
+			if (level % 2) reverse(lev.begin(), lev.end());
+			res.push_back(lev);
+			level++;
+		}
+		return res;
+	}
 };
 /*
 
@@ -3259,33 +3291,33 @@ The maximum depth is the number of nodes along the longest path from the root no
  */
 class Solution {
 public:
-  int maxDepth(TreeNode* root) {
-   if (!root) return 0;
-   int res = 0;
-   queue<TreeNode*> q;
-   q.push(root);
-   while (!q.empty()) {
-    int _size = q.size();
-    res++;
-    for (int i = 0; i < _size; i++) {
-     TreeNode *temp = q.front();
-     q.pop();
-     if (temp -> left) q.push(temp -> left);
-     if (temp -> right) q.push(temp -> right);
- }
-}
-return res;
-}
+	int maxDepth(TreeNode* root) {
+		if (!root) return 0;
+		int res = 0;
+		queue<TreeNode*> q;
+		q.push(root);
+		while (!q.empty()) {
+			int _size = q.size();
+			res++;
+			for (int i = 0; i < _size; i++) {
+				TreeNode *temp = q.front();
+				q.pop();
+				if (temp->left) q.push(temp->left);
+				if (temp->right) q.push(temp->right);
+			}
+		}
+		return res;
+	}
 };
 class Solution {
 public:
-  int maxDepth(TreeNode* root) {
-   if (!root) return 0;
-   else if (!(root -> left) && !(root -> right)) return 1;
-   int depth_L = maxDepth(root -> left);
-   int depth_R = maxDepth(root -> right);
-   return depth_L > depth_R ? depth_L + 1 : depth_R + 1;
-}
+	int maxDepth(TreeNode* root) {
+		if (!root) return 0;
+		else if (!(root->left) && !(root->right)) return 1;
+		int depth_L = maxDepth(root->left);
+		int depth_R = maxDepth(root->right);
+		return depth_L > depth_R ? depth_L + 1 : depth_R + 1;
+	}
 };
 /*
 
@@ -3308,25 +3340,25 @@ You may assume that duplicates do not exist in the tree.
  */
 class Solution {
 public:
-    TreeNode* buildTree(vector<int>& preorder, vector<int>& inorder) {
-        return BT(preorder, 0, preorder.size() - 1, inorder, 0, inorder.size() - 1);
-    }
-    TreeNode* BT(vector<int>& preorder, int pl, int pr, vector<int>& inorder, int il, int ir) {
-        if (il > ir) {
-            return NULL;
-        }
-        int val = preorder[pl];
-        TreeNode *root = new TreeNode(val);
-        int i = il;
-        for (; i < ir; i++) {
-            if (val == inorder[i]) {
-                break;
-            }
-        }
-        root -> left = BT(preorder, pl + 1, pl + i - il, inorder, il, i - 1);
-        root -> right = BT(preorder, pl + i - il + 1, pr, inorder, i + 1, ir);
-        return root;
-    }
+	TreeNode* buildTree(vector<int>& preorder, vector<int>& inorder) {
+		return BT(preorder, 0, preorder.size() - 1, inorder, 0, inorder.size() - 1);
+	}
+	TreeNode* BT(vector<int>& preorder, int pl, int pr, vector<int>& inorder, int il, int ir) {
+		if (il > ir) {
+			return NULL;
+		}
+		int val = preorder[pl];
+		TreeNode *root = new TreeNode(val);
+		int i = il;
+		for (; i < ir; i++) {
+			if (val == inorder[i]) {
+				break;
+			}
+		}
+		root->left = BT(preorder, pl + 1, pl + i - il, inorder, il, i - 1);
+		root->right = BT(preorder, pl + i - il + 1, pr, inorder, i + 1, ir);
+		return root;
+	}
 };
 /*
 
@@ -3349,25 +3381,25 @@ You may assume that duplicates do not exist in the tree.
  */
 class Solution {
 public:
-    TreeNode* buildTree(vector<int>& inorder, vector<int>& postorder) {
-        return BT(inorder, 0, inorder.size() - 1, postorder, 0, postorder.size() - 1);
-    }
-    TreeNode* BT(vector<int>& inorder, int il, int ir, vector<int>& postorder, int pl, int pr) {
-        if (il > ir) {
-            return NULL;
-        }
-        int val = postorder[pr];
-        TreeNode *root = new TreeNode(val);
-        int i = il;
-        for (; i < ir; i++) {
-            if (val == inorder[i]) {
-                break;
-            }
-        }
-        root -> left = BT(inorder, il, i - 1, postorder, pl, pl - il + i - 1);
-        root -> right = BT(inorder, i + 1, ir, postorder, pl - il + i, pr - 1);
-        return root;
-    }
+	TreeNode* buildTree(vector<int>& inorder, vector<int>& postorder) {
+		return BT(inorder, 0, inorder.size() - 1, postorder, 0, postorder.size() - 1);
+	}
+	TreeNode* BT(vector<int>& inorder, int il, int ir, vector<int>& postorder, int pl, int pr) {
+		if (il > ir) {
+			return NULL;
+		}
+		int val = postorder[pr];
+		TreeNode *root = new TreeNode(val);
+		int i = il;
+		for (; i < ir; i++) {
+			if (val == inorder[i]) {
+				break;
+			}
+		}
+		root->left = BT(inorder, il, i - 1, postorder, pl, pl - il + i - 1);
+		root->right = BT(inorder, i + 1, ir, postorder, pl - il + i, pr - 1);
+		return root;
+	}
 };
 /*
 
@@ -3377,10 +3409,10 @@ Given a binary tree, return the bottom-up level order traversal of its nodes' va
 
 For example:
 Given binary tree [3,9,20,null,null,15,7],
-    3
+	3
    / \
   9  20
-    /  \
+	/  \
    15   7
 return its bottom-up level order traversal as:
 [
@@ -3401,26 +3433,26 @@ return its bottom-up level order traversal as:
  */
 class Solution {
 public:
-  vector<vector<int>> levelOrderBottom(TreeNode* root) {
-   vector<vector<int>> res;
-   if (!root) return res;
-   queue<TreeNode*> q;
-   q.push(root);
-   while (!q.empty()) {
-    vector<int> lev;
-    int _size = q.size();
-    for (int i = 0; i < _size; i++) {
-     TreeNode *temp = q.front();
-     q.pop();
-     lev.push_back(temp -> val);
-     if (temp -> left) q.push(temp -> left);
-     if (temp -> right) q.push(temp -> right);
- }
- res.push_back(lev);
-}
-reverse(res.begin(), res.end());
-return res;
-}
+	vector<vector<int>> levelOrderBottom(TreeNode* root) {
+		vector<vector<int>> res;
+		if (!root) return res;
+		queue<TreeNode*> q;
+		q.push(root);
+		while (!q.empty()) {
+			vector<int> lev;
+			int _size = q.size();
+			for (int i = 0; i < _size; i++) {
+				TreeNode *temp = q.front();
+				q.pop();
+				lev.push_back(temp->val);
+				if (temp->left) q.push(temp->left);
+				if (temp->right) q.push(temp->right);
+			}
+			res.push_back(lev);
+		}
+		reverse(res.begin(), res.end());
+		return res;
+	}
 };
 /*
 
@@ -3437,39 +3469,40 @@ Given a singly linked list where elements are sorted in ascending order, convert
  *     ListNode(int x) : val(x), next(NULL) {}
  * };
  */
-/**
- * Definition for a binary tree node.
- * struct TreeNode {
- *     int val;
- *     TreeNode *left;
- *     TreeNode *right;
- *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
- * };
- */
+ /**
+  * Definition for a binary tree node.
+  * struct TreeNode {
+  *     int val;
+  *     TreeNode *left;
+  *     TreeNode *right;
+  *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+  * };
+  */
 class Solution {
 public:
-    TreeNode* sortedListToBST(ListNode* head) {
-        TreeNode *fake = new TreeNode(-1);
-        if (head == NULL) {
-            return fake -> left;
-        }else if (head -> next == NULL) {
-            fake -> val = head -> val;
-            return fake;
-        }
-        ListNode *fast = head, *slow = head, *slow_prev = NULL;
-        while (fast -> next != NULL && fast -> next -> next != NULL) {
-            slow_prev = slow;
-            slow = slow -> next;
-            fast = fast -> next -> next;
-        }
-        fake -> val = slow -> val;
-        if (slow_prev != NULL) {
-            slow_prev -> next = NULL;
-            fake -> left = sortedListToBST(head);
-        }
-        fake -> right = sortedListToBST(slow -> next);
-        return fake;
-    }
+	TreeNode* sortedListToBST(ListNode* head) {
+		TreeNode *fake = new TreeNode(-1);
+		if (head == NULL) {
+			return fake->left;
+		}
+		else if (head->next == NULL) {
+			fake->val = head->val;
+			return fake;
+		}
+		ListNode *fast = head, *slow = head, *slow_prev = NULL;
+		while (fast->next != NULL && fast->next->next != NULL) {
+			slow_prev = slow;
+			slow = slow->next;
+			fast = fast->next->next;
+		}
+		fake->val = slow->val;
+		if (slow_prev != NULL) {
+			slow_prev->next = NULL;
+			fake->left = sortedListToBST(head);
+		}
+		fake->right = sortedListToBST(slow->next);
+		return fake;
+	}
 };
 /*
 
@@ -3491,18 +3524,18 @@ For this problem, a height-balanced binary tree is defined as a binary tree in w
  */
 class Solution {
 public:
-  bool isBalanced(TreeNode* root) {
-   if (!root) return true;
-   else if (abs(depth(root->left) - depth(root->right)) > 1) return false;
-   else return isBalanced(root->left) && isBalanced(root->right);
-}
-int depth(TreeNode* root) {
-   if (!root) return 0;
-   else if (!(root -> left) && !(root -> right)) return 1;
-   int depth_L = depth(root -> left);
-   int depth_R = depth(root -> right);
-   return depth_L > depth_R ? depth_L + 1 : depth_R + 1;
-}
+	bool isBalanced(TreeNode* root) {
+		if (!root) return true;
+		else if (abs(depth(root->left) - depth(root->right)) > 1) return false;
+		else return isBalanced(root->left) && isBalanced(root->right);
+	}
+	int depth(TreeNode* root) {
+		if (!root) return 0;
+		else if (!(root->left) && !(root->right)) return 1;
+		int depth_L = depth(root->left);
+		int depth_R = depth(root->right);
+		return depth_L > depth_R ? depth_L + 1 : depth_R + 1;
+	}
 };
 /*
 
@@ -3524,18 +3557,18 @@ The minimum depth is the number of nodes along the shortest path from the root n
  */
 class Solution {
 public:
-  int minDepth(TreeNode* root) {
-   if (!root) return 0;
-   else if (!root -> left && !root -> right) return 1;
-   else {
-    int depth_L, depth_R;
-    if (root -> left) depth_L = minDepth(root -> left);
-    else depth_L = INT_MAX;
-    if (root -> right) depth_R = minDepth(root -> right);
-    else depth_R = INT_MAX;
-    return min(depth_L, depth_R) + 1;
-}
-}
+	int minDepth(TreeNode* root) {
+		if (!root) return 0;
+		else if (!root->left && !root->right) return 1;
+		else {
+			int depth_L, depth_R;
+			if (root->left) depth_L = minDepth(root->left);
+			else depth_L = INT_MAX;
+			if (root->right) depth_R = minDepth(root->right);
+			else depth_R = INT_MAX;
+			return min(depth_L, depth_R) + 1;
+		}
+	}
 };
 /*
 
@@ -3545,13 +3578,13 @@ Given a binary tree and a sum, determine if the tree has a root-to-leaf path suc
 
 For example:
 Given the below binary tree and sum = 22,
-              5
-             / \
-            4   8
-           /   / \
-          11  13  4
-         /  \      \
-        7    2      1
+			  5
+			 / \
+			4   8
+		   /   / \
+		  11  13  4
+		 /  \      \
+		7    2      1
 return true, as there exist a root-to-leaf path 5->4->11->2 which sum is 22.
 
 */
@@ -3566,14 +3599,15 @@ return true, as there exist a root-to-leaf path 5->4->11->2 which sum is 22.
  */
 class Solution {
 public:
-    bool hasPathSum(TreeNode* root, int sum) {
-        if (root == NULL) {
-            return false;
-        } else if (root->left == NULL && root->right == NULL && sum == root->val) {
-            return true;
-        }
-        return hasPathSum(root->left, sum - root->val) || hasPathSum(root->right, sum - root->val);
-    }
+	bool hasPathSum(TreeNode* root, int sum) {
+		if (root == NULL) {
+			return false;
+		}
+		else if (root->left == NULL && root->right == NULL && sum == root->val) {
+			return true;
+		}
+		return hasPathSum(root->left, sum - root->val) || hasPathSum(root->right, sum - root->val);
+	}
 };
 /*
 
@@ -3583,13 +3617,13 @@ Given a binary tree and a sum, find all root-to-leaf paths where each path's sum
 
 For example:
 Given the below binary tree and sum = 22,
-              5
-             / \
-            4   8
-           /   / \
-          11  13  4
-         /  \    / \
-        7    2  5   1
+			  5
+			 / \
+			4   8
+		   /   / \
+		  11  13  4
+		 /  \    / \
+		7    2  5   1
 return
 [
    [5,4,11,2],
@@ -3608,34 +3642,35 @@ return
  */
 class Solution {
 public:
-    vector<vector<int>> pathSum(TreeNode* root, int sum) {
-        vector<vector<int>> res;
-        vector<int> res_sub;
-        pathSum(root, res, res_sub, sum);
-        return res;
-    }
+	vector<vector<int>> pathSum(TreeNode* root, int sum) {
+		vector<vector<int>> res;
+		vector<int> res_sub;
+		pathSum(root, res, res_sub, sum);
+		return res;
+	}
 private:
-    void pathSum(TreeNode* root, vector<vector<int>>& res, vector<int>& res_sub, int sum) {
-        if (root == NULL) {
-            return;
-        } else if (root->left == NULL && root->right == NULL && sum == root->val) {
-            res_sub.push_back(root->val);
-            res.push_back(res_sub);
-            res_sub.pop_back();
-            return;
-        }
-        if (root->left != NULL) {
-            res_sub.push_back(root->val);
-            pathSum(root->left, res, res_sub, sum - root->val);
-            res_sub.pop_back();
-        }
-        if (root->right != NULL) {
-            res_sub.push_back(root->val);
-            pathSum(root->right, res, res_sub, sum - root->val);
-            res_sub.pop_back();
-        }
+	void pathSum(TreeNode* root, vector<vector<int>>& res, vector<int>& res_sub, int sum) {
+		if (root == NULL) {
+			return;
+		}
+		else if (root->left == NULL && root->right == NULL && sum == root->val) {
+			res_sub.push_back(root->val);
+			res.push_back(res_sub);
+			res_sub.pop_back();
+			return;
+		}
+		if (root->left != NULL) {
+			res_sub.push_back(root->val);
+			pathSum(root->left, res, res_sub, sum - root->val);
+			res_sub.pop_back();
+		}
+		if (root->right != NULL) {
+			res_sub.push_back(root->val);
+			pathSum(root->right, res, res_sub, sum - root->val);
+			res_sub.pop_back();
+		}
 
-    }
+	}
 };
 /*
 
@@ -3647,8 +3682,8 @@ For example, given numRows = 5,
 Return
 
 [
-     [1],
-    [1,1],
+	 [1],
+	[1,1],
    [1,2,1],
   [1,3,3,1],
  [1,4,6,4,1]
@@ -3657,22 +3692,22 @@ Return
 */
 class Solution {
 public:
-    vector<vector<int>> generate(int numRows) {
-        vector<vector<int>> vec;
-        if (numRows <= 0) {
-            return vec;
-        }
-        vec.push_back(vector<int>(1, 1));
-        for (int i = 1; i < numRows; i++) {
-            vector<int> res(1, 1);
-            for (int j = 0, k = 1; k < vec[i - 1].size(); j++, k++) {
-                res.push_back(vec[i - 1][j] + vec[i - 1][k]);
-            }
-            res.push_back(1);
-            vec.push_back(res);
-        }
-        return vec;
-    }
+	vector<vector<int>> generate(int numRows) {
+		vector<vector<int>> vec;
+		if (numRows <= 0) {
+			return vec;
+		}
+		vec.push_back(vector<int>(1, 1));
+		for (int i = 1; i < numRows; i++) {
+			vector<int> res(1, 1);
+			for (int j = 0, k = 1; k < vec[i - 1].size(); j++, k++) {
+				res.push_back(vec[i - 1][j] + vec[i - 1][k]);
+			}
+			res.push_back(1);
+			vec.push_back(res);
+		}
+		return vec;
+	}
 };
 /*
 
@@ -3684,24 +3719,24 @@ For example, given k = 3,
 Return [1,3,3,1].
 
 */
-class Solution {  
-public:  
-    vector<int> getRow(int rowIndex) {  
-        vector<int> res(1, 1);  
-        if (rowIndex == 0) {
-            return res;  
-        }
-        for (int i = 1; i <= rowIndex; i++) {
-            vector<int> tmp = res;  
-            res.clear();  
-            res.push_back(1);  
-            for (int i = 0; i < tmp.size() - 1; i++) {
-                res.push_back(tmp[i] + tmp[i + 1]);  
-            }
-            res.push_back(1);  
-        }  
-        return res;  
-    }  
+class Solution {
+public:
+	vector<int> getRow(int rowIndex) {
+		vector<int> res(1, 1);
+		if (rowIndex == 0) {
+			return res;
+		}
+		for (int i = 1; i <= rowIndex; i++) {
+			vector<int> tmp = res;
+			res.clear();
+			res.push_back(1);
+			for (int i = 0; i < tmp.size() - 1; i++) {
+				res.push_back(tmp[i] + tmp[i + 1]);
+			}
+			res.push_back(1);
+		}
+		return res;
+	}
 };
 /*
 
@@ -3711,8 +3746,8 @@ Given a triangle, find the minimum path sum from top to bottom. Each step you ma
 
 For example, given the following triangle
 [
-     [2],
-    [3,4],
+	 [2],
+	[3,4],
    [6,5,7],
   [4,1,8,3]
 ]
@@ -3724,15 +3759,15 @@ Bonus point if you are able to do this using only O(n) extra space, where n is t
 */
 class Solution {
 public:
-    int minimumTotal(vector<vector<int>>& triangle) {
-        vector<int> res = triangle.back();
-        for (int i = triangle.size() - 2; i >= 0; i--) {
-            for (int j = 0; j < triangle[i].size(); j++) {
-                res[j] = min(res[j], res[j + 1]) + triangle[i][j];
-            }
-        }
-        return res[0];
-    }
+	int minimumTotal(vector<vector<int>>& triangle) {
+		vector<int> res = triangle.back();
+		for (int i = triangle.size() - 2; i >= 0; i--) {
+			for (int j = 0; j < triangle[i].size(); j++) {
+				res[j] = min(res[j], res[j + 1]) + triangle[i][j];
+			}
+		}
+		return res[0];
+	}
 };
 /*
 
@@ -3756,20 +3791,21 @@ In this case, no transaction is done, i.e. max profit = 0.
 */
 class Solution {
 public:
-    int maxProfit(vector<int>& prices) {
-        if (!prices.size()) {
-            return 0;
-        }
-        int pro, low = prices[0];
-        for (int i = 0; i < prices.size(); i++) {
-            if (low > prices[i]) {
-                low = prices[i];
-            } else {
-                pro = max(prices[i] - low, pro);
-            }
-        }
-        return pro;
-    }
+	int maxProfit(vector<int>& prices) {
+		if (!prices.size()) {
+			return 0;
+		}
+		int pro, low = prices[0];
+		for (int i = 0; i < prices.size(); i++) {
+			if (low > prices[i]) {
+				low = prices[i];
+			}
+			else {
+				pro = max(prices[i] - low, pro);
+			}
+		}
+		return pro;
+	}
 };
 /*
 
@@ -3782,13 +3818,13 @@ Design an algorithm to find the maximum profit. You may complete as many transac
 */
 class Solution {
 public:
-    int maxProfit(vector<int>& prices) {
-        int res = 0;
-        for (int i = 1; i < prices.size(); i++) {
-            res += max(prices[i] - prices[i - 1], 0);
-        }
-        return res;
-    }
+	int maxProfit(vector<int>& prices) {
+		int res = 0;
+		for (int i = 1; i < prices.size(); i++) {
+			res += max(prices[i] - prices[i - 1], 0);
+		}
+		return res;
+	}
 };
 /*
 
@@ -3801,9 +3837,9 @@ For this problem, a path is defined as any sequence of nodes from some starting 
 For example:
 Given the below binary tree,
 
-       1
-      / \
-     2   3
+	   1
+	  / \
+	 2   3
 Return 6.
 
 */
@@ -3818,22 +3854,22 @@ Return 6.
  */
 class Solution {
 public:
-    int maxPathSum(TreeNode* root) {
-        int res = INT_MIN;
-        maxPathSum(root, res);
-        return res;
-    }
+	int maxPathSum(TreeNode* root) {
+		int res = INT_MIN;
+		maxPathSum(root, res);
+		return res;
+	}
 private:
-    int maxPathSum(TreeNode* root, int& max) {
-        if (root == NULL) {
-            return 0;
-        }
-        int l = maxPathSum(root->left, max), r = maxPathSum(root->right, max);
-        l = l < 0 ? 0 : l;
-        r = r < 0 ? 0 : r;
-        max = max > l + r + root->val ? max : l + r + root->val;
-        return l > r ? l + root->val : r + root->val;
-    }
+	int maxPathSum(TreeNode* root, int& max) {
+		if (root == NULL) {
+			return 0;
+		}
+		int l = maxPathSum(root->left, max), r = maxPathSum(root->right, max);
+		l = l < 0 ? 0 : l;
+		r = r < 0 ? 0 : r;
+		max = max > l + r + root->val ? max : l + r + root->val;
+		return l > r ? l + root->val : r + root->val;
+	}
 };
 /*
 
@@ -3856,7 +3892,7 @@ public:
 	bool isPalindrome(string s) {
 		int left = 0, right = s.length() - 1;
 		while (left < right) {
-			while (!isalnum(s[left]) && left < right) 
+			while (!isalnum(s[left]) && left < right)
 				left++;
 			while (!isalnum(s[right]) && left < right)
 				right--;
@@ -3885,41 +3921,43 @@ Return
 */
 class Solution {
 public:
-    vector<vector<string>> partition(string s) {
-        int _size = s.size();
-        vector<vector<bool>> t(_size, vector<bool>(_size, false));
-        for (int j = 0; j < _size;j++) {
-            for (int i = 0; i < _size;i++) {
-                if (i + j < _size) {
-                    if (j == 0) {
-                        t[i][i + j] = true;
-                    } else if (j < 3) {
-                        t[i][i + j] = (s[i] == s[i + j]);
-                    } else {
-                        t[i][i + j] = (s[i] == s[i + j]) && (t[i + 1][i + j - 1]);
-                    }
-                }
-            }
-        }
-        vector<vector<string>> res;
-        vector<string> res_sub;
-        partition(res, res_sub, t, 0, s);
-        return res;
-    }
+	vector<vector<string>> partition(string s) {
+		int _size = s.size();
+		vector<vector<bool>> t(_size, vector<bool>(_size, false));
+		for (int j = 0; j < _size;j++) {
+			for (int i = 0; i < _size;i++) {
+				if (i + j < _size) {
+					if (j == 0) {
+						t[i][i + j] = true;
+					}
+					else if (j < 3) {
+						t[i][i + j] = (s[i] == s[i + j]);
+					}
+					else {
+						t[i][i + j] = (s[i] == s[i + j]) && (t[i + 1][i + j - 1]);
+					}
+				}
+			}
+		}
+		vector<vector<string>> res;
+		vector<string> res_sub;
+		partition(res, res_sub, t, 0, s);
+		return res;
+	}
 private:
-    void partition(vector<vector<string>>& res, vector<string>& res_sub, const vector<vector<bool>>& t, int index, const string& s) {
-        if (index == t[0].size()) {
-            res.push_back(res_sub);
-            return;
-        }
-        for (int i = index; i < t[0].size(); i++) {
-            if (t[index][i]) {
-                res_sub.push_back(s.substr(index, i - index + 1));
-                partition(res, res_sub, t, i + 1, s);
-                res_sub.pop_back();
-            }
-        }
-    }
+	void partition(vector<vector<string>>& res, vector<string>& res_sub, const vector<vector<bool>>& t, int index, const string& s) {
+		if (index == t[0].size()) {
+			res.push_back(res_sub);
+			return;
+		}
+		for (int i = index; i < t[0].size(); i++) {
+			if (t[index][i]) {
+				res_sub.push_back(s.substr(index, i - index + 1));
+				partition(res, res_sub, t, i + 1, s);
+				res_sub.pop_back();
+			}
+		}
+	}
 };
 /*
 
@@ -3961,12 +3999,12 @@ Your algorithm should have a linear runtime complexity. Could you implement it w
 */
 class Solution {
 public:
-    int singleNumber(vector<int>& nums) {
-        for (int i = 1; i < nums.size(); i++) {
-            nums[0] ^= nums[i];
-        }
-        return nums[0];
-    }
+	int singleNumber(vector<int>& nums) {
+		for (int i = 1; i < nums.size(); i++) {
+			nums[0] ^= nums[i];
+		}
+		return nums[0];
+	}
 };
 /*
 
@@ -3987,34 +4025,34 @@ Return a deep copy of the list.
  */
 class Solution {
 public:
-    RandomListNode *copyRandomList(RandomListNode *head) {
-        if (head == NULL) {
-            return NULL;
-        }
-        RandomListNode *newhead = new RandomListNode(head->label);
-        RandomListNode *cur = newhead;
-        unordered_map<RandomListNode*, RandomListNode*> mapping;
-        mapping[head] = newhead;
-        while (head != NULL) {
-            if (head->next != NULL) {
-                if (mapping.find(head->next) == mapping.end()) {
-                    RandomListNode *next = new RandomListNode(head->next->label);
-                    mapping[head->next] = next;
-                }
-                cur->next = mapping[head->next];
-            }
-            if (head->random != NULL) {
-                if (mapping.find(head->random) == mapping.end()) {
-                    RandomListNode *random = new RandomListNode(head->random->label);
-                    mapping[head->random] = random;
-                }
-                cur->random = mapping[head->random];
-            }
-            head = head->next;
-            cur = cur->next;
-        }
-        return newhead;
-    }
+	RandomListNode *copyRandomList(RandomListNode *head) {
+		if (head == NULL) {
+			return NULL;
+		}
+		RandomListNode *newhead = new RandomListNode(head->label);
+		RandomListNode *cur = newhead;
+		unordered_map<RandomListNode*, RandomListNode*> mapping;
+		mapping[head] = newhead;
+		while (head != NULL) {
+			if (head->next != NULL) {
+				if (mapping.find(head->next) == mapping.end()) {
+					RandomListNode *next = new RandomListNode(head->next->label);
+					mapping[head->next] = next;
+				}
+				cur->next = mapping[head->next];
+			}
+			if (head->random != NULL) {
+				if (mapping.find(head->random) == mapping.end()) {
+					RandomListNode *random = new RandomListNode(head->random->label);
+					mapping[head->random] = random;
+				}
+				cur->random = mapping[head->random];
+			}
+			head = head->next;
+			cur = cur->next;
+		}
+		return newhead;
+	}
 };
 /*
 
@@ -4036,21 +4074,21 @@ Can you solve it without using extra space?
  */
 class Solution {
 public:
-    bool hasCycle(ListNode *head) {
-        if (head == NULL) {
-            return false;
-        }
-        ListNode *s = head, *f = head;
-        while (f -> next != NULL && f -> next -> next != NULL) {
-            s = s -> next;
-            f = f -> next -> next;
-            if (s == f) {
-                return true;
-            }
-        }
-        return false;
-        
-    }
+	bool hasCycle(ListNode *head) {
+		if (head == NULL) {
+			return false;
+		}
+		ListNode *s = head, *f = head;
+		while (f->next != NULL && f->next->next != NULL) {
+			s = s->next;
+			f = f->next->next;
+			if (s == f) {
+				return true;
+			}
+		}
+		return false;
+
+	}
 };
 /*
 
@@ -4074,23 +4112,23 @@ Can you solve it without using extra space?
  */
 class Solution {
 public:
-    ListNode *detectCycle(ListNode *head) {
-        if(head == NULL || head -> next == NULL) {
-            return NULL;
-        }
-        ListNode *s = head, *f = head;
-        while (f != NULL && f -> next != NULL) {
-            s = s -> next;
-            f = f -> next -> next;
-            if (s == f) break;
-        }
-        if (s != f) return NULL;
-        while (head != s) {
-            head = head -> next;
-            s = s -> next;
-        }
-        return head; 
-    }
+	ListNode *detectCycle(ListNode *head) {
+		if (head == NULL || head->next == NULL) {
+			return NULL;
+		}
+		ListNode *s = head, *f = head;
+		while (f != NULL && f->next != NULL) {
+			s = s->next;
+			f = f->next->next;
+			if (s == f) break;
+		}
+		if (s != f) return NULL;
+		while (head != s) {
+			head = head->next;
+			s = s->next;
+		}
+		return head;
+	}
 };
 /*
 
@@ -4115,36 +4153,36 @@ Given {1,2,3,4}, reorder it to {1,4,2,3}.
  */
 class Solution {
 public:
-    void reorderList(ListNode* head) {
-        if (head == NULL || head -> next == NULL) {
-            return;
-        }
-        ListNode *s = head, *f = head;
-        while (f -> next != NULL && f -> next -> next != NULL) {
-            s = s -> next;
-            f = f -> next -> next;
-        }
-        ListNode *newhead = reverse(s -> next);
-        s -> next = NULL;
-        s = head;
-        while (newhead != NULL) {
-            ListNode *newheadpos = newhead -> next;
-            newhead -> next = s -> next;
-            s -> next = newhead;
-            s = s -> next -> next;
-            newhead = newheadpos;
-        }
-    }
+	void reorderList(ListNode* head) {
+		if (head == NULL || head->next == NULL) {
+			return;
+		}
+		ListNode *s = head, *f = head;
+		while (f->next != NULL && f->next->next != NULL) {
+			s = s->next;
+			f = f->next->next;
+		}
+		ListNode *newhead = reverse(s->next);
+		s->next = NULL;
+		s = head;
+		while (newhead != NULL) {
+			ListNode *newheadpos = newhead->next;
+			newhead->next = s->next;
+			s->next = newhead;
+			s = s->next->next;
+			newhead = newheadpos;
+		}
+	}
 private:
-    ListNode* reverse(ListNode* head) {
-        if (head == NULL || head -> next == NULL) {
-            return head;
-        }
-        ListNode *newhead = reverse(head -> next);
-        head -> next -> next = head;
-        head -> next = NULL;
-        return newhead;
-    }
+	ListNode* reverse(ListNode* head) {
+		if (head == NULL || head->next == NULL) {
+			return head;
+		}
+		ListNode *newhead = reverse(head->next);
+		head->next->next = head;
+		head->next = NULL;
+		return newhead;
+	}
 };
 /*
 
@@ -4155,9 +4193,9 @@ Given a binary tree, return the preorder traversal of its nodes' values.
 For example:
 Given binary tree {1,#,2,3},
    1
-    \
-     2
-    /
+	\
+	 2
+	/
    3
 return [1,2,3].
 
@@ -4175,18 +4213,87 @@ Note: Recursive solution is trivial, could you do it iteratively?
  */
 class Solution {
 public:
-  vector<int> preorderTraversal(TreeNode* root) {
-   vector<int> res;
-   traversal(root, res);
-   return res;
-}
-void traversal(TreeNode* root, vector<int>& res) {
-   if (root) {
-    res.push_back(root -> val);
-    traversal(root -> left, res);
-    traversal(root -> right, res);
-}
-}
+	vector<int> preorderTraversal(TreeNode* root) {
+		vector<int> res;
+		traversal(root, res);
+		return res;
+	}
+	void traversal(TreeNode* root, vector<int>& res) {
+		if (root) {
+			res.push_back(root->val);
+			traversal(root->left, res);
+			traversal(root->right, res);
+		}
+	}
+};
+/*
+
+145. Binary Tree Postorder Traversal (Hard)
+
+Given a binary tree, return the postorder traversal of its nodes' values.
+
+For example:
+Given binary tree {1,#,2,3},
+   1
+	\
+	 2
+	/
+   3
+return [3,2,1].
+
+Note: Recursive solution is trivial, could you do it iteratively?
+
+*/
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+class Solution {
+public:
+	vector<int> postorderTraversal(TreeNode* root) {
+		if (root == NULL) {
+			return{};
+		}
+		vector<int> res;
+		stack<TreeNode*> s;
+		TreeNode *pre = NULL;
+		s.push(root);
+		while (!s.empty()) {
+			TreeNode *cur = s.top();
+			if (pre == NULL || pre->left == cur || pre->right == cur) {
+				if (cur->left != NULL) {
+					s.push(cur->left);
+				}
+				else if (cur->right != NULL) {
+					s.push(cur->right);
+				}
+				else {
+					res.push_back(cur->val);
+					s.pop();
+				}
+			}
+			else if (pre == cur->left) {
+				if (cur->right != NULL) {
+					s.push(cur->right);
+				}
+				else {
+					res.push_back(cur->val);
+					s.pop();
+				}
+			}
+			else {
+				res.push_back(cur->val);
+				s.pop();
+			}
+			pre = cur;
+		}
+		return res;
+	}
 };
 /*
 
@@ -4200,75 +4307,76 @@ set(key, value) - Set or insert the value if the key is not already present. Whe
 */
 class KeyValue {
 public:
-    int key, value;
-    KeyValue *next;
-    KeyValue (int key, int value) {
-        next = NULL;
-        this->key = key;
-        this->value = value;
-    }
-    KeyValue() {
-        this->next = NULL;
-        this->key = 0;
-        this->value = 0;
-    }
+	int key, value;
+	KeyValue *next;
+	KeyValue(int key, int value) {
+		next = NULL;
+		this->key = key;
+		this->value = value;
+	}
+	KeyValue() {
+		this->next = NULL;
+		this->key = 0;
+		this->value = 0;
+	}
 };
-class LRUCache{
+class LRUCache {
 public:
-    unordered_map<int, KeyValue*> mapping;
-    KeyValue *head, *tail;
-    int capacity, size;
-    LRUCache(int capacity) {
-        this->head = new KeyValue(0, 0);
-        this->tail = head;
-        this->capacity = capacity;
-        this->size = 0;
-        mapping.clear();
-    }
+	unordered_map<int, KeyValue*> mapping;
+	KeyValue *head, *tail;
+	int capacity, size;
+	LRUCache(int capacity) {
+		this->head = new KeyValue(0, 0);
+		this->tail = head;
+		this->capacity = capacity;
+		this->size = 0;
+		mapping.clear();
+	}
 
-    int get(int key) {
-        if (mapping.find(key) == mapping.end()) {
-            return -1;
-        }
-        moveToTail(mapping[key]);
-        return mapping[key]->next->value;
-    }
+	int get(int key) {
+		if (mapping.find(key) == mapping.end()) {
+			return -1;
+		}
+		moveToTail(mapping[key]);
+		return mapping[key]->next->value;
+	}
 
-    void set(int key, int value) {
-        if (mapping.find(key) != mapping.end()) {
-            mapping[key]->next->value = value;
-            moveToTail(mapping[key]);
-        } else {
-            KeyValue *node = new KeyValue(key, value);
-            tail->next = node;
-            mapping[key] = tail;
-            tail = node;
-            size++;
-            if (size > capacity) {
-                mapping.erase(head->next->key);
-                head->next = head->next->next;
-                if (head->next != NULL) {
-                    mapping[head->next->key] = head;
-                }
-                size--;
-            }
-        }
-    }
+	void set(int key, int value) {
+		if (mapping.find(key) != mapping.end()) {
+			mapping[key]->next->value = value;
+			moveToTail(mapping[key]);
+		}
+		else {
+			KeyValue *node = new KeyValue(key, value);
+			tail->next = node;
+			mapping[key] = tail;
+			tail = node;
+			size++;
+			if (size > capacity) {
+				mapping.erase(head->next->key);
+				head->next = head->next->next;
+				if (head->next != NULL) {
+					mapping[head->next->key] = head;
+				}
+				size--;
+			}
+		}
+	}
 private:
-    void moveToTail(KeyValue *prev) {
-        if (prev->next == tail) {
-            return;
-        }
-        KeyValue *node = prev->next;
-        prev->next = node->next;
-        if (node->next != NULL) {
-            mapping[node->next->key] = prev;
-        }
-        tail->next = node;
-        node->next = NULL;
-        mapping[node->key] = tail;
-        tail = node;
-    }
+	void moveToTail(KeyValue *prev) {
+		if (prev->next == tail) {
+			return;
+		}
+		KeyValue *node = prev->next;
+		prev->next = node->next;
+		if (node->next != NULL) {
+			mapping[node->next->key] = prev;
+		}
+		tail->next = node;
+		node->next = NULL;
+		mapping[node->key] = tail;
+		tail = node;
+	}
 };
 /*
 
@@ -4287,30 +4395,31 @@ Sort a linked list using insertion sort.
  */
 class Solution {
 public:
-    ListNode* insertionSortList(ListNode* head) {
-        if (head == NULL|| head -> next == NULL) {
-            return head;
-        }
-        ListNode *head_new = new ListNode(-1);
-        head_new -> next = head;
-        while (head -> next != NULL) {
-            ListNode *post = head -> next;
-            if (post -> val < head -> val) {
-                head -> next = post -> next;
-                ListNode *prev = head_new;
-                ListNode *p = head_new -> next;
-                while (p -> val < post -> val) {
-                    prev = prev -> next;
-                    p = p -> next;
-                }
-                prev -> next = post;
-                post -> next = p;
-            } else {
-                head = head -> next;
-            }
-        }
-        return head_new -> next;
-    }
+	ListNode* insertionSortList(ListNode* head) {
+		if (head == NULL || head->next == NULL) {
+			return head;
+		}
+		ListNode *head_new = new ListNode(-1);
+		head_new->next = head;
+		while (head->next != NULL) {
+			ListNode *post = head->next;
+			if (post->val < head->val) {
+				head->next = post->next;
+				ListNode *prev = head_new;
+				ListNode *p = head_new->next;
+				while (p->val < post->val) {
+					prev = prev->next;
+					p = p->next;
+				}
+				prev->next = post;
+				post->next = p;
+			}
+			else {
+				head = head->next;
+			}
+		}
+		return head_new->next;
+	}
 };
 /*
 
@@ -4329,38 +4438,39 @@ Sort a linked list in O(n log n) time using constant space complexity.
  */
 class Solution {
 public:
-    ListNode* sortList(ListNode* head) {
-        if (head == NULL || head -> next == NULL) {
-            return head;
-        }
-        ListNode *newhead = split(head);
-        return sort_combine(sortList(head), sortList(newhead));
-    }
+	ListNode* sortList(ListNode* head) {
+		if (head == NULL || head->next == NULL) {
+			return head;
+		}
+		ListNode *newhead = split(head);
+		return sort_combine(sortList(head), sortList(newhead));
+	}
 private:
-    ListNode* split(ListNode* head) {
-        ListNode *s = head, *f = head;
-        while(f -> next != NULL && f -> next -> next != NULL) {
-            s = s -> next;
-            f = f -> next -> next;
-        }
-        f = s -> next;
-        s -> next = NULL;
-        return f;
-    }
-    ListNode* sort_combine(ListNode* head, ListNode* s) {
-        ListNode *head_new = new ListNode(-1), *p = head_new;
-        while (head != NULL || s != NULL) {
-            if (head == NULL || s != NULL && head -> val > s -> val) {
-                p -> next = s;
-                s = s -> next;
-            } else {
-                p -> next = head;
-                head = head -> next;
-            }
-            p = p -> next;
-        }
-        return head_new -> next;
-    }
+	ListNode* split(ListNode* head) {
+		ListNode *s = head, *f = head;
+		while (f->next != NULL && f->next->next != NULL) {
+			s = s->next;
+			f = f->next->next;
+		}
+		f = s->next;
+		s->next = NULL;
+		return f;
+	}
+	ListNode* sort_combine(ListNode* head, ListNode* s) {
+		ListNode *head_new = new ListNode(-1), *p = head_new;
+		while (head != NULL || s != NULL) {
+			if (head == NULL || s != NULL && head->val > s->val) {
+				p->next = s;
+				s = s->next;
+			}
+			else {
+				p->next = head;
+				head = head->next;
+			}
+			p = p->next;
+		}
+		return head_new->next;
+	}
 };
 /*
 
@@ -4380,31 +4490,33 @@ Given n points on a 2D plane, find the maximum number of points that lie on the 
  */
 class Solution {
 public:
-    int maxPoints(vector<Point>& points) {
-        if (points.size() < 3) {
-            return points.size();
-        }
-        int res = 0;
-        for (int i = 0; i < points.size(); i++) {
-            int p0_num = 1, k_max = 0;
-            unordered_map<double, int> mapping;
-            for (int j = i + 1; j < points.size(); j++) {
-                if (points[i].x == points[j].x && points[i].y == points[j].y) {
-                    p0_num++;
-                } else {
-                    double k;
-                    if (points[i].x == points[j].x) {
-                        k = INT_MAX;
-                    } else {
-                        k = double(points[i].y - points[j].y) / double(points[i].x - points[j].x);
-                    }
-                    k_max = max(k_max, ++mapping[k]);
-                }
-            }
-            res = max(res, k_max + p0_num);
-        }
-        return res;
-    }
+	int maxPoints(vector<Point>& points) {
+		if (points.size() < 3) {
+			return points.size();
+		}
+		int res = 0;
+		for (int i = 0; i < points.size(); i++) {
+			int p0_num = 1, k_max = 0;
+			unordered_map<double, int> mapping;
+			for (int j = i + 1; j < points.size(); j++) {
+				if (points[i].x == points[j].x && points[i].y == points[j].y) {
+					p0_num++;
+				}
+				else {
+					double k;
+					if (points[i].x == points[j].x) {
+						k = INT_MAX;
+					}
+					else {
+						k = double(points[i].y - points[j].y) / double(points[i].x - points[j].x);
+					}
+					k_max = max(k_max, ++mapping[k]);
+				}
+			}
+			res = max(res, k_max + p0_num);
+		}
+		return res;
+	}
 };
 /*
 
@@ -4488,19 +4600,19 @@ the contiguous subarray [2,3] has the largest product = 6.
 */
 class Solution {
 public:
-    int maxProduct(vector<int>& nums) {
-        if(nums.empty()) {
-            return 0;
-        }
-        int cur_max = nums[0], cur_min = nums[0], maxProduct = nums[0];
-        for(int i = 1; i < nums.size(); i++) {
-            int prev_min = cur_min, prev_max = cur_max;
-            cur_max = max(nums[i], max(prev_max * nums[i], prev_min * nums[i]));
-            cur_min = min(nums[i], min(prev_max * nums[i], prev_min * nums[i]));
-            maxProduct = max(cur_max, maxProduct);
-        }
-        return maxProduct;
-    }
+	int maxProduct(vector<int>& nums) {
+		if (nums.empty()) {
+			return 0;
+		}
+		int cur_max = nums[0], cur_min = nums[0], maxProduct = nums[0];
+		for (int i = 1; i < nums.size(); i++) {
+			int prev_min = cur_min, prev_max = cur_max;
+			cur_max = max(nums[i], max(prev_max * nums[i], prev_min * nums[i]));
+			cur_min = min(nums[i], min(prev_max * nums[i], prev_min * nums[i]));
+			maxProduct = max(cur_max, maxProduct);
+		}
+		return maxProduct;
+	}
 };
 /*
 
@@ -4551,33 +4663,33 @@ minStack.getMin();   --> Returns -2.
 */
 class MinStack {
 public:
-    stack<int> s, min;
-    /** initialize your data structure here. */
-    MinStack() {
+	stack<int> s, min;
+	/** initialize your data structure here. */
+	MinStack() {
 
-    }
+	}
 
-    void push(int x) {
-        s.push(x);
-        if (min.empty() || x <= min.top()) {
-            min.push(x);
-        }
-    }
+	void push(int x) {
+		s.push(x);
+		if (min.empty() || x <= min.top()) {
+			min.push(x);
+		}
+	}
 
-    void pop() {
-        if (s.top() == min.top()) {
-            min.pop();
-        }
-        s.pop();
-    }
+	void pop() {
+		if (s.top() == min.top()) {
+			min.pop();
+		}
+		s.pop();
+	}
 
-    int top() {
-        return s.top();
-    }
+	int top() {
+		return s.top();
+	}
 
-    int getMin() {
-        return min.top();
-    }
+	int getMin() {
+		return min.top();
+	}
 };
 /**
  * Your MinStack object will be instantiated and called as such:
@@ -4587,67 +4699,70 @@ public:
  * int param_3 = obj.top();
  * int param_4 = obj.getMin();
  */
-/*
+ /*
 
-160. Intersection of Two Linked Lists (Easy)
+ 160. Intersection of Two Linked Lists (Easy)
 
-Write a program to find the node at which the intersection of two singly linked lists begins.
-
-
-For example, the following two linked lists:
-
-A:          a1 → a2
-                   ↘
-                     c1 → c2 → c3
-                   ↗            
-B:     b1 → b2 → b3
-begin to intersect at node c1.
+ Write a program to find the node at which the intersection of two singly linked lists begins.
 
 
-Notes:
+ For example, the following two linked lists:
 
-If the two linked lists have no intersection at all, return null.
-The linked lists must retain their original structure after the function returns.
-You may assume there are no cycles anywhere in the entire linked structure.
-Your code should preferably run in O(n) time and use only O(1) memory.
+ A:          a1 → a2
+					↘
+					  c1 → c2 → c3
+					↗
+ B:     b1 → b2 → b3
+ begin to intersect at node c1.
 
-*/
-/**
- * Definition for singly-linked list.
- * struct ListNode {
- *     int val;
- *     ListNode *next;
- *     ListNode(int x) : val(x), next(NULL) {}
- * };
+
+ Notes:
+
+ If the two linked lists have no intersection at all, return null.
+ The linked lists must retain their original structure after the function returns.
+ You may assume there are no cycles anywhere in the entire linked structure.
+ Your code should preferably run in O(n) time and use only O(1) memory.
+
  */
+ /**
+  * Definition for singly-linked list.
+  * struct ListNode {
+  *     int val;
+  *     ListNode *next;
+  *     ListNode(int x) : val(x), next(NULL) {}
+  * };
+  */
 class Solution {
 public:
-    ListNode *getIntersectionNode(ListNode *headA, ListNode *headB) {
-        if (headA == NULL || headB == NULL) {
-            return NULL;
-        }
-        ListNode *headA1 = headA, *headB1 = headB;
-        int flag1 = 0, flag2 = 0;
-        while (flag1 + flag2 <= 2) {
-            if (headA1 -> val != headB1-> val) {
-                if (!headA1 -> next) {
-                    headA1 = headB;
-                    flag1++;
-                } else {
-                    headA1 = headA1 -> next;
-                }
-                if (!headB1 -> next) {
-                    headB1 = headA;
-                    flag2++;
-                } else {
-                    headB1 = headB1 -> next;
-                }
-            } else {
-                return headA1;
-            }
-        }
-        return NULL;
-    }
+	ListNode *getIntersectionNode(ListNode *headA, ListNode *headB) {
+		if (headA == NULL || headB == NULL) {
+			return NULL;
+		}
+		ListNode *headA1 = headA, *headB1 = headB;
+		int flag1 = 0, flag2 = 0;
+		while (flag1 + flag2 <= 2) {
+			if (headA1->val != headB1->val) {
+				if (!headA1->next) {
+					headA1 = headB;
+					flag1++;
+				}
+				else {
+					headA1 = headA1->next;
+				}
+				if (!headB1->next) {
+					headB1 = headA;
+					flag2++;
+				}
+				else {
+					headB1 = headB1->next;
+				}
+			}
+			else {
+				return headA1;
+			}
+		}
+		return NULL;
+	}
 };
 /*
 
@@ -4671,18 +4786,19 @@ Your solution should be in logarithmic complexity.
 */
 class Solution {
 public:
-    int findPeakElement(vector<int>& nums) {
-        int l = 0, r = nums.size() - 1;
-        while (l < r) {
-            int mid = l + (r - l) / 2;
-            if (nums[mid] < nums[mid + 1]) {
-                l = mid +1;
-            } else {
-                r = mid;
-            }
-        }
-        return l;
-    }
+	int findPeakElement(vector<int>& nums) {
+		int l = 0, r = nums.size() - 1;
+		while (l < r) {
+			int mid = l + (r - l) / 2;
+			if (nums[mid] < nums[mid + 1]) {
+				l = mid + 1;
+			}
+			else {
+				r = mid;
+			}
+		}
+		return l;
+	}
 };
 /*
 
@@ -4695,23 +4811,23 @@ For example, given [0, 1, 3, 50, 75], lower = 0 and upper = 99, return ["2", "4-
 */
 class Solution {
 public:
-    vector<string> findMissingRanges(vector<int>& nums, int lower, int upper) {
-        vector<string> res;
-        for (int i = 0; i < nums.size(); i++) {
-            if (lower < nums[i]) {
-                res.push_back(range(lower, nums[i] - 1));
-            }
-            lower = nums[i] + 1;
-        }
-        if (nums.empty() || nums.back() < upper) {
-            res.push_back(range(lower, upper));
-        }
-        return res;
-    }
+	vector<string> findMissingRanges(vector<int>& nums, int lower, int upper) {
+		vector<string> res;
+		for (int i = 0; i < nums.size(); i++) {
+			if (lower < nums[i]) {
+				res.push_back(range(lower, nums[i] - 1));
+			}
+			lower = nums[i] + 1;
+		}
+		if (nums.empty() || nums.back() < upper) {
+			res.push_back(range(lower, upper));
+		}
+		return res;
+	}
 private:
-    string range(int lower, int upper) {
-        return lower == upper ? to_string(lower) : to_string(lower) + "->" + to_string(upper);
-    }
+	string range(int lower, int upper) {
+		return lower == upper ? to_string(lower) : to_string(lower) + "->" + to_string(upper);
+	}
 };
 /*
 
@@ -4742,13 +4858,13 @@ public:
 				return -1;
 		}
 		if (ver1.size() > ver2.size()) {
-			while(!ver1[index] && index < ver1.size())
+			while (!ver1[index] && index < ver1.size())
 				index++;
 			if (index < ver1.size())
 				return 1;
 		}
 		if (ver1.size() < ver2.size()) {
-			while(!ver2[index] && index < ver2.size())
+			while (!ver2[index] && index < ver2.size())
 				index++;
 			if (index < ver2.size())
 				return -1;
@@ -4759,7 +4875,7 @@ public:
 		vector<int> res;
 		stringstream str(s);
 		string item;
-		while(getline(str, item, sign)) {
+		while (getline(str, item, sign)) {
 			res.push_back(atoi(item.c_str()));
 		}
 		return res;
@@ -4787,34 +4903,34 @@ Be wary of edge cases! List out as many test cases as you can think of and test 
 */
 class Solution {
 public:
-    string fractionToDecimal(int numerator, int denominator) {
-        if (!numerator) {
-            return "0";
-        }
-        string res;
-        if (numerator < 0 ^ denominator < 0) {
-            res += "-";
-        }
-        long n_l_abs = labs(long(numerator)), d_l_abs = labs(long(denominator));
-        res += to_string(n_l_abs / d_l_abs);
-        if (!(n_l_abs %= d_l_abs)) {
-            return res;
-        }
-        res += ".";
-        unordered_map<int, int> mapping;
-        int i = res.size() - 1;
-        while (n_l_abs) {
-            if (mapping.count(n_l_abs)) {
-                res.insert(mapping[n_l_abs], "(");
-                res += ")";
-                return res;
-            }
-            mapping[n_l_abs] = ++i;
-            res += to_string((n_l_abs *= 10) / d_l_abs);
-            n_l_abs %= d_l_abs;
-        }
-        return res;
-    }
+	string fractionToDecimal(int numerator, int denominator) {
+		if (!numerator) {
+			return "0";
+		}
+		string res;
+		if (numerator < 0 ^ denominator < 0) {
+			res += "-";
+		}
+		long n_l_abs = labs(long(numerator)), d_l_abs = labs(long(denominator));
+		res += to_string(n_l_abs / d_l_abs);
+		if (!(n_l_abs %= d_l_abs)) {
+			return res;
+		}
+		res += ".";
+		unordered_map<int, int> mapping;
+		int i = res.size() - 1;
+		while (n_l_abs) {
+			if (mapping.count(n_l_abs)) {
+				res.insert(mapping[n_l_abs], "(");
+				res += ")";
+				return res;
+			}
+			mapping[n_l_abs] = ++i;
+			res += to_string((n_l_abs *= 10) / d_l_abs);
+			n_l_abs %= d_l_abs;
+		}
+		return res;
+	}
 };
 /*
 
@@ -4832,47 +4948,51 @@ Output: index1=1, index2=2
 */
 class Solution {
 public:
-    vector<int> twoSum(vector<int>& numbers, int target) {
-        if (numbers.size() < 2) {
-            return {-1, -1};
-        }
-        for (int i = 0; i < numbers.size() - 1; i++) {
-            if (numbers[i] + numbers[i + 1] > target) {
-                break;
-            }
-            int l = i + 1, r = numbers.size() - 1;
-            while (l <= r) {
-                int mid = l + (r - l) / 2;
-                if (numbers[mid] > target - numbers[i]) {
-                    r = mid - 1;
-                } else if (numbers[mid] < target - numbers[i]) {
-                    l = mid + 1;
-                } else {
-                    return {i + 1, mid + 1};
-                }
-            }
-        }
-        return {-1, -1};
-    }
+	vector<int> twoSum(vector<int>& numbers, int target) {
+		if (numbers.size() < 2) {
+			return{ -1, -1 };
+		}
+		for (int i = 0; i < numbers.size() - 1; i++) {
+			if (numbers[i] + numbers[i + 1] > target) {
+				break;
+			}
+			int l = i + 1, r = numbers.size() - 1;
+			while (l <= r) {
+				int mid = l + (r - l) / 2;
+				if (numbers[mid] > target - numbers[i]) {
+					r = mid - 1;
+				}
+				else if (numbers[mid] < target - numbers[i]) {
+					l = mid + 1;
+				}
+				else {
+					return{ i + 1, mid + 1 };
+				}
+			}
+		}
+		return{ -1, -1 };
+	}
 };
 class Solution {
 public:
-    vector<int> twoSum(vector<int>& numbers, int target) {
-        if (numbers.size() < 2) {
-            return {-1, -1};
-        }
-        int l = 0, r = numbers.size() - 1;
-        while (l < r) {
-            if (numbers[l] + numbers[r] > target) {
-                r--;
-            } else if (numbers[l] + numbers[r] < target) {
-                l++;
-            } else {
-                return {++l, ++r};
-            }
-        }
-        return {-1, -1};
-    }
+	vector<int> twoSum(vector<int>& numbers, int target) {
+		if (numbers.size() < 2) {
+			return{ -1, -1 };
+		}
+		int l = 0, r = numbers.size() - 1;
+		while (l < r) {
+			if (numbers[l] + numbers[r] > target) {
+				r--;
+			}
+			else if (numbers[l] + numbers[r] < target) {
+				l++;
+			}
+			else {
+				return{ ++l, ++r };
+			}
+		}
+		return{ -1, -1 };
+	}
 };
 /*
 
@@ -4888,19 +5008,19 @@ For example:
 ...
 26 -> Z
 27 -> AA
-28 -> AB 
+28 -> AB
 
 */
 class Solution {
 public:
-    string convertToTitle(int n) {
-        string res = "";
-        while (n) {
-            res = char((n - 1) % 26 + 'A') + res;
-            n = (n - 1) / 26;
-        }
-        return res;
-    }
+	string convertToTitle(int n) {
+		string res = "";
+		while (n) {
+			res = char((n - 1) % 26 + 'A') + res;
+			n = (n - 1) / 26;
+		}
+		return res;
+	}
 };
 /*
 
@@ -4913,24 +5033,25 @@ You may assume that the array is non-empty and the majority element always exist
 */
 class Solution {
 public:
-    int majorityElement(vector<int>& nums) {
-        if (nums.size() == 1) {
-            return nums[0];
-        }
-        int cnt = 0, majority;
-        for (int i =0; i < nums.size(); i++) {
-            if (cnt == 0) {
-                majority = nums[i];
-                cnt++;
-            } else {
-                majority == nums[i] ? cnt++ : cnt--;
-                if (cnt > nums.size() / 2) {
-                    return majority;
-                }
-            }
-        }
-        return majority;
-    }
+	int majorityElement(vector<int>& nums) {
+		if (nums.size() == 1) {
+			return nums[0];
+		}
+		int cnt = 0, majority;
+		for (int i = 0; i < nums.size(); i++) {
+			if (cnt == 0) {
+				majority = nums[i];
+				cnt++;
+			}
+			else {
+				majority == nums[i] ? cnt++ : cnt--;
+				if (cnt > nums.size() / 2) {
+					return majority;
+				}
+			}
+		}
+		return majority;
+	}
 };
 /*
 
@@ -4948,18 +5069,18 @@ C -> 3
 ...
 Z -> 26
 AA -> 27
-AB -> 28 
+AB -> 28
 
 */
 class Solution {
 public:
-    int titleToNumber(string s) {
-        int res = 0;
-        for (int i = 0; i < s.length(); i++) {
-            res = res * 26 + (s[i] - '@');
-        }
-        return res;
-    }
+	int titleToNumber(string s) {
+		int res = 0;
+		for (int i = 0; i < s.length(); i++) {
+			res = res * 26 + (s[i] - '@');
+		}
+		return res;
+	}
 };
 /*
 
@@ -4972,14 +5093,14 @@ Note: Your solution should be in logarithmic time complexity.
 */
 class Solution {
 public:
-    int trailingZeroes(int n) {
-        int res = 0;
-        while (n > 0) {
-            n /= 5;
-            res += n;
-        }
-        return res;
-    }
+	int trailingZeroes(int n) {
+		int res = 0;
+		while (n > 0) {
+			n /= 5;
+			res += n;
+		}
+		return res;
+	}
 };
 /*
 
@@ -5003,30 +5124,30 @@ Note: next() and hasNext() should run in average O(1) time and uses O(h) memory,
  */
 class BSTIterator {
 private:
-  stack<int> s;
-  void traversal(TreeNode* root, stack<int>& s) {
-   if (root) {
-    traversal(root -> right, s);
-    s.push(root -> val);
-    traversal(root -> left, s);
-}
-}
+	stack<int> s;
+	void traversal(TreeNode* root, stack<int>& s) {
+		if (root) {
+			traversal(root->right, s);
+			s.push(root->val);
+			traversal(root->left, s);
+		}
+	}
 public:
-  BSTIterator(TreeNode *root) {
-   traversal(root, s);
-}
+	BSTIterator(TreeNode *root) {
+		traversal(root, s);
+	}
 
-    /** @return whether we have a next smallest number */
-bool hasNext() {
-   return !s.empty();
-}
+	/** @return whether we have a next smallest number */
+	bool hasNext() {
+		return !s.empty();
+	}
 
-    /** @return the next smallest number */
-int next() {
-   int num = s.top();
-   s.pop();
-   return num;
-}
+	/** @return the next smallest number */
+	int next() {
+		int num = s.top();
+		s.pop();
+		return num;
+	}
 };
 
 /**
@@ -5034,54 +5155,59 @@ int next() {
  * BSTIterator i = BSTIterator(root);
  * while (i.hasNext()) cout << i.next();
  */
-/*
+ /*
 
-174. Dungeon Game (Hard)
+ 174. Dungeon Game (Hard)
 
-The demons had captured the princess (P) and imprisoned her in the bottom-right corner of a dungeon. The dungeon consists of M x N rooms laid out in a 2D grid. Our valiant knight (K) was initially positioned in the top-left room and must fight his way through the dungeon to rescue the princess.
+ The demons had captured the princess (P) and imprisoned her in the bottom-right corner of a dungeon. The dungeon consists of M x N rooms laid out in a 2D grid. Our valiant knight (K) was initially positioned in the top-left room and must fight his way through the dungeon to rescue the princess.
 
-The knight has an initial health point represented by a positive integer. If at any point his health point drops to 0 or below, he dies immediately.
+ The knight has an initial health point represented by a positive integer. If at any point his health point drops to 0 or below, he dies immediately.
 
-Some of the rooms are guarded by demons, so the knight loses health (negative integers) upon entering these rooms; other rooms are either empty (0's) or contain magic orbs that increase the knight's health (positive integers).
+ Some of the rooms are guarded by demons, so the knight loses health (negative integers) upon entering these rooms; other rooms are either empty (0's) or contain magic orbs that increase the knight's health (positive integers).
 
-In order to reach the princess as quickly as possible, the knight decides to move only rightward or downward in each step.
+ In order to reach the princess as quickly as possible, the knight decides to move only rightward or downward in each step.
 
 
-Write a function to determine the knight's minimum initial health so that he is able to rescue the princess.
+ Write a function to determine the knight's minimum initial health so that he is able to rescue the princess.
 
-For example, given the dungeon below, the initial health of the knight must be at least 7 if he follows the optimal path RIGHT-> RIGHT -> DOWN -> DOWN.
+ For example, given the dungeon below, the initial health of the knight must be at least 7 if he follows the optimal path RIGHT-> RIGHT -> DOWN -> DOWN.
 
-*/
+ */
 class Solution {
 public:
-    int calculateMinimumHP(vector<vector<int>>& dungeon) {
-        vector<int> t(dungeon[0].size(), 0);
-        for (int i = dungeon.size() - 1; i >= 0; i--) {
-            for (int j = dungeon[0].size() - 1; j >= 0; j--) {
-                if (i == dungeon.size() - 1 && j == dungeon[0].size() - 1) {
-                    t[j] = update(dungeon[i][j], 1);
-                } else if (i == dungeon.size() - 1) {
-                    t[j] = update(dungeon[i][j], t[j + 1]);
-                } else if (j == dungeon[0].size() - 1) {
-                    t[j] = update(dungeon[i][j], t[j]);
-                } else {
-                    t[j] = min(update(dungeon[i][j], t[j + 1]), update(dungeon[i][j], t[j]));
-                }
-            }
-        }
-        return t[0];
-    }
+	int calculateMinimumHP(vector<vector<int>>& dungeon) {
+		vector<int> t(dungeon[0].size(), 0);
+		for (int i = dungeon.size() - 1; i >= 0; i--) {
+			for (int j = dungeon[0].size() - 1; j >= 0; j--) {
+				if (i == dungeon.size() - 1 && j == dungeon[0].size() - 1) {
+					t[j] = update(dungeon[i][j], 1);
+				}
+				else if (i == dungeon.size() - 1) {
+					t[j] = update(dungeon[i][j], t[j + 1]);
+				}
+				else if (j == dungeon[0].size() - 1) {
+					t[j] = update(dungeon[i][j], t[j]);
+				}
+				else {
+					t[j] = min(update(dungeon[i][j], t[j + 1]), update(dungeon[i][j], t[j]));
+				}
+			}
+		}
+		return t[0];
+	}
 private:
-    int update(int cur, int pre) {
-        if (cur < 0) {
-            return -cur + pre;
-        } else if (cur >= pre) {
-            return 1;
-        } else {
-            return pre - cur;
-        }
-        return 0;
-    }
+	int update(int cur, int pre) {
+		if (cur < 0) {
+			return -cur + pre;
+		}
+		else if (cur >= pre) {
+			return 1;
+		}
+		else {
+			return pre - cur;
+		}
+		return 0;
+	}
 };
 /*
 
@@ -5106,7 +5232,7 @@ public:
 	}
 	static bool comp(int i, int j) {
 		return to_string(i) + to_string(j) > to_string(j) + to_string(i);
-	} 
+	}
 };
 /*
 
@@ -5127,17 +5253,17 @@ Related problem: Rotate Array
 */
 class Solution {
 public:
-    void reverseWords(string &s) {
-        int i = 0, j = 0;
-        while (j < s.size()) {
-            while(j < s.size() && s[j] != ' ') {
-                j++;
-            }
-            reverse(s.begin() + i, s.begin() + j);
-            i = ++j;
-        }
-        reverse(s.begin(), s.end());
-    }
+	void reverseWords(string &s) {
+		int i = 0, j = 0;
+		while (j < s.size()) {
+			while (j < s.size() && s[j] != ' ') {
+				j++;
+			}
+			reverse(s.begin() + i, s.begin() + j);
+			i = ++j;
+		}
+		reverse(s.begin(), s.end());
+	}
 };
 /*
 
@@ -5157,16 +5283,16 @@ Return:
 */
 class Solution {
 public:
-    vector<string> findRepeatedDnaSequences(string s) {
-        unordered_map<int, int> mapping;
-        vector<string> res;
-        for (int t = 0, i = 0; i < s.size(); i++) {
-            if (mapping[t = t << 3 & 0x3FFFFFFF | s[i] & 7]++ == 1) {
-                res.push_back(s.substr(i - 9, 10));
-            }
-        }
-        return res;
-    }
+	vector<string> findRepeatedDnaSequences(string s) {
+		unordered_map<int, int> mapping;
+		vector<string> res;
+		for (int t = 0, i = 0; i < s.size(); i++) {
+			if (mapping[t = t << 3 & 0x3FFFFFFF | s[i] & 7]++ == 1) {
+				res.push_back(s.substr(i - 9, 10));
+			}
+		}
+		return res;
+	}
 };
 /*
 
@@ -5182,16 +5308,16 @@ Try to come up as many solutions as you can, there are at least 3 different ways
 */
 class Solution {
 public:
-    void rotate(vector<int>& nums, int k) {
-        int n = nums.size();
-        if (n <= 1) {
-            return;
-        }
-        k %= n;
-        reverse(nums.begin(), nums.begin() + (n - k));
-        reverse(nums.begin() + (n - k), nums.end());
-        reverse(nums.begin(), nums.end());
-    }
+	void rotate(vector<int>& nums, int k) {
+		int n = nums.size();
+		if (n <= 1) {
+			return;
+		}
+		k %= n;
+		reverse(nums.begin(), nums.begin() + (n - k));
+		reverse(nums.begin() + (n - k), nums.end());
+		reverse(nums.begin(), nums.end());
+	}
 };
 /*
 
@@ -5204,16 +5330,16 @@ For example, given input 43261596 (represented in binary as 00000010100101000001
 */
 class Solution {
 public:
-   uint32_t reverseBits(uint32_t n) {
-      uint32_t res = 0;
-      int index = 31;
-      while (n > 0) {
-         res |= (n & 0x1) << index;
-         n >>= 1;
-         index--;
-     }
-     return res;
- }
+	uint32_t reverseBits(uint32_t n) {
+		uint32_t res = 0;
+		int index = 31;
+		while (n > 0) {
+			res |= (n & 0x1) << index;
+			n >>= 1;
+			index--;
+		}
+		return res;
+	}
 };
 /*
 
@@ -5226,14 +5352,14 @@ For example, the 32-bit integer ’11' has binary representation 000000000000000
 */
 class Solution {
 public:
-   int hammingWeight(uint32_t n) {
-      int res;
-      while (n > 0) {
-         res += n & 0x1;
-         n = n >> 1;
-     }
-     return res;
- }
+	int hammingWeight(uint32_t n) {
+		int res;
+		while (n > 0) {
+			res += n & 0x1;
+			n = n >> 1;
+		}
+		return res;
+	}
 };
 /*
 
@@ -5248,9 +5374,9 @@ class Solution {
 public:
 	int rob(vector<int>& nums) {
 		int n = nums.size();
-		switch(n) {
-			case 0: return 0; break;
-			case 1: return nums[0]; break; 
+		switch (n) {
+		case 0: return 0; break;
+		case 1: return nums[0]; break;
 		}
 		vector<int> res(n, 0);
 		res[0] = nums[0];
@@ -5279,27 +5405,28 @@ Example: 19 is a happy number
 */
 class Solution {
 public:
-    int cal(int n) {
-        int temp = 0;
-        while (n) {
-            temp += pwo(n % 10, 2);
-            n /= 10;
-        }
-        return temp;
-    }
-    bool isHappy(int n) {
-        unordered_map<int, bool> mapping;
-        int sum = cal(n);
-        while(sum != 1) {
-            if (mapping[sum]) {
-                return false;
-            } else {
-                mapping[sum] = true;
-                sum = cal(sum);
-            }
-        }
-        return true;
-    }
+	int cal(int n) {
+		int temp = 0;
+		while (n) {
+			temp += pwo(n % 10, 2);
+			n /= 10;
+		}
+		return temp;
+	}
+	bool isHappy(int n) {
+		unordered_map<int, bool> mapping;
+		int sum = cal(n);
+		while (sum != 1) {
+			if (mapping[sum]) {
+				return false;
+			}
+			else {
+				mapping[sum] = true;
+				sum = cal(sum);
+			}
+		}
+		return true;
+	}
 };
 /*
 
@@ -5322,18 +5449,19 @@ Return: 1 --> 2 --> 3 --> 4 --> 5
  */
 class Solution {
 public:
-    ListNode* removeElements(ListNode* head, int val) {
-        ListNode *dummy = new ListNode(-1), *p = dummy;
-        dummy -> next = head;
-        while (p != NULL) {
-            if (p -> next != NULL && p -> next -> val == val) {
-                p -> next = p -> next -> next;
-            } else {
-                p = p -> next;
-            }
-        }
-        return dummy -> next;
-    }
+	ListNode* removeElements(ListNode* head, int val) {
+		ListNode *dummy = new ListNode(-1), *p = dummy;
+		dummy->next = head;
+		while (p != NULL) {
+			if (p->next != NULL && p->next->val == val) {
+				p->next = p->next->next;
+			}
+			else {
+				p = p->next;
+			}
+		}
+		return dummy->next;
+	}
 };
 /*
 
@@ -5346,20 +5474,20 @@ Count the number of prime numbers less than a non-negative number, n.
 */
 class Solution {
 public:
-    int countPrimes(int n) {
-        if (n <= 1) return 0;
-        vector<int> prime(n, 0);
-        int cnt = 0;
-        for(int i = 2; i < n; i++) {
-            if(prime[i]==0) {
-                cnt++;
-                for(int j = 2; i * j < n; j++) {
-                    prime[i * j] = 1;
-                }
-            }
-        }
-        return cnt;
-    }
+	int countPrimes(int n) {
+		if (n <= 1) return 0;
+		vector<int> prime(n, 0);
+		int cnt = 0;
+		for (int i = 2; i < n; i++) {
+			if (prime[i] == 0) {
+				cnt++;
+				for (int j = 2; i * j < n; j++) {
+					prime[i * j] = 1;
+				}
+			}
+		}
+		return cnt;
+	}
 };
 /*
 
@@ -5384,42 +5512,45 @@ You may assume both s and t have the same length.
 */
 class Solution {
 public:
-    bool isIsomorphic(string s, string t) {
-        if (s.length() == 0) {
-            return true;
-        }
-        unordered_map<char, char> mapping;
-        set<char> Set;  
-        for (int i = 0; i < s.length(); i++) {
-            char s1 = s[i], t1 = t[i];
-            if (mapping.find(s1) != mapping.end()) {
-                if (mapping[s1] != t1) return false;
-            } else {
-                if (Set.count(t1) == 1) {
-                    return false;
-                } else {
-                    mapping[s1] = t1;
-                    Set.insert(t1);
-                }
-            }
-        }
-        return true;
-    }
+	bool isIsomorphic(string s, string t) {
+		if (s.length() == 0) {
+			return true;
+		}
+		unordered_map<char, char> mapping;
+		set<char> Set;
+		for (int i = 0; i < s.length(); i++) {
+			char s1 = s[i], t1 = t[i];
+			if (mapping.find(s1) != mapping.end()) {
+				if (mapping[s1] != t1) return false;
+			}
+			else {
+				if (Set.count(t1) == 1) {
+					return false;
+				}
+				else {
+					mapping[s1] = t1;
+					Set.insert(t1);
+				}
+			}
+		}
+		return true;
+	}
 };
 class Solution {
 public:
-    bool isIsomorphic(string s, string t) {
-        int cs[128] = {0}, ct[128] = {0};
-        for(int i = 0; i < s.size(); i++) {
-            if(cs[s[i]] != ct[t[i]]) {
-                return false;
-            } else if (!cs[s[i]]) {
-                cs[s[i]] = i + 1;
-                ct[t[i]] = i + 1;
-            }
-        }
-        return true;
-    }
+	bool isIsomorphic(string s, string t) {
+		int cs[128] = { 0 }, ct[128] = { 0 };
+		for (int i = 0; i < s.size(); i++) {
+			if (cs[s[i]] != ct[t[i]]) {
+				return false;
+			}
+			else if (!cs[s[i]]) {
+				cs[s[i]] = i + 1;
+				ct[t[i]] = i + 1;
+			}
+		}
+		return true;
+	}
 };
 /*
 
@@ -5444,31 +5575,31 @@ A linked list can be reversed either iteratively or recursively. Could you imple
  */
 class Solution {
 public:
-    ListNode* reverseList(ListNode* head) {
-        if (head == NULL || head -> next == NULL) {
-            return head;
-        }
-        ListNode *p = head, *prev = NULL;
-        while (head != NULL) {
-            ListNode *post = head -> next;
-            head -> next = prev;
-            prev = head;
-            head = post;
-        }
-        return prev;
-    }
+	ListNode* reverseList(ListNode* head) {
+		if (head == NULL || head->next == NULL) {
+			return head;
+		}
+		ListNode *p = head, *prev = NULL;
+		while (head != NULL) {
+			ListNode *post = head->next;
+			head->next = prev;
+			prev = head;
+			head = post;
+		}
+		return prev;
+	}
 };
 class Solution {
 public:
-    ListNode* reverseList(ListNode* head) {
-        if (head == NULL || head -> next == NULL) {
-            return head;
-        }
-        ListNode *newhead = reverseList(head -> next);
-        head -> next -> next = head;
-        head -> next = NULL;
-        return newhead;
-    }
+	ListNode* reverseList(ListNode* head) {
+		if (head == NULL || head->next == NULL) {
+			return head;
+		}
+		ListNode *newhead = reverseList(head->next);
+		head->next->next = head;
+		head->next = NULL;
+		return newhead;
+	}
 };
 /*
 
@@ -5488,19 +5619,19 @@ If you have figured out the O(n) solution, try coding another solution of which 
 */
 class Solution {
 public:
-    int minSubArrayLen(int s, vector<int>& nums) {
-        int l = 0, r = 0, _sum = 0, _size = nums.size(), len_min = _size + 1;
-        while (r < _size) {
-            while (r < _size && _sum < s) {
-                _sum += nums[r++];
-            }
-            while (_sum >= s) {
-                _sum -= nums[l++];
-            }
-            len_min = min(len_min, r - l + 1);
-        }
-        return len_min > _size ? 0 : len_min;
-    }
+	int minSubArrayLen(int s, vector<int>& nums) {
+		int l = 0, r = 0, _sum = 0, _size = nums.size(), len_min = _size + 1;
+		while (r < _size) {
+			while (r < _size && _sum < s) {
+				_sum += nums[r++];
+			}
+			while (_sum >= s) {
+				_sum -= nums[l++];
+			}
+			len_min = min(len_min, r - l + 1);
+		}
+		return len_min > _size ? 0 : len_min;
+	}
 };
 /*
 
@@ -5539,7 +5670,7 @@ Find the kth largest element in an unsorted array. Note that it is the kth large
 For example,
 Given [3,2,1,5,6,4] and k = 2, return 5.
 
-Note: 
+Note:
 You may assume k is always valid, 1 ≤ k ≤ array's length.
 
 */
@@ -5547,7 +5678,7 @@ class Solution {
 public:
 	int findKthLargest(vector<int>& nums, int k) {
 		sort(nums.begin(), nums.end(), greater<int>());
-		return nums[k-1];
+		return nums[k - 1];
 	}
 };
 /*
@@ -5575,24 +5706,24 @@ Output:
 */
 class Solution {
 public:
-    vector<vector<int>> combinationSum3(int k, int n) {
-        vector<vector<int>> res;
-        vector<int> res_sub;
-        combinationSum3(k, n, 1, res, res_sub);
-        return res;
-    }
+	vector<vector<int>> combinationSum3(int k, int n) {
+		vector<vector<int>> res;
+		vector<int> res_sub;
+		combinationSum3(k, n, 1, res, res_sub);
+		return res;
+	}
 private:
-    void combinationSum3(int k, int n, int start, vector<vector<int>>& res, vector<int>& res_sub) {
-        if (n == 0 && res_sub.size() == k) {
-            res.push_back(res_sub);
-            return;
-        }
-        for (int i = start; i < 10 && i <= n && res_sub.size() < k; i++) {
-            res_sub.push_back(i);
-            combinationSum3(k, n - i, i + 1, res, res_sub);
-            res_sub.pop_back();
-        }
-    }
+	void combinationSum3(int k, int n, int start, vector<vector<int>>& res, vector<int>& res_sub) {
+		if (n == 0 && res_sub.size() == k) {
+			res.push_back(res_sub);
+			return;
+		}
+		for (int i = start; i < 10 && i <= n && res_sub.size() < k; i++) {
+			res_sub.push_back(i);
+			combinationSum3(k, n - i, i + 1, res, res_sub);
+			res_sub.pop_back();
+		}
+	}
 };
 /*
 
@@ -5603,16 +5734,16 @@ Given an array of integers, find if the array contains any duplicates. Your func
 */
 class Solution {
 public:
-    bool containsDuplicate(vector<int>& nums) {
-        unordered_map<int, bool> mapping;
-        for (int i : nums) {
-            if (mapping[i]) {
-                return true;
-            }
-            mapping[i] = true;
-        }
-        return false;
-    }
+	bool containsDuplicate(vector<int>& nums) {
+		unordered_map<int, bool> mapping;
+		for (int i : nums) {
+			if (mapping[i]) {
+				return true;
+			}
+			mapping[i] = true;
+		}
+		return false;
+	}
 };
 /*
 219. Contains Duplicate II (Easy)
@@ -5622,19 +5753,19 @@ Given an array of integers and an integer k, find out whether there are two dist
 */
 class Solution {
 public:
-    bool containsNearbyDuplicate(vector<int>& nums, int k) {
-        if (nums.size() < 2 || k < 1) {
-            return false;
-        }
-        unordered_map<int, int> mapping;
-        for (int i = 0; i < nums.size(); ++i) {
-            if (mapping.count(nums[i]) && i - mapping[nums[i]] <= k) {
-                return true;
-            }
-            mapping[nums[i]] = i;
-        }
-        return false;
-    }
+	bool containsNearbyDuplicate(vector<int>& nums, int k) {
+		if (nums.size() < 2 || k < 1) {
+			return false;
+		}
+		unordered_map<int, int> mapping;
+		for (int i = 0; i < nums.size(); ++i) {
+			if (mapping.count(nums[i]) && i - mapping[nums[i]] <= k) {
+				return true;
+			}
+			mapping[nums[i]] = i;
+		}
+		return false;
+	}
 };
 /*
 
@@ -5645,22 +5776,22 @@ Given an array of integers, find out whether there are two distinct indices i an
 */
 class Solution {
 public:
-    bool containsNearbyAlmostDuplicate(vector<int>& nums, int k, int t) {
-        if (nums.size() < 2) return false;
-        vector<pair<long, int>> withIndex;
-        for(int i = 0; i < nums.size(); i++) 
-            withIndex.emplace_back(nums[i], i);
-        sort(withIndex.begin(), withIndex.end(), [](const pair<long, int>& a, const pair<long, int>&b) { return a.first<b.first; });
-        for(int i = 0; i < nums.size(); i++) {
-            int j = i + 1;
-            while(j < nums.size()) {
-                if(withIndex[j].first - withIndex[i].first > t) break;
-                if(abs(withIndex[j].second-withIndex[i].second) <= k) return true;
-                j++;
-            }
-        }
-        return false;
-    }
+	bool containsNearbyAlmostDuplicate(vector<int>& nums, int k, int t) {
+		if (nums.size() < 2) return false;
+		vector<pair<long, int>> withIndex;
+		for (int i = 0; i < nums.size(); i++)
+			withIndex.emplace_back(nums[i], i);
+		sort(withIndex.begin(), withIndex.end(), [](const pair<long, int>& a, const pair<long, int>&b) { return a.first < b.first; });
+		for (int i = 0; i < nums.size(); i++) {
+			int j = i + 1;
+			while (j < nums.size()) {
+				if (withIndex[j].first - withIndex[i].first > t) break;
+				if (abs(withIndex[j].second - withIndex[i].second) <= k) return true;
+				j++;
+			}
+		}
+		return false;
+	}
 };
 /*
 
@@ -5679,25 +5810,26 @@ Return 4.
 */
 class Solution {
 public:
-    int maximalSquare(vector<vector<char>>& matrix) {
-        if (matrix.empty()) {
-            return 0;
-        }
-        int row = matrix.size(), col = matrix[0].size();
-        vector<vector<int>> t(row, vector<int>(col, 0));
-        int cur = 0;
-        for (int i = 0; i < matrix.size(); i++) {
-            for (int j = 0; j < matrix[0].size(); j++) {
-                if (i == 0 || j == 0) {
-                    t[i][j] = matrix[i][j] - '0';
-                } else if (matrix[i][j] == '1'){
-                    t[i][j] = min(min(t[i - 1][j - 1], t[i][j - 1]), t[i - 1][j]) + 1;
-                }
-                cur = max(cur, t[i][j]);
-            }
-        }
-        return cur * cur;
-    }
+	int maximalSquare(vector<vector<char>>& matrix) {
+		if (matrix.empty()) {
+			return 0;
+		}
+		int row = matrix.size(), col = matrix[0].size();
+		vector<vector<int>> t(row, vector<int>(col, 0));
+		int cur = 0;
+		for (int i = 0; i < matrix.size(); i++) {
+			for (int j = 0; j < matrix[0].size(); j++) {
+				if (i == 0 || j == 0) {
+					t[i][j] = matrix[i][j] - '0';
+				}
+				else if (matrix[i][j] == '1') {
+					t[i][j] = min(min(t[i - 1][j - 1], t[i][j - 1]), t[i - 1][j]) + 1;
+				}
+				cur = max(cur, t[i][j]);
+			}
+		}
+		return cur * cur;
+	}
 };
 /*
 
@@ -5706,8 +5838,8 @@ public:
 Given a complete binary tree, count the number of nodes.
 
 Definition of a complete binary tree from Wikipedia:
-In a complete binary tree every level, except possibly the last, is completely filled, 
-and all nodes in the last level are as far left as possible. It can have between 1 and 
+In a complete binary tree every level, except possibly the last, is completely filled,
+and all nodes in the last level are as far left as possible. It can have between 1 and
 2h nodes inclusive at the last level h.
 
 */
@@ -5722,29 +5854,30 @@ and all nodes in the last level are as far left as possible. It can have between
  */
 class Solution {
 public:
-  int countNodes(TreeNode* root) {
-   if (!root) return 0;
-   int h = 0, sum = 0;
-   TreeNode *t = root, *t0 = NULL;
-   while (t) {
-    t = t -> left;
-    h++;
-}
-t = root;
-int level = h - 2;
-while (level > -1) {
-    t0 = t -> left;
-    for (int i = 0; i < level; i++) 
-     t0 = t0 -> right;
- if (t0) {
-     sum += 1<<level;
-     t = t -> right;
- } else t = t -> left;
- level--;
-}
-if (t) sum++;
-return sum+((1<<(h-1))-1);
-}
+	int countNodes(TreeNode* root) {
+		if (!root) return 0;
+		int h = 0, sum = 0;
+		TreeNode *t = root, *t0 = NULL;
+		while (t) {
+			t = t->left;
+			h++;
+		}
+		t = root;
+		int level = h - 2;
+		while (level > -1) {
+			t0 = t->left;
+			for (int i = 0; i < level; i++)
+				t0 = t0->right;
+			if (t0) {
+				sum += 1 << level;
+				t = t->right;
+			}
+			else t = t->left;
+			level--;
+		}
+		if (t) sum++;
+		return sum + ((1 << (h - 1)) - 1);
+	}
 };
 /*
 
@@ -5759,15 +5892,16 @@ Assume that the total area is never beyond the maximum possible value of int.
 */
 class Solution {
 public:
-    int computeArea(int A, int B, int C, int D, int E, int F, int G, int H) {
-        int are = (C - A) * (D - B) + (G - E) * (H -F);
-        if (E >= C || G <= A || F >= D || H <= B) {
-            return are;
-        } else {
-            are -= (min(C, G) - max(A, E)) * (min(D, H) - max(B, F));
-        }
-        return are;
-    }
+	int computeArea(int A, int B, int C, int D, int E, int F, int G, int H) {
+		int are = (C - A) * (D - B) + (G - E) * (H - F);
+		if (E >= C || G <= A || F >= D || H <= B) {
+			return are;
+		}
+		else {
+			are -= (min(C, G) - max(A, E)) * (min(D, H) - max(B, F));
+		}
+		return are;
+	}
 };
 /*
 
@@ -5794,49 +5928,50 @@ You may assume that all operations are valid (for example, no pop or top operati
 */
 class Stack {
 public:
-    queue<int> q1,q2;
-    // Push element x onto stack.
-    void push(int x) {
-        if (q1.empty()) {
-            q1.push(x);
-            while (!q2.empty()) {
-                q1.push(q2.front());
-                q2.pop();
-            }
-        } else {
-            q2.push(x);
-            while (!q1.empty()) {
-                q2.push(q1.front());
-                q1.pop();
-            }
-        }
-    }
+	queue<int> q1, q2;
+	// Push element x onto stack.
+	void push(int x) {
+		if (q1.empty()) {
+			q1.push(x);
+			while (!q2.empty()) {
+				q1.push(q2.front());
+				q2.pop();
+			}
+		}
+		else {
+			q2.push(x);
+			while (!q1.empty()) {
+				q2.push(q1.front());
+				q1.pop();
+			}
+		}
+	}
 
-    // Removes the element on top of the stack.
-    void pop() {
-        if (!q1.empty()) {
-            q1.pop();
-        }
-        if (!q2.empty()) {
-            q2.pop();
-        }
-    }
+	// Removes the element on top of the stack.
+	void pop() {
+		if (!q1.empty()) {
+			q1.pop();
+		}
+		if (!q2.empty()) {
+			q2.pop();
+		}
+	}
 
-    // Get the top element.
-    int top() {
-        if (!q1.empty()) {
-            return q1.front();  
-        }
-        if (!q2.empty()) {
-            return q2.front();
-        }
-        return -1;
-    }
+	// Get the top element.
+	int top() {
+		if (!q1.empty()) {
+			return q1.front();
+		}
+		if (!q2.empty()) {
+			return q2.front();
+		}
+		return -1;
+	}
 
-    // Return whether the stack is empty.
-    bool empty() {
-        return q1.empty() && q2.empty(); 
-    }
+	// Return whether the stack is empty.
+	bool empty() {
+		return q1.empty() && q2.empty();
+	}
 };
 /*
 
@@ -5844,13 +5979,13 @@ public:
 
 Invert a binary tree.
 
-     4
+	 4
    /   \
   2     7
  / \   / \
 1   3 6   9
 to
-     4
+	 4
    /   \
   7     2
  / \   / \
@@ -5868,16 +6003,16 @@ to
  */
 class Solution {
 public:
-  TreeNode* invertTree(TreeNode* root) {
-   if (!root || !(root -> left) && !(root -> right))
-    return root;
-else {
-    swap(root -> left, root -> right);
-    invertTree(root -> left);
-    invertTree(root -> right);
-}
-return root;
-}
+	TreeNode* invertTree(TreeNode* root) {
+		if (!root || !(root->left) && !(root->right))
+			return root;
+		else {
+			swap(root->left, root->right);
+			invertTree(root->left);
+			invertTree(root->right);
+		}
+		return root;
+	}
 };
 /*
 
@@ -5890,21 +6025,21 @@ For example, given [0,1,2,4,5,7], return ["0->2","4->5","7"].
 */
 class Solution {
 public:
-    vector<string> summaryRanges(vector<int>& nums) {
-        vector<string> res;
-        int lower = 0;
-        nums.push_back(INT_MAX);
-        for (int i = 1; i < nums.size(); i++) {
-            if (nums[i] > nums[i - 1] + 1) {
-                res.push_back(subrange(nums[lower], nums[i - 1]));
-                lower = i;
-            }
-        }
-        return res;
-    }
-    string subrange(int lower, int higher) {
-        return lower == higher ? to_string(lower) : to_string(lower) + "->" + to_string(higher);
-    }
+	vector<string> summaryRanges(vector<int>& nums) {
+		vector<string> res;
+		int lower = 0;
+		nums.push_back(INT_MAX);
+		for (int i = 1; i < nums.size(); i++) {
+			if (nums[i] > nums[i - 1] + 1) {
+				res.push_back(subrange(nums[lower], nums[i - 1]));
+				lower = i;
+			}
+		}
+		return res;
+	}
+	string subrange(int lower, int higher) {
+		return lower == higher ? to_string(lower) : to_string(lower) + "->" + to_string(higher);
+	}
 };
 /*
 
@@ -5925,33 +6060,38 @@ public:
 		int res1, res2, num1 = 0, num2 = 0;
 		for (int i = 0; i < nums.size(); i++) {
 			if (res1 == nums[i]) {
-                num1++;
-            } else if (res2 == nums[i]) {
-                num2++;
-            } else if (num1 == 0) {
-                res1 = nums[i];
-                num1++;
-            } else if (num2 == 0) {
-                res2 = nums[i];
-                num2++;
-            } else {
-                num1--;
-                num2--;
-            }
-        }
-        num1 = 0;
-        num2 = 0;
-        for (int i = 0; i < nums.size(); i++) {
-         if (res1 == nums[i]) {
-            num1++;
-        } else if (res2 == nums[i]) {
-            num2++;
-        }
-    }
-    if (num1 > nums.size() / 3) res.push_back(res1);  
-    if (num2 > nums.size() / 3) res.push_back(res2);
-    return res;
-}
+				num1++;
+			}
+			else if (res2 == nums[i]) {
+				num2++;
+			}
+			else if (num1 == 0) {
+				res1 = nums[i];
+				num1++;
+			}
+			else if (num2 == 0) {
+				res2 = nums[i];
+				num2++;
+			}
+			else {
+				num1--;
+				num2--;
+			}
+		}
+		num1 = 0;
+		num2 = 0;
+		for (int i = 0; i < nums.size(); i++) {
+			if (res1 == nums[i]) {
+				num1++;
+			}
+			else if (res2 == nums[i]) {
+				num2++;
+			}
+		}
+		if (num1 > nums.size() / 3) res.push_back(res1);
+		if (num2 > nums.size() / 3) res.push_back(res2);
+		return res;
+	}
 };
 /*
 
@@ -5959,7 +6099,7 @@ public:
 
 Given a binary search tree, write a function kthSmallest to find the kth smallest element in it.
 
-Note: 
+Note:
 You may assume k is always valid, 1 ≤ k ≤ BST's total elements.
 
 Follow up:
@@ -5983,39 +6123,39 @@ The optimal runtime complexity is O(height of BST).
  */
 class Solution {
 public:
-  int kthSmallest(TreeNode* root, int k) {
-   vector<int> res;
-   traversal(root, res);
-   return res[k - 1];
-}
-void traversal(TreeNode* root, vector<int>& res) {
-   if (root) {
-    traversal(root -> left, res);
-    res.push_back(root -> val);
-    traversal(root -> right, res);
-}
-}
+	int kthSmallest(TreeNode* root, int k) {
+		vector<int> res;
+		traversal(root, res);
+		return res[k - 1];
+	}
+	void traversal(TreeNode* root, vector<int>& res) {
+		if (root) {
+			traversal(root->left, res);
+			res.push_back(root->val);
+			traversal(root->right, res);
+		}
+	}
 };
 class Solution {
 public:
-  int kthSmallest(TreeNode* root, int k) {
-   stack<TreeNode*> s;
-   int cnt = 0, res = root -> val;
-   while (true) {
-    TreeNode* temp = root;
-    while(temp) {
-     s.push(temp);
-     temp = temp -> left;
- }
- if (s.empty() || cnt == k) return res;
- cnt++;
- root = s.top();
- s.pop();
- res = root -> val;
- root = root -> right;
-}
-return res;
-}
+	int kthSmallest(TreeNode* root, int k) {
+		stack<TreeNode*> s;
+		int cnt = 0, res = root->val;
+		while (true) {
+			TreeNode* temp = root;
+			while (temp) {
+				s.push(temp);
+				temp = temp->left;
+			}
+			if (s.empty() || cnt == k) return res;
+			cnt++;
+			root = s.top();
+			s.pop();
+			res = root->val;
+			root = root->right;
+		}
+		return res;
+	}
 };
 /*
 
@@ -6026,9 +6166,9 @@ Given an integer, write a function to determine if it is a power of two.
 */
 class Solution {
 public:
-    bool isPowerOfTwo(int n) {
-        return n > 0 && (n & (n - 1)) == 0;
-    }
+	bool isPowerOfTwo(int n) {
+		return n > 0 && (n & (n - 1)) == 0;
+	}
 };
 /*
 
@@ -6050,34 +6190,34 @@ You may assume that all operations are valid (for example, no pop or peek operat
 */
 class Queue {
 public:
-    stack<int> s1, s2;
-    // Push element x to the back of queue.
-    void push(int x) {
-        while (!s2.empty()) {
-            s1.push(s2.top());
-            s2.pop();
-        }
-        s1.push(x);
-        while (!s1.empty()) {
-            s2.push(s1.top());
-            s1.pop();
-        }
-    }
+	stack<int> s1, s2;
+	// Push element x to the back of queue.
+	void push(int x) {
+		while (!s2.empty()) {
+			s1.push(s2.top());
+			s2.pop();
+		}
+		s1.push(x);
+		while (!s1.empty()) {
+			s2.push(s1.top());
+			s1.pop();
+		}
+	}
 
-    // Removes the element from in front of queue.
-    void pop(void) {
-        s2.pop();
-    }
+	// Removes the element from in front of queue.
+	void pop(void) {
+		s2.pop();
+	}
 
-    // Get the front element.
-    int peek(void) {
-        return s2.top();
-    }
+	// Get the front element.
+	int peek(void) {
+		return s2.top();
+	}
 
-    // Return whether the queue is empty.
-    bool empty(void) {
-        return s2.empty();
-    }
+	// Return whether the queue is empty.
+	bool empty(void) {
+		return s2.empty();
+	}
 };
 /*
 
@@ -6121,40 +6261,40 @@ Given a singly linked list, determine if it is a palindrome.
  */
 class Solution {
 public:
-    bool isPalindrome(ListNode* head) {
-        if (head == NULL || head -> next == NULL) {
-            return true;
-        }
-        ListNode *mid = head, *last = head;
-        while (last -> next && last -> next -> next) {
-            mid = mid -> next;
-            last = last -> next -> next;
-        }
-        mid -> next = reverse(mid -> next);
-        mid = mid -> next;
-        while (mid != NULL) {
-            if (mid -> val != head -> val) {
-                return false;
-            }
-            mid = mid -> next;
-            head = head -> next;
-        }
-        return true;
-    }
+	bool isPalindrome(ListNode* head) {
+		if (head == NULL || head->next == NULL) {
+			return true;
+		}
+		ListNode *mid = head, *last = head;
+		while (last->next && last->next->next) {
+			mid = mid->next;
+			last = last->next->next;
+		}
+		mid->next = reverse(mid->next);
+		mid = mid->next;
+		while (mid != NULL) {
+			if (mid->val != head->val) {
+				return false;
+			}
+			mid = mid->next;
+			head = head->next;
+		}
+		return true;
+	}
 private:
-    ListNode* reverse(ListNode* head) {
-        if (head == NULL || head -> next == NULL) {
-            return head;
-        }
-        ListNode *p = head, *prev = NULL;
-        while (head != NULL) {
-            ListNode *post = head -> next;
-            head -> next = prev;
-            prev = head;
-            head = post;
-        }
-        return prev;
-    }
+	ListNode* reverse(ListNode* head) {
+		if (head == NULL || head->next == NULL) {
+			return head;
+		}
+		ListNode *p = head, *prev = NULL;
+		while (head != NULL) {
+			ListNode *post = head->next;
+			head->next = prev;
+			prev = head;
+			head = post;
+		}
+		return prev;
+	}
 };
 /*
 
@@ -6164,13 +6304,13 @@ Given a binary search tree (BST), find the lowest common ancestor (LCA) of two g
 
 According to the definition of LCA on Wikipedia: “The lowest common ancestor is defined between two nodes v and w as the lowest node in T that has both v and w as descendants (where we allow a node to be a descendant of itself).”
 
-        _______6______
-       /              \
-    ___2__          ___8__
+		_______6______
+	   /              \
+	___2__          ___8__
    /      \        /      \
    0      _4       7       9
-         /  \
-         3   5
+		 /  \
+		 3   5
 For example, the lowest common ancestor (LCA) of nodes 2 and 8 is 6. Another example is LCA of nodes 2 and 4 is 2, since a node can be a descendant of itself according to the LCA definition.
 
 */
@@ -6185,16 +6325,16 @@ For example, the lowest common ancestor (LCA) of nodes 2 and 8 is 6. Another exa
  */
 class Solution {
 public:
-  TreeNode* lowestCommonAncestor(TreeNode* root, TreeNode* p, TreeNode* q) {
-   if (min(p -> val, q -> val) < root -> val && max(p -> val, q -> val) > root -> val)
-    return root;
-else if (root -> val < min(p -> val, q -> val))
-    return lowestCommonAncestor(root -> right, p, q);
-else if (root -> val > max(p -> val, q -> val))
-    return lowestCommonAncestor(root -> left, p, q);
-else
-    return root;
-}
+	TreeNode* lowestCommonAncestor(TreeNode* root, TreeNode* p, TreeNode* q) {
+		if (min(p->val, q->val) < root->val && max(p->val, q->val) > root->val)
+			return root;
+		else if (root->val < min(p->val, q->val))
+			return lowestCommonAncestor(root->right, p, q);
+		else if (root->val > max(p->val, q->val))
+			return lowestCommonAncestor(root->left, p, q);
+		else
+			return root;
+	}
 };
 /*
 
@@ -6204,13 +6344,13 @@ Given a binary tree, find the lowest common ancestor (LCA) of two given nodes in
 
 According to the definition of LCA on Wikipedia: “The lowest common ancestor is defined between two nodes v and w as the lowest node in T that has both v and w as descendants (where we allow a node to be a descendant of itself).”
 
-        _______3______
-       /              \
-    ___5__          ___1__
+		_______3______
+	   /              \
+	___5__          ___1__
    /      \        /      \
    6      _2       0       8
-         /  \
-         7   4
+		 /  \
+		 7   4
 For example, the lowest common ancestor (LCA) of nodes 5 and 1 is 3. Another example is LCA of nodes 5 and 4 is 5, since a node can be a descendant of itself according to the LCA definition.
 
 */
@@ -6225,20 +6365,22 @@ For example, the lowest common ancestor (LCA) of nodes 5 and 1 is 3. Another exa
  */
 class Solution {
 public:
-    TreeNode* lowestCommonAncestor(TreeNode* root, TreeNode* p, TreeNode* q) {
-        if (root == NULL || root == p || root == q) {
-            return root;
-        }
-        TreeNode *l = lowestCommonAncestor(root->left, p, q), *r = lowestCommonAncestor(root->right, p, q);
-        if (l != NULL && r != NULL) {
-            return root;
-        } else if (l != NULL) {
-            return l;
-        } else if (r != NULL) {
-            return r;
-        }
-        return NULL;
-    }
+	TreeNode* lowestCommonAncestor(TreeNode* root, TreeNode* p, TreeNode* q) {
+		if (root == NULL || root == p || root == q) {
+			return root;
+		}
+		TreeNode *l = lowestCommonAncestor(root->left, p, q), *r = lowestCommonAncestor(root->right, p, q);
+		if (l != NULL && r != NULL) {
+			return root;
+		}
+		else if (l != NULL) {
+			return l;
+		}
+		else if (r != NULL) {
+			return r;
+		}
+		return NULL;
+	}
 };
 /*
 
@@ -6259,13 +6401,13 @@ Supposed the linked list is 1 -> 2 -> 3 -> 4 and you are given the third node wi
  */
 class Solution {
 public:
-    void deleteNode(ListNode* node) {
-        if (node == NULL) {
-            return;
-        }
-        node -> val = node -> next -> val;
-        node -> next = node -> next -> next;
-    }
+	void deleteNode(ListNode* node) {
+		if (node == NULL) {
+			return;
+		}
+		node->val = node->next->val;
+		node->next = node->next->next;
+	}
 };
 /*
 
@@ -6283,18 +6425,18 @@ Could you solve it with constant space complexity? (Note: The output array does 
 */
 class Solution {
 public:
-    vector<int> productExceptSelf(vector<int>& nums) {
-        int _size = nums.size(), temp = 1;
-        vector<int> res(_size);
-        res[0] = 1;
-        for (int i = 1; i < _size; i++) {
-            res[i] = res[i - 1] * nums[i - 1];
-        }
-        for (int i = _size - 2; i >= 0; i--) {
-            res[i] *= (temp *= nums[i + 1]);
-        }
-        return res;
-    }
+	vector<int> productExceptSelf(vector<int>& nums) {
+		int _size = nums.size(), temp = 1;
+		vector<int> res(_size);
+		res[0] = 1;
+		for (int i = 1; i < _size; i++) {
+			res[i] = res[i - 1] * nums[i - 1];
+		}
+		for (int i = _size - 2; i >= 0; i--) {
+			res[i] *= (temp *= nums[i + 1]);
+		}
+		return res;
+	}
 };
 /*
 
@@ -6370,10 +6512,10 @@ private:
 				vector<int> l = calculate(input, st, i - 1), r = calculate(input, i + 1, ed);
 				for (int j = 0; j < l.size(); j++) {
 					for (int k = 0; k < r.size(); k++) {
-						switch(input[i]) {
-							case '-': res.push_back(l[j] - r[k]); break;
-							case '+': res.push_back(l[j] + r[k]); break;
-							case '*': res.push_back(l[j] * r[k]); break;
+						switch (input[i]) {
+						case '-': res.push_back(l[j] - r[k]); break;
+						case '+': res.push_back(l[j] + r[k]); break;
+						case '*': res.push_back(l[j] * r[k]); break;
 						}
 					}
 				}
@@ -6407,47 +6549,47 @@ What if the inputs contain unicode characters? How would you adapt your solution
 */
 class Solution {
 public:
-    bool isAnagram(string s, string t) {
-        if (s.empty() != t.empty() || s.length() != t.length()) {
-            return false;
-        }
-        if (s.empty() && t.empty()) {
-            return true;
-        }
-        unordered_map<char, int> mapping;
-        for (auto cha : s) {
-            mapping[cha] += 1;
-        }
-        for (auto cha : t) {
-            if (mapping[cha] == 0) {
-                return false;
-            }
-            else {
-                mapping[cha]--;
-            }
-        }
-        return true;
-    }
+	bool isAnagram(string s, string t) {
+		if (s.empty() != t.empty() || s.length() != t.length()) {
+			return false;
+		}
+		if (s.empty() && t.empty()) {
+			return true;
+		}
+		unordered_map<char, int> mapping;
+		for (auto cha : s) {
+			mapping[cha] += 1;
+		}
+		for (auto cha : t) {
+			if (mapping[cha] == 0) {
+				return false;
+			}
+			else {
+				mapping[cha]--;
+			}
+		}
+		return true;
+	}
 };
 class Solution {
 public:
-    bool isAnagram(string s, string t) {
-        if (s.empty() != t.empty() || s.length() != t.length()) {
-            return false;
-        }
-        if (s.empty() && t.empty()) {
-            return true;
-        }
-        vector<int> cnt(26, 0);
-        for(int i = 0; i < s.size(); i++) {
-            cnt[s[i]-'a']++;
-        }
-        for(int i = 0; i < t.size(); i++) {
-            if(cnt[t[i]-'a'] == 0) return false;
-            cnt[t[i]-'a']--;
-        }
-        return true;
-    }
+	bool isAnagram(string s, string t) {
+		if (s.empty() != t.empty() || s.length() != t.length()) {
+			return false;
+		}
+		if (s.empty() && t.empty()) {
+			return true;
+		}
+		vector<int> cnt(26, 0);
+		for (int i = 0; i < s.size(); i++) {
+			cnt[s[i] - 'a']++;
+		}
+		for (int i = 0; i < t.size(); i++) {
+			if (cnt[t[i] - 'a'] == 0) return false;
+			cnt[t[i] - 'a']--;
+		}
+		return true;
+	}
 };
 /*
 
@@ -6467,36 +6609,37 @@ You may assume that word1 does not equal to word2, and word1 and word2 are both 
 */
 class Solution {
 public:
-    int shortestDistance(vector<string>& words, string word1, string word2) {
-        int p1 = -1, p2 = -1, mindis = INT_MAX;
-        for (int k = 0; k < words.size(); k++) {
-            if (isMatched(words[k], word1)) {
-                p1 = k;
-            } else if (isMatched(words[k], word2)) {
-                p2 = k;
-            }
-            if (p1 != -1 && p2 != -1) {
-                mindis = min(mindis, abs(p1 - p2));
-            }
-        }
-        return mindis;
-    }
+	int shortestDistance(vector<string>& words, string word1, string word2) {
+		int p1 = -1, p2 = -1, mindis = INT_MAX;
+		for (int k = 0; k < words.size(); k++) {
+			if (isMatched(words[k], word1)) {
+				p1 = k;
+			}
+			else if (isMatched(words[k], word2)) {
+				p2 = k;
+			}
+			if (p1 != -1 && p2 != -1) {
+				mindis = min(mindis, abs(p1 - p2));
+			}
+		}
+		return mindis;
+	}
 private:
-    bool isMatched(string words, string word1) {
-        int len = words.length();
-        if (len == word1.length()) {
-            int i = 0;
-            for (; i < len; i++) {
-                if (words[i] != word1[i]) {
-                    break;
-                }
-            }
-            if (i == len) {
-                return true;
-            }
-        }
-        return false;
-    }
+	bool isMatched(string words, string word1) {
+		int len = words.length();
+		if (len == word1.length()) {
+			int i = 0;
+			for (; i < len; i++) {
+				if (words[i] != word1[i]) {
+					break;
+				}
+			}
+			if (i == len) {
+				return true;
+			}
+		}
+		return false;
+	}
 };
 /*
 
@@ -6520,44 +6663,45 @@ You may assume word1 and word2 are both in the list.
 */
 class Solution {
 public:
-    int shortestWordDistance(vector<string>& words, string word1, string word2) {
-        int p1 = -1, p2 = -1, mindis = INT_MAX, prep1;
-        for (int k = 0; k < words.size(); k++) {
-            if (isMatched(words[k], word1)) {
-                prep1 = p1;
-                p1 = k;
-            }
-            if (isMatched(words[k], word2)) {
-                p2 = k;
-            }
-            if (p1 != -1 && p2 != -1) {
-                if (p1 == p2) {
-                    if (prep1 != -1) {
-                        mindis = min(mindis, abs(prep1 - p2));
-                    }
-                } else {
-                    mindis = min(mindis, abs(p1 - p2));
-                }
-            }
-        }
-        return mindis;
-    }
+	int shortestWordDistance(vector<string>& words, string word1, string word2) {
+		int p1 = -1, p2 = -1, mindis = INT_MAX, prep1;
+		for (int k = 0; k < words.size(); k++) {
+			if (isMatched(words[k], word1)) {
+				prep1 = p1;
+				p1 = k;
+			}
+			if (isMatched(words[k], word2)) {
+				p2 = k;
+			}
+			if (p1 != -1 && p2 != -1) {
+				if (p1 == p2) {
+					if (prep1 != -1) {
+						mindis = min(mindis, abs(prep1 - p2));
+					}
+				}
+				else {
+					mindis = min(mindis, abs(p1 - p2));
+				}
+			}
+		}
+		return mindis;
+	}
 private:
-    bool isMatched(string words, string word1) {
-        int len = words.length();
-        if (len == word1.length()) {
-            int i = 0;
-            for (; i < len; i++) {
-                if (words[i] != word1[i]) {
-                    break;
-                }
-            }
-            if (i == len) {
-                return true;
-            }
-        }
-        return false;
-    }
+	bool isMatched(string words, string word1) {
+		int len = words.length();
+		if (len == word1.length()) {
+			int i = 0;
+			for (; i < len; i++) {
+				if (words[i] != word1[i]) {
+					break;
+				}
+			}
+			if (i == len) {
+				return true;
+			}
+		}
+		return false;
+	}
 };
 /*
 
@@ -6572,21 +6716,21 @@ For example, the numbers "69", "88", and "818" are all strobogrammatic.
 */
 class Solution {
 public:
-    bool isStrobogrammatic(string num) {
-        if (num.empty()) {
-            return false;
-        }
-        unordered_map <char, char> mapping = {{'0', '0'}, {'1', '1'}, { '6', '9'}, {'8', '8'}, {'9', '6'}};
-        int i = 0, j = num.size() - 1;
-        while (i <= j) {
-            if (mapping[num[i]] != num[j]) {
-                return false;
-            }
-            i++;
-            j--;
-        }
-        return true;
-    }
+	bool isStrobogrammatic(string num) {
+		if (num.empty()) {
+			return false;
+		}
+		unordered_map <char, char> mapping = { {'0', '0'}, {'1', '1'}, { '6', '9'}, {'8', '8'}, {'9', '6'} };
+		int i = 0, j = num.size() - 1;
+		while (i <= j) {
+			if (mapping[num[i]] != num[j]) {
+				return false;
+			}
+			i++;
+			j--;
+		}
+		return true;
+	}
 };
 /*
 
@@ -6617,19 +6761,19 @@ All root-to-leaf paths are:
  */
 class Solution {
 public:
-  vector<string> binaryTreePaths(TreeNode* root) {
-   vector<string> res;
-   if (!root)
-    return res;
-else if (!(root -> left) && !(root -> right))
-    res.push_back(to_string(root -> val));
-string head = to_string(root->val) + "->";
-for(auto item: binaryTreePaths(root->left))
-    res.push_back(head + item);
-for(auto item: binaryTreePaths(root->right))
-    res.push_back(head + item);
-return res;
-}
+	vector<string> binaryTreePaths(TreeNode* root) {
+		vector<string> res;
+		if (!root)
+			return res;
+		else if (!(root->left) && !(root->right))
+			res.push_back(to_string(root->val));
+		string head = to_string(root->val) + "->";
+		for (auto item : binaryTreePaths(root->left))
+			res.push_back(head + item);
+		for (auto item : binaryTreePaths(root->right))
+			res.push_back(head + item);
+		return res;
+	}
 };
 /*
 
@@ -6649,7 +6793,7 @@ Could you do it without any loop/recursion in O(1) runtime?
 class Solution {
 public:
 	int addDigits(int num) {
-		return num - (num - 1) / 9 * 9 ;
+		return num - (num - 1) / 9 * 9;
 	}
 };
 /*
@@ -6670,28 +6814,29 @@ Could you solve it in O(n2) runtime?
 */
 class Solution {
 public:
-    int threeSumSmaller(vector<int>& nums, int target) {
-        sort(nums.begin(), nums.end());
-        if (nums.size() < 3) {
-            return 0;
-        }
-        int res = 0;
-        for (int i = 0; i < nums.size() - 2; i++) {
-            if (nums[i] + nums[i + 1] + nums[i + 2] >= target) {
-                return res;
-            }
-            int j = i + 1, k = nums.size() - 1;
-            while (j < k) {
-                if (nums[i] + nums[j] + nums[k] < target) {
-                    res += k - j;
-                    j++;
-                } else {
-                    k--;
-                }
-            }
-        }
-        return res;
-    }
+	int threeSumSmaller(vector<int>& nums, int target) {
+		sort(nums.begin(), nums.end());
+		if (nums.size() < 3) {
+			return 0;
+		}
+		int res = 0;
+		for (int i = 0; i < nums.size() - 2; i++) {
+			if (nums[i] + nums[i + 1] + nums[i + 2] >= target) {
+				return res;
+			}
+			int j = i + 1, k = nums.size() - 1;
+			while (j < k) {
+				if (nums[i] + nums[j] + nums[k] < target) {
+					res += k - j;
+					j++;
+				}
+				else {
+					k--;
+				}
+			}
+		}
+		return res;
+	}
 };
 /*
 
@@ -6707,15 +6852,15 @@ Note that 1 is typically treated as an ugly number.
 class Solution {
 public:
 	bool isUgly(int num) {
-		if (num == 0) 
+		if (num == 0)
 			return false;
-		if (num == 1) 
+		if (num == 1)
 			return true;
-		if (num % 2 == 0) 
+		if (num % 2 == 0)
 			return isUgly(num / 2);
-		if (num % 3 == 0) 
+		if (num % 3 == 0)
 			return isUgly(num / 3);
-		if (num % 5 == 0) 
+		if (num % 5 == 0)
 			return isUgly(num / 5);
 		return false;
 	}
@@ -6742,8 +6887,8 @@ class Solution {
 public:
 	int nthUglyNumber(int n) {
 		if (!n) return 0;
-		static vector<int> table(1,1);
-		static int i2 = 0,i3 = 0, i5 =0;
+		static vector<int> table(1, 1);
+		static int i2 = 0, i3 = 0, i5 = 0;
 		int k(table.size());
 		for (; k < n; k++) {
 			int tmp = min(table[i2] * 2, min(table[i3] * 3, table[i5] * 5));
@@ -6752,7 +6897,7 @@ public:
 			if (!(tmp % 5)) i5++;
 			table.push_back(tmp);
 		}
-		return table[n-1];
+		return table[n - 1];
 	}
 };
 /*
@@ -6773,22 +6918,22 @@ If each character occurs even number of times, then it must be a palindrome. How
 */
 class Solution {
 public:
-    bool canPermutePalindrome(string s) {
-        unordered_map<char, int> mapping;
-        for (char cha : s) {
-            mapping[cha]++;
-        }
-        bool odd = false;
-        for (auto i = mapping.begin(); i != mapping.end(); i++) {
-            if (i->second % 2) {
-                if (odd) {
-                    return false;
-                }
-                odd = true;
-            }
-        }
-        return true;
-    }
+	bool canPermutePalindrome(string s) {
+		unordered_map<char, int> mapping;
+		for (char cha : s) {
+			mapping[cha]++;
+		}
+		bool odd = false;
+		for (auto i = mapping.begin(); i != mapping.end(); i++) {
+			if (i->second % 2) {
+				if (odd) {
+					return false;
+				}
+				odd = true;
+			}
+		}
+		return true;
+	}
 };
 /*
 
@@ -6810,53 +6955,53 @@ To generate all distinct permutations of a (half of) string, use a similar appro
 */
 class Solution {
 public:
-    vector<string> generatePalindromes(string s) {
-        unordered_map<char, int> mapping;  
-        for (char cha : s) {  
-            mapping[cha]++;  
-        }  
-        string str;
-        string c = "";
-        bool odd = false;  
-        for (auto i = mapping.begin(); i != mapping.end(); i++) {  
-            if (i->second % 2) {  
-                if (odd) {  
-                    return {};  
-                }
-                c.push_back(i->first);
-                odd = true;
-            }
-            int temp = i->second / 2;
-            while (temp > 0) {
-                str += i->first;
-                temp--;
-            }
-        }
-        vector<string> res;
-        helper(res, str, 0);
-        for (int i = 0 ; i < res.size(); i++) {
-            string temp = res[i];
-            reverse(temp.begin(), temp.end());
-            res[i] += c + temp;
-        }
-        return res; 
-    }
+	vector<string> generatePalindromes(string s) {
+		unordered_map<char, int> mapping;
+		for (char cha : s) {
+			mapping[cha]++;
+		}
+		string str;
+		string c = "";
+		bool odd = false;
+		for (auto i = mapping.begin(); i != mapping.end(); i++) {
+			if (i->second % 2) {
+				if (odd) {
+					return{};
+				}
+				c.push_back(i->first);
+				odd = true;
+			}
+			int temp = i->second / 2;
+			while (temp > 0) {
+				str += i->first;
+				temp--;
+			}
+		}
+		vector<string> res;
+		helper(res, str, 0);
+		for (int i = 0; i < res.size(); i++) {
+			string temp = res[i];
+			reverse(temp.begin(), temp.end());
+			res[i] += c + temp;
+		}
+		return res;
+	}
 private:
-    void helper(vector<string>& res, string& str, int index) {
-        if (index == str.size()) {
-            res.push_back(str);
-            return;
-        }
-        set<char> s;
-        for (int i = index; i < str.size(); i++) {
-            if (i == index || s.find(str[i]) == s.end()) {
-                s.insert(str[i]);
-                swap(str[i], str[index]);
-                helper(res, str, index + 1);
-                swap(str[i], str[index]);
-            }
-        }
-    }
+	void helper(vector<string>& res, string& str, int index) {
+		if (index == str.size()) {
+			res.push_back(str);
+			return;
+		}
+		set<char> s;
+		for (int i = index; i < str.size(); i++) {
+			if (i == index || s.find(str[i]) == s.end()) {
+				s.insert(str[i]);
+				swap(str[i], str[index]);
+				helper(res, str, index + 1);
+				swap(str[i], str[index]);
+			}
+		}
+	}
 };
 /*
 
@@ -6873,13 +7018,13 @@ Your algorithm should run in linear runtime complexity. Could you implement it u
 */
 class Solution {
 public:
-    int missingNumber(vector<int>& nums) {
-        int _sum = nums.size() * (nums.size() + 1) / 2;
-        for (int i : nums) {
-            _sum -= i;
-        }
-        return _sum;
-    }
+	int missingNumber(vector<int>& nums) {
+		int _sum = nums.size() * (nums.size() + 1) / 2;
+		for (int i : nums) {
+			_sum -= i;
+		}
+		return _sum;
+	}
 };
 /*
 
@@ -6903,20 +7048,21 @@ You are guaranteed to have only one unique value in the BST that is closest to t
  */
 class Solution {
 public:
-    int closestValue(TreeNode* root, double target) {
-        int res = root->val;
-        while(root != NULL) {
-            if (abs(root->val - target) < abs(res - target)) {
-                res = root->val;
-            }
-            if (root->val < target) {
-                root = root->right;
-            } else {
-                root = root->left;
-            }
-        }
-        return res;
-    }
+	int closestValue(TreeNode* root, double target) {
+		int res = root->val;
+		while (root != NULL) {
+			if (abs(root->val - target) < abs(res - target)) {
+				res = root->val;
+			}
+			if (root->val < target) {
+				root = root->right;
+			}
+			else {
+				root = root->left;
+			}
+		}
+		return res;
+	}
 };
 /*
 
@@ -6939,16 +7085,16 @@ A faster approach is to use extra space.
 */
 class Solution {
 public:
-    int hIndex(vector<int>& citations) {
-        sort(citations.begin(), citations.end());
-        int _size = citations.size();
-        for (int i = 0; i < _size; i++) {
-            if (citations[i] >= _size - i) {
-                return _size - i;
-            }
-        }
-        return 0;
-    }
+	int hIndex(vector<int>& citations) {
+		sort(citations.begin(), citations.end());
+		int _size = citations.size();
+		for (int i = 0; i < _size; i++) {
+			if (citations[i] >= _size - i) {
+				return _size - i;
+			}
+		}
+		return 0;
+	}
 };
 /*
 
@@ -6994,24 +7140,26 @@ bool knows(int a, int b);
 
 class Solution {
 public:
-    int findCelebrity(int n) {
-        int l = 0, r = n - 1;
-        while (l < r) {
-            if (knows(l, r)) {
-                l++;
-            } else {
-                r--;
-            }
-        }
-        for (int i = 0; i < n; i++) {
-            if (i == l || knows(i, l) && !knows(l, i)) {
-                continue;
-            } else {
-                return -1;
-            }
-        }
-        return l;
-    }
+	int findCelebrity(int n) {
+		int l = 0, r = n - 1;
+		while (l < r) {
+			if (knows(l, r)) {
+				l++;
+			}
+			else {
+				r--;
+			}
+		}
+		for (int i = 0; i < n; i++) {
+			if (i == l || knows(i, l) && !knows(l, i)) {
+				continue;
+			}
+			else {
+				return -1;
+			}
+		}
+		return l;
+	}
 };
 /*
 
@@ -7054,7 +7202,7 @@ class Solution {
 public:
 	int numSquares(int n) {
 		if (n <= 0) return 0;
-		static vector<int> table{(0)};
+		static vector<int> table{ (0) };
 		while (table.size() <= n) {
 			int _size = table.size();
 			int temp = INT_MAX;
@@ -7076,39 +7224,40 @@ For example, given nums = [3, 5, 2, 1, 6, 4], one possible answer is [1, 6, 2, 5
 */
 class Solution {
 public:
-    void wiggleSort(vector<int>& nums) {
-        for (int i = 1; i < nums.size(); i++) {
-            if ((i % 2 == 1 && nums[i] < nums[i - 1]) || (i % 2 == 0 && nums[i] > nums[i - 1])) {
-                swap(nums[i], nums[i - 1]);
-            }
-        }
-    }
+	void wiggleSort(vector<int>& nums) {
+		for (int i = 1; i < nums.size(); i++) {
+			if ((i % 2 == 1 && nums[i] < nums[i - 1]) || (i % 2 == 0 && nums[i] > nums[i - 1])) {
+				swap(nums[i], nums[i - 1]);
+			}
+		}
+	}
 };
 class Solution {
 public:
-    void wiggleSort(vector<int>& nums) {
-        if (nums.empty()) {
-            return;
-        }
-        sort(nums.begin(), nums.end());
-        swap(nums.back(), nums[nums.size() / 2]);
-        if (nums.size() % 2) {
-            wiggleSort(nums, 0, nums.size() - 2);
-        } else {
-            wiggleSort(nums, 0, nums.size() - 1);
-        }
-    }
+	void wiggleSort(vector<int>& nums) {
+		if (nums.empty()) {
+			return;
+		}
+		sort(nums.begin(), nums.end());
+		swap(nums.back(), nums[nums.size() / 2]);
+		if (nums.size() % 2) {
+			wiggleSort(nums, 0, nums.size() - 2);
+		}
+		else {
+			wiggleSort(nums, 0, nums.size() - 1);
+		}
+	}
 private:
-    void wiggleSort(vector<int>& nums, int l, int r) {
-        if (l < r - 1) {
-            int _size = r - l + 1, i = l + _size / 4, mid = l + _size / 2, j = l + 3 * _size / 4;
-            reverse(nums.begin() + i, nums.begin() + mid);
-            reverse(nums.begin() + mid, nums.begin() + j);
-            reverse(nums.begin() + i, nums.begin() + j);
-            wiggleSort(nums, l, l + 2 * (i - l) - 1);
-            wiggleSort(nums, l + 2 * (i - l), r);
-        }
-    }
+	void wiggleSort(vector<int>& nums, int l, int r) {
+		if (l < r - 1) {
+			int _size = r - l + 1, i = l + _size / 4, mid = l + _size / 2, j = l + 3 * _size / 4;
+			reverse(nums.begin() + i, nums.begin() + mid);
+			reverse(nums.begin() + mid, nums.begin() + j);
+			reverse(nums.begin() + i, nums.begin() + j);
+			wiggleSort(nums, l, l + 2 * (i - l) - 1);
+			wiggleSort(nums, l + 2 * (i - l), r);
+		}
+	}
 };
 /*
 
@@ -7125,13 +7274,13 @@ Minimize the total number of operations.
 */
 class Solution {
 public:
-    void moveZeroes(vector<int>& nums) {
-        for (int i = 0, j = 0; i < nums.size(); i++) {
-            if (nums[i]) {
-                swap(nums[i], nums[j++]);
-            }
-        }
-    }
+	void moveZeroes(vector<int>& nums) {
+		for (int i = 0, j = 0; i < nums.size(); i++) {
+			if (nums[i]) {
+				swap(nums[i], nums[j++]);
+			}
+		}
+	}
 };
 /*
 
@@ -7148,34 +7297,34 @@ There is only one duplicate number in the array, but it could be repeated more t
 */
 class Solution {
 public:
-    int findDuplicate(vector<int>& nums) {
-        int s = 0, f = 0;
-        int finder = 0;
-        while (true) {
-            s = nums[s];
-            f = nums[nums[f]];
-            if (s == f) {
-                break;
-            }
-        }
-        while (true) {
-            s = nums[s];
-            finder = nums[finder];
-            if (s == finder) {
-                return s;
-            }
-        }
-    }
+	int findDuplicate(vector<int>& nums) {
+		int s = 0, f = 0;
+		int finder = 0;
+		while (true) {
+			s = nums[s];
+			f = nums[nums[f]];
+			if (s == f) {
+				break;
+			}
+		}
+		while (true) {
+			s = nums[s];
+			finder = nums[finder];
+			if (s == finder) {
+				return s;
+			}
+		}
+	}
 };
 /*
 
 289. Game of Life (Medium)
 
-According to the Wikipedia's article: "The Game of Life, also known simply as Life, 
+According to the Wikipedia's article: "The Game of Life, also known simply as Life,
 is a cellular automaton devised by the British mathematician John Horton Conway in 1970."
 
-Given a board with m by n cells, each cell has an initial state live (1) or dead (0). 
-Each cell interacts with its eight neighbors (horizontal, vertical, diagonal) using the 
+Given a board with m by n cells, each cell has an initial state live (1) or dead (0).
+Each cell interacts with its eight neighbors (horizontal, vertical, diagonal) using the
 following four rules (taken from the above Wikipedia article):
 
 Any live cell with fewer than two live neighbors dies, as if caused by under-population.
@@ -7184,44 +7333,44 @@ Any live cell with more than three live neighbors dies, as if by over-population
 Any dead cell with exactly three live neighbors becomes a live cell, as if by reproduction.
 Write a function to compute the next state (after one update) of the board given its current state.
 
-Follow up: 
-Could you solve it in-place? Remember that the board needs to be updated at the same time: 
+Follow up:
+Could you solve it in-place? Remember that the board needs to be updated at the same time:
 You cannot update some cells first and then use their updated values to update other cells.
-In this question, we represent the board using a 2D array. In principle, the board is infinite, 
+In this question, we represent the board using a 2D array. In principle, the board is infinite,
 which would cause problems when the active area encroaches the border of the array. How would you address these problems?
 
 */
 class Solution {
 public:
-    void gameOfLife(vector<vector<int>>& board) {
-        for (int i = 0; i < board.size(); i++) {
-            for (int j = 0; j < board[0].size(); j++) {
-                int cnt = lives(board, i, j);
-                if (cnt == 3 || (cnt == 2 && board[i][j] == 1)) {
-                    board[i][j] += 10;
-                }
-            }
-        }
-        update(board);
-    }
-    int lives(vector<vector<int>>& board, int i, int j) {
-        int cnt = 0;
-        for (int row = max(0, i - 1); row <= min((int)board.size() - 1, i + 1); row++) {
-            for (int col = max(0, j - 1); col <= min((int)board[0].size() - 1, j + 1); col++) {
-                if (row != i || col != j) {
-                    cnt += board[row][col] % 10;
-                }
-            }
-        }
-        return cnt;
-    }
-    void update(vector<vector<int>>& board) {
-        for (int i = 0; i < board.size(); i++) {
-            for (int j = 0; j < board[0].size(); j++) {
-                board[i][j] = board[i][j] / 10;
-            }
-        }
-    }
+	void gameOfLife(vector<vector<int>>& board) {
+		for (int i = 0; i < board.size(); i++) {
+			for (int j = 0; j < board[0].size(); j++) {
+				int cnt = lives(board, i, j);
+				if (cnt == 3 || (cnt == 2 && board[i][j] == 1)) {
+					board[i][j] += 10;
+				}
+			}
+		}
+		update(board);
+	}
+	int lives(vector<vector<int>>& board, int i, int j) {
+		int cnt = 0;
+		for (int row = max(0, i - 1); row <= min((int)board.size() - 1, i + 1); row++) {
+			for (int col = max(0, j - 1); col <= min((int)board[0].size() - 1, j + 1); col++) {
+				if (row != i || col != j) {
+					cnt += board[row][col] % 10;
+				}
+			}
+		}
+		return cnt;
+	}
+	void update(vector<vector<int>>& board) {
+		for (int i = 0; i < board.size(); i++) {
+			for (int j = 0; j < board[0].size(); j++) {
+				board[i][j] = board[i][j] / 10;
+			}
+		}
+	}
 };
 /*
 
@@ -7242,23 +7391,23 @@ You may assume pattern contains only lowercase letters, and str contains lowerca
 */
 class Solution {
 public:
-    bool wordPattern(string pattern, string str) {
-        unordered_map<char,int> mappingchar;
-        unordered_map<string,int> mappingstr;
-        string strs;
-        int index = 0;
-        istringstream in(str);
-        while(in>>strs){
-            if(index < pattern.length()){
-                if(mappingchar[pattern[index]]!=mappingstr[strs]) {
-                    return false;
-                }
-                mappingchar[pattern[index]] = mappingstr[strs] = index + 1;
-            }
-            index++;
-        }
-        return index == pattern.length();
-    }
+	bool wordPattern(string pattern, string str) {
+		unordered_map<char, int> mappingchar;
+		unordered_map<string, int> mappingstr;
+		string strs;
+		int index = 0;
+		istringstream in(str);
+		while (in >> strs) {
+			if (index < pattern.length()) {
+				if (mappingchar[pattern[index]] != mappingstr[strs]) {
+					return false;
+				}
+				mappingchar[pattern[index]] = mappingstr[strs] = index + 1;
+			}
+			index++;
+		}
+		return index == pattern.length();
+	}
 };
 /*
 
@@ -7277,9 +7426,9 @@ If there are 5 stones in the heap, could you figure out a way to remove the ston
 */
 class Solution {
 public:
-    bool canWinNim(int n) {
-        return n % 4;
-    }
+	bool canWinNim(int n) {
+		return n % 4;
+	}
 };
 /*
 
@@ -7307,26 +7456,27 @@ You may assume that the secret number and your friend's guess only contain digit
 */
 class Solution {
 public:
-    string getHint(string secret, string guess) {
-        vector<int> mapping(10, 0);
-        int bulls = 0, cows = 0;
-        for (int i = 0; i < guess.length(); i++) {
-            if (guess[i] == secret[i]) {
-                bulls++;
-            } else {
-                mapping[secret[i] - '0']++;
-            }
-        }
-        for (int i = 0; i < guess.length(); i++) {
-            if (guess[i] != secret[i] && mapping[guess[i] - '0']) {
-                cows++;
-                mapping[guess[i] - '0']--;
-            }
-        }
-        char result[10];
-        sprintf(result, "%dA%dB", bulls, cows);
-        return result;
-    }
+	string getHint(string secret, string guess) {
+		vector<int> mapping(10, 0);
+		int bulls = 0, cows = 0;
+		for (int i = 0; i < guess.length(); i++) {
+			if (guess[i] == secret[i]) {
+				bulls++;
+			}
+			else {
+				mapping[secret[i] - '0']++;
+			}
+		}
+		for (int i = 0; i < guess.length(); i++) {
+			if (guess[i] != secret[i] && mapping[guess[i] - '0']) {
+				cows++;
+				mapping[guess[i] - '0']--;
+			}
+		}
+		char result[10];
+		sprintf(result, "%dA%dB", bulls, cows);
+		return result;
+	}
 };
 /*
 
@@ -7361,7 +7511,7 @@ class Solution {
 public:
 	int lengthOfLIS(vector<int>& nums) {
 		vector<int> res;
-		for(int i : nums) {
+		for (int i : nums) {
 			auto it = lower_bound(res.begin(), res.end(), i);
 			if (it == res.end()) res.push_back(i);
 			else *it = i;
@@ -7450,7 +7600,7 @@ public:
 	}
 
 	int sumRegion(int row1, int col1, int row2, int col2) {
-		return table[row2+1][col2+1] - table[row2+1][col1] - table[row1][col2+1] + table[row1][col1];
+		return table[row2 + 1][col2 + 1] - table[row2 + 1][col1] - table[row1][col2 + 1] + table[row1][col1];
 	}
 };
 
@@ -7465,7 +7615,7 @@ public:
 
 Say you have an array for which the ith element is the price of a given stock on day i.
 
-Design an algorithm to find the maximum profit. You may complete as many transactions as you like 
+Design an algorithm to find the maximum profit. You may complete as many transactions as you like
 (ie, buy one and sell one share of the stock multiple times) with the following restrictions:
 
 You may not engage in multiple transactions at the same time (ie, you must sell the stock before you buy again).
@@ -7488,7 +7638,7 @@ public:
 			table[i] = max(table[i], max(table[i - 1], prices[i] + temp));
 			if (i > 1) temp = max(temp, table[i - 2] - prices[i]);
 			else temp = max(temp, -prices[i]);
-		} 
+		}
 		return table.back();
 	}
 };
@@ -7500,12 +7650,12 @@ There are n bulbs that are initially off. You first turn on all the bulbs. Then,
 
 Example:
 
-Given n = 3. 
+Given n = 3.
 
 At first, the three bulbs are [off, off, off].
 After first round, the three bulbs are [on, on, on].
 After second round, the three bulbs are [on, off, on].
-After third round, the three bulbs are [on, off, off]. 
+After third round, the three bulbs are [on, off, off].
 
 So you should return 1, because there is only one bulb is on.
 
@@ -7553,14 +7703,14 @@ public:
 		sort(coins.begin(), coins.end());
 		return coinChange(coins, amount, coins.size() - 1, 0, *(new int(INT_MAX)));
 	}
-	int coinChange(vector<int>&coins,int amount,int idx,int cur,int &cand){
-		if(!amount) return cand=cur;
-		if(idx < 0)return -1;
+	int coinChange(vector<int>&coins, int amount, int idx, int cur, int &cand) {
+		if (!amount) return cand = cur;
+		if (idx < 0)return -1;
 		int flag = 0, n = amount / coins[idx];
-		if(n + cur >= cand) return -1;
-		for(int i = n; i >= 0; i--)
-			if(coinChange(coins,amount-i*coins[idx],idx-1,cur+i,cand)!=-1) flag=1;
-		if(flag) return cand;
+		if (n + cur >= cand) return -1;
+		for (int i = n; i >= 0; i--)
+			if (coinChange(coins, amount - i*coins[idx], idx - 1, cur + i, cand) != -1) flag = 1;
+		if (flag) return cand;
 		return -1;
 	}
 };
@@ -7584,24 +7734,24 @@ return 2. (because the subarray [-1, 2] sums to 1 and is the longest)
 */
 class Solution {
 public:
-    int maxSubArrayLen(vector<int>& nums, int k) {
-        if (nums.empty()) {
-            return 0;
-        }
-        int sum = 0, len = 0;
-        unordered_map<int, int> mapping;
-        mapping[0] = -1;
-        for (int i = 0; i < nums.size(); i++) {
-            sum += nums[i];
-            if (mapping.find(sum - k) != mapping.end()) {
-                len = max(len, i - mapping[sum - k]);
-            } 
-            if (mapping.find(sum) == mapping.end()){
-                mapping[sum] = i;
-            }
-        }
-        return len;
-    }
+	int maxSubArrayLen(vector<int>& nums, int k) {
+		if (nums.empty()) {
+			return 0;
+		}
+		int sum = 0, len = 0;
+		unordered_map<int, int> mapping;
+		mapping[0] = -1;
+		for (int i = 0; i < nums.size(); i++) {
+			sum += nums[i];
+			if (mapping.find(sum - k) != mapping.end()) {
+				len = max(len, i - mapping[sum - k]);
+			}
+			if (mapping.find(sum) == mapping.end()) {
+				mapping[sum] = i;
+			}
+		}
+		return len;
+	}
 };
 /*
 326. Power of Three (Easy)
@@ -7617,9 +7767,9 @@ public:
 	bool isPowerOfThree(int n) {
 		if (n <= 0)
 			return false;
-		if(n == 1)
+		if (n == 1)
 			return true;
-		if(n % 3 == 0)
+		if (n % 3 == 0)
 			return isPowerOfThree(n / 3);
 		return false;
 	}
@@ -7627,9 +7777,9 @@ public:
 class Solution {
 public:
 	bool isPowerOfThree(int n) {
-		if(n > 0) 
+		if (n > 0)
 			return 1162261467 % n == 0;
-		else 
+		else
 			return false;
 	}
 };
@@ -7646,7 +7796,7 @@ Given 1->2->3->4->5->NULL,
 return 1->3->5->2->4->NULL.
 
 Note:
-The relative order inside both the even and odd groups should remain as it was in the input. 
+The relative order inside both the even and odd groups should remain as it was in the input.
 The first node is considered odd, the second node even and so on ...
 
 */
@@ -7660,20 +7810,20 @@ The first node is considered odd, the second node even and so on ...
  */
 class Solution {
 public:
-    ListNode* oddEvenList(ListNode* head) {
-        if (head == NULL || head -> next == NULL) {
-            return head;
-        }
-        ListNode *o = head, *eh = head -> next, *e = head -> next;
-        while (o -> next && e -> next) {
-            o -> next = e -> next;
-            o = e -> next;
-            e -> next = o -> next;
-            e = o -> next;
-        }
-        o -> next = eh;
-        return head;
-    }
+	ListNode* oddEvenList(ListNode* head) {
+		if (head == NULL || head->next == NULL) {
+			return head;
+		}
+		ListNode *o = head, *eh = head->next, *e = head->next;
+		while (o->next && e->next) {
+			o->next = e->next;
+			o = e->next;
+			e->next = o->next;
+			e = o->next;
+		}
+		o->next = eh;
+		return head;
+	}
 };
 /*
 
@@ -7681,8 +7831,8 @@ public:
 
 One way to serialize a binary tree is to use pre-order traversal. When we encounter a non-null node, we record the node's value. If it is a null node, we record using a sentinel value such as #.
 
-     _9_
-    /   \
+	 _9_
+	/   \
    3     2
   / \   / \
  4   1  #  6
@@ -7717,19 +7867,20 @@ public:
 			if (preorder[i] != '#') {
 				s += 'n';
 				while (preorder[i] != ',' && i < preorder.length()) i++;
-			} else {
+			}
+			else {
 				s += '#';
 				while (s.length() >= 2 && s.back() == '#' && s[s.length() - 2] == '#') {
 					if (s.length() == 2) return false;
 					s.pop_back();
 					s.pop_back();
 					s.pop_back();
-					s +='#';
+					s += '#';
 				}
 				i++;
 			}
 		}
-		return s =="#";
+		return s == "#";
 	}
 };
 /*
@@ -7797,7 +7948,7 @@ public:
 		return s;
 	}
 };
-/* 
+/*
 
 345. Reverse Vowels of a String (Easy)
 
@@ -7812,20 +7963,20 @@ Given s = "leetcode", return "leotcede".
 */
 class Solution {
 public:
-    string reverseVowels(string s) {
-        string vowels = "aeiouAEIOU";
-        int left = 0, right = s.length() - 1;
-        while (left < right) {
-            while (vowels.find(s[left]) == -1 && left < right) {
-                left++;
-            }
-            while (vowels.find(s[right]) == -1 && left < right) {
-                right--;
-            }
-            swap(s[right--], s[left++]);
-        }
-        return s;
-    }
+	string reverseVowels(string s) {
+		string vowels = "aeiouAEIOU";
+		int left = 0, right = s.length() - 1;
+		while (left < right) {
+			while (vowels.find(s[left]) == -1 && left < right) {
+				left++;
+			}
+			while (vowels.find(s[right]) == -1 && left < right) {
+				right--;
+			}
+			swap(s[right--], s[left++]);
+		}
+		return s;
+	}
 };
 /*
 
@@ -7836,29 +7987,29 @@ Given a non-empty array of integers, return the k most frequent elements.
 For example,
 Given [1,1,1,2,2,3] and k = 2, return [1,2].
 
-Note: 
+Note:
 You may assume k is always valid, 1 ≤ k ≤ number of unique elements.
 Your algorithm's time complexity must be better than O(n log n), where n is the array's size
 
 */
 class Solution {
 public:
-    vector<int> topKFrequent(vector<int>& nums, int k) {
-        vector<int> res;
-        unordered_map<int, int> mapping;
-        for (auto i : nums) { 
-            mapping[i]++;
-        }
-        priority_queue<pair<int, int>> q;
-        for (auto i = mapping.begin(); i != mapping.end(); i++) {
-            q.push(make_pair(i -> second, i -> first));
-            if (q.size() > (int)mapp.size() - k) {
-                res.push_back(q.top().second);
-                q.pop();
-            }
-        }
-        return res;
-    }
+	vector<int> topKFrequent(vector<int>& nums, int k) {
+		vector<int> res;
+		unordered_map<int, int> mapping;
+		for (auto i : nums) {
+			mapping[i]++;
+		}
+		priority_queue<pair<int, int>> q;
+		for (auto i = mapping.begin(); i != mapping.end(); i++) {
+			q.push(make_pair(i->second, i->first));
+			if (q.size() > (int)mapp.size() - k) {
+				res.push_back(q.top().second);
+				q.pop();
+			}
+		}
+		return res;
+	}
 };
 /*
 
@@ -7876,21 +8027,21 @@ The result can be in any order.
 */
 class Solution {
 public:
-    vector<int> intersection(vector<int>& nums1, vector<int>& nums2) {
-        vector<int> result;
-        if (nums1.empty() || nums2.empty()) return result;
-        unordered_map<int, bool> mapping;
-        for (auto i : nums1) {
-            mapping[i] = true;
-        }
-        for (auto i : nums2) {
-            if (mapping[i]) {
-                result.push_back(i);
-                mapping.erase(i);
-            }
-        }
-        return result;
-    }
+	vector<int> intersection(vector<int>& nums1, vector<int>& nums2) {
+		vector<int> result;
+		if (nums1.empty() || nums2.empty()) return result;
+		unordered_map<int, bool> mapping;
+		for (auto i : nums1) {
+			mapping[i] = true;
+		}
+		for (auto i : nums2) {
+			if (mapping[i]) {
+				result.push_back(i);
+				mapping.erase(i);
+			}
+		}
+		return result;
+	}
 };
 /*
 
@@ -7912,20 +8063,20 @@ What if elements of nums2 are stored on disk, and the memory is limited such tha
 */
 class Solution {
 public:
-    vector<int> intersect(vector<int>& nums1, vector<int>& nums2) {
-        vector<int> result;
-        if (nums1.empty() || nums2.empty()) return result;
-        unordered_map<int, int> mapping;
-        for (auto val : nums1) {
-            mapping[val]++;
-        }
-        for (auto val : nums2) {
-            if (mapping[val]-- > 0) {
-                result.push_back(val);
-            }
-        }
-        return result;
-    }
+	vector<int> intersect(vector<int>& nums1, vector<int>& nums2) {
+		vector<int> result;
+		if (nums1.empty() || nums2.empty()) return result;
+		unordered_map<int, int> mapping;
+		for (auto val : nums1) {
+			mapping[val]++;
+		}
+		for (auto val : nums2) {
+			if (mapping[val]-- > 0) {
+				result.push_back(val);
+			}
+		}
+		return result;
+	}
 };
 /*
 
@@ -7970,22 +8121,22 @@ class Twitter {
 	{
 		int time;
 		int id;
-		Tweet(int time, int id): time(time), id(id) {}
-		
+		Tweet(int time, int id) : time(time), id(id) {}
+
 	};
 	unordered_map<int, vector<Tweet>> tweets;
 	unordered_map<int, set<int>> following;
 	int time;
 public:
-    /** Initialize your data structure here. */
+	/** Initialize your data structure here. */
 	Twitter() : time(0) {}
 
-    /** Compose a new tweet. */
+	/** Compose a new tweet. */
 	void postTweet(int userId, int tweetId) {
 		tweets[userId].emplace_back(time++, tweetId);
 	}
 
-    /** Retrieve the 10 most recent tweet ids in the user's news feed. Each item in the news feed must be posted by users who the user followed or by the user herself. Tweets must be ordered from most recent to least recent. */
+	/** Retrieve the 10 most recent tweet ids in the user's news feed. Each item in the news feed must be posted by users who the user followed or by the user herself. Tweets must be ordered from most recent to least recent. */
 	vector<int> getNewsFeed(int userId) {
 		vector<pair<Tweet*, Tweet*>> h;
 		for (auto& u : following[userId]) {
@@ -7995,7 +8146,7 @@ public:
 		auto& t = tweets[userId];
 		if (t.size()) h.emplace_back(t.data(), t.data() + t.size() - 1);
 		auto f = [](const pair<Tweet*, Tweet*>& x, const pair<Tweet*, Tweet*>& y) {
-			return x.second -> time < y.second -> time;
+			return x.second->time < y.second->time;
 		};
 		make_heap(h.begin(), h.end(), f);
 
@@ -8005,19 +8156,19 @@ public:
 		for (int i = 0; i < n && !h.empty(); i++) {
 			pop_heap(h.begin(), h.end(), f);
 			auto& hb = h.back();
-			o.push_back(hb.second -> id);
+			o.push_back(hb.second->id);
 			if (hb.first == hb.second--) h.pop_back();
 			else push_heap(h.begin(), h.end(), f);
 		}
 		return o;
 	}
 
-    /** Follower follows a followee. If the operation is invalid, it should be a no-op. */
+	/** Follower follows a followee. If the operation is invalid, it should be a no-op. */
 	void follow(int followerId, int followeeId) {
 		if (followerId != followeeId) following[followerId].insert(followeeId);
 	}
 
-    /** Follower unfollows a followee. If the operation is invalid, it should be a no-op. */
+	/** Follower unfollows a followee. If the operation is invalid, it should be a no-op. */
 	void unfollow(int followerId, int followeeId) {
 		if (followerId != followeeId) following[followerId].erase(followeeId);
 	}
@@ -8031,31 +8182,31 @@ public:
  * obj.follow(followerId,followeeId);
  * obj.unfollow(followerId,followeeId);
  */
-/*
+ /*
 
-357. Count Numbers with Unique Digits (Medium)
+ 357. Count Numbers with Unique Digits (Medium)
 
-Given a non-negative integer n, count all numbers with unique digits, x, where 0 ≤ x < 10n.
+ Given a non-negative integer n, count all numbers with unique digits, x, where 0 ≤ x < 10n.
 
-Example:
-Given n = 2, return 91. (The answer should be the total numbers in the range of 0 ≤ x < 100, 
-excluding [11,22,33,44,55,66,77,88,99])
+ Example:
+ Given n = 2, return 91. (The answer should be the total numbers in the range of 0 ≤ x < 100,
+ excluding [11,22,33,44,55,66,77,88,99])
 
-Hint:
+ Hint:
 
-A direct way is to use the backtracking approach.
-Backtracking should contains three states which are (the current number, number of steps to 
-get that number and a bitmask which represent which number is marked as visited so far in the 
-current number). Start with state (0,0,0) and count all valid number till we reach number of 
-steps equals to 10n.
+ A direct way is to use the backtracking approach.
+ Backtracking should contains three states which are (the current number, number of steps to
+ get that number and a bitmask which represent which number is marked as visited so far in the
+ current number). Start with state (0,0,0) and count all valid number till we reach number of
+ steps equals to 10n.
 
-This problem can also be solved using a dynamic programming approach and some knowledge of 
-combinatorics.
-Let f(k) = count of numbers with unique digits with length equals k.
-f(1) = 10, ..., f(k) = 9 * 9 * 8 * ... (9 - k + 2) [The first factor is 9 because a number 
-cannot start with 0].
+ This problem can also be solved using a dynamic programming approach and some knowledge of
+ combinatorics.
+ Let f(k) = count of numbers with unique digits with length equals k.
+ f(1) = 10, ..., f(k) = 9 * 9 * 8 * ... (9 - k + 2) [The first factor is 9 because a number
+ cannot start with 0].
 
-*/
+ */
 class Solution {
 public:
 	int countNumbersWithUniqueDigits(int n) {
@@ -8174,39 +8325,39 @@ Output:
  */
 class Solution {
 public:
-    ListNode* plusOne(ListNode* head) {
-        if (head == NULL) {
-            return head;
-        }
-        ListNode *newhead = reverse(head);
-        int carry = 1;
-        for (ListNode *p = newhead; p != NULL && carry != 0; p = p -> next) {
-            int value = p -> val + carry;
-            p -> val = value % 10;
-            carry = value / 10;
-        }
-        head = reverse(newhead);
-        if (carry > 0) {
-            ListNode *p = new ListNode(1);
-            p -> next = head;
-            return p;
-        }
-        return head;
-    }
+	ListNode* plusOne(ListNode* head) {
+		if (head == NULL) {
+			return head;
+		}
+		ListNode *newhead = reverse(head);
+		int carry = 1;
+		for (ListNode *p = newhead; p != NULL && carry != 0; p = p->next) {
+			int value = p->val + carry;
+			p->val = value % 10;
+			carry = value / 10;
+		}
+		head = reverse(newhead);
+		if (carry > 0) {
+			ListNode *p = new ListNode(1);
+			p->next = head;
+			return p;
+		}
+		return head;
+	}
 private:
-    ListNode* reverse(ListNode* head) {
-        if (head == NULL || head -> next == NULL) {
-            return head;
-        }
-        ListNode *pre = NULL;
-        while (head != NULL) {
-            ListNode *post = head -> next;
-            head -> next = pre;
-            pre = head;
-            head = post;
-        }
-        return pre;
-    }
+	ListNode* reverse(ListNode* head) {
+		if (head == NULL || head->next == NULL) {
+			return head;
+		}
+		ListNode *pre = NULL;
+		while (head != NULL) {
+			ListNode *post = head->next;
+			head->next = pre;
+			pre = head;
+			head = post;
+		}
+		return pre;
+	}
 };
 /*
 
@@ -8222,16 +8373,16 @@ Example:
 
 Given:
 
-    length = 5,
-    updates = [
-        [1,  3,  2],
-        [2,  4,  3],
-        [0,  2, -2]
-    ]
+	length = 5,
+	updates = [
+		[1,  3,  2],
+		[2,  4,  3],
+		[0,  2, -2]
+	]
 
 Output:
 
-    [-2, 0, 3, 5, 3]
+	[-2, 0, 3, 5, 3]
 Explanation:
 
 Initial state:
@@ -8255,19 +8406,19 @@ The optimal time complexity is O(k + n) and uses O(1) extra space.
 */
 class Solution {
 public:
-    vector<int> getModifiedArray(int length, vector<vector<int>>& updates) {
-        vector<int> res(length, 0);
-        for (vector<int> v : updates) {
-            res[v[0]] += v[2];
-            if (v[1] < length - 1) {
-                res[v[1] + 1] -= v[2];
-            }
-        }
-        for (int i = 1; i < length; i++) {
-            res[i] += res[i - 1];
-        }
-        return res;
-    }
+	vector<int> getModifiedArray(int length, vector<vector<int>>& updates) {
+		vector<int> res(length, 0);
+		for (vector<int> v : updates) {
+			res[v[0]] += v[2];
+			if (v[1] < length - 1) {
+				res[v[1] + 1] -= v[2];
+			}
+		}
+		for (int i = 1; i < length; i++) {
+			res[i] += res[i - 1];
+		}
+		return res;
+	}
 };
 /*
 
@@ -8282,7 +8433,7 @@ Given a = 1 and b = 2, return 3.
 class Solution {
 public:
 	int getSum(int a, int b) {
-		while (b){
+		while (b) {
 			int x = a ^ b, y = (a & b) << 1;
 			a = x; b = y;
 		}
@@ -8314,14 +8465,14 @@ public:
 	int superPow(int a, vector<int>& b) {
 		if (a % 1337 == 0) return 0;
 		int p = 0;
-		for (int i : b) 
+		for (int i : b)
 			p = (p * 10 + i) % 1140;
 		if (p == 0) p += 1140;
 		return power(a, p, 1337);
 	}
 	int power(int x, int n, int mod) {
 		int ret = 1;
-		for (x %= mod; n; x = x * x % mod, n >>= 1) 
+		for (x %= mod; n; x = x * x % mod, n >>= 1)
 			if (n & 1) ret = ret * x % mod;
 		return ret;
 	}
@@ -8359,9 +8510,9 @@ public:
 		while (left != right) {
 			int mid = left / 2 + right / 2;
 			switch (guess(mid)) {
-				case 1: left = mid + 1; break;
-				case -1: right = mid - 1; break;
-				case 0: return mid;
+			case 1: left = mid + 1; break;
+			case -1: right = mid - 1; break;
+			case 0: return mid;
 			}
 		}
 		return left;
@@ -8411,9 +8562,9 @@ public:
 			dp[i][i + 2] = i + 1;
 		}
 		for (int nn = 3; nn <= n; nn++) {
-			for (int m = 1; m <= n - nn; m++){
+			for (int m = 1; m <= n - nn; m++) {
 				int mini = 0x7fffffff;
-				for (int i = m + 2; i < m + nn; i++){
+				for (int i = m + 2; i < m + nn; i++) {
 					int l = dp[m][i - 1];
 					int r = dp[i + 1][m + nn];
 					mini = min(mini, max(l, r) + i);
@@ -8428,17 +8579,17 @@ public:
 
 376. Wiggle Subsequence (Medium)
 
-A sequence of numbers is called a wiggle sequence if the differences between successive 
-numbers strictly alternate between positive and negative. The first difference (if one 
-exists) may be either positive or negative. A sequence with fewer than two elements is 
+A sequence of numbers is called a wiggle sequence if the differences between successive
+numbers strictly alternate between positive and negative. The first difference (if one
+exists) may be either positive or negative. A sequence with fewer than two elements is
 trivially a wiggle sequence.
 
-For example, [1,7,4,9,2,5] is a wiggle sequence because the differences (6,-3,5,-7,3) 
-are alternately positive and negative. In contrast, [1,4,7,2,5] and [1,7,4,5,5] are not 
-wiggle sequences, the first because its first two differences are positive and the second 
+For example, [1,7,4,9,2,5] is a wiggle sequence because the differences (6,-3,5,-7,3)
+are alternately positive and negative. In contrast, [1,4,7,2,5] and [1,7,4,5,5] are not
+wiggle sequences, the first because its first two differences are positive and the second
 because its last difference is zero.
 
-Given a sequence of integers, return the length of the longest subsequence that is a 
+Given a sequence of integers, return the length of the longest subsequence that is a
 wiggle sequence. A subsequence is obtained by deleting some number of elements (eventually,
  also zero) from the original sequence, leaving the remaining elements in their original order.
 
@@ -8460,9 +8611,9 @@ class Solution {
 public:
 	int wiggleMaxLength(vector<int>& nums) {
 		int _size = nums.size(), p = 1, n = 1;
-		for (int i = 1; i < _size; i++){
-			if (nums[i] > nums[i-1]) p = n + 1;
-			else if(nums[i] < nums[i-1]) n = p + 1;
+		for (int i = 1; i < _size; i++) {
+			if (nums[i] > nums[i - 1]) p = n + 1;
+			else if (nums[i] < nums[i - 1]) n = p + 1;
 		}
 		return _size == 0 ? 0 : max(p, n);
 	}
@@ -8503,7 +8654,7 @@ public:
 		table[0] = 1;
 		for (int i = 1; i <= target; i++) {
 			for (int j : nums) {
-				if (i - j >= 0) table[i] += table[i - j]; 
+				if (i - j >= 0) table[i] += table[i - j];
 			}
 		}
 		return table.back();
@@ -8527,7 +8678,7 @@ matrix = [
 k = 8,
 
 return 13.
-Note: 
+Note:
 You may assume k is always valid, 1 ≤ k ≤ n2.
 
 */
@@ -8548,11 +8699,11 @@ public:
 
 383. Ransom Note (Easy)
 
- Given  an  arbitrary  ransom  note  string  and  another  string  containing  letters from  all  the  
-magazines,  write  a  function  that  will  return  true  if  the  ransom   note  can  be  constructed  
-from  the  magazines ;  otherwise,  it  will  return  false.   
+ Given  an arbitrary  ransom  note  string and another string containing letters from  all the 
+magazines,  write a function that will return true if the ransom  note can be constructed 
+from the magazines ; otherwise, it will return false.  
 
-Each  letter  in  the  magazine  string  can  only  be  used  once  in  your  ransom  note.
+Each letter  in  the  magazine string can  only be  used once  in  your ransom  note.
 
 Note:
 You may assume that both strings contain only lowercase letters.
@@ -8598,32 +8749,32 @@ Explanation:
 */
 class Solution {
 public:
-    char findTheDifference(string s, string t) {
-        char result = 0;
-        for (char c : s) {
-            result ^= c;
-        }
-        for (char c : t) {
-            result ^= c;
-        }
-        return result;
-    }
+	char findTheDifference(string s, string t) {
+		char result = 0;
+		for (char c : s) {
+			result ^= c;
+		}
+		for (char c : t) {
+			result ^= c;
+		}
+		return result;
+	}
 };
 class Solution {
 public:
-    char findTheDifference(string s, string t) {
-        unordered_map<char, int> mapping;
-        for (char c : s) {
-            mapping[c] += 1;
-        }
-        for (char c : t) {
-            mapping[c] -= 1;
-            if (mapping[c] == -1) {
-                return c;
-            }
-        }
-        return ' ';
-    }
+	char findTheDifference(string s, string t) {
+		unordered_map<char, int> mapping;
+		for (char c : s) {
+			mapping[c] += 1;
+		}
+		for (char c : t) {
+			mapping[c] -= 1;
+			if (mapping[c] == -1) {
+				return c;
+			}
+		}
+		return ' ';
+	}
 };
 /*
 
@@ -8631,11 +8782,11 @@ public:
 
 Given a string s and a string t, check if s is subsequence of t.
 
-You may assume that there is only lower case English letters in both s and t. t is potentially 
+You may assume that there is only lower case English letters in both s and t. t is potentially
 a very long (length ~= 500,000) string, and s is a short string (<=100).
 
-A subsequence of a string is a new string which is formed from the original string by deleting 
-some (can be none) of the characters without disturbing the relative positions of the remaining 
+A subsequence of a string is a new string which is formed from the original string by deleting
+some (can be none) of the characters without disturbing the relative positions of the remaining
 characters. (ie, "ace" is a subsequence of "abcde" while "aec" is not).
 
 Example 1:
@@ -8649,7 +8800,7 @@ s = "axc", t = "ahbgdc"
 Return false.
 
 Follow up:
-If there are lots of incoming S, say S1, S2, ... , Sk where k >= 1B, and you want to check one 
+If there are lots of incoming S, say S1, S2, ... , Sk where k >= 1B, and you want to check one
 by one to see if T has its subsequence. In this scenario, how would you change your code?
 
 */
@@ -8691,22 +8842,22 @@ So the maximum value of F(0), F(1), F(2), F(3) is F(3) = 26.
 */
 class Solution {
 public:
-    int maxRotateFunction(vector<int>& A) {
-        if (A.empty()) {
-            return 0;
-        }
-        int sum = 0, res = INT_MIN, temp = 0;
-        for (int i = 0; i < A.size(); i++) {
-            sum += A[i];
-            temp += i * A[i];
-        }
-        res = temp;
-        for (int i = 1; i < A.size(); i++) {
-            temp = sum - A.size() * A[A.size() - i] + temp;
-            res = max(res, temp);
-        }
-        return res;
-    }
+	int maxRotateFunction(vector<int>& A) {
+		if (A.empty()) {
+			return 0;
+		}
+		int sum = 0, res = INT_MIN, temp = 0;
+		for (int i = 0; i < A.size(); i++) {
+			sum += A[i];
+			temp += i * A[i];
+		}
+		res = temp;
+		for (int i = 1; i < A.size(); i++) {
+			temp = sum - A.size() * A[A.size() - i] + temp;
+			res = max(res, temp);
+		}
+		return res;
+	}
 };
 /*
 
@@ -8744,20 +8895,20 @@ or
 */
 class Solution {
 public:
-    int integerReplacement(int n) {
-        int res = 0;
-        unsigned m = n;
-        while (m > 3) {
-            //...?0 even
-            if (!(m & 1)) m >>= 1;
-            //...11
-            else if (m & 2) m++;
-            //...01
-            else m--;
-            res++;
-        }
-        return res + m - 1;
-    }
+	int integerReplacement(int n) {
+		int res = 0;
+		unsigned m = n;
+		while (m > 3) {
+			//...?0 even
+			if (!(m & 1)) m >>= 1;
+			//...11
+			else if (m & 2) m++;
+			//...01
+			else m--;
+			res++;
+		}
+		return res + m - 1;
+	}
 };
 /*
 
@@ -8789,16 +8940,18 @@ The 11th digit of the sequence 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, ... is a 0, wh
 */
 class Solution {
 public:
-    int findNthDigit(int n) {
-        int d = 1, base = 1;
-        while ((long long)9 * base * d - n < 0) {
-            n -= 9 * base * d++;
-            base *= 10;
-        }
-        int num = --n / d + base;
-        for (int i = 1; i < d - n % d; i++) num /= 10;
-            return num % 10;
-    }
+	int findNthDigit(int n) {
+		int d = 1, base = 1;
+		while ((long long)9 * base * d - n < 0) {
+			n -= 9 * base * d++;
+			base *= 10;
+		}
+		int num = --n / d + base;
+		for (int i = 1; i < d - n % d; i++) {
+			num /= 10;
+		}
+		return num % 10;
+	}
 };
 /*
 
@@ -8825,21 +8978,21 @@ One longest palindrome that can be built is "dccaccd", whose length is 7.
 */
 class Solution {
 public:
-    int longestPalindrome(string s) {
-        int table[58] = {0};
-        int res = 0;
-        bool flag = false;
-        for (char cha : s) {
-            table[cha - 'A']++;
-        }
-        for (auto i : table) {
-            res += i / 2 * 2;
-            if (i % 2 == 1) {
-                flag = true;
-            }
-        }
-        return flag == true ? res + 1 : res;   
-    }
+	int longestPalindrome(string s) {
+		int table[58] = { 0 };
+		int res = 0;
+		bool flag = false;
+		for (char cha : s) {
+			table[cha - 'A']++;
+		}
+		for (auto i : table) {
+			res += i / 2 * 2;
+			if (i % 2 == 1) {
+				flag = true;
+			}
+		}
+		return flag == true ? res + 1 : res;
+	}
 };
 /*
 
@@ -8870,19 +9023,19 @@ Both numbers with value 2 are both considered as second maximum.
 */
 class Solution {
 public:
-    int thirdMax(vector<int>& nums) {
-        set<int> s;
-        for(int i = 0; i < nums.size(); ++i) {
-            s.insert(nums[i]);
-            if(s.size() > 3) {
-                s.erase(s.begin());
-            }
-        }
-        if(s.size() < 3) {
-            return *(--s.end());
-        }
-        return *s.begin();
-    }
+	int thirdMax(vector<int>& nums) {
+		set<int> s;
+		for (int i = 0; i < nums.size(); ++i) {
+			s.insert(nums[i]);
+			if (s.size() > 3) {
+				s.erase(s.begin());
+			}
+		}
+		if (s.size() < 3) {
+			return *(--s.end());
+		}
+		return *s.begin();
+	}
 };
 /*
 
@@ -8900,21 +9053,21 @@ You must not use any built-in BigInteger library or convert the inputs to intege
 */
 class Solution {
 public:
-    string addStrings(string num1, string num2) {
-        string res;
-        int i = num1.length() - 1, j = num2.length() - 1;
-        long carry = 0;
-        while ( i >= 0 || j >= 0 || carry > 0) {
-            if (i >= 0) {
-                carry = (num1[i--] - '0') + carry;
-            }
-            if (j >= 0) {
-                carry = (num2[j--] - '0') + carry;
-            }
-            res += to_string(carry % 10);
-            carry /= 10;
-        }
-        reverse(res.begin(), res.end());
-        return res;
-    }
+	string addStrings(string num1, string num2) {
+		string res;
+		int i = num1.length() - 1, j = num2.length() - 1;
+		long carry = 0;
+		while (i >= 0 || j >= 0 || carry > 0) {
+			if (i >= 0) {
+				carry = (num1[i--] - '0') + carry;
+			}
+			if (j >= 0) {
+				carry = (num2[j--] - '0') + carry;
+			}
+			res += to_string(carry % 10);
+			carry /= 10;
+		}
+		reverse(res.begin(), res.end());
+		return res;
+	}
 };

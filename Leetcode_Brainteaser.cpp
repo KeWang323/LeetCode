@@ -15,9 +15,9 @@ If there are 5 stones in the heap, could you figure out a way to remove the ston
 */
 class Solution {
 public:
-    bool canWinNim(int n) {
-        return n % 4;
-    }
+	bool canWinNim(int n) {
+		return n % 4;
+	}
 };
 /*
 
@@ -27,19 +27,19 @@ There are n bulbs that are initially off. You first turn on all the bulbs. Then,
 
 Example:
 
-Given n = 3. 
+Given n = 3.
 
 At first, the three bulbs are [off, off, off].
 After first round, the three bulbs are [on, on, on].
 After second round, the three bulbs are [on, off, on].
-After third round, the three bulbs are [on, off, off]. 
+After third round, the three bulbs are [on, off, off].
 
 So you should return 1, because there is only one bulb is on.
 
 */
 class Solution {
 public:
-    int bulbSwitch(int n) {
-        return sqrt(n);
-    }
+	int bulbSwitch(int n) {
+		return sqrt(n);
+	}
 };

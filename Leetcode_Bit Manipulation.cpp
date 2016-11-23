@@ -23,21 +23,21 @@ If nums = [1,2,3], a solution is:
 */
 class Solution {
 public:
-    vector<vector<int>> subsets(vector<int>& nums) {
-        vector<vector<int>> res;
-        vector<int> res_sub;
-        res.push_back(res_sub);
-        generate(nums, 0, res, res_sub);
-        return res;
-    }
-    void generate(vector<int>& nums, int start, vector<vector<int>>& res, vector<int>& res_sub) {
-    	for (int i = start; i < nums.size(); i++) {
-    		res_sub.push_back(nums[i]);
-    		res.push_back(res_sub);
-    		generate(nums, i + 1, res, res_sub);
-    		res_sub.pop_back();
-    	}
-    }
+	vector<vector<int>> subsets(vector<int>& nums) {
+		vector<vector<int>> res;
+		vector<int> res_sub;
+		res.push_back(res_sub);
+		generate(nums, 0, res, res_sub);
+		return res;
+	}
+	void generate(vector<int>& nums, int start, vector<vector<int>>& res, vector<int>& res_sub) {
+		for (int i = start; i < nums.size(); i++) {
+			res_sub.push_back(nums[i]);
+			res.push_back(res_sub);
+			generate(nums, i + 1, res, res_sub);
+			res_sub.pop_back();
+		}
+	}
 };
 /*
 
@@ -51,12 +51,12 @@ Your algorithm should have a linear runtime complexity. Could you implement it w
 */
 class Solution {
 public:
-    int singleNumber(vector<int>& nums) {
-        for (int i = 1; i < nums.size(); i++) {
-            nums[0] ^= nums[i];
-        }
-        return nums[0];
-    }
+	int singleNumber(vector<int>& nums) {
+		for (int i = 1; i < nums.size(); i++) {
+			nums[0] ^= nums[i];
+		}
+		return nums[0];
+	}
 };
 /*
 
@@ -69,24 +69,25 @@ You may assume that the array is non-empty and the majority element always exist
 */
 class Solution {
 public:
-    int majorityElement(vector<int>& nums) {
-        if (nums.size() == 1) {
-            return nums[0];
-        }
-        int cnt = 0, majority;
-        for (int i =0; i < nums.size(); i++) {
-            if (cnt == 0) {
-                majority = nums[i];
-                cnt++;
-            } else {
-                majority == nums[i] ? cnt++ : cnt--;
-                if (cnt > nums.size() / 2) {
-                    return majority;
-                }
-            }
-        }
-        return majority;
-    }
+	int majorityElement(vector<int>& nums) {
+		if (nums.size() == 1) {
+			return nums[0];
+		}
+		int cnt = 0, majority;
+		for (int i = 0; i < nums.size(); i++) {
+			if (cnt == 0) {
+				majority = nums[i];
+				cnt++;
+			}
+			else {
+				majority == nums[i] ? cnt++ : cnt--;
+				if (cnt > nums.size() / 2) {
+					return majority;
+				}
+			}
+		}
+		return majority;
+	}
 };
 /*
 
@@ -106,16 +107,16 @@ Return:
 */
 class Solution {
 public:
-    vector<string> findRepeatedDnaSequences(string s) {
-        unordered_map<int, int> mapping;
-        vector<string> res;
-        for (int t = 0, i = 0; i < s.size(); i++) {
-            if (mapping[t = t << 3 & 0x3FFFFFFF | s[i] & 7]++ == 1) {
-                res.push_back(s.substr(i - 9, 10));
-            }
-        }
-        return res;
-    }
+	vector<string> findRepeatedDnaSequences(string s) {
+		unordered_map<int, int> mapping;
+		vector<string> res;
+		for (int t = 0, i = 0; i < s.size(); i++) {
+			if (mapping[t = t << 3 & 0x3FFFFFFF | s[i] & 7]++ == 1) {
+				res.push_back(s.substr(i - 9, 10));
+			}
+		}
+		return res;
+	}
 };
 /*
 
@@ -128,16 +129,16 @@ For example, given input 43261596 (represented in binary as 00000010100101000001
 */
 class Solution {
 public:
-    uint32_t reverseBits(uint32_t n) {
-        uint32_t res = 0;
-        int index = 31;
-        while (n > 0) {
-            res |= (n & 0x1) << index;
-            n >>= 1;
-            index--;
-        }
-        return res;
-    }
+	uint32_t reverseBits(uint32_t n) {
+		uint32_t res = 0;
+		int index = 31;
+		while (n > 0) {
+			res |= (n & 0x1) << index;
+			n >>= 1;
+			index--;
+		}
+		return res;
+	}
 };
 /*
 
@@ -168,9 +169,9 @@ Given an integer, write a function to determine if it is a power of two.
 */
 class Solution {
 public:
-    bool isPowerOfTwo(int n) {
-        return n > 0 && (n & (n - 1)) == 0;
-    }
+	bool isPowerOfTwo(int n) {
+		return n > 0 && (n & (n - 1)) == 0;
+	}
 };
 /*
 
@@ -187,13 +188,13 @@ Your algorithm should run in linear runtime complexity. Could you implement it u
 */
 class Solution {
 public:
-    int missingNumber(vector<int>& nums) {
-        int _sum = nums.size() * (nums.size() + 1) / 2;
-        for (int i : nums) {
-            _sum -= i;
-        }
-        return _sum;
-    }
+	int missingNumber(vector<int>& nums) {
+		int _sum = nums.size() * (nums.size() + 1) / 2;
+		for (int i : nums) {
+			_sum -= i;
+		}
+		return _sum;
+	}
 };
 /*
 
@@ -218,12 +219,12 @@ Or does the odd/even status of the number help you in calculating the number of 
 */
 class Solution {
 public:
-    vector<int> countBits(int num) {
-        vector<int> table(num + 1);
-        for (int i = 1; i <= num; i++)
-            table[i] = 1 + table[i & (i - 1)];
-        return table;
-    }
+	vector<int> countBits(int num) {
+		vector<int> table(num + 1);
+		for (int i = 1; i <= num; i++)
+			table[i] = 1 + table[i & (i - 1)];
+		return table;
+	}
 };
 /*
 
@@ -255,13 +256,13 @@ Given a = 1 and b = 2, return 3.
 */
 class Solution {
 public:
-    int getSum(int a, int b) {
-        while (b){
-            int x = a ^ b, y = (a & b) << 1;
-            a = x; b = y;
-        }
-        return a;
-    }
+	int getSum(int a, int b) {
+		while (b) {
+			int x = a ^ b, y = (a & b) << 1;
+			a = x; b = y;
+		}
+		return a;
+	}
 };
 /*
 
@@ -288,30 +289,30 @@ Explanation:
 */
 class Solution {
 public:
-    char findTheDifference(string s, string t) {
-        char result = 0;
-        for (char c : s) {
-            result ^= c;
-        }
-        for (char c : t) {
-            result ^= c;
-        }
-        return result;
-    }
+	char findTheDifference(string s, string t) {
+		char result = 0;
+		for (char c : s) {
+			result ^= c;
+		}
+		for (char c : t) {
+			result ^= c;
+		}
+		return result;
+	}
 };
 class Solution {
 public:
-    char findTheDifference(string s, string t) {
-        unordered_map<char, int> mapping;
-        for (char c : s) {
-            mapping[c] += 1;
-        }
-        for (char c : t) {
-            mapping[c] -= 1;
-            if (mapping[c] == -1) {
-                return c;
-            }
-        }
-        return ' ';
-    }
+	char findTheDifference(string s, string t) {
+		unordered_map<char, int> mapping;
+		for (char c : s) {
+			mapping[c] += 1;
+		}
+		for (char c : t) {
+			mapping[c] -= 1;
+			if (mapping[c] == -1) {
+				return c;
+			}
+		}
+		return ' ';
+	}
 };

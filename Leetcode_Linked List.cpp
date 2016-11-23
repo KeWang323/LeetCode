@@ -20,23 +20,23 @@ Output: 7 -> 0 -> 8
  */
 class Solution {
 public:
-    ListNode* addTwoNumbers(ListNode* l1, ListNode* l2) {
-        int carry = 0;
-        ListNode *dummy = new ListNode(-1), *p = dummy;
-        for (ListNode *pa = l1, *pb = l2; pa || pb; p = p -> next) {
-            int ai = pa != NULL ? pa -> val : 0;
-            int bi = pb != NULL ? pb -> val : 0;
-            carry = ai + bi + carry;
-            p -> next = new ListNode(carry % 10);
-            carry /= 10;
-            pa = pa != NULL ? pa -> next : NULL;
-            pb = pb != NULL ? pb -> next : NULL;
-        }
-        if (carry) {
-            p -> next = new ListNode(carry);
-        }
-        return dummy -> next;
-    }
+	ListNode* addTwoNumbers(ListNode* l1, ListNode* l2) {
+		int carry = 0;
+		ListNode *dummy = new ListNode(-1), *p = dummy;
+		for (ListNode *pa = l1, *pb = l2; pa || pb; p = p->next) {
+			int ai = pa != NULL ? pa->val : 0;
+			int bi = pb != NULL ? pb->val : 0;
+			carry = ai + bi + carry;
+			p->next = new ListNode(carry % 10);
+			carry /= 10;
+			pa = pa != NULL ? pa->next : NULL;
+			pb = pb != NULL ? pb->next : NULL;
+		}
+		if (carry) {
+			p->next = new ListNode(carry);
+		}
+		return dummy->next;
+	}
 };
 /*
 
@@ -64,25 +64,25 @@ Try to do this in one pass.
  */
 class Solution {
 public:
-    ListNode* removeNthFromEnd(ListNode* head, int n) {
-        if (head == NULL) {
-            return head;
-        }
-        ListNode *p = head, *q = head, *q_prev = NULL;
-        for (int i = 0; i < n - 1; i++) {
-            p = p -> next;
-        }
-        while (p -> next != NULL) {
-            p = p -> next;
-            q_prev = q;
-            q = q -> next;
-        }
-        if (!q_prev) {
-            return head -> next;
-        }
-        q_prev -> next = q -> next;
-        return head;
-    }
+	ListNode* removeNthFromEnd(ListNode* head, int n) {
+		if (head == NULL) {
+			return head;
+		}
+		ListNode *p = head, *q = head, *q_prev = NULL;
+		for (int i = 0; i < n - 1; i++) {
+			p = p->next;
+		}
+		while (p->next != NULL) {
+			p = p->next;
+			q_prev = q;
+			q = q->next;
+		}
+		if (!q_prev) {
+			return head->next;
+		}
+		q_prev->next = q->next;
+		return head;
+	}
 };
 /*
 
@@ -101,19 +101,20 @@ Merge two sorted linked lists and return it as a new list. The new list should b
  */
 class Solution {
 public:
-    ListNode* mergeTwoLists(ListNode* l1, ListNode* l2) {
-        ListNode* dummy = new ListNode(-1);
-        for (ListNode* p = dummy; l1 != NULL || l2 != NULL; p = p -> next) {
-            if (l1 == NULL || l2 != NULL && l2 -> val < l1 -> val) {
-                p -> next = l2;
-                l2 = l2 -> next;
-            } else {
-                p -> next = l1;
-                l1 = l1 -> next;
-            }
-        }
-        return dummy -> next;
-    }
+	ListNode* mergeTwoLists(ListNode* l1, ListNode* l2) {
+		ListNode* dummy = new ListNode(-1);
+		for (ListNode* p = dummy; l1 != NULL || l2 != NULL; p = p->next) {
+			if (l1 == NULL || l2 != NULL && l2->val < l1->val) {
+				p->next = l2;
+				l2 = l2->next;
+			}
+			else {
+				p->next = l1;
+				l1 = l1->next;
+			}
+		}
+		return dummy->next;
+	}
 };
 /*
 
@@ -132,33 +133,33 @@ Merge k sorted linked lists and return it as one sorted list. Analyze and descri
  */
 class Comp {
 public:
-    bool operator()(pair<ListNode*, int> p1, pair<ListNode*, int> p2) {
-        return p1.first->val > p2.first->val;
-    }
+	bool operator()(pair<ListNode*, int> p1, pair<ListNode*, int> p2) {
+		return p1.first->val > p2.first->val;
+	}
 };
 class Solution {
 public:
-    ListNode* mergeKLists(vector<ListNode*>& lists) {
-        priority_queue<pair<ListNode*, int>, vector<pair<ListNode*, int>>, Comp> pq;
-        ListNode *dummy = new ListNode(-1);
-        ListNode *cur = dummy;
-        for (int i = 0; i < lists.size();i++) {
-            if (lists[i] != NULL) {
-                pq.push(make_pair(lists[i], i));
-            }
-        }
-        while (!pq.empty()) {
-            pair<ListNode*, int> p = pq.top();
-            pq.pop();
-            cur->next = p.first;
-            cur = cur->next;
-            lists[p.second] = lists[p.second]->next;
-            if (lists[p.second] != NULL) {
-                pq.push(make_pair(lists[p.second], p.second));
-            } 
-        }
-        return dummy->next;
-    }
+	ListNode* mergeKLists(vector<ListNode*>& lists) {
+		priority_queue<pair<ListNode*, int>, vector<pair<ListNode*, int>>, Comp> pq;
+		ListNode *dummy = new ListNode(-1);
+		ListNode *cur = dummy;
+		for (int i = 0; i < lists.size();i++) {
+			if (lists[i] != NULL) {
+				pq.push(make_pair(lists[i], i));
+			}
+		}
+		while (!pq.empty()) {
+			pair<ListNode*, int> p = pq.top();
+			pq.pop();
+			cur->next = p.first;
+			cur = cur->next;
+			lists[p.second] = lists[p.second]->next;
+			if (lists[p.second] != NULL) {
+				pq.push(make_pair(lists[p.second], p.second));
+			}
+		}
+		return dummy->next;
+	}
 };
 /*
 
@@ -182,15 +183,15 @@ Your algorithm should use only constant space. You may not modify the values in 
  */
 class Solution {
 public:
-    ListNode* swapPairs(ListNode* head) {
-        if(head == NULL || head -> next == NULL) {
-            return head;
-        }
-        ListNode* temp = head -> next;
-        head -> next = swapPairs(temp -> next);
-        temp -> next = head;
-        return temp;
-    }
+	ListNode* swapPairs(ListNode* head) {
+		if (head == NULL || head->next == NULL) {
+			return head;
+		}
+		ListNode* temp = head->next;
+		head->next = swapPairs(temp->next);
+		temp->next = head;
+		return temp;
+	}
 };
 /*
 
@@ -213,51 +214,51 @@ return 4->5->1->2->3->NULL.
  */
 class Solution {
 public:
-    ListNode* rotateRight(ListNode* head, int k) {
-        if (head == NULL || head -> next == NULL) {
-            return head;
-        }
-        int len = 1;
-        ListNode *p = head, *q = head;
-        while (p -> next != NULL) {
-            p = p -> next;
-            len++;
-        }
-        k %= len;
-        p = head;
-        for (int i = 0; i < k; i++) {
-            p = p -> next;
-        }
-        while (p -> next != NULL) {
-            p = p -> next;
-            q = q -> next;
-        }
-        p -> next = head;
-        ListNode *newh = q -> next;
-        q -> next = NULL;
-        return newh;
-    }
+	ListNode* rotateRight(ListNode* head, int k) {
+		if (head == NULL || head->next == NULL) {
+			return head;
+		}
+		int len = 1;
+		ListNode *p = head, *q = head;
+		while (p->next != NULL) {
+			p = p->next;
+			len++;
+		}
+		k %= len;
+		p = head;
+		for (int i = 0; i < k; i++) {
+			p = p->next;
+		}
+		while (p->next != NULL) {
+			p = p->next;
+			q = q->next;
+		}
+		p->next = head;
+		ListNode *newh = q->next;
+		q->next = NULL;
+		return newh;
+	}
 };
 class Solution {
 public:
-    ListNode* rotateRight(ListNode* head, int k) {
-        if (!head) {
-            return head;
-        }
-        int len = 1;
-        ListNode *p = head;
-        while (p -> next != NULL) {
-            len++;
-            p = p -> next;
-        }
-        p -> next = head;
-        k %= len;
-        for (int i = 0; i < len - k; i++, p = p -> next){
-        }
-        ListNode *head_new = p -> next;
-        p -> next = NULL;
-        return head_new;
-    }
+	ListNode* rotateRight(ListNode* head, int k) {
+		if (!head) {
+			return head;
+		}
+		int len = 1;
+		ListNode *p = head;
+		while (p->next != NULL) {
+			len++;
+			p = p->next;
+		}
+		p->next = head;
+		k %= len;
+		for (int i = 0; i < len - k; i++, p = p->next) {
+		}
+		ListNode *head_new = p->next;
+		p->next = NULL;
+		return head_new;
+	}
 };
 /*
 
@@ -280,28 +281,29 @@ Given 1->1->1->2->3, return 2->3.
  */
 class Solution {
 public:
-    ListNode* deleteDuplicates(ListNode* head) {
-        if (head == NULL || head -> next == NULL) {
-            return head;
-        }
-        ListNode *dummy = new ListNode(-1);
-        dummy -> next = head;
-        ListNode *p = dummy;
-        while (head != NULL) {
-            ListNode *post = head -> next;
-            if (post != NULL && post -> val == head -> val) {
-                while (post != NULL && post -> val == head -> val) {
-                    post = post -> next;
-                } 
-                head = post;
-                p -> next = head;
-            } else {
-                p = head;
-                head = head -> next;
-            }
-        }
-        return dummy -> next;
-    }
+	ListNode* deleteDuplicates(ListNode* head) {
+		if (head == NULL || head->next == NULL) {
+			return head;
+		}
+		ListNode *dummy = new ListNode(-1);
+		dummy->next = head;
+		ListNode *p = dummy;
+		while (head != NULL) {
+			ListNode *post = head->next;
+			if (post != NULL && post->val == head->val) {
+				while (post != NULL && post->val == head->val) {
+					post = post->next;
+				}
+				head = post;
+				p->next = head;
+			}
+			else {
+				p = head;
+				head = head->next;
+			}
+		}
+		return dummy->next;
+	}
 };
 /*
 
@@ -324,20 +326,21 @@ Given 1->1->2->3->3, return 1->2->3.
  */
 class Solution {
 public:
-    ListNode* deleteDuplicates(ListNode* head) {
-        if(head != NULL|| head -> next != NULL) {
-            return head;
-        }
-        ListNode *p = head;
-        while (p != NULL && p -> next != NULL) {
-            if(p -> val == p -> next -> val) {
-                p -> next = p -> next -> next;
-            } else {
-                p = p -> next; 
-            }
-        }
-        return head;
-    }
+	ListNode* deleteDuplicates(ListNode* head) {
+		if (head != NULL || head->next != NULL) {
+			return head;
+		}
+		ListNode *p = head;
+		while (p != NULL && p->next != NULL) {
+			if (p->val == p->next->val) {
+				p->next = p->next->next;
+			}
+			else {
+				p = p->next;
+			}
+		}
+		return head;
+	}
 };
 /*
 
@@ -362,26 +365,27 @@ return 1->2->2->4->3->5.
  */
 class Solution {
 public:
-    ListNode* partition(ListNode* head, int x) {
-        if (head == NULL || head -> next == NULL) {
-            return head;
-        }
-        ListNode *s = new ListNode(-1), *g = new ListNode(-1);
-        ListNode *p = s, *q = g;
-        while (head != NULL) {
-            if (head -> val < x) {
-                p -> next = head;
-                p = p-> next;
-            } else {
-                q -> next = head;
-                q = q -> next;
-            }
-            head = head -> next;
-        }
-        p -> next = g -> next;
-        q -> next = NULL;
-        return s -> next;
-    }
+	ListNode* partition(ListNode* head, int x) {
+		if (head == NULL || head->next == NULL) {
+			return head;
+		}
+		ListNode *s = new ListNode(-1), *g = new ListNode(-1);
+		ListNode *p = s, *q = g;
+		while (head != NULL) {
+			if (head->val < x) {
+				p->next = head;
+				p = p->next;
+			}
+			else {
+				q->next = head;
+				q = q->next;
+			}
+			head = head->next;
+		}
+		p->next = g->next;
+		q->next = NULL;
+		return s->next;
+	}
 };
 /*
 
@@ -409,24 +413,25 @@ Given m, n satisfy the following condition:
  */
 class Solution {
 public:
-    ListNode* reverseBetween(ListNode* head, int m, int n) {
-        ListNode *head_new = new ListNode(0);
-        head_new -> next = head;
-        ListNode *p = head_new;
-        int i = 1;
-        while (i < n) {
-            if (i++ < m) {
-                p = head;
-                head = head -> next;
-            } else {
-                ListNode *post = head -> next;
-                head -> next = head -> next -> next;
-                post -> next = p -> next;
-                p -> next = post;
-            }
-        }
-        return head_new -> next;
-    }
+	ListNode* reverseBetween(ListNode* head, int m, int n) {
+		ListNode *head_new = new ListNode(0);
+		head_new->next = head;
+		ListNode *p = head_new;
+		int i = 1;
+		while (i < n) {
+			if (i++ < m) {
+				p = head;
+				head = head->next;
+			}
+			else {
+				ListNode *post = head->next;
+				head->next = head->next->next;
+				post->next = p->next;
+				p->next = post;
+			}
+		}
+		return head_new->next;
+	}
 };
 /*
 
@@ -443,39 +448,40 @@ Given a singly linked list where elements are sorted in ascending order, convert
  *     ListNode(int x) : val(x), next(NULL) {}
  * };
  */
-/**
- * Definition for a binary tree node.
- * struct TreeNode {
- *     int val;
- *     TreeNode *left;
- *     TreeNode *right;
- *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
- * };
- */
+ /**
+  * Definition for a binary tree node.
+  * struct TreeNode {
+  *     int val;
+  *     TreeNode *left;
+  *     TreeNode *right;
+  *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+  * };
+  */
 class Solution {
 public:
-    TreeNode* sortedListToBST(ListNode* head) {
-        TreeNode *fake = new TreeNode(-1);
-        if (head == NULL) {
-            return fake -> left;
-        }else if (head -> next == NULL) {
-            fake -> val = head -> val;
-            return fake;
-        }
-        ListNode *fast = head, *slow = head, *slow_prev = NULL;
-        while (fast -> next != NULL && fast -> next -> next != NULL) {
-            slow_prev = slow;
-            slow = slow -> next;
-            fast = fast -> next -> next;
-        }
-        fake -> val = slow -> val;
-        if (slow_prev != NULL) {
-            slow_prev -> next = NULL;
-            fake -> left = sortedListToBST(head);
-        }
-        fake -> right = sortedListToBST(slow -> next);
-        return fake;
-    }
+	TreeNode* sortedListToBST(ListNode* head) {
+		TreeNode *fake = new TreeNode(-1);
+		if (head == NULL) {
+			return fake->left;
+		}
+		else if (head->next == NULL) {
+			fake->val = head->val;
+			return fake;
+		}
+		ListNode *fast = head, *slow = head, *slow_prev = NULL;
+		while (fast->next != NULL && fast->next->next != NULL) {
+			slow_prev = slow;
+			slow = slow->next;
+			fast = fast->next->next;
+		}
+		fake->val = slow->val;
+		if (slow_prev != NULL) {
+			slow_prev->next = NULL;
+			fake->left = sortedListToBST(head);
+		}
+		fake->right = sortedListToBST(slow->next);
+		return fake;
+	}
 };
 /*
 
@@ -496,34 +502,34 @@ Return a deep copy of the list.
  */
 class Solution {
 public:
-    RandomListNode *copyRandomList(RandomListNode *head) {
-        if (head == NULL) {
-            return NULL;
-        }
-        RandomListNode *newhead = new RandomListNode(head->label);
-        RandomListNode *cur = newhead;
-        unordered_map<RandomListNode*, RandomListNode*> mapping;
-        mapping[head] = newhead;
-        while (head != NULL) {
-            if (head->next != NULL) {
-                if (mapping.find(head->next) == mapping.end()) {
-                    RandomListNode *next = new RandomListNode(head->next->label);
-                    mapping[head->next] = next;
-                }
-                cur->next = mapping[head->next];
-            }
-            if (head->random != NULL) {
-                if (mapping.find(head->random) == mapping.end()) {
-                    RandomListNode *random = new RandomListNode(head->random->label);
-                    mapping[head->random] = random;
-                }
-                cur->random = mapping[head->random];
-            }
-            head = head->next;
-            cur = cur->next;
-        }
-        return newhead;
-    }
+	RandomListNode *copyRandomList(RandomListNode *head) {
+		if (head == NULL) {
+			return NULL;
+		}
+		RandomListNode *newhead = new RandomListNode(head->label);
+		RandomListNode *cur = newhead;
+		unordered_map<RandomListNode*, RandomListNode*> mapping;
+		mapping[head] = newhead;
+		while (head != NULL) {
+			if (head->next != NULL) {
+				if (mapping.find(head->next) == mapping.end()) {
+					RandomListNode *next = new RandomListNode(head->next->label);
+					mapping[head->next] = next;
+				}
+				cur->next = mapping[head->next];
+			}
+			if (head->random != NULL) {
+				if (mapping.find(head->random) == mapping.end()) {
+					RandomListNode *random = new RandomListNode(head->random->label);
+					mapping[head->random] = random;
+				}
+				cur->random = mapping[head->random];
+			}
+			head = head->next;
+			cur = cur->next;
+		}
+		return newhead;
+	}
 };
 /*
 
@@ -545,21 +551,21 @@ Can you solve it without using extra space?
  */
 class Solution {
 public:
-    bool hasCycle(ListNode *head) {
-        if (head == NULL) {
-            return false;
-        }
-        ListNode *s = head, *f = head;
-        while (f -> next != NULL && f -> next -> next != NULL) {
-            s = s -> next;
-            f = f -> next -> next;
-            if (s == f) {
-                return true;
-            }
-        }
-        return false;
-        
-    }
+	bool hasCycle(ListNode *head) {
+		if (head == NULL) {
+			return false;
+		}
+		ListNode *s = head, *f = head;
+		while (f->next != NULL && f->next->next != NULL) {
+			s = s->next;
+			f = f->next->next;
+			if (s == f) {
+				return true;
+			}
+		}
+		return false;
+
+	}
 };
 /*
 
@@ -583,23 +589,23 @@ Can you solve it without using extra space?
  */
 class Solution {
 public:
-    ListNode *detectCycle(ListNode *head) {
-        if(head == NULL || head -> next == NULL) {
-            return NULL;
-        }
-        ListNode *s = head, *f = head;
-        while (f != NULL && f -> next != NULL) {
-            s = s -> next;
-            f = f -> next -> next;
-            if (s == f) break;
-        }
-        if (s != f) return NULL;
-        while (head != s) {
-            head = head -> next;
-            s = s -> next;
-        }
-        return head; 
-    }
+	ListNode *detectCycle(ListNode *head) {
+		if (head == NULL || head->next == NULL) {
+			return NULL;
+		}
+		ListNode *s = head, *f = head;
+		while (f != NULL && f->next != NULL) {
+			s = s->next;
+			f = f->next->next;
+			if (s == f) break;
+		}
+		if (s != f) return NULL;
+		while (head != s) {
+			head = head->next;
+			s = s->next;
+		}
+		return head;
+	}
 };
 /*
 
@@ -624,36 +630,36 @@ Given {1,2,3,4}, reorder it to {1,4,2,3}.
  */
 class Solution {
 public:
-    void reorderList(ListNode* head) {
-        if (head == NULL || head -> next == NULL) {
-            return;
-        }
-        ListNode *s = head, *f = head;
-        while (f -> next != NULL && f -> next -> next != NULL) {
-            s = s -> next;
-            f = f -> next -> next;
-        }
-        ListNode *newhead = reverse(s -> next);
-        s -> next = NULL;
-        s = head;
-        while (newhead != NULL) {
-            ListNode *newheadpos = newhead -> next;
-            newhead -> next = s -> next;
-            s -> next = newhead;
-            s = s -> next -> next;
-            newhead = newheadpos;
-        }
-    }
+	void reorderList(ListNode* head) {
+		if (head == NULL || head->next == NULL) {
+			return;
+		}
+		ListNode *s = head, *f = head;
+		while (f->next != NULL && f->next->next != NULL) {
+			s = s->next;
+			f = f->next->next;
+		}
+		ListNode *newhead = reverse(s->next);
+		s->next = NULL;
+		s = head;
+		while (newhead != NULL) {
+			ListNode *newheadpos = newhead->next;
+			newhead->next = s->next;
+			s->next = newhead;
+			s = s->next->next;
+			newhead = newheadpos;
+		}
+	}
 private:
-    ListNode* reverse(ListNode* head) {
-        if (head == NULL || head -> next == NULL) {
-            return head;
-        }
-        ListNode *newhead = reverse(head -> next);
-        head -> next -> next = head;
-        head -> next = NULL;
-        return newhead;
-    }
+	ListNode* reverse(ListNode* head) {
+		if (head == NULL || head->next == NULL) {
+			return head;
+		}
+		ListNode *newhead = reverse(head->next);
+		head->next->next = head;
+		head->next = NULL;
+		return newhead;
+	}
 };
 /*
 
@@ -672,30 +678,31 @@ Sort a linked list using insertion sort.
  */
 class Solution {
 public:
-    ListNode* insertionSortList(ListNode* head) {
-        if (head == NULL|| head -> next == NULL) {
-            return head;
-        }
-        ListNode *head_new = new ListNode(-1);
-        head_new -> next = head;
-        while (head -> next != NULL) {
-            ListNode *post = head -> next;
-            if (post -> val < head -> val) {
-                head -> next = post -> next;
-                ListNode *prev = head_new;
-                ListNode *p = head_new -> next;
-                while (p -> val < post -> val) {
-                    prev = prev -> next;
-                    p = p -> next;
-                }
-                prev -> next = post;
-                post -> next = p;
-            } else {
-                head = head -> next;
-            }
-        }
-        return head_new -> next;
-    }
+	ListNode* insertionSortList(ListNode* head) {
+		if (head == NULL || head->next == NULL) {
+			return head;
+		}
+		ListNode *head_new = new ListNode(-1);
+		head_new->next = head;
+		while (head->next != NULL) {
+			ListNode *post = head->next;
+			if (post->val < head->val) {
+				head->next = post->next;
+				ListNode *prev = head_new;
+				ListNode *p = head_new->next;
+				while (p->val < post->val) {
+					prev = prev->next;
+					p = p->next;
+				}
+				prev->next = post;
+				post->next = p;
+			}
+			else {
+				head = head->next;
+			}
+		}
+		return head_new->next;
+	}
 };
 /*
 
@@ -714,38 +721,39 @@ Sort a linked list in O(n log n) time using constant space complexity.
  */
 class Solution {
 public:
-    ListNode* sortList(ListNode* head) {
-        if (head == NULL || head -> next == NULL) {
-            return head;
-        }
-        ListNode *newhead = split(head);
-        return sort_combine(sortList(head), sortList(newhead));
-    }
+	ListNode* sortList(ListNode* head) {
+		if (head == NULL || head->next == NULL) {
+			return head;
+		}
+		ListNode *newhead = split(head);
+		return sort_combine(sortList(head), sortList(newhead));
+	}
 private:
-    ListNode* split(ListNode* head) {
-        ListNode *s = head, *f = head;
-        while(f -> next != NULL && f -> next -> next != NULL) {
-            s = s -> next;
-            f = f -> next -> next;
-        }
-        f = s -> next;
-        s -> next = NULL;
-        return f;
-    }
-    ListNode* sort_combine(ListNode* head, ListNode* s) {
-        ListNode *head_new = new ListNode(-1), *p = head_new;
-        while (head != NULL || s != NULL) {
-            if (head == NULL || s != NULL && head -> val > s -> val) {
-                p -> next = s;
-                s = s -> next;
-            } else {
-                p -> next = head;
-                head = head -> next;
-            }
-            p = p -> next;
-        }
-        return head_new -> next;
-    }
+	ListNode* split(ListNode* head) {
+		ListNode *s = head, *f = head;
+		while (f->next != NULL && f->next->next != NULL) {
+			s = s->next;
+			f = f->next->next;
+		}
+		f = s->next;
+		s->next = NULL;
+		return f;
+	}
+	ListNode* sort_combine(ListNode* head, ListNode* s) {
+		ListNode *head_new = new ListNode(-1), *p = head_new;
+		while (head != NULL || s != NULL) {
+			if (head == NULL || s != NULL && head->val > s->val) {
+				p->next = s;
+				s = s->next;
+			}
+			else {
+				p->next = head;
+				head = head->next;
+			}
+			p = p->next;
+		}
+		return head_new->next;
+	}
 };
 /*
 
@@ -757,9 +765,9 @@ Write a program to find the node at which the intersection of two singly linked 
 For example, the following two linked lists:
 
 A:          a1 → a2
-                   ↘
-                     c1 → c2 → c3
-                   ↗            
+				   ↘
+					 c1 → c2 → c3
+				   ↗
 B:     b1 → b2 → b3
 begin to intersect at node c1.
 
@@ -782,32 +790,35 @@ Your code should preferably run in O(n) time and use only O(1) memory.
  */
 class Solution {
 public:
-    ListNode *getIntersectionNode(ListNode *headA, ListNode *headB) {
-        if (headA == NULL || headB == NULL) {
-            return NULL;
-        }
-        ListNode *headA1 = headA, *headB1 = headB;
-        int flag1 = 0, flag2 = 0;
-        while (flag1 + flag2 <= 2) {
-            if (headA1 -> val != headB1-> val) {
-                if (!headA1 -> next) {
-                    headA1 = headB;
-                    flag1++;
-                } else {
-                    headA1 = headA1 -> next;
-                }
-                if (!headB1 -> next) {
-                    headB1 = headA;
-                    flag2++;
-                } else {
-                    headB1 = headB1 -> next;
-                }
-            } else {
-                return headA1;
-            }
-        }
-        return NULL;
-    }
+	ListNode *getIntersectionNode(ListNode *headA, ListNode *headB) {
+		if (headA == NULL || headB == NULL) {
+			return NULL;
+		}
+		ListNode *headA1 = headA, *headB1 = headB;
+		int flag1 = 0, flag2 = 0;
+		while (flag1 + flag2 <= 2) {
+			if (headA1->val != headB1->val) {
+				if (!headA1->next) {
+					headA1 = headB;
+					flag1++;
+				}
+				else {
+					headA1 = headA1->next;
+				}
+				if (!headB1->next) {
+					headB1 = headA;
+					flag2++;
+				}
+				else {
+					headB1 = headB1->next;
+				}
+			}
+			else {
+				return headA1;
+			}
+		}
+		return NULL;
+	}
 };
 /*
 
@@ -830,18 +841,19 @@ Return: 1 --> 2 --> 3 --> 4 --> 5
  */
 class Solution {
 public:
-    ListNode* removeElements(ListNode* head, int val) {
-        ListNode *dummy = new ListNode(-1), *p = dummy;
-        dummy -> next = head;
-        while (p != NULL) {
-            if (p -> next != NULL && p -> next -> val == val) {
-                p -> next = p -> next -> next;
-            } else {
-                p = p -> next;
-            }
-        }
-        return dummy -> next;
-    }
+	ListNode* removeElements(ListNode* head, int val) {
+		ListNode *dummy = new ListNode(-1), *p = dummy;
+		dummy->next = head;
+		while (p != NULL) {
+			if (p->next != NULL && p->next->val == val) {
+				p->next = p->next->next;
+			}
+			else {
+				p = p->next;
+			}
+		}
+		return dummy->next;
+	}
 };
 /*
 
@@ -866,31 +878,31 @@ A linked list can be reversed either iteratively or recursively. Could you imple
  */
 class Solution {
 public:
-    ListNode* reverseList(ListNode* head) {
-        if (head == NULL || head -> next == NULL) {
-            return head;
-        }
-        ListNode *p = head, *prev = NULL;
-        while (head != NULL) {
-            ListNode *post = head -> next;
-            head -> next = prev;
-            prev = head;
-            head = post;
-        }
-        return prev;
-    }
+	ListNode* reverseList(ListNode* head) {
+		if (head == NULL || head->next == NULL) {
+			return head;
+		}
+		ListNode *p = head, *prev = NULL;
+		while (head != NULL) {
+			ListNode *post = head->next;
+			head->next = prev;
+			prev = head;
+			head = post;
+		}
+		return prev;
+	}
 };
 class Solution {
 public:
-    ListNode* reverseList(ListNode* head) {
-        if (head == NULL || head -> next == NULL) {
-            return head;
-        }
-        ListNode *newhead = reverseList(head -> next);
-        head -> next -> next = head;
-        head -> next = NULL;
-        return newhead;
-    }
+	ListNode* reverseList(ListNode* head) {
+		if (head == NULL || head->next == NULL) {
+			return head;
+		}
+		ListNode *newhead = reverseList(head->next);
+		head->next->next = head;
+		head->next = NULL;
+		return newhead;
+	}
 };
 /*
 
@@ -909,40 +921,40 @@ Given a singly linked list, determine if it is a palindrome.
  */
 class Solution {
 public:
-    bool isPalindrome(ListNode* head) {
-        if (head == NULL || head -> next == NULL) {
-            return true;
-        }
-        ListNode *mid = head, *last = head;
-        while (last -> next && last -> next -> next) {
-            mid = mid -> next;
-            last = last -> next -> next;
-        }
-        mid -> next = reverse(mid -> next);
-        mid = mid -> next;
-        while (mid != NULL) {
-            if (mid -> val != head -> val) {
-                return false;
-            }
-            mid = mid -> next;
-            head = head -> next;
-        }
-        return true;
-    }
+	bool isPalindrome(ListNode* head) {
+		if (head == NULL || head->next == NULL) {
+			return true;
+		}
+		ListNode *mid = head, *last = head;
+		while (last->next && last->next->next) {
+			mid = mid->next;
+			last = last->next->next;
+		}
+		mid->next = reverse(mid->next);
+		mid = mid->next;
+		while (mid != NULL) {
+			if (mid->val != head->val) {
+				return false;
+			}
+			mid = mid->next;
+			head = head->next;
+		}
+		return true;
+	}
 private:
-    ListNode* reverse(ListNode* head) {
-        if (head == NULL || head -> next == NULL) {
-            return head;
-        }
-        ListNode *p = head, *prev = NULL;
-        while (head != NULL) {
-            ListNode *post = head -> next;
-            head -> next = prev;
-            prev = head;
-            head = post;
-        }
-        return prev;
-    }
+	ListNode* reverse(ListNode* head) {
+		if (head == NULL || head->next == NULL) {
+			return head;
+		}
+		ListNode *p = head, *prev = NULL;
+		while (head != NULL) {
+			ListNode *post = head->next;
+			head->next = prev;
+			prev = head;
+			head = post;
+		}
+		return prev;
+	}
 };
 /*
 
@@ -963,13 +975,13 @@ Supposed the linked list is 1 -> 2 -> 3 -> 4 and you are given the third node wi
  */
 class Solution {
 public:
-    void deleteNode(ListNode* node) {
-        if (node == NULL) {
-            return;
-        }
-        node -> val = node -> next -> val;
-        node -> next = node -> next -> next;
-    }
+	void deleteNode(ListNode* node) {
+		if (node == NULL) {
+			return;
+		}
+		node->val = node->next->val;
+		node->next = node->next->next;
+	}
 };
 /*
 
@@ -984,7 +996,7 @@ Given 1->2->3->4->5->NULL,
 return 1->3->5->2->4->NULL.
 
 Note:
-The relative order inside both the even and odd groups should remain as it was in the input. 
+The relative order inside both the even and odd groups should remain as it was in the input.
 The first node is considered odd, the second node even and so on ...
 
 */
@@ -998,20 +1010,20 @@ The first node is considered odd, the second node even and so on ...
  */
 class Solution {
 public:
-    ListNode* oddEvenList(ListNode* head) {
-        if (head == NULL || head -> next == NULL) {
-            return head;
-        }
-        ListNode *o = head, *eh = head -> next, *e = head -> next;
-        while (o -> next && e -> next) {
-            o -> next = e -> next;
-            o = e -> next;
-            e -> next = o -> next;
-            e = o -> next;
-        }
-        o -> next = eh;
-        return head;
-    }
+	ListNode* oddEvenList(ListNode* head) {
+		if (head == NULL || head->next == NULL) {
+			return head;
+		}
+		ListNode *o = head, *eh = head->next, *e = head->next;
+		while (o->next && e->next) {
+			o->next = e->next;
+			o = e->next;
+			e->next = o->next;
+			e = o->next;
+		}
+		o->next = eh;
+		return head;
+	}
 };
 /*
 
@@ -1039,37 +1051,37 @@ Output:
  */
 class Solution {
 public:
-    ListNode* plusOne(ListNode* head) {
-        if (head == NULL) {
-            return head;
-        }
-        ListNode *newhead = reverse(head);
-        int carry = 1;
-        for (ListNode *p = newhead; p != NULL && carry != 0; p = p -> next) {
-            int value = p -> val + carry;
-            p -> val = value % 10;
-            carry = value / 10;
-        }
-        head = reverse(newhead);
-        if (carry > 0) {
-            ListNode *p = new ListNode(1);
-            p -> next = head;
-            return p;
-        }
-        return head;
-    }
+	ListNode* plusOne(ListNode* head) {
+		if (head == NULL) {
+			return head;
+		}
+		ListNode *newhead = reverse(head);
+		int carry = 1;
+		for (ListNode *p = newhead; p != NULL && carry != 0; p = p->next) {
+			int value = p->val + carry;
+			p->val = value % 10;
+			carry = value / 10;
+		}
+		head = reverse(newhead);
+		if (carry > 0) {
+			ListNode *p = new ListNode(1);
+			p->next = head;
+			return p;
+		}
+		return head;
+	}
 private:
-    ListNode* reverse(ListNode* head) {
-        if (head == NULL || head -> next == NULL) {
-            return head;
-        }
-        ListNode *pre = NULL;
-        while (head != NULL) {
-            ListNode *post = head -> next;
-            head -> next = pre;
-            pre = head;
-            head = post;
-        }
-        return pre;
-    }
+	ListNode* reverse(ListNode* head) {
+		if (head == NULL || head->next == NULL) {
+			return head;
+		}
+		ListNode *pre = NULL;
+		while (head != NULL) {
+			ListNode *post = head->next;
+			head->next = pre;
+			pre = head;
+			head = post;
+		}
+		return pre;
+	}
 };

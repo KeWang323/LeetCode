@@ -18,8 +18,8 @@ public:
 	int lengthOfLongestSubstring(string s) {
 		int start = 0, max_len = 0;
 		vector<int> last_position(255, -1);
-		for (int i = 0; i < s.size(); i++){
-			if (last_position[s[i]] >= start){
+		for (int i = 0; i < s.size(); i++) {
+			if (last_position[s[i]] >= start) {
 				max_len = max(i - start, max_len);
 				start = last_position[s[i]] + 1;
 			}
@@ -44,8 +44,8 @@ public:
 		while (i < j) {
 			int h_min = min(height[i], height[j]);
 			water = max(water, h_min * (j - i));
-			while (height[j] <= h_min && i < j) j--; 
-			while (height[i] <= h_min && i < j) i++; 
+			while (height[j] <= h_min && i < j) j--;
+			while (height[i] <= h_min && i < j) i++;
 		}
 		return water;
 	}
@@ -174,7 +174,7 @@ public:
 		}
 		sort(nums.begin(), nums.end());
 		for (int i = 0; i < _size - 3; i++) {
-			if (i > 0 && nums[i] == nums[i-1] || nums[i] + nums[_size - 3] + nums[_size - 2] + nums[_size - 1] < target) {
+			if (i > 0 && nums[i] == nums[i - 1] || nums[i] + nums[_size - 3] + nums[_size - 2] + nums[_size - 1] < target) {
 				continue;
 			}
 			if (nums[i] + nums[i + 1] + nums[i + 2] + nums[i + 3] > target) {
@@ -245,17 +245,17 @@ public:
 		}
 		ListNode *p = head, *q = head, *q_prev = NULL;
 		for (int i = 0; i < n - 1; i++) {
-			p = p -> next;
+			p = p->next;
 		}
-		while (p -> next != NULL) {
-			p = p -> next;
+		while (p->next != NULL) {
+			p = p->next;
 			q_prev = q;
-			q = q -> next;
+			q = q->next;
 		}
 		if (!q_prev) {
-			return head -> next;
+			return head->next;
 		}
-		q_prev -> next = q -> next;
+		q_prev->next = q->next;
 		return head;
 	}
 };
@@ -346,7 +346,7 @@ public:
 			}
 			if (j == neelen) return i;
 		}
-		return -1;        
+		return -1;
 	}
 };
 /*
@@ -365,42 +365,43 @@ You should return the indices: [0,9].
 */
 class Solution {
 public:
-    vector<int> findSubstring(string s, vector<string>& words) {
-        if (words.empty()) {
-            return{};
-        }
-        unordered_map<string, int> mapping;
-        for (string str : words) {
-            mapping[str]++;
-        }
-        vector<int> res;
-        int wsize = words[0].size();
-        for (int i = 0; i < wsize; i++) {
-            int wcnt = 0, slow = i, fast = i;
-            unordered_map<string, int> mapping2;
-            while (fast + wsize <= s.size()) {
-                string str = s.substr(fast, wsize);
-                if (mapping.find(str) == mapping.end()) {
-                    mapping2.clear();
-                    wcnt = 0;
-                    slow = fast + wsize;
-                } else {
-                    wcnt++;
-                    mapping2[str]++;
-                    while (mapping[str] < mapping2[str]) {
-                        mapping2[s.substr(slow, wsize)]--;
-                        wcnt--;
-                        slow += wsize;
-                    }
-                }
-                if (wcnt == words.size()) {
-                    res.push_back(slow);
-                }
-                fast += wsize;
-            }
-        }
-        return res;
-    }
+	vector<int> findSubstring(string s, vector<string>& words) {
+		if (words.empty()) {
+			return{};
+		}
+		unordered_map<string, int> mapping;
+		for (string str : words) {
+			mapping[str]++;
+		}
+		vector<int> res;
+		int wsize = words[0].size();
+		for (int i = 0; i < wsize; i++) {
+			int wcnt = 0, slow = i, fast = i;
+			unordered_map<string, int> mapping2;
+			while (fast + wsize <= s.size()) {
+				string str = s.substr(fast, wsize);
+				if (mapping.find(str) == mapping.end()) {
+					mapping2.clear();
+					wcnt = 0;
+					slow = fast + wsize;
+				}
+				else {
+					wcnt++;
+					mapping2[str]++;
+					while (mapping[str] < mapping2[str]) {
+						mapping2[s.substr(slow, wsize)]--;
+						wcnt--;
+						slow += wsize;
+					}
+				}
+				if (wcnt == words.size()) {
+					res.push_back(slow);
+				}
+				fast += wsize;
+			}
+		}
+		return res;
+	}
 };
 /*
 
@@ -408,7 +409,7 @@ public:
 
 Given n non-negative integers representing an elevation map where the width of each bar is 1, compute how much water it is able to trap after raining.
 
-For example, 
+For example,
 Given [0,1,0,2,1,0,1,3,2,1,2,1], return 6.
 
 
@@ -462,27 +463,27 @@ return 4->5->1->2->3->NULL.
 class Solution {
 public:
 	ListNode* rotateRight(ListNode* head, int k) {
-		if (head == NULL || head -> next == NULL) {
+		if (head == NULL || head->next == NULL) {
 			return head;
 		}
 		int len = 1;
 		ListNode *p = head, *q = head;
-		while (p -> next != NULL) {
-			p = p -> next;
+		while (p->next != NULL) {
+			p = p->next;
 			len++;
 		}
 		k %= len;
 		p = head;
 		for (int i = 0; i < k; i++) {
-			p = p -> next;
+			p = p->next;
 		}
-		while (p -> next != NULL) {
-			p = p -> next;
-			q = q -> next;
+		while (p->next != NULL) {
+			p = p->next;
+			q = q->next;
 		}
-		p -> next = head;
-		ListNode *newh = q -> next;
-		q -> next = NULL;
+		p->next = head;
+		ListNode *newh = q->next;
+		q->next = NULL;
 		return newh;
 	}
 };
@@ -494,16 +495,16 @@ public:
 		}
 		int len = 1;
 		ListNode *p = head;
-		while (p -> next != NULL) {
+		while (p->next != NULL) {
 			len++;
-			p = p -> next;
+			p = p->next;
 		}
-		p -> next = head;
+		p->next = head;
 		k %= len;
-		for (int i = 0; i < len - k; i++, p = p -> next){
+		for (int i = 0; i < len - k; i++, p = p->next) {
 		}
-		ListNode *head_new = p -> next;
-		p -> next = NULL;
+		ListNode *head_new = p->next;
+		p->next = NULL;
 		return head_new;
 	}
 };
@@ -560,12 +561,12 @@ Your function should return length = 5, with the first five elements of nums bei
 class Solution {
 public:
 	int removeDuplicates(vector<int>& nums) {
-		if(nums.size() <= 2) {
+		if (nums.size() <= 2) {
 			return nums.size();
 		}
 		int index = 2;
-		for(int i = 2; i < nums.size(); i++) {
-			if(nums[index - 2] != nums[i]) {
+		for (int i = 2; i < nums.size(); i++) {
+			if (nums[index - 2] != nums[i]) {
 				nums[index++] = nums[i];
 			}
 		}
@@ -627,24 +628,25 @@ return 1->2->2->4->3->5.
 class Solution {
 public:
 	ListNode* partition(ListNode* head, int x) {
-		if (head == NULL || head -> next == NULL) {
+		if (head == NULL || head->next == NULL) {
 			return head;
 		}
 		ListNode *s = new ListNode(-1), *g = new ListNode(-1);
 		ListNode *p = s, *q = g;
 		while (head != NULL) {
-			if (head -> val < x) {
-				p -> next = head;
-				p = p-> next;
-			} else {
-				q -> next = head;
-				q = q -> next;
+			if (head->val < x) {
+				p->next = head;
+				p = p->next;
 			}
-			head = head -> next;
+			else {
+				q->next = head;
+				q = q->next;
+			}
+			head = head->next;
 		}
-		p -> next = g -> next;
-		q -> next = NULL;
-		return s -> next;
+		p->next = g->next;
+		q->next = NULL;
+		return s->next;
 	}
 };
 /*
@@ -661,7 +663,7 @@ public:
 	void merge(vector<int>& nums1, int m, vector<int>& nums2, int n) {
 		int i = m - 1, j = n - 1, k = m + n - 1;
 		while (j >= 0) {
-			if (i >=0 && nums1[i] > nums2[j]) {
+			if (i >= 0 && nums1[i] > nums2[j]) {
 				nums1[k--] = nums1[i--];
 			}
 			else {
@@ -691,7 +693,7 @@ public:
 	bool isPalindrome(string s) {
 		int left = 0, right = s.length() - 1;
 		while (left < right) {
-			while (!isalnum(s[left]) && left < right) 
+			while (!isalnum(s[left]) && left < right)
 				left++;
 			while (!isalnum(s[right]) && left < right)
 				right--;
@@ -726,9 +728,9 @@ public:
 			return false;
 		}
 		ListNode *s = head, *f = head;
-		while (f -> next != NULL && f -> next -> next != NULL) {
-			s = s -> next;
-			f = f -> next -> next;
+		while (f->next != NULL && f->next->next != NULL) {
+			s = s->next;
+			f = f->next->next;
 			if (s == f) {
 				return true;
 			}
@@ -760,21 +762,21 @@ Can you solve it without using extra space?
 class Solution {
 public:
 	ListNode *detectCycle(ListNode *head) {
-		if(head == NULL || head -> next == NULL) {
+		if (head == NULL || head->next == NULL) {
 			return NULL;
 		}
 		ListNode *s = head, *f = head;
-		while (f != NULL && f -> next != NULL) {
-			s = s -> next;
-			f = f -> next -> next;
+		while (f != NULL && f->next != NULL) {
+			s = s->next;
+			f = f->next->next;
 			if (s == f) break;
 		}
 		if (s != f) return NULL;
 		while (head != s) {
-			head = head -> next;
-			s = s -> next;
+			head = head->next;
+			s = s->next;
 		}
-		return head; 
+		return head;
 	}
 };
 /*
@@ -795,7 +797,7 @@ class Solution {
 public:
 	vector<int> twoSum(vector<int>& numbers, int target) {
 		if (numbers.size() < 2) {
-			return {-1, -1};
+			return{ -1, -1 };
 		}
 		for (int i = 0; i < numbers.size() - 1; i++) {
 			if (numbers[i] + numbers[i + 1] > target) {
@@ -806,33 +808,37 @@ public:
 				int mid = l + (r - l) / 2;
 				if (numbers[mid] > target - numbers[i]) {
 					r = mid - 1;
-				} else if (numbers[mid] < target - numbers[i]) {
+				}
+				else if (numbers[mid] < target - numbers[i]) {
 					l = mid + 1;
-				} else {
-					return {i + 1, mid + 1};
+				}
+				else {
+					return{ i + 1, mid + 1 };
 				}
 			}
 		}
-		return {-1, -1};
+		return{ -1, -1 };
 	}
 };
 class Solution {
 public:
 	vector<int> twoSum(vector<int>& numbers, int target) {
 		if (numbers.size() < 2) {
-			return {-1, -1};
+			return{ -1, -1 };
 		}
 		int l = 0, r = numbers.size() - 1;
 		while (l < r) {
 			if (numbers[l] + numbers[r] > target) {
 				r--;
-			} else if (numbers[l] + numbers[r] < target) {
+			}
+			else if (numbers[l] + numbers[r] < target) {
 				l++;
-			} else {
-				return {++l, ++r};
+			}
+			else {
+				return{ ++l, ++r };
 			}
 		}
-		return {-1, -1};
+		return{ -1, -1 };
 	}
 };
 /*
@@ -885,34 +891,34 @@ Given a singly linked list, determine if it is a palindrome.
 class Solution {
 public:
 	bool isPalindrome(ListNode* head) {
-		if (head == NULL || head -> next == NULL) {
+		if (head == NULL || head->next == NULL) {
 			return true;
 		}
 		ListNode *mid = head, *last = head;
-		while (last -> next && last -> next -> next) {
-			mid = mid -> next;
-			last = last -> next -> next;
+		while (last->next && last->next->next) {
+			mid = mid->next;
+			last = last->next->next;
 		}
-		mid -> next = reverse(mid -> next);
-		mid = mid -> next;
+		mid->next = reverse(mid->next);
+		mid = mid->next;
 		while (mid != NULL) {
-			if (mid -> val != head -> val) {
+			if (mid->val != head->val) {
 				return false;
 			}
-			mid = mid -> next;
-			head = head -> next;
+			mid = mid->next;
+			head = head->next;
 		}
 		return true;
 	}
 private:
 	ListNode* reverse(ListNode* head) {
-		if (head == NULL || head -> next == NULL) {
+		if (head == NULL || head->next == NULL) {
 			return head;
 		}
 		ListNode *p = head, *prev = NULL;
 		while (head != NULL) {
-			ListNode *post = head -> next;
-			head -> next = prev;
+			ListNode *post = head->next;
+			head->next = prev;
 			prev = head;
 			head = post;
 		}
@@ -952,7 +958,8 @@ public:
 				if (nums[i] + nums[j] + nums[k] < target) {
 					res += k - j;
 					j++;
-				} else {
+				}
+				else {
 					k--;
 				}
 			}
@@ -1040,7 +1047,7 @@ public:
 		return s;
 	}
 };
-/* 
+/*
 
 345. Reverse Vowels of a String (Easy)
 

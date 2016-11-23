@@ -20,23 +20,23 @@ Output: 7 -> 0 -> 8
  */
 class Solution {
 public:
-    ListNode* addTwoNumbers(ListNode* l1, ListNode* l2) {
-        int carry = 0;
-        ListNode *dummy = new ListNode(-1), *p = dummy;
-        for (ListNode *pa = l1, *pb = l2; pa || pb; p = p -> next) {
-            int ai = pa != NULL ? pa -> val : 0;
-            int bi = pb != NULL ? pb -> val : 0;
-            carry = ai + bi + carry;
-            p -> next = new ListNode(carry % 10);
-            carry /= 10;
-            pa = pa != NULL ? pa -> next : NULL;
-            pb = pb != NULL ? pb -> next : NULL;
-        }
-        if (carry) {
-            p -> next = new ListNode(carry);
-        }
-        return dummy -> next;
-    }
+	ListNode* addTwoNumbers(ListNode* l1, ListNode* l2) {
+		int carry = 0;
+		ListNode *dummy = new ListNode(-1), *p = dummy;
+		for (ListNode *pa = l1, *pb = l2; pa || pb; p = p->next) {
+			int ai = pa != NULL ? pa->val : 0;
+			int bi = pb != NULL ? pb->val : 0;
+			carry = ai + bi + carry;
+			p->next = new ListNode(carry % 10);
+			carry /= 10;
+			pa = pa != NULL ? pa->next : NULL;
+			pb = pb != NULL ? pb->next : NULL;
+		}
+		if (carry) {
+			p->next = new ListNode(carry);
+		}
+		return dummy->next;
+	}
 };
 /*
 
@@ -70,11 +70,11 @@ public:
 			num_rev = num_rev * 10 + x % 10;
 			x /= 10;
 		}
-		if(num_rev < INT_MIN || num_rev > INT_MAX) {
-            return 0;
-        }
-        return num_rev;	
-    }
+		if (num_rev < INT_MIN || num_rev > INT_MAX) {
+			return 0;
+		}
+		return num_rev;
+	}
 };
 /*
 
@@ -103,28 +103,28 @@ If no valid conversion could be performed, a zero value is returned. If the corr
 */
 class Solution {
 public:
-    int myAtoi(string str) {
-        if (str.empty()) {
-            return 0;
-        }
-        long long num = 0;
-        int i = 0, sign = 1;
-        for (; str[i] == ' '; i++) {
-        }
-        if (str[i] == '-' || str[i] == '+') {
-            sign = 1 - 2 * (str[i++] == '-');
-        }
-        for(; i < str.length(); i++) {  
-            if(isdigit(str[i])) {  
-                num = num * 10 + (str[i] - '0');  
-                if(num > INT_MAX) {
-                    return sign > 0 ? INT_MAX : INT_MIN;  
-                }
-            }  
-            else break;  
-        }  
-        return (int)num * sign;
-    }
+	int myAtoi(string str) {
+		if (str.empty()) {
+			return 0;
+		}
+		long long num = 0;
+		int i = 0, sign = 1;
+		for (; str[i] == ' '; i++) {
+		}
+		if (str[i] == '-' || str[i] == '+') {
+			sign = 1 - 2 * (str[i++] == '-');
+		}
+		for (; i < str.length(); i++) {
+			if (isdigit(str[i])) {
+				num = num * 10 + (str[i] - '0');
+				if (num > INT_MAX) {
+					return sign > 0 ? INT_MAX : INT_MIN;
+				}
+			}
+			else break;
+		}
+		return (int)num * sign;
+	}
 };
 /*
 
@@ -146,22 +146,22 @@ There is a more generic way of solving this problem.
 */
 class Solution {
 public:
-    bool isPalindrome(int x) {
-        if (x < 0) {
-            return false;
-        }
-        int len = 1;
-        for (; x / len >= 10; len *= 10) {
-        }
-        while (x != 0) {
-            if (x / len != x % 10) {
-                return false;
-            }
-            x = x % len / 10;
-            len /= 100;
-        }
-        return true;
-    }
+	bool isPalindrome(int x) {
+		if (x < 0) {
+			return false;
+		}
+		int len = 1;
+		for (; x / len >= 10; len *= 10) {
+		}
+		while (x != 0) {
+			if (x / len != x % 10) {
+				return false;
+			}
+			x = x % len / 10;
+			len /= 100;
+		}
+		return true;
+	}
 };
 /*
 
@@ -183,9 +183,9 @@ public:
 			{"", "M", "MM", "MMM"}
 		};
 		res += c[3][num / 1000 % 10];
-		res += c[2][num / 100  % 10];
-		res += c[1][num / 10   % 10];
-		res += c[0][num        % 10];
+		res += c[2][num / 100 % 10];
+		res += c[1][num / 10 % 10];
+		res += c[0][num % 10];
 		return res;
 	}
 };
@@ -204,25 +204,26 @@ public:
 		int num = ChatoNum(s[0]);
 		for (int i = 1; i < s.length(); i++) {
 			if (ChatoNum(s[i]) > ChatoNum(s[i - 1])) {
-                num += ChatoNum(s[i]) - 2 * ChatoNum(s[i - 1]);
-            } else {
-                num += ChatoNum(s[i]);
-            }
-        }
-        return num;
-    }
-    int ChatoNum(char cha) {
-        switch (cha) {
-            case 'I': return 1;
-            case 'V': return 5;
-            case 'X': return 10;
-            case 'L': return 50;
-            case 'C': return 100;
-            case 'D': return 500;
-            case 'M': return 1000;
-        }
-        return 0;  
-    }
+				num += ChatoNum(s[i]) - 2 * ChatoNum(s[i - 1]);
+			}
+			else {
+				num += ChatoNum(s[i]);
+			}
+		}
+		return num;
+	}
+	int ChatoNum(char cha) {
+		switch (cha) {
+		case 'I': return 1;
+		case 'V': return 5;
+		case 'X': return 10;
+		case 'L': return 50;
+		case 'C': return 100;
+		case 'D': return 500;
+		case 'M': return 1000;
+		}
+		return 0;
+	}
 };
 /*
 
@@ -237,34 +238,34 @@ class Solution {
 public:
 	int divide(int dividend, int divisor) {
 		if (!dividend) {
-            return 0;
-        }
-        if (!divisor || dividend == INT_MIN && divisor == -1) {
-            return INT_MAX;
-        }
-        int sign = (dividend > 0 ^ divisor > 0) ? -1 : 1;
-        long dd = labs((long)dividend), dr = labs((long)divisor);
-        if (dd < dr) {
-            return 0;
-        }
-        int h = 0;
-        long t = dr;
-        while (t <= dd) {
-            t <<= 1;
-            h++;
-        }
-        long ret = 1 << --h;
-        dd -= (t >>= 1);
-        while (dd >= dr) {
-            while (t > dd){
-                t >>= 1;
-                h--;
-            }
-            ret |= 1 << h;
-            dd -= t;
-        }
-        return sign < 0 ? -ret : ret;
-    }
+			return 0;
+		}
+		if (!divisor || dividend == INT_MIN && divisor == -1) {
+			return INT_MAX;
+		}
+		int sign = (dividend > 0 ^ divisor > 0) ? -1 : 1;
+		long dd = labs((long)dividend), dr = labs((long)divisor);
+		if (dd < dr) {
+			return 0;
+		}
+		int h = 0;
+		long t = dr;
+		while (t <= dd) {
+			t <<= 1;
+			h++;
+		}
+		long ret = 1 << --h;
+		dd -= (t >>= 1);
+		while (dd >= dr) {
+			while (t > dd) {
+				t >>= 1;
+				h--;
+			}
+			ret |= 1 << h;
+			dd -= t;
+		}
+		return sign < 0 ? -ret : ret;
+	}
 };
 /*
 
@@ -282,27 +283,27 @@ class Solution {
 public:
 	string multiply(string num1, string num2) {
 		if (num1 == "0" || num2 == "0") {
-            return "0";
-        }
-        int s1 = num1.size() - 1, s2 = num2.size() - 1;
-        int i = s1 + s2, j = 0, carry = 0;
-        string res;
-        while (j <= i) {
-            for (int k = 0; k <= j; k++) {
-                if (s1 >= k && s2 >= (j - k)) {
-                    carry += (num1[s1 - k] - '0') * (num2[s2 - (j - k)] - '0'); 
-                }
-            }
-            res = char(carry % 10 + '0') + res;
-            carry /= 10;
-            j++;
-        }
-        while (carry) {
-            res = char(carry % 10 + '0') + res;
-            carry /= 10;
-        }
-        return res;
-    }
+			return "0";
+		}
+		int s1 = num1.size() - 1, s2 = num2.size() - 1;
+		int i = s1 + s2, j = 0, carry = 0;
+		string res;
+		while (j <= i) {
+			for (int k = 0; k <= j; k++) {
+				if (s1 >= k && s2 >= (j - k)) {
+					carry += (num1[s1 - k] - '0') * (num2[s2 - (j - k)] - '0');
+				}
+			}
+			res = char(carry % 10 + '0') + res;
+			carry /= 10;
+			j++;
+		}
+		while (carry) {
+			res = char(carry % 10 + '0') + res;
+			carry /= 10;
+		}
+		return res;
+	}
 };
 /*
 
@@ -313,20 +314,20 @@ Implement pow(x, n).
 */
 class Solution {
 public:
-    double myPow(double x, int n) {
-        if (n == 0) {
-            return 1;
-        }
-        if (n < 0) {
-            if (n == INT_MIN) {
-                return 1 / x * myPow(x, n + 1);
-            }
-            x = 1 / x;
-            n = -n;
-        }
-        double temp = myPow(x, n / 2);
-        return n % 2 ? x * temp * temp : temp * temp;
-    }
+	double myPow(double x, int n) {
+		if (n == 0) {
+			return 1;
+		}
+		if (n < 0) {
+			if (n == INT_MIN) {
+				return 1 / x * myPow(x, n + 1);
+			}
+			x = 1 / x;
+			n = -n;
+		}
+		double temp = myPow(x, n / 2);
+		return n % 2 ? x * temp * temp : temp * temp;
+	}
 };
 /*
 
@@ -339,20 +340,20 @@ The digits are stored such that the most significant digit is at the head of the
 */
 class Solution {
 public:
-    vector<int> plusOne(vector<int>& digits) {
-        reverse(digits.begin(), digits.end());
-        int flag = 1;
-        for (int i = 0; i < digits.size(); i++) {
-            digits[i] += flag;
-            flag = digits[i] / 10;
-            digits[i] %= 10;
-        }
-        if (flag) {
-            digits.push_back(1);
-        }
-        reverse(digits.begin(), digits.end());
-        return digits;
-    }
+	vector<int> plusOne(vector<int>& digits) {
+		reverse(digits.begin(), digits.end());
+		int flag = 1;
+		for (int i = 0; i < digits.size(); i++) {
+			digits[i] += flag;
+			flag = digits[i] / 10;
+			digits[i] %= 10;
+		}
+		if (flag) {
+			digits.push_back(1);
+		}
+		reverse(digits.begin(), digits.end());
+		return digits;
+	}
 };
 /*
 
@@ -368,17 +369,17 @@ Return "100".
 */
 class Solution {
 public:
-    string addBinary(string a, string b) {
-        int i = a.size(), j = b.size(), carry = 0;
-        string res;
-        while (i > 0 || j > 0 || carry > 0) {
-            int num1 = i > 0 ? a[(i--) - 1] - '0' : 0, num2 = j > 0 ? b[(j--) - 1] - '0' : 0;
-            carry += num1 + num2;
-            res = char(carry % 2 + '0') + res;
-            carry /= 2;
-        }
-        return res;
-    }
+	string addBinary(string a, string b) {
+		int i = a.size(), j = b.size(), carry = 0;
+		string res;
+		while (i > 0 || j > 0 || carry > 0) {
+			int num1 = i > 0 ? a[(i--) - 1] - '0' : 0, num2 = j > 0 ? b[(j--) - 1] - '0' : 0;
+			carry += num1 + num2;
+			res = char(carry % 2 + '0') + res;
+			carry /= 2;
+		}
+		return res;
+	}
 };
 /*
 
@@ -391,21 +392,22 @@ Compute and return the square root of x.
 */
 class Solution {
 public:
-    int mySqrt(int x) {
-        if (x < 2) {
-            return x;
-        }
-        int l = 1, r = x;
-        while (l < r) {
-            int mid = l + (r - l) / 2;
-            if (x / mid < mid) {
-                r = mid;
-            } else {
-                l = mid + 1;
-            }
-        }
-        return r - 1;
-    }
+	int mySqrt(int x) {
+		if (x < 2) {
+			return x;
+		}
+		int l = 1, r = x;
+		while (l < r) {
+			int mid = l + (r - l) / 2;
+			if (x / mid < mid) {
+				r = mid;
+			}
+			else {
+				l = mid + 1;
+			}
+		}
+		return r - 1;
+	}
 };
 /*
 
@@ -425,31 +427,33 @@ Given n points on a 2D plane, find the maximum number of points that lie on the 
  */
 class Solution {
 public:
-    int maxPoints(vector<Point>& points) {
-        if (points.size() < 3) {
-            return points.size();
-        }
-        int res = 0;
-        for (int i = 0; i < points.size(); i++) {
-            int p0_num = 1, k_max = 0;
-            unordered_map<double, int> mapping;
-            for (int j = i + 1; j < points.size(); j++) {
-                if (points[i].x == points[j].x && points[i].y == points[j].y) {
-                    p0_num++;
-                } else {
-                    double k;
-                    if (points[i].x == points[j].x) {
-                        k = INT_MAX;
-                    } else {
-                        k = double(points[i].y - points[j].y) / double(points[i].x - points[j].x);
-                    }
-                    k_max = max(k_max, ++mapping[k]);
-                }
-            }
-            res = max(res, k_max + p0_num);
-        }
-        return res;
-    }
+	int maxPoints(vector<Point>& points) {
+		if (points.size() < 3) {
+			return points.size();
+		}
+		int res = 0;
+		for (int i = 0; i < points.size(); i++) {
+			int p0_num = 1, k_max = 0;
+			unordered_map<double, int> mapping;
+			for (int j = i + 1; j < points.size(); j++) {
+				if (points[i].x == points[j].x && points[i].y == points[j].y) {
+					p0_num++;
+				}
+				else {
+					double k;
+					if (points[i].x == points[j].x) {
+						k = INT_MAX;
+					}
+					else {
+						k = double(points[i].y - points[j].y) / double(points[i].x - points[j].x);
+					}
+					k_max = max(k_max, ++mapping[k]);
+				}
+			}
+			res = max(res, k_max + p0_num);
+		}
+		return res;
+	}
 };
 /*
 
@@ -473,34 +477,34 @@ Be wary of edge cases! List out as many test cases as you can think of and test 
 */
 class Solution {
 public:
-    string fractionToDecimal(int numerator, int denominator) {
-        if (!numerator) {
-            return "0";
-        }
-        string res;
-        if (numerator < 0 ^ denominator < 0) {
-            res += "-";
-        }
-        long n_l_abs = labs(long(numerator)), d_l_abs = labs(long(denominator));
-        res += to_string(n_l_abs / d_l_abs);
-        if (!(n_l_abs %= d_l_abs)) {
-            return res;
-        }
-        res += ".";
-        unordered_map<int, int> mapping;
-        int i = res.size() - 1;
-        while (n_l_abs) {
-            if (mapping.count(n_l_abs)) {
-                res.insert(mapping[n_l_abs], "(");
-                res += ")";
-                return res;
-            }
-            mapping[n_l_abs] = ++i;
-            res += to_string((n_l_abs *= 10) / d_l_abs);
-            n_l_abs %= d_l_abs;
-        }
-        return res;
-    }
+	string fractionToDecimal(int numerator, int denominator) {
+		if (!numerator) {
+			return "0";
+		}
+		string res;
+		if (numerator < 0 ^ denominator < 0) {
+			res += "-";
+		}
+		long n_l_abs = labs(long(numerator)), d_l_abs = labs(long(denominator));
+		res += to_string(n_l_abs / d_l_abs);
+		if (!(n_l_abs %= d_l_abs)) {
+			return res;
+		}
+		res += ".";
+		unordered_map<int, int> mapping;
+		int i = res.size() - 1;
+		while (n_l_abs) {
+			if (mapping.count(n_l_abs)) {
+				res.insert(mapping[n_l_abs], "(");
+				res += ")";
+				return res;
+			}
+			mapping[n_l_abs] = ++i;
+			res += to_string((n_l_abs *= 10) / d_l_abs);
+			n_l_abs %= d_l_abs;
+		}
+		return res;
+	}
 };
 /*
 
@@ -516,7 +520,7 @@ For example:
 ...
 26 -> Z
 27 -> AA
-28 -> AB 
+28 -> AB
 
 */
 class Solution {
@@ -546,7 +550,7 @@ C -> 3
 ...
 Z -> 26
 AA -> 27
-AB -> 28 
+AB -> 28
 
 */
 class Solution {
@@ -570,14 +574,14 @@ Note: Your solution should be in logarithmic time complexity.
 */
 class Solution {
 public:
-    int trailingZeroes(int n) {
-        int res = 0;
-        while (n > 0) {
-            n /= 5;
-            res += n;
-        }
-        return res;
-    }
+	int trailingZeroes(int n) {
+		int res = 0;
+		while (n > 0) {
+			n /= 5;
+			res += n;
+		}
+		return res;
+	}
 };
 /*
 
@@ -597,27 +601,28 @@ Example: 19 is a happy number
 */
 class Solution {
 public:
-    int cal(int n) {
-        int temp = 0;
-        while (n) {
-            temp += pwo(n % 10, 2);
-            n /= 10;
-        }
-        return temp;
-    }
-    bool isHappy(int n) {
-        unordered_map<int, bool> mapping;
-        int sum = cal(n);
-        while(sum != 1) {
-            if (mapping[sum]) {
-                return false;
-            } else {
-                mapping[sum] = true;
-                sum = cal(sum);
-            }
-        }
-        return true;
-    }
+	int cal(int n) {
+		int temp = 0;
+		while (n) {
+			temp += pwo(n % 10, 2);
+			n /= 10;
+		}
+		return temp;
+	}
+	bool isHappy(int n) {
+		unordered_map<int, bool> mapping;
+		int sum = cal(n);
+		while (sum != 1) {
+			if (mapping[sum]) {
+				return false;
+			}
+			else {
+				mapping[sum] = true;
+				sum = cal(sum);
+			}
+		}
+		return true;
+	}
 };
 /*
 
@@ -630,20 +635,20 @@ Count the number of prime numbers less than a non-negative number, n.
 */
 class Solution {
 public:
-    int countPrimes(int n) {
-        if (n <= 1) return 0;
-        vector<int> prime(n, 0);
-        int cnt = 0;
-        for(int i = 2; i < n; i++) {
-            if(prime[i]==0) {
-                cnt++;
-                for(int j = 2; i * j < n; j++) {
-                    prime[i * j] = 1;
-                }
-            }
-        }
-        return cnt;
-    }
+	int countPrimes(int n) {
+		if (n <= 1) return 0;
+		vector<int> prime(n, 0);
+		int cnt = 0;
+		for (int i = 2; i < n; i++) {
+			if (prime[i] == 0) {
+				cnt++;
+				for (int j = 2; i * j < n; j++) {
+					prime[i * j] = 1;
+				}
+			}
+		}
+		return cnt;
+	}
 };
 /*
 
@@ -658,15 +663,16 @@ Assume that the total area is never beyond the maximum possible value of int.
 */
 class Solution {
 public:
-    int computeArea(int A, int B, int C, int D, int E, int F, int G, int H) {
-        int are = (C - A) * (D - B) + (G - E) * (H -F);
-        if (E >= C || G <= A || F >= D || H <= B) {
-            return are;
-        } else {
-            are -= (min(C, G) - max(A, E)) * (min(D, H) - max(B, F));
-        }
-        return are;
-    }
+	int computeArea(int A, int B, int C, int D, int E, int F, int G, int H) {
+		int are = (C - A) * (D - B) + (G - E) * (H - F);
+		if (E >= C || G <= A || F >= D || H <= B) {
+			return are;
+		}
+		else {
+			are -= (min(C, G) - max(A, E)) * (min(D, H) - max(B, F));
+		}
+		return are;
+	}
 };
 /*
 
@@ -677,9 +683,9 @@ Given an integer, write a function to determine if it is a power of two.
 */
 class Solution {
 public:
-    bool isPowerOfTwo(int n) {
-        return n > 0 && (n & (n - 1)) == 0;
-    }
+	bool isPowerOfTwo(int n) {
+		return n > 0 && (n & (n - 1)) == 0;
+	}
 };
 /*
 
@@ -719,21 +725,21 @@ For example, the numbers "69", "88", and "818" are all strobogrammatic.
 */
 class Solution {
 public:
-    bool isStrobogrammatic(string num) {
-        if (num.empty()) {
-            return false;
-        }
-        unordered_map <char, char> mapping = {{'0', '0'}, {'1', '1'}, { '6', '9'}, {'8', '8'}, {'9', '6'}};
-        int i = 0, j = num.size() - 1;
-        while (i <= j) {
-            if (mapping[num[i]] != num[j]) {
-                return false;
-            }
-            i++;
-            j--;
-        }
-        return true;
-    }
+	bool isStrobogrammatic(string num) {
+		if (num.empty()) {
+			return false;
+		}
+		unordered_map <char, char> mapping = { {'0', '0'}, {'1', '1'}, { '6', '9'}, {'8', '8'}, {'9', '6'} };
+		int i = 0, j = num.size() - 1;
+		while (i <= j) {
+			if (mapping[num[i]] != num[j]) {
+				return false;
+			}
+			i++;
+			j--;
+		}
+		return true;
+	}
 };
 /*
 
@@ -753,7 +759,7 @@ Could you do it without any loop/recursion in O(1) runtime?
 class Solution {
 public:
 	int addDigits(int num) {
-		return num - (num - 1) / 9 * 9 ;
+		return num - (num - 1) / 9 * 9;
 	}
 };
 /*
@@ -770,15 +776,15 @@ Note that 1 is typically treated as an ugly number.
 class Solution {
 public:
 	bool isUgly(int num) {
-		if (num == 0) 
+		if (num == 0)
 			return false;
-		if (num == 1) 
+		if (num == 1)
 			return true;
-		if (num % 2 == 0) 
+		if (num % 2 == 0)
 			return isUgly(num / 2);
-		if (num % 3 == 0) 
+		if (num % 3 == 0)
 			return isUgly(num / 3);
-		if (num % 5 == 0) 
+		if (num % 5 == 0)
 			return isUgly(num / 5);
 		return false;
 	}
@@ -805,8 +811,8 @@ class Solution {
 public:
 	int nthUglyNumber(int n) {
 		if (!n) return 0;
-		static vector<int> table(1,1);
-		static int i2 = 0,i3 = 0, i5 =0;
+		static vector<int> table(1, 1);
+		static int i2 = 0, i3 = 0, i5 = 0;
 		int k(table.size());
 		for (; k < n; k++) {
 			int tmp = min(table[i2] * 2, min(table[i3] * 3, table[i5] * 5));
@@ -815,7 +821,7 @@ public:
 			if (!(tmp % 5)) i5++;
 			table.push_back(tmp);
 		}
-		return table[n-1];
+		return table[n - 1];
 	}
 };
 /*
@@ -833,13 +839,13 @@ Your algorithm should run in linear runtime complexity. Could you implement it u
 */
 class Solution {
 public:
-    int missingNumber(vector<int>& nums) {
-        int _sum = nums.size() * (nums.size() + 1) / 2;
-        for (int i : nums) {
-            _sum -= i;
-        }
-        return _sum;
-    }
+	int missingNumber(vector<int>& nums) {
+		int _sum = nums.size() * (nums.size() + 1) / 2;
+		for (int i : nums) {
+			_sum -= i;
+		}
+		return _sum;
+	}
 };
 /*
 
@@ -854,7 +860,7 @@ class Solution {
 public:
 	int numSquares(int n) {
 		if (n <= 0) return 0;
-		static vector<int> table{(0)};
+		static vector<int> table{ (0) };
 		while (table.size() <= n) {
 			int _size = table.size();
 			int temp = INT_MAX;
@@ -873,12 +879,12 @@ There are n bulbs that are initially off. You first turn on all the bulbs. Then,
 
 Example:
 
-Given n = 3. 
+Given n = 3.
 
 At first, the three bulbs are [off, off, off].
 After first round, the three bulbs are [on, on, on].
 After second round, the three bulbs are [on, off, on].
-After third round, the three bulbs are [on, off, off]. 
+After third round, the three bulbs are [on, off, off].
 
 So you should return 1, because there is only one bulb is on.
 
@@ -903,9 +909,9 @@ public:
 	bool isPowerOfThree(int n) {
 		if (n <= 0)
 			return false;
-		if(n == 1)
+		if (n == 1)
 			return true;
-		if(n % 3 == 0)
+		if (n % 3 == 0)
 			return isPowerOfThree(n / 3);
 		return false;
 	}
@@ -913,9 +919,9 @@ public:
 class Solution {
 public:
 	bool isPowerOfThree(int n) {
-		if(n > 0) 
+		if (n > 0)
 			return 1162261467 % n == 0;
-		else 
+		else
 			return false;
 	}
 };
@@ -926,21 +932,21 @@ public:
 Given a non-negative integer n, count all numbers with unique digits, x, where 0 ≤ x < 10n.
 
 Example:
-Given n = 2, return 91. (The answer should be the total numbers in the range of 0 ≤ x < 100, 
+Given n = 2, return 91. (The answer should be the total numbers in the range of 0 ≤ x < 100,
 excluding [11,22,33,44,55,66,77,88,99])
 
 Hint:
 
 A direct way is to use the backtracking approach.
-Backtracking should contains three states which are (the current number, number of steps to 
-get that number and a bitmask which represent which number is marked as visited so far in the 
-current number). Start with state (0,0,0) and count all valid number till we reach number of 
+Backtracking should contains three states which are (the current number, number of steps to
+get that number and a bitmask which represent which number is marked as visited so far in the
+current number). Start with state (0,0,0) and count all valid number till we reach number of
 steps equals to 10n.
 
-This problem can also be solved using a dynamic programming approach and some knowledge of 
+This problem can also be solved using a dynamic programming approach and some knowledge of
 combinatorics.
 Let f(k) = count of numbers with unique digits with length equals k.
-f(1) = 10, ..., f(k) = 9 * 9 * 8 * ... (9 - k + 2) [The first factor is 9 because a number 
+f(1) = 10, ..., f(k) = 9 * 9 * 8 * ... (9 - k + 2) [The first factor is 9 because a number
 cannot start with 0].
 
 */
@@ -1061,14 +1067,14 @@ public:
 	int superPow(int a, vector<int>& b) {
 		if (a % 1337 == 0) return 0;
 		int p = 0;
-		for (int i : b) 
+		for (int i : b)
 			p = (p * 10 + i) % 1140;
 		if (p == 0) p += 1140;
 		return power(a, p, 1337);
 	}
 	int power(int x, int n, int mod) {
 		int ret = 1;
-		for (x %= mod; n; x = x * x % mod, n >>= 1) 
+		for (x %= mod; n; x = x * x % mod, n >>= 1)
 			if (n & 1) ret = ret * x % mod;
 		return ret;
 	}
@@ -1162,7 +1168,7 @@ public:
 		}
 		int num = --n / d + base;
 		for (int i = 1; i < d - n % d; i++) num /= 10;
-			return num % 10;
+		return num % 10;
 	}
 };
 /*
@@ -1181,21 +1187,21 @@ You must not use any built-in BigInteger library or convert the inputs to intege
 */
 class Solution {
 public:
-    string addStrings(string num1, string num2) {
-        string res;
-        int i = num1.length() - 1, j = num2.length() - 1;
-        long carry = 0;
-        while ( i >= 0 || j >= 0 || carry > 0) {
-            if (i >= 0) {
-                carry = (num1[i--] - '0') + carry;
-            }
-            if (j >= 0) {
-                carry = (num2[j--] - '0') + carry;
-            }
-            res += to_string(carry % 10);
-            carry /= 10;
-        }
-        reverse(res.begin(), res.end());
-        return res;
-    }
+	string addStrings(string num1, string num2) {
+		string res;
+		int i = num1.length() - 1, j = num2.length() - 1;
+		long carry = 0;
+		while (i >= 0 || j >= 0 || carry > 0) {
+			if (i >= 0) {
+				carry = (num1[i--] - '0') + carry;
+			}
+			if (j >= 0) {
+				carry = (num2[j--] - '0') + carry;
+			}
+			res += to_string(carry % 10);
+			carry /= 10;
+		}
+		reverse(res.begin(), res.end());
+		return res;
+	}
 };

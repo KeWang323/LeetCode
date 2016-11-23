@@ -20,26 +20,27 @@ return [1,6],[8,10],[15,18].
  */
 class Solution {
 public:
-    vector<Interval> merge(vector<Interval>& intervals) {
-        if (intervals.empty()) {
-            return {};
-        }
-        sort(intervals.begin(), intervals.end(), [] (Interval a, Interval b) {return a.start < b.start;});
-        vector<Interval> res;
-        res.push_back(intervals[0]);
-        int i = 0, j = 1;
-        while (j < intervals.size()) {
-            if (res[i].end >= intervals[j].start) {
-                res[i].start = min(res[i].start, intervals[j].start);
-                res[i].end = max(res[i].end, intervals[j].end);
-                j++;
-            } else {
-                res.push_back(intervals[j++]);
-                i++;
-            }
-        }
-        return res;
-    }
+	vector<Interval> merge(vector<Interval>& intervals) {
+		if (intervals.empty()) {
+			return{};
+		}
+		sort(intervals.begin(), intervals.end(), [](Interval a, Interval b) {return a.start < b.start;});
+		vector<Interval> res;
+		res.push_back(intervals[0]);
+		int i = 0, j = 1;
+		while (j < intervals.size()) {
+			if (res[i].end >= intervals[j].start) {
+				res[i].start = min(res[i].start, intervals[j].start);
+				res[i].end = max(res[i].end, intervals[j].end);
+				j++;
+			}
+			else {
+				res.push_back(intervals[j++]);
+				i++;
+			}
+		}
+		return res;
+	}
 };
 /*
 
@@ -69,30 +70,33 @@ This is because the new interval [4,9] overlaps with [3,5],[6,7],[8,10].
  */
 class Solution {
 public:
-    vector<Interval> insert(vector<Interval>& intervals, Interval newInterval) {
-        vector<Interval> res;
-        bool flag = false;
-        for (Interval inter : intervals) {
-            if (flag) {
-                res.push_back(inter);
-            } else {
-                if (newInterval.end < inter.start) {
-                    res.push_back(newInterval);
-                    flag = true;
-                    res.push_back(inter);
-                } else if (inter.end < newInterval.start) {
-                    res.push_back(inter);
-                } else {
-                    newInterval.start = min(newInterval.start, inter.start);
-                    newInterval.end = max(newInterval.end, inter.end);
-                }
-            }
-        }           
-        if (!flag) {
-            res.push_back(newInterval);
-        }
-        return res;
-    }
+	vector<Interval> insert(vector<Interval>& intervals, Interval newInterval) {
+		vector<Interval> res;
+		bool flag = false;
+		for (Interval inter : intervals) {
+			if (flag) {
+				res.push_back(inter);
+			}
+			else {
+				if (newInterval.end < inter.start) {
+					res.push_back(newInterval);
+					flag = true;
+					res.push_back(inter);
+				}
+				else if (inter.end < newInterval.start) {
+					res.push_back(inter);
+				}
+				else {
+					newInterval.start = min(newInterval.start, inter.start);
+					newInterval.end = max(newInterval.end, inter.end);
+				}
+			}
+		}
+		if (!flag) {
+			res.push_back(newInterval);
+		}
+		return res;
+	}
 };
 /*
 
@@ -116,20 +120,20 @@ Could you come up with an one-pass algorithm using only constant space?
 */
 class Solution {
 public:
-    void sortColors(vector<int>& nums) {
-        int i = 0, k = 0, j = nums.size() - 1;
-        while (k <= j) {
-            if (nums[k] == 0) {
-                swap(nums[i++], nums[k++]);
-            }
-            else if (nums[k] == 2) {
-                swap(nums[k], nums[j--]);
-            }
-            else {
-                k++;
-            }
-        }
-    }
+	void sortColors(vector<int>& nums) {
+		int i = 0, k = 0, j = nums.size() - 1;
+		while (k <= j) {
+			if (nums[k] == 0) {
+				swap(nums[i++], nums[k++]);
+			}
+			else if (nums[k] == 2) {
+				swap(nums[k], nums[j--]);
+			}
+			else {
+				k++;
+			}
+		}
+	}
 };
 /*
 
@@ -148,30 +152,31 @@ Sort a linked list using insertion sort.
  */
 class Solution {
 public:
-    ListNode* insertionSortList(ListNode* head) {
-        if (head == NULL|| head -> next == NULL) {
-            return head;
-        }
-        ListNode *head_new = new ListNode(-1);
-        head_new -> next = head;
-        while (head -> next != NULL) {
-            ListNode *post = head -> next;
-            if (post -> val < head -> val) {
-                head -> next = post -> next;
-                ListNode *prev = head_new;
-                ListNode *p = head_new -> next;
-                while (p -> val < post -> val) {
-                    prev = prev -> next;
-                    p = p -> next;
-                }
-                prev -> next = post;
-                post -> next = p;
-            } else {
-                head = head -> next;
-            }
-        }
-        return head_new -> next;
-    }
+	ListNode* insertionSortList(ListNode* head) {
+		if (head == NULL || head->next == NULL) {
+			return head;
+		}
+		ListNode *head_new = new ListNode(-1);
+		head_new->next = head;
+		while (head->next != NULL) {
+			ListNode *post = head->next;
+			if (post->val < head->val) {
+				head->next = post->next;
+				ListNode *prev = head_new;
+				ListNode *p = head_new->next;
+				while (p->val < post->val) {
+					prev = prev->next;
+					p = p->next;
+				}
+				prev->next = post;
+				post->next = p;
+			}
+			else {
+				head = head->next;
+			}
+		}
+		return head_new->next;
+	}
 };
 /*
 
@@ -190,38 +195,39 @@ Sort a linked list in O(n log n) time using constant space complexity.
  */
 class Solution {
 public:
-    ListNode* sortList(ListNode* head) {
-        if (head == NULL || head -> next == NULL) {
-            return head;
-        }
-        ListNode *newhead = split(head);
-        return sort_combine(sortList(head), sortList(newhead));
-    }
+	ListNode* sortList(ListNode* head) {
+		if (head == NULL || head->next == NULL) {
+			return head;
+		}
+		ListNode *newhead = split(head);
+		return sort_combine(sortList(head), sortList(newhead));
+	}
 private:
-    ListNode* split(ListNode* head) {
-        ListNode *s = head, *f = head;
-        while(f -> next != NULL && f -> next -> next != NULL) {
-            s = s -> next;
-            f = f -> next -> next;
-        }
-        f = s -> next;
-        s -> next = NULL;
-        return f;
-    }
-    ListNode* sort_combine(ListNode* head, ListNode* s) {
-        ListNode *head_new = new ListNode(-1), *p = head_new;
-        while (head != NULL || s != NULL) {
-            if (head == NULL || s != NULL && head -> val > s -> val) {
-                p -> next = s;
-                s = s -> next;
-            } else {
-                p -> next = head;
-                head = head -> next;
-            }
-            p = p -> next;
-        }
-        return head_new -> next;
-    }
+	ListNode* split(ListNode* head) {
+		ListNode *s = head, *f = head;
+		while (f->next != NULL && f->next->next != NULL) {
+			s = s->next;
+			f = f->next->next;
+		}
+		f = s->next;
+		s->next = NULL;
+		return f;
+	}
+	ListNode* sort_combine(ListNode* head, ListNode* s) {
+		ListNode *head_new = new ListNode(-1), *p = head_new;
+		while (head != NULL || s != NULL) {
+			if (head == NULL || s != NULL && head->val > s->val) {
+				p->next = s;
+				s = s->next;
+			}
+			else {
+				p->next = head;
+				head = head->next;
+			}
+			p = p->next;
+		}
+		return head_new->next;
+	}
 };
 /*
 
@@ -236,17 +242,17 @@ Note: The result may be very large, so you need to return a string instead of an
 */
 class Solution {
 public:
-    string largestNumber(vector<int>& nums) {
-        string res;
-        sort(nums.begin(), nums.end(), comp);
-        if (nums[0] == 0) return "0";
-        for (int num : nums)
-            res += to_string(num);
-        return res;
-    }
-    static bool comp(int i, int j) {
-        return to_string(i) + to_string(j) > to_string(j) + to_string(i);
-    } 
+	string largestNumber(vector<int>& nums) {
+		string res;
+		sort(nums.begin(), nums.end(), comp);
+		if (nums[0] == 0) return "0";
+		for (int num : nums)
+			res += to_string(num);
+		return res;
+	}
+	static bool comp(int i, int j) {
+		return to_string(i) + to_string(j) > to_string(j) + to_string(i);
+	}
 };
 /*
 
@@ -267,47 +273,47 @@ What if the inputs contain unicode characters? How would you adapt your solution
 */
 class Solution {
 public:
-    bool isAnagram(string s, string t) {
-        if (s.empty() != t.empty() || s.length() != t.length()) {
-            return false;
-        }
-        if (s.empty() && t.empty()) {
-            return true;
-        }
-        unordered_map<char, int> mapping;
-        for (auto cha : s) {
-            mapping[cha] += 1;
-        }
-        for (auto cha : t) {
-            if (mapping[cha] == 0) {
-                return false;
-            }
-            else {
-                mapping[cha]--;
-            }
-        }
-        return true;
-    }
+	bool isAnagram(string s, string t) {
+		if (s.empty() != t.empty() || s.length() != t.length()) {
+			return false;
+		}
+		if (s.empty() && t.empty()) {
+			return true;
+		}
+		unordered_map<char, int> mapping;
+		for (auto cha : s) {
+			mapping[cha] += 1;
+		}
+		for (auto cha : t) {
+			if (mapping[cha] == 0) {
+				return false;
+			}
+			else {
+				mapping[cha]--;
+			}
+		}
+		return true;
+	}
 };
 class Solution {
 public:
-    bool isAnagram(string s, string t) {
-        if (s.empty() != t.empty() || s.length() != t.length()) {
-            return false;
-        }
-        if (s.empty() && t.empty()) {
-            return true;
-        }
-        vector<int> cnt(26, 0);
-        for(int i = 0; i < s.size(); i++) {
-            cnt[s[i]-'a']++;
-        }
-        for(int i = 0; i < t.size(); i++) {
-            if(cnt[t[i]-'a'] == 0) return false;
-            cnt[t[i]-'a']--;
-        }
-        return true;
-    }
+	bool isAnagram(string s, string t) {
+		if (s.empty() != t.empty() || s.length() != t.length()) {
+			return false;
+		}
+		if (s.empty() && t.empty()) {
+			return true;
+		}
+		vector<int> cnt(26, 0);
+		for (int i = 0; i < s.size(); i++) {
+			cnt[s[i] - 'a']++;
+		}
+		for (int i = 0; i < t.size(); i++) {
+			if (cnt[t[i] - 'a'] == 0) return false;
+			cnt[t[i] - 'a']--;
+		}
+		return true;
+	}
 };
 /*
 
@@ -330,16 +336,16 @@ A faster approach is to use extra space.
 */
 class Solution {
 public:
-    int hIndex(vector<int>& citations) {
-        sort(citations.begin(), citations.end());
-        int _size = citations.size();
-        for (int i = 0; i < _size; i++) {
-            if (citations[i] >= _size - i) {
-                return _size - i;
-            }
-        }
-        return 0;
-    }
+	int hIndex(vector<int>& citations) {
+		sort(citations.begin(), citations.end());
+		int _size = citations.size();
+		for (int i = 0; i < _size; i++) {
+			if (citations[i] >= _size - i) {
+				return _size - i;
+			}
+		}
+		return 0;
+	}
 };
 /*
 
@@ -352,39 +358,40 @@ For example, given nums = [3, 5, 2, 1, 6, 4], one possible answer is [1, 6, 2, 5
 */
 class Solution {
 public:
-    void wiggleSort(vector<int>& nums) {
-        for (int i = 1; i < nums.size(); i++) {
-            if ((i % 2 == 1 && nums[i] < nums[i - 1]) || (i % 2 == 0 && nums[i] > nums[i - 1])) {
-                swap(nums[i], nums[i - 1]);
-            }
-        }
-    }
+	void wiggleSort(vector<int>& nums) {
+		for (int i = 1; i < nums.size(); i++) {
+			if ((i % 2 == 1 && nums[i] < nums[i - 1]) || (i % 2 == 0 && nums[i] > nums[i - 1])) {
+				swap(nums[i], nums[i - 1]);
+			}
+		}
+	}
 };
 class Solution {
 public:
-    void wiggleSort(vector<int>& nums) {
-        if (nums.empty()) {
-            return;
-        }
-        sort(nums.begin(), nums.end());
-        swap(nums.back(), nums[nums.size() / 2]);
-        if (nums.size() % 2) {
-            wiggleSort(nums, 0, nums.size() - 2);
-        } else {
-            wiggleSort(nums, 0, nums.size() - 1);
-        }
-    }
+	void wiggleSort(vector<int>& nums) {
+		if (nums.empty()) {
+			return;
+		}
+		sort(nums.begin(), nums.end());
+		swap(nums.back(), nums[nums.size() / 2]);
+		if (nums.size() % 2) {
+			wiggleSort(nums, 0, nums.size() - 2);
+		}
+		else {
+			wiggleSort(nums, 0, nums.size() - 1);
+		}
+	}
 private:
-    void wiggleSort(vector<int>& nums, int l, int r) {
-        if (l < r - 1) {
-            int _size = r - l + 1, i = l + _size / 4, mid = l + _size / 2, j = l + 3 * _size / 4;
-            reverse(nums.begin() + i, nums.begin() + mid);
-            reverse(nums.begin() + mid, nums.begin() + j);
-            reverse(nums.begin() + i, nums.begin() + j);
-            wiggleSort(nums, l, l + 2 * (i - l) - 1);
-            wiggleSort(nums, l + 2 * (i - l), r);
-        }
-    }
+	void wiggleSort(vector<int>& nums, int l, int r) {
+		if (l < r - 1) {
+			int _size = r - l + 1, i = l + _size / 4, mid = l + _size / 2, j = l + 3 * _size / 4;
+			reverse(nums.begin() + i, nums.begin() + mid);
+			reverse(nums.begin() + mid, nums.begin() + j);
+			reverse(nums.begin() + i, nums.begin() + j);
+			wiggleSort(nums, l, l + 2 * (i - l) - 1);
+			wiggleSort(nums, l + 2 * (i - l), r);
+		}
+	}
 };
 /*
 
@@ -402,21 +409,21 @@ The result can be in any order.
 */
 class Solution {
 public:
-    vector<int> intersection(vector<int>& nums1, vector<int>& nums2) {
-        vector<int> result;
-        if (nums1.empty() || nums2.empty()) return result;
-        unordered_map<int, bool> mapping;
-        for (auto i : nums1) {
-            mapping[i] = true;
-        }
-        for (auto i : nums2) {
-            if (mapping[i]) {
-                result.push_back(i);
-                mapping.erase(i);
-            }
-        }
-        return result;
-    }
+	vector<int> intersection(vector<int>& nums1, vector<int>& nums2) {
+		vector<int> result;
+		if (nums1.empty() || nums2.empty()) return result;
+		unordered_map<int, bool> mapping;
+		for (auto i : nums1) {
+			mapping[i] = true;
+		}
+		for (auto i : nums2) {
+			if (mapping[i]) {
+				result.push_back(i);
+				mapping.erase(i);
+			}
+		}
+		return result;
+	}
 };
 /*
 
@@ -438,18 +445,18 @@ What if elements of nums2 are stored on disk, and the memory is limited such tha
 */
 class Solution {
 public:
-    vector<int> intersect(vector<int>& nums1, vector<int>& nums2) {
-        vector<int> result;
-        if (nums1.empty() || nums2.empty()) return result;
-        unordered_map<int, int> mapping;
-        for (auto val : nums1) {
-            mapping[val]++;
-        }
-        for (auto val : nums2) {
-            if (mapping[val]-- > 0) {
-                result.push_back(val);
-            }
-        }
-        return result;
-    }
+	vector<int> intersect(vector<int>& nums1, vector<int>& nums2) {
+		vector<int> result;
+		if (nums1.empty() || nums2.empty()) return result;
+		unordered_map<int, int> mapping;
+		for (auto val : nums1) {
+			mapping[val]++;
+		}
+		for (auto val : nums2) {
+			if (mapping[val]-- > 0) {
+				result.push_back(val);
+			}
+		}
+		return result;
+	}
 };

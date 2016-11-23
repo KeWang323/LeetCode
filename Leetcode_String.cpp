@@ -18,8 +18,8 @@ public:
 	int lengthOfLongestSubstring(string s) {
 		int start = 0, max_len = 0;
 		vector<int> last_position(255, -1);
-		for (int i = 0; i < s.size(); i++){
-			if (last_position[s[i]] >= start){
+		for (int i = 0; i < s.size(); i++) {
+			if (last_position[s[i]] >= start) {
 				max_len = max(i - start, max_len);
 				start = last_position[s[i]] + 1;
 			}
@@ -32,7 +32,7 @@ public:
 
 5. Longest Palindromic Substring (Medium)
 
-Given a string S, find the longest palindromic substring in S. You may assume that the maximum 
+Given a string S, find the longest palindromic substring in S. You may assume that the maximum
 length of S is 1000, and there exists one unique longest palindromic substring.
 
 */
@@ -136,15 +136,15 @@ public:
 		if (str[i] == '-' || str[i] == '+') {
 			sign = 1 - 2 * (str[i++] == '-');
 		}
-		for(; i < str.length(); i++) {  
-			if(isdigit(str[i])) {  
-				num = num * 10 + (str[i] - '0');  
-				if(num > INT_MAX) {
-					return sign > 0 ? INT_MAX : INT_MIN;  
+		for (; i < str.length(); i++) {
+			if (isdigit(str[i])) {
+				num = num * 10 + (str[i] - '0');
+				if (num > INT_MAX) {
+					return sign > 0 ? INT_MAX : INT_MIN;
 				}
-			}  
-			else break;  
-		}  
+			}
+			else break;
+		}
 		return (int)num * sign;
 	}
 };
@@ -168,9 +168,9 @@ public:
 			{"", "M", "MM", "MMM"}
 		};
 		res += c[3][num / 1000 % 10];
-		res += c[2][num / 100  % 10];
-		res += c[1][num / 10   % 10];
-		res += c[0][num        % 10];
+		res += c[2][num / 100 % 10];
+		res += c[1][num / 10 % 10];
+		res += c[0][num % 10];
 		return res;
 	}
 };
@@ -199,15 +199,15 @@ public:
 	}
 	int ChatoNum(char cha) {
 		switch (cha) {
-			case 'I': return 1;
-			case 'V': return 5;
-			case 'X': return 10;
-			case 'L': return 50;
-			case 'C': return 100;
-			case 'D': return 500;
-			case 'M': return 1000;
+		case 'I': return 1;
+		case 'V': return 5;
+		case 'X': return 10;
+		case 'L': return 50;
+		case 'C': return 100;
+		case 'D': return 500;
+		case 'M': return 1000;
 		}
-		return 0;  
+		return 0;
 	}
 };
 /*
@@ -225,7 +225,7 @@ public:
 		int i, j;
 		for (i = 1; i < strs.size(); i++) {
 			for (j = 0; j < len; j++) {
-				if (strs[i-1][j] != strs[i][j]) {
+				if (strs[i - 1][j] != strs[i][j]) {
 					len = min(len, j);
 					break;
 				}
@@ -254,7 +254,7 @@ public:
 	vector<string> letterCombinations(string digits) {
 		vector<string> res;
 		if (digits.empty()) return res;
-		vector<string> letters = {"", "", "abc", "def", "ghi", "jkl", "mno", "pqrs", "tuv", "wxyz"};
+		vector<string> letters = { "", "", "abc", "def", "ghi", "jkl", "mno", "pqrs", "tuv", "wxyz" };
 		string s;
 		generate(digits, res, 0, s, letters);
 		return res;
@@ -328,14 +328,17 @@ public:
 			if (q) {
 				s.push_back(')');
 				generate(0, q - 1, res, s);
-			} else {
+			}
+			else {
 				res.push_back(s);
 				return;
 			}
-		} else if (p == q) {
+		}
+		else if (p == q) {
 			s.push_back('(');
 			generate(p - 1, q, res, s);
-		} else {
+		}
+		else {
 			s.push_back('(');
 			generate(p - 1, q, res, s);
 			s.pop_back();
@@ -363,7 +366,7 @@ public:
 			}
 			if (j == neelen) return i;
 		}
-		return -1;        
+		return -1;
 	}
 };
 /*
@@ -382,42 +385,43 @@ You should return the indices: [0,9].
 */
 class Solution {
 public:
-    vector<int> findSubstring(string s, vector<string>& words) {
-        if (words.empty()) {
-            return{};
-        }
-        unordered_map<string, int> mapping;
-        for (string str : words) {
-            mapping[str]++;
-        }
-        vector<int> res;
-        int wsize = words[0].size();
-        for (int i = 0; i < wsize; i++) {
-            int wcnt = 0, slow = i, fast = i;
-            unordered_map<string, int> mapping2;
-            while (fast + wsize <= s.size()) {
-                string str = s.substr(fast, wsize);
-                if (mapping.find(str) == mapping.end()) {
-                    mapping2.clear();
-                    wcnt = 0;
-                    slow = fast + wsize;
-                } else {
-                    wcnt++;
-                    mapping2[str]++;
-                    while (mapping[str] < mapping2[str]) {
-                        mapping2[s.substr(slow, wsize)]--;
-                        wcnt--;
-                        slow += wsize;
-                    }
-                }
-                if (wcnt == words.size()) {
-                    res.push_back(slow);
-                }
-                fast += wsize;
-            }
-        }
-        return res;
-    }
+	vector<int> findSubstring(string s, vector<string>& words) {
+		if (words.empty()) {
+			return{};
+		}
+		unordered_map<string, int> mapping;
+		for (string str : words) {
+			mapping[str]++;
+		}
+		vector<int> res;
+		int wsize = words[0].size();
+		for (int i = 0; i < wsize; i++) {
+			int wcnt = 0, slow = i, fast = i;
+			unordered_map<string, int> mapping2;
+			while (fast + wsize <= s.size()) {
+				string str = s.substr(fast, wsize);
+				if (mapping.find(str) == mapping.end()) {
+					mapping2.clear();
+					wcnt = 0;
+					slow = fast + wsize;
+				}
+				else {
+					wcnt++;
+					mapping2[str]++;
+					while (mapping[str] < mapping2[str]) {
+						mapping2[s.substr(slow, wsize)]--;
+						wcnt--;
+						slow += wsize;
+					}
+				}
+				if (wcnt == words.size()) {
+					res.push_back(slow);
+				}
+				fast += wsize;
+			}
+		}
+		return res;
+	}
 };
 /*
 
@@ -478,7 +482,7 @@ public:
 		while (j <= i) {
 			for (int k = 0; k <= j; k++) {
 				if (s1 >= k && s2 >= (j - k)) {
-					carry += (num1[s1 - k] - '0') * (num2[s2 - (j - k)] - '0'); 
+					carry += (num1[s1 - k] - '0') * (num2[s2 - (j - k)] - '0');
 				}
 			}
 			res = char(carry % 10 + '0') + res;
@@ -498,7 +502,7 @@ public:
 
 Given an array of strings, group anagrams together.
 
-For example, given: ["eat", "tea", "tan", "ate", "nat", "bat"], 
+For example, given: ["eat", "tea", "tan", "ate", "nat", "bat"],
 Return:
 
 [
@@ -513,7 +517,7 @@ class Solution {
 public:
 	vector<vector<string>> groupAnagrams(vector<string>& strs) {
 		vector<vector<string>> res;
-		vector<int> primes = {2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 41, 43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89, 97, 101, 103, 107};
+		vector<int> primes = { 2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 41, 43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89, 97, 101, 103, 107 };
 		unordered_map<long, int> mapping;
 		int pos = 0;
 		for (auto s : strs) {
@@ -522,13 +526,15 @@ public:
 				for (auto cha : s) {
 					temp *= primes[cha - 'a'];
 				}
-			} else {
+			}
+			else {
 				temp = 107;
 			}
 			if (mapping.find(temp) == mapping.end()) {
 				mapping[temp] = pos++;
 				res.push_back(vector<string>{s});
-			} else {
+			}
+			else {
 				res[mapping[temp]].push_back(s);
 			}
 		}
@@ -545,7 +551,7 @@ If the last word does not exist, return 0.
 
 Note: A word is defined as a character sequence consists of non-space characters only.
 
-For example, 
+For example,
 Given s = "Hello World",
 return 5.
 
@@ -554,7 +560,7 @@ class Solution {
 public:
 	int lengthOfLastWord(string s) {
 		int len = s.length() - 1, res = 0;
-		while(len > -1) {
+		while (len > -1) {
 			if (s[len] != ' ') res++;
 			else if (res) return res;
 			len--;
@@ -614,15 +620,15 @@ public:
 		string res = "", token;
 		stringstream ss(path);
 		vector<string> pos;
-		while(getline(ss, token, '/')){
-			if(token == "." || token == "") continue;
-			else if(token==".."){
-				if(!pos.empty())  pos.pop_back();
+		while (getline(ss, token, '/')) {
+			if (token == "." || token == "") continue;
+			else if (token == "..") {
+				if (!pos.empty())  pos.pop_back();
 			}
 			else pos.push_back(token);
 		}
-		if(pos.empty()) return "/";
-		for(string i : pos)
+		if (pos.empty()) return "/";
+		for (string i : pos)
 			res = res + '/' + i;
 		return res;
 	}
@@ -649,11 +655,14 @@ public:
 			for (int j = 0; j < col + 1; j++) {
 				if (i == 0) {
 					t[i][j] = j;
-				} else if (j == 0) {
+				}
+				else if (j == 0) {
 					t[i][j] = i;
-				} else if (word1[i - 1] == word2[j - 1]) {
+				}
+				else if (word1[i - 1] == word2[j - 1]) {
 					t[i][j] = t[i - 1][j - 1];
-				} else {
+				}
+				else {
 					t[i][j] = min(min(t[i - 1][j - 1], t[i][j - 1]), t[i - 1][j]) + 1;
 				}
 			}
@@ -719,7 +728,7 @@ public:
 			res.push_back(res_sub);
 			return;
 		}
-		if(s.length() - start > 3 * cnt) return;
+		if (s.length() - start > 3 * cnt) return;
 		for (int i = 0; i + start < s.length() && i < 3; i++) {
 			if (i == 0) generate(s, start + 1, cnt - 1, res, res_sub + s.substr(start, 1) + ".");
 			if (i == 1 && s[start] != '0') generate(s, start + 2, cnt - 1, res, res_sub + s.substr(start, 2) + ".");
@@ -748,7 +757,7 @@ public:
 	bool isPalindrome(string s) {
 		int left = 0, right = s.length() - 1;
 		while (left < right) {
-			while (!isalnum(s[left]) && left < right) 
+			while (!isalnum(s[left]) && left < right)
 				left++;
 			while (!isalnum(s[right]) && left < right)
 				right--;
@@ -824,13 +833,13 @@ public:
 				return -1;
 		}
 		if (ver1.size() > ver2.size()) {
-			while(!ver1[index] && index < ver1.size())
+			while (!ver1[index] && index < ver1.size())
 				index++;
 			if (index < ver1.size())
 				return 1;
 		}
 		if (ver1.size() < ver2.size()) {
-			while(!ver2[index] && index < ver2.size())
+			while (!ver2[index] && index < ver2.size())
 				index++;
 			if (index < ver2.size())
 				return -1;
@@ -841,7 +850,7 @@ public:
 		vector<int> res;
 		stringstream str(s);
 		string item;
-		while(getline(str, item, sign)) {
+		while (getline(str, item, sign)) {
 			res.push_back(atoi(item.c_str()));
 		}
 		return res;
@@ -869,7 +878,7 @@ public:
 	void reverseWords(string &s) {
 		int i = 0, j = 0;
 		while (j < s.size()) {
-			while(j < s.size() && s[j] != ' ') {
+			while (j < s.size() && s[j] != ' ') {
 				j++;
 			}
 			reverse(s.begin() + i, s.begin() + j);
@@ -901,7 +910,7 @@ public:
 		return s;
 	}
 };
-/* 
+/*
 
 345. Reverse Vowels of a String (Easy)
 
@@ -934,12 +943,9 @@ public:
 /*
 
 383. Ransom Note (Easy)
+ Given an arbitrary ransom note string and another string containing letters from all the magazines, write a function that will return true if the ransom note can be constructed from the magazines ; otherwise, it will return false.
 
- Given  an  arbitrary  ransom  note  string  and  another  string  containing  letters from  all  the  
-magazines,  write  a  function  that  will  return  true  if  the  ransom   note  can  be  constructed  
-from  the  magazines ;  otherwise,  it  will  return  false.   
-
-Each  letter  in  the  magazine  string  can  only  be  used  once  in  your  ransom  note.
+Each letter in the magazine string can only be used once in your ransom note.
 
 Note:
 You may assume that both strings contain only lowercase letters.

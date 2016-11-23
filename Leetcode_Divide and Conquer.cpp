@@ -20,34 +20,37 @@ The median is (2 + 3)/2 = 2.5
 */
 class Solution {
 public:
-    double findMedianSortedArrays(vector<int>& nums1, vector<int>& nums2) {
-        int sum = nums1.size() + nums2.size();
-        double res;
-        if (sum % 2) {
-            res = findKth(nums1, nums2, 0, 0, sum / 2 + 1);
-        } else {
-            res = (findKth(nums1, nums2, 0, 0, sum / 2) + findKth(nums1, nums2, 0, 0, sum / 2 + 1)) / 2.0;
-        }
-        return res;
-    }
+	double findMedianSortedArrays(vector<int>& nums1, vector<int>& nums2) {
+		int sum = nums1.size() + nums2.size();
+		double res;
+		if (sum % 2) {
+			res = findKth(nums1, nums2, 0, 0, sum / 2 + 1);
+		}
+		else {
+			res = (findKth(nums1, nums2, 0, 0, sum / 2) + findKth(nums1, nums2, 0, 0, sum / 2 + 1)) / 2.0;
+		}
+		return res;
+	}
 private:
-    double findKth(vector<int>& nums1, vector<int>& nums2, int s1, int s2, int k) {
-        if (s1 >= nums1.size()) {
-            return nums2[s2 + k - 1];
-        } else if (s2 >= nums2.size()) {
-            return nums1[s1 + k - 1];
-        }
-        if (k == 1) {
-            return min(nums1[s1], nums2[s2]);
-        }
-        int mid1 = s1 + k / 2 - 1 >= nums1.size() ? INT_MAX : nums1[s1 + k / 2 - 1];
-        int mid2 = s2 + k / 2 - 1 >= nums2.size() ? INT_MAX : nums2[s2 + k / 2 - 1];
-        if (mid1 < mid2) {
-            return findKth(nums1, nums2, s1 + k / 2, s2, k - k / 2);
-        } else {
-            return findKth(nums1, nums2, s1, s2 + k / 2, k - k / 2);
-        }
-    }
+	double findKth(vector<int>& nums1, vector<int>& nums2, int s1, int s2, int k) {
+		if (s1 >= nums1.size()) {
+			return nums2[s2 + k - 1];
+		}
+		else if (s2 >= nums2.size()) {
+			return nums1[s1 + k - 1];
+		}
+		if (k == 1) {
+			return min(nums1[s1], nums2[s2]);
+		}
+		int mid1 = s1 + k / 2 - 1 >= nums1.size() ? INT_MAX : nums1[s1 + k / 2 - 1];
+		int mid2 = s2 + k / 2 - 1 >= nums2.size() ? INT_MAX : nums2[s2 + k / 2 - 1];
+		if (mid1 < mid2) {
+			return findKth(nums1, nums2, s1 + k / 2, s2, k - k / 2);
+		}
+		else {
+			return findKth(nums1, nums2, s1, s2 + k / 2, k - k / 2);
+		}
+	}
 };
 /*
 
@@ -66,33 +69,33 @@ Merge k sorted linked lists and return it as one sorted list. Analyze and descri
  */
 class Comp {
 public:
-    bool operator()(pair<ListNode*, int> p1, pair<ListNode*, int> p2) {
-        return p1.first->val > p2.first->val;
-    }
+	bool operator()(pair<ListNode*, int> p1, pair<ListNode*, int> p2) {
+		return p1.first->val > p2.first->val;
+	}
 };
 class Solution {
 public:
-    ListNode* mergeKLists(vector<ListNode*>& lists) {
-        priority_queue<pair<ListNode*, int>, vector<pair<ListNode*, int>>, Comp> pq;
-        ListNode *dummy = new ListNode(-1);
-        ListNode *cur = dummy;
-        for (int i = 0; i < lists.size();i++) {
-            if (lists[i] != NULL) {
-                pq.push(make_pair(lists[i], i));
-            }
-        }
-        while (!pq.empty()) {
-            pair<ListNode*, int> p = pq.top();
-            pq.pop();
-            cur->next = p.first;
-            cur = cur->next;
-            lists[p.second] = lists[p.second]->next;
-            if (lists[p.second] != NULL) {
-                pq.push(make_pair(lists[p.second], p.second));
-            } 
-        }
-        return dummy->next;
-    }
+	ListNode* mergeKLists(vector<ListNode*>& lists) {
+		priority_queue<pair<ListNode*, int>, vector<pair<ListNode*, int>>, Comp> pq;
+		ListNode *dummy = new ListNode(-1);
+		ListNode *cur = dummy;
+		for (int i = 0; i < lists.size();i++) {
+			if (lists[i] != NULL) {
+				pq.push(make_pair(lists[i], i));
+			}
+		}
+		while (!pq.empty()) {
+			pair<ListNode*, int> p = pq.top();
+			pq.pop();
+			cur->next = p.first;
+			cur = cur->next;
+			lists[p.second] = lists[p.second]->next;
+			if (lists[p.second] != NULL) {
+				pq.push(make_pair(lists[p.second], p.second));
+			}
+		}
+		return dummy->next;
+	}
 };
 /*
 
@@ -111,14 +114,14 @@ If you have figured out the O(n) solution, try coding another solution using the
 */
 class Solution {
 public:
-    int maxSubArray(vector<int>& nums) {
-        int _sum = INT_MIN, prev = 0;
-        for (int i = 0; i < nums.size(); i++) {
-            prev = max(prev + nums[i], nums[i]);
-            _sum = max(_sum, prev);
-        }
-        return _sum;
-    }
+	int maxSubArray(vector<int>& nums) {
+		int _sum = INT_MIN, prev = 0;
+		for (int i = 0; i < nums.size(); i++) {
+			prev = max(prev + nums[i], nums[i]);
+			_sum = max(_sum, prev);
+		}
+		return _sum;
+	}
 };
 /*
 
@@ -131,24 +134,25 @@ You may assume that the array is non-empty and the majority element always exist
 */
 class Solution {
 public:
-    int majorityElement(vector<int>& nums) {
-        if (nums.size() == 1) {
-            return nums[0];
-        }
-        int cnt = 0, majority;
-        for (int i =0; i < nums.size(); i++) {
-            if (cnt == 0) {
-                majority = nums[i];
-                cnt++;
-            } else {
-                majority == nums[i] ? cnt++ : cnt--;
-                if (cnt > nums.size() / 2) {
-                    return majority;
-                }
-            }
-        }
-        return majority;
-    }
+	int majorityElement(vector<int>& nums) {
+		if (nums.size() == 1) {
+			return nums[0];
+		}
+		int cnt = 0, majority;
+		for (int i = 0; i < nums.size(); i++) {
+			if (cnt == 0) {
+				majority = nums[i];
+				cnt++;
+			}
+			else {
+				majority == nums[i] ? cnt++ : cnt--;
+				if (cnt > nums.size() / 2) {
+					return majority;
+				}
+			}
+		}
+		return majority;
+	}
 };
 /*
 
@@ -159,16 +163,16 @@ Find the kth largest element in an unsorted array. Note that it is the kth large
 For example,
 Given [3,2,1,5,6,4] and k = 2, return 5.
 
-Note: 
+Note:
 You may assume k is always valid, 1 ≤ k ≤ array's length.
 
 */
 class Solution {
 public:
-    int findKthLargest(vector<int>& nums, int k) {
-        sort(nums.begin(), nums.end(), greater<int>());
-        return nums[k-1];
-    }
+	int findKthLargest(vector<int>& nums, int k) {
+		sort(nums.begin(), nums.end(), greater<int>());
+		return nums[k - 1];
+	}
 };
 /*
 
@@ -196,16 +200,16 @@ Given target = 20, return false.
 */
 class Solution {
 public:
-    bool searchMatrix(vector<vector<int>>& matrix, int target) {
-        int r = matrix.size() - 1, c = matrix[0].size() - 1;
-        int i = 0, j = c;
-        while (i <= r && j >= 0) {
-            if (matrix[i][j] > target) j--;
-            else if (matrix[i][j] < target) i++;
-            else return true;
-        }
-        return false;
-    }
+	bool searchMatrix(vector<vector<int>>& matrix, int target) {
+		int r = matrix.size() - 1, c = matrix[0].size() - 1;
+		int i = 0, j = c;
+		while (i <= r && j >= 0) {
+			if (matrix[i][j] > target) j--;
+			else if (matrix[i][j] < target) i++;
+			else return true;
+		}
+		return false;
+	}
 };
 /*
 
@@ -235,30 +239,30 @@ Output: [-34, -14, -10, -10, 10]
 */
 class Solution {
 private:
-    int _len;
-    vector<int> calculate(const string& input, int st, int ed) {
-        vector<int> res;
-        if (st > ed) return res;
-        for (int i = st; i <= ed; i++) {
-            if (!isdigit(input[i])) {
-                vector<int> l = calculate(input, st, i - 1), r = calculate(input, i + 1, ed);
-                for (int j = 0; j < l.size(); j++) {
-                    for (int k = 0; k < r.size(); k++) {
-                        switch(input[i]) {
-                            case '-': res.push_back(l[j] - r[k]); break;
-                            case '+': res.push_back(l[j] + r[k]); break;
-                            case '*': res.push_back(l[j] * r[k]); break;
-                        }
-                    }
-                }
-            }
-        }
-        if (res.empty()) res.push_back(stoi(input.substr(st, ed - st + 1)));
-        return res;
-    }
+	int _len;
+	vector<int> calculate(const string& input, int st, int ed) {
+		vector<int> res;
+		if (st > ed) return res;
+		for (int i = st; i <= ed; i++) {
+			if (!isdigit(input[i])) {
+				vector<int> l = calculate(input, st, i - 1), r = calculate(input, i + 1, ed);
+				for (int j = 0; j < l.size(); j++) {
+					for (int k = 0; k < r.size(); k++) {
+						switch (input[i]) {
+						case '-': res.push_back(l[j] - r[k]); break;
+						case '+': res.push_back(l[j] + r[k]); break;
+						case '*': res.push_back(l[j] * r[k]); break;
+						}
+					}
+				}
+			}
+		}
+		if (res.empty()) res.push_back(stoi(input.substr(st, ed - st + 1)));
+		return res;
+	}
 public:
-    vector<int> diffWaysToCompute(string input) {
-        int _len = input.length();
-        return calculate(input, 0, _len - 1);
-    }
+	vector<int> diffWaysToCompute(string input) {
+		int _len = input.length();
+		return calculate(input, 0, _len - 1);
+	}
 };

@@ -20,34 +20,37 @@ The median is (2 + 3)/2 = 2.5
 */
 class Solution {
 public:
-    double findMedianSortedArrays(vector<int>& nums1, vector<int>& nums2) {
-        int sum = nums1.size() + nums2.size();
-        double res;
-        if (sum % 2) {
-            res = findKth(nums1, nums2, 0, 0, sum / 2 + 1);
-        } else {
-            res = (findKth(nums1, nums2, 0, 0, sum / 2) + findKth(nums1, nums2, 0, 0, sum / 2 + 1)) / 2.0;
-        }
-        return res;
-    }
+	double findMedianSortedArrays(vector<int>& nums1, vector<int>& nums2) {
+		int sum = nums1.size() + nums2.size();
+		double res;
+		if (sum % 2) {
+			res = findKth(nums1, nums2, 0, 0, sum / 2 + 1);
+		}
+		else {
+			res = (findKth(nums1, nums2, 0, 0, sum / 2) + findKth(nums1, nums2, 0, 0, sum / 2 + 1)) / 2.0;
+		}
+		return res;
+	}
 private:
-    double findKth(vector<int>& nums1, vector<int>& nums2, int s1, int s2, int k) {
-        if (s1 >= nums1.size()) {
-            return nums2[s2 + k - 1];
-        } else if (s2 >= nums2.size()) {
-            return nums1[s1 + k - 1];
-        }
-        if (k == 1) {
-            return min(nums1[s1], nums2[s2]);
-        }
-        int mid1 = s1 + k / 2 - 1 >= nums1.size() ? INT_MAX : nums1[s1 + k / 2 - 1];
-        int mid2 = s2 + k / 2 - 1 >= nums2.size() ? INT_MAX : nums2[s2 + k / 2 - 1];
-        if (mid1 < mid2) {
-            return findKth(nums1, nums2, s1 + k / 2, s2, k - k / 2);
-        } else {
-            return findKth(nums1, nums2, s1, s2 + k / 2, k - k / 2);
-        }
-    }
+	double findKth(vector<int>& nums1, vector<int>& nums2, int s1, int s2, int k) {
+		if (s1 >= nums1.size()) {
+			return nums2[s2 + k - 1];
+		}
+		else if (s2 >= nums2.size()) {
+			return nums1[s1 + k - 1];
+		}
+		if (k == 1) {
+			return min(nums1[s1], nums2[s2]);
+		}
+		int mid1 = s1 + k / 2 - 1 >= nums1.size() ? INT_MAX : nums1[s1 + k / 2 - 1];
+		int mid2 = s2 + k / 2 - 1 >= nums2.size() ? INT_MAX : nums2[s2 + k / 2 - 1];
+		if (mid1 < mid2) {
+			return findKth(nums1, nums2, s1 + k / 2, s2, k - k / 2);
+		}
+		else {
+			return findKth(nums1, nums2, s1, s2 + k / 2, k - k / 2);
+		}
+	}
 };
 /*
 
@@ -60,36 +63,36 @@ If it is overflow, return MAX_INT.
 */
 class Solution {
 public:
-    int divide(int dividend, int divisor) {
-        if (!dividend) {
-            return 0;
-        }
-        if (!divisor || dividend == INT_MIN && divisor == -1) {
-            return INT_MAX;
-        }
-        int sign = (dividend > 0 ^ divisor > 0) ? -1 : 1;
-        long dd = labs((long)dividend), dr = labs((long)divisor);
-        if (dd < dr) {
-            return 0;
-        }
-        int h = 0;
-        long t = dr;
-        while (t <= dd) {
-            t <<= 1;
-            h++;
-        }
-        long ret = 1 << --h;
-        dd -= (t >>= 1);
-        while (dd >= dr) {
-            while (t > dd){
-                t >>= 1;
-                h--;
-            }
-            ret |= 1 << h;
-            dd -= t;
-        }
-        return sign < 0 ? -ret : ret;
-    }
+	int divide(int dividend, int divisor) {
+		if (!dividend) {
+			return 0;
+		}
+		if (!divisor || dividend == INT_MIN && divisor == -1) {
+			return INT_MAX;
+		}
+		int sign = (dividend > 0 ^ divisor > 0) ? -1 : 1;
+		long dd = labs((long)dividend), dr = labs((long)divisor);
+		if (dd < dr) {
+			return 0;
+		}
+		int h = 0;
+		long t = dr;
+		while (t <= dd) {
+			t <<= 1;
+			h++;
+		}
+		long ret = 1 << --h;
+		dd -= (t >>= 1);
+		while (dd >= dr) {
+			while (t > dd) {
+				t >>= 1;
+				h--;
+			}
+			ret |= 1 << h;
+			dd -= t;
+		}
+		return sign < 0 ? -ret : ret;
+	}
 };
 /*
 33. Search in Rotated Sorted Array (Hard)
@@ -104,32 +107,32 @@ You may assume no duplicate exists in the array.
 */
 class Solution {
 public:
-    int search(vector<int>& nums, int target) {
-        int l = 0, r = nums.size() - 1;
-        while (l <= r) {
-            int mid = l + (r - l) / 2;
-            if (nums[mid] == target) {
-                return mid;
-            }
-            else if (nums[l] <= nums[mid]) {
-                if (nums[l] <= target && target < nums[mid]) {
-                    r = mid - 1;
-                }
-                else {
-                    l = mid + 1;
-                }
-            }
-            else {
-                if (nums[mid] < target && target <= nums[r]) {
-                    l = mid + 1;
-                }
-                else {
-                    r = mid - 1;
-                }
-            }
-        }
-        return -1;
-    }
+	int search(vector<int>& nums, int target) {
+		int l = 0, r = nums.size() - 1;
+		while (l <= r) {
+			int mid = l + (r - l) / 2;
+			if (nums[mid] == target) {
+				return mid;
+			}
+			else if (nums[l] <= nums[mid]) {
+				if (nums[l] <= target && target < nums[mid]) {
+					r = mid - 1;
+				}
+				else {
+					l = mid + 1;
+				}
+			}
+			else {
+				if (nums[mid] < target && target <= nums[r]) {
+					l = mid + 1;
+				}
+				else {
+					r = mid - 1;
+				}
+			}
+		}
+		return -1;
+	}
 };
 /*
 
@@ -148,31 +151,31 @@ return [3, 4].
 */
 class Solution {
 public:
-    vector<int> searchRange(vector<int>& nums, int target) {
-        int l = 0, r = nums.size() - 1;
-        vector<int> res(2, -1);
-        while (l <= r) {
-            int mid = l + (r - l) / 2;
-            if (nums[mid] < target) {
-                l = mid + 1;
-            }
-            else if (target < nums[mid]) {
-                r = mid - 1;
-            }
-            else {
-                while (nums[l] != target) {
-                    l++;
-                }
-                while (nums[r] != target) {
-                    r--;
-                }
-                res[0] = l;
-                res[1] = r;
-                return res;
-            }
-        }
-        return res;
-    }
+	vector<int> searchRange(vector<int>& nums, int target) {
+		int l = 0, r = nums.size() - 1;
+		vector<int> res(2, -1);
+		while (l <= r) {
+			int mid = l + (r - l) / 2;
+			if (nums[mid] < target) {
+				l = mid + 1;
+			}
+			else if (target < nums[mid]) {
+				r = mid - 1;
+			}
+			else {
+				while (nums[l] != target) {
+					l++;
+				}
+				while (nums[r] != target) {
+					r--;
+				}
+				res[0] = l;
+				res[1] = r;
+				return res;
+			}
+		}
+		return res;
+	}
 };
 /*
 
@@ -191,20 +194,20 @@ Here are few examples.
 */
 class Solution {
 public:
-    int searchInsert(vector<int>& nums, int target) {
-        int l = 0, r = nums.size() - 1;
-        while (l <= r) {
-            int mid = l + (r - l) / 2;
-            if (nums[mid] == target) return mid;
-            else if (nums[mid] > target) {
-                r = mid - 1;
-            }
-            else {
-                l = mid + 1;
-            }
-        }
-        return l;
-    }
+	int searchInsert(vector<int>& nums, int target) {
+		int l = 0, r = nums.size() - 1;
+		while (l <= r) {
+			int mid = l + (r - l) / 2;
+			if (nums[mid] == target) return mid;
+			else if (nums[mid] > target) {
+				r = mid - 1;
+			}
+			else {
+				l = mid + 1;
+			}
+		}
+		return l;
+	}
 };
 /*
 
@@ -215,20 +218,20 @@ Implement pow(x, n).
 */
 class Solution {
 public:
-    double myPow(double x, int n) {
-        if (n == 0) {
-            return 1;
-        }
-        if (n < 0) {
-            if (n == INT_MIN) {
-                return 1 / x * myPow(x, n + 1);
-            }
-            x = 1 / x;
-            n = -n;
-        }
-        double temp = myPow(x, n / 2);
-        return n % 2 ? x * temp * temp : temp * temp;
-    }
+	double myPow(double x, int n) {
+		if (n == 0) {
+			return 1;
+		}
+		if (n < 0) {
+			if (n == INT_MIN) {
+				return 1 / x * myPow(x, n + 1);
+			}
+			x = 1 / x;
+			n = -n;
+		}
+		double temp = myPow(x, n / 2);
+		return n % 2 ? x * temp * temp : temp * temp;
+	}
 };
 /*
 
@@ -241,21 +244,22 @@ Compute and return the square root of x.
 */
 class Solution {
 public:
-    int mySqrt(int x) {
-        if (x < 2) {
-            return x;
-        }
-        int l = 1, r = x;
-        while (l < r) {
-            int mid = l + (r - l) / 2;
-            if (x / mid < mid) {
-                r = mid;
-            } else {
-                l = mid + 1;
-            }
-        }
-        return r - 1;
-    }
+	int mySqrt(int x) {
+		if (x < 2) {
+			return x;
+		}
+		int l = 1, r = x;
+		while (l < r) {
+			int mid = l + (r - l) / 2;
+			if (x / mid < mid) {
+				r = mid;
+			}
+			else {
+				l = mid + 1;
+			}
+		}
+		return r - 1;
+	}
 };
 /*
 
@@ -279,22 +283,24 @@ Given target = 3, return true.
 */
 class Solution {
 public:
-    bool searchMatrix(vector<vector<int>>& matrix, int target) {
-        int m = matrix.size(), n = matrix[0].size();
-        int l = 0, r = m * n - 1;
-        while (l <= r) {
-            int mid = l + (r - l) / 2;
-            int i = mid / n, j = mid % n;
-            if (matrix[i][j] < target) {
-                l = mid + 1;
-            } else if (target < matrix[i][j]) {
-                r = mid - 1;
-            } else {
-                return true;
-            }
-        }
-        return false;
-    }
+	bool searchMatrix(vector<vector<int>>& matrix, int target) {
+		int m = matrix.size(), n = matrix[0].size();
+		int l = 0, r = m * n - 1;
+		while (l <= r) {
+			int mid = l + (r - l) / 2;
+			int i = mid / n, j = mid % n;
+			if (matrix[i][j] < target) {
+				l = mid + 1;
+			}
+			else if (target < matrix[i][j]) {
+				r = mid - 1;
+			}
+			else {
+				return true;
+			}
+		}
+		return false;
+	}
 };
 /*
 
@@ -311,23 +317,23 @@ Write a function to determine if a given target is in the array.
 */
 class Solution {
 public:
-    bool search(vector<int>& nums, int target) {
-        int l = 0, r = nums.size() - 1;
-        while (l <= r) {
-            int mid = l + (r - l) / 2;
-            if (nums[mid] == target) return true;
-            else if (nums[l] < nums[mid]) {
-                if (nums[l] <= target && target < nums[mid]) r = mid - 1;
-                else l = mid + 1;
-            }
-            else if (nums[l] > nums[mid]) {
-                if (nums[mid] < target && target <= nums[r]) l = mid + 1;
-                else r = mid -1;
-            }
-            else l++;
-        }
-        return false;
-    }
+	bool search(vector<int>& nums, int target) {
+		int l = 0, r = nums.size() - 1;
+		while (l <= r) {
+			int mid = l + (r - l) / 2;
+			if (nums[mid] == target) return true;
+			else if (nums[l] < nums[mid]) {
+				if (nums[l] <= target && target < nums[mid]) r = mid - 1;
+				else l = mid + 1;
+			}
+			else if (nums[l] > nums[mid]) {
+				if (nums[mid] < target && target <= nums[r]) l = mid + 1;
+				else r = mid - 1;
+			}
+			else l++;
+		}
+		return false;
+	}
 };
 /*
 
@@ -344,18 +350,19 @@ You may assume no duplicate exists in the array.
 */
 class Solution {
 public:
-    int findMin(vector<int>& nums) {
-        int l = 0, r = nums.size() - 1;
-        while (l < r) {
-            int mid = l + (r - l) / 2;
-            if (nums[mid] < nums[r]) {
-                r = mid;
-            } else {
-                l = mid + 1;
-            }
-        }
-        return nums[l];
-    }
+	int findMin(vector<int>& nums) {
+		int l = 0, r = nums.size() - 1;
+		while (l < r) {
+			int mid = l + (r - l) / 2;
+			if (nums[mid] < nums[r]) {
+				r = mid;
+			}
+			else {
+				l = mid + 1;
+			}
+		}
+		return nums[l];
+	}
 };
 /*
 
@@ -379,18 +386,19 @@ Your solution should be in logarithmic complexity.
 */
 class Solution {
 public:
-    int findPeakElement(vector<int>& nums) {
-        int l = 0, r = nums.size() - 1;
-        while (l < r) {
-            int mid = l + (r - l) / 2;
-            if (nums[mid] < nums[mid + 1]) {
-                l = mid +1;
-            } else {
-                r = mid;
-            }
-        }
-        return l;
-    }
+	int findPeakElement(vector<int>& nums) {
+		int l = 0, r = nums.size() - 1;
+		while (l < r) {
+			int mid = l + (r - l) / 2;
+			if (nums[mid] < nums[mid + 1]) {
+				l = mid + 1;
+			}
+			else {
+				r = mid;
+			}
+		}
+		return l;
+	}
 };
 /*
 
@@ -408,47 +416,51 @@ Output: index1=1, index2=2
 */
 class Solution {
 public:
-    vector<int> twoSum(vector<int>& numbers, int target) {
-        if (numbers.size() < 2) {
-            return {-1, -1};
-        }
-        for (int i = 0; i < numbers.size() - 1; i++) {
-            if (numbers[i] + numbers[i + 1] > target) {
-                break;
-            }
-            int l = i + 1, r = numbers.size() - 1;
-            while (l <= r) {
-                int mid = l + (r - l) / 2;
-                if (numbers[mid] > target - numbers[i]) {
-                    r = mid - 1;
-                } else if (numbers[mid] < target - numbers[i]) {
-                    l = mid + 1;
-                } else {
-                    return {i + 1, mid + 1};
-                }
-            }
-        }
-        return {-1, -1};
-    }
+	vector<int> twoSum(vector<int>& numbers, int target) {
+		if (numbers.size() < 2) {
+			return{ -1, -1 };
+		}
+		for (int i = 0; i < numbers.size() - 1; i++) {
+			if (numbers[i] + numbers[i + 1] > target) {
+				break;
+			}
+			int l = i + 1, r = numbers.size() - 1;
+			while (l <= r) {
+				int mid = l + (r - l) / 2;
+				if (numbers[mid] > target - numbers[i]) {
+					r = mid - 1;
+				}
+				else if (numbers[mid] < target - numbers[i]) {
+					l = mid + 1;
+				}
+				else {
+					return{ i + 1, mid + 1 };
+				}
+			}
+		}
+		return{ -1, -1 };
+	}
 };
 class Solution {
 public:
-    vector<int> twoSum(vector<int>& numbers, int target) {
-        if (numbers.size() < 2) {
-            return {-1, -1};
-        }
-        int l = 0, r = numbers.size() - 1;
-        while (l < r) {
-            if (numbers[l] + numbers[r] > target) {
-                r--;
-            } else if (numbers[l] + numbers[r] < target) {
-                l++;
-            } else {
-                return {++l, ++r};
-            }
-        }
-        return {-1, -1};
-    }
+	vector<int> twoSum(vector<int>& numbers, int target) {
+		if (numbers.size() < 2) {
+			return{ -1, -1 };
+		}
+		int l = 0, r = numbers.size() - 1;
+		while (l < r) {
+			if (numbers[l] + numbers[r] > target) {
+				r--;
+			}
+			else if (numbers[l] + numbers[r] < target) {
+				l++;
+			}
+			else {
+				return{ ++l, ++r };
+			}
+		}
+		return{ -1, -1 };
+	}
 };
 /*
 
@@ -470,34 +482,39 @@ For example, given the dungeon below, the initial health of the knight must be a
 */
 class Solution {
 public:
-    int calculateMinimumHP(vector<vector<int>>& dungeon) {
-        vector<int> t(dungeon[0].size(), 0);
-        for (int i = dungeon.size() - 1; i >= 0; i--) {
-            for (int j = dungeon[0].size() - 1; j >= 0; j--) {
-                if (i == dungeon.size() - 1 && j == dungeon[0].size() - 1) {
-                    t[j] = update(dungeon[i][j], 1);
-                } else if (i == dungeon.size() - 1) {
-                    t[j] = update(dungeon[i][j], t[j + 1]);
-                } else if (j == dungeon[0].size() - 1) {
-                    t[j] = update(dungeon[i][j], t[j]);
-                } else {
-                    t[j] = min(update(dungeon[i][j], t[j + 1]), update(dungeon[i][j], t[j]));
-                }
-            }
-        }
-        return t[0];
-    }
+	int calculateMinimumHP(vector<vector<int>>& dungeon) {
+		vector<int> t(dungeon[0].size(), 0);
+		for (int i = dungeon.size() - 1; i >= 0; i--) {
+			for (int j = dungeon[0].size() - 1; j >= 0; j--) {
+				if (i == dungeon.size() - 1 && j == dungeon[0].size() - 1) {
+					t[j] = update(dungeon[i][j], 1);
+				}
+				else if (i == dungeon.size() - 1) {
+					t[j] = update(dungeon[i][j], t[j + 1]);
+				}
+				else if (j == dungeon[0].size() - 1) {
+					t[j] = update(dungeon[i][j], t[j]);
+				}
+				else {
+					t[j] = min(update(dungeon[i][j], t[j + 1]), update(dungeon[i][j], t[j]));
+				}
+			}
+		}
+		return t[0];
+	}
 private:
-    int update(int cur, int pre) {
-        if (cur < 0) {
-            return -cur + pre;
-        } else if (cur >= pre) {
-            return 1;
-        } else {
-            return pre - cur;
-        }
-        return 0;
-    }
+	int update(int cur, int pre) {
+		if (cur < 0) {
+			return -cur + pre;
+		}
+		else if (cur >= pre) {
+			return 1;
+		}
+		else {
+			return pre - cur;
+		}
+		return 0;
+	}
 };
 /*
 
@@ -517,19 +534,19 @@ If you have figured out the O(n) solution, try coding another solution of which 
 */
 class Solution {
 public:
-    int minSubArrayLen(int s, vector<int>& nums) {
-        int l = 0, r = 0, _sum = 0, _size = nums.size(), len_min = _size + 1;
-        while (r < _size) {
-            while (r < _size && _sum < s) {
-                _sum += nums[r++];
-            }
-            while (_sum >= s) {
-                _sum -= nums[l++];
-            }
-            len_min = min(len_min, r - l + 1);
-        }
-        return len_min > _size ? 0 : len_min;
-    }
+	int minSubArrayLen(int s, vector<int>& nums) {
+		int l = 0, r = 0, _sum = 0, _size = nums.size(), len_min = _size + 1;
+		while (r < _size) {
+			while (r < _size && _sum < s) {
+				_sum += nums[r++];
+			}
+			while (_sum >= s) {
+				_sum -= nums[l++];
+			}
+			len_min = min(len_min, r - l + 1);
+		}
+		return len_min > _size ? 0 : len_min;
+	}
 };
 /*
 
@@ -538,8 +555,8 @@ public:
 Given a complete binary tree, count the number of nodes.
 
 Definition of a complete binary tree from Wikipedia:
-In a complete binary tree every level, except possibly the last, is completely filled, 
-and all nodes in the last level are as far left as possible. It can have between 1 and 
+In a complete binary tree every level, except possibly the last, is completely filled,
+and all nodes in the last level are as far left as possible. It can have between 1 and
 2h nodes inclusive at the last level h.
 
 */
@@ -554,29 +571,30 @@ and all nodes in the last level are as far left as possible. It can have between
  */
 class Solution {
 public:
-    int countNodes(TreeNode* root) {
-        if (!root) return 0;
-        int h = 0, sum = 0;
-        TreeNode *t = root, *t0 = NULL;
-        while (t) {
-            t = t -> left;
-            h++;
-        }
-        t = root;
-        int level = h - 2;
-        while (level > -1) {
-            t0 = t -> left;
-            for (int i = 0; i < level; i++) 
-                t0 = t0 -> right;
-            if (t0) {
-                sum += 1<<level;
-                t = t -> right;
-            } else t = t -> left;
-            level--;
-        }
-        if (t) sum++;
-        return sum+((1<<(h-1))-1);
-    }
+	int countNodes(TreeNode* root) {
+		if (!root) return 0;
+		int h = 0, sum = 0;
+		TreeNode *t = root, *t0 = NULL;
+		while (t) {
+			t = t->left;
+			h++;
+		}
+		t = root;
+		int level = h - 2;
+		while (level > -1) {
+			t0 = t->left;
+			for (int i = 0; i < level; i++)
+				t0 = t0->right;
+			if (t0) {
+				sum += 1 << level;
+				t = t->right;
+			}
+			else t = t->left;
+			level--;
+		}
+		if (t) sum++;
+		return sum + ((1 << (h - 1)) - 1);
+	}
 };
 /*
 
@@ -584,7 +602,7 @@ public:
 
 Given a binary search tree, write a function kthSmallest to find the kth smallest element in it.
 
-Note: 
+Note:
 You may assume k is always valid, 1 ≤ k ≤ BST's total elements.
 
 Follow up:
@@ -608,39 +626,39 @@ The optimal runtime complexity is O(height of BST).
  */
 class Solution {
 public:
-    int kthSmallest(TreeNode* root, int k) {
-        vector<int> res;
-        traversal(root, res);
-        return res[k - 1];
-    }
-    void traversal(TreeNode* root, vector<int>& res) {
-        if (root) {
-            traversal(root -> left, res);
-            res.push_back(root -> val);
-            traversal(root -> right, res);
-        }
-    }
+	int kthSmallest(TreeNode* root, int k) {
+		vector<int> res;
+		traversal(root, res);
+		return res[k - 1];
+	}
+	void traversal(TreeNode* root, vector<int>& res) {
+		if (root) {
+			traversal(root->left, res);
+			res.push_back(root->val);
+			traversal(root->right, res);
+		}
+	}
 };
 class Solution {
 public:
-    int kthSmallest(TreeNode* root, int k) {
-        stack<TreeNode*> s;
-        int cnt = 0, res = root -> val;
-        while (true) {
-            TreeNode* temp = root;
-            while(temp) {
-                s.push(temp);
-                temp = temp -> left;
-            }
-            if (s.empty() || cnt == k) return res;
-            cnt++;
-            root = s.top();
-            s.pop();
-            res = root -> val;
-            root = root -> right;
-        }
-        return res;
-    }
+	int kthSmallest(TreeNode* root, int k) {
+		stack<TreeNode*> s;
+		int cnt = 0, res = root->val;
+		while (true) {
+			TreeNode* temp = root;
+			while (temp) {
+				s.push(temp);
+				temp = temp->left;
+			}
+			if (s.empty() || cnt == k) return res;
+			cnt++;
+			root = s.top();
+			s.pop();
+			res = root->val;
+			root = root->right;
+		}
+		return res;
+	}
 };
 /*
 
@@ -668,16 +686,16 @@ Given target = 20, return false.
 */
 class Solution {
 public:
-    bool searchMatrix(vector<vector<int>>& matrix, int target) {
-        int r = matrix.size() - 1, c = matrix[0].size() - 1;
-        int i = 0, j = c;
-        while (i <= r && j >= 0) {
-            if (matrix[i][j] > target) j--;
-            else if (matrix[i][j] < target) i++;
-            else return true;
-        }
-        return false;
-    }
+	bool searchMatrix(vector<vector<int>>& matrix, int target) {
+		int r = matrix.size() - 1, c = matrix[0].size() - 1;
+		int i = 0, j = c;
+		while (i <= r && j >= 0) {
+			if (matrix[i][j] > target) j--;
+			else if (matrix[i][j] < target) i++;
+			else return true;
+		}
+		return false;
+	}
 };
 /*
 
@@ -701,20 +719,21 @@ You are guaranteed to have only one unique value in the BST that is closest to t
  */
 class Solution {
 public:
-    int closestValue(TreeNode* root, double target) {
-        int res = root->val;
-        while(root != NULL) {
-            if (abs(root->val - target) < abs(res - target)) {
-                res = root->val;
-            }
-            if (root->val < target) {
-                root = root->right;
-            } else {
-                root = root->left;
-            }
-        }
-        return res;
-    }
+	int closestValue(TreeNode* root, double target) {
+		int res = root->val;
+		while (root != NULL) {
+			if (abs(root->val - target) < abs(res - target)) {
+				res = root->val;
+			}
+			if (root->val < target) {
+				root = root->right;
+			}
+			else {
+				root = root->left;
+			}
+		}
+		return res;
+	}
 };
 /*
 
@@ -729,18 +748,18 @@ Expected runtime complexity is in O(log n) and the input is sorted.
 */
 class Solution {
 public:
-    int hIndex(vector<int>& citations) {
-        if (citations.empty()) return 0;
-        int _size = citations.size();
-        int l = 0, r = _size - 1;
-        while (l <= r) {
-            int mid = (l + r) / 2;
-            if (citations[mid] < _size - mid) l = mid + 1;
-            else if (citations[mid] > _size - mid) r = mid - 1;
-            else return citations[mid];
-        }
-        return _size - l;
-    }
+	int hIndex(vector<int>& citations) {
+		if (citations.empty()) return 0;
+		int _size = citations.size();
+		int l = 0, r = _size - 1;
+		while (l <= r) {
+			int mid = (l + r) / 2;
+			if (citations[mid] < _size - mid) l = mid + 1;
+			else if (citations[mid] > _size - mid) r = mid - 1;
+			else return citations[mid];
+		}
+		return _size - l;
+	}
 };
 /*
 
@@ -785,24 +804,24 @@ There is only one duplicate number in the array, but it could be repeated more t
 */
 class Solution {
 public:
-    int findDuplicate(vector<int>& nums) {
-        int s = 0, f = 0;
-        int finder = 0;
-        while (true) {
-            s = nums[s];
-            f = nums[nums[f]];
-            if (s == f) {
-                break;
-            }
-        }
-        while (true) {
-            s = nums[s];
-            finder = nums[finder];
-            if (s == finder) {
-                return s;
-            }
-        }
-    }
+	int findDuplicate(vector<int>& nums) {
+		int s = 0, f = 0;
+		int finder = 0;
+		while (true) {
+			s = nums[s];
+			f = nums[nums[f]];
+			if (s == f) {
+				break;
+			}
+		}
+		while (true) {
+			s = nums[s];
+			finder = nums[finder];
+			if (s == finder) {
+				return s;
+			}
+		}
+	}
 };
 /*
 
@@ -821,29 +840,29 @@ Follow up: Could you improve it to O(n log n) time complexity?
 */
 class Solution {
 public:
-    int lengthOfLIS(vector<int>& nums) {
-        int res = 0;
-        int table[nums.size()];
-        for (int i = 0; i < nums.size(); i++) {
-            table[i] = 1;
-            for (int j = 0; j < i; j++)
-                if (nums[j] < nums[i]) table[i] = max(table[i], table[j] + 1);
-            res = max(res, table[i]);
-        }
-        return res;
-    }
+	int lengthOfLIS(vector<int>& nums) {
+		int res = 0;
+		int table[nums.size()];
+		for (int i = 0; i < nums.size(); i++) {
+			table[i] = 1;
+			for (int j = 0; j < i; j++)
+				if (nums[j] < nums[i]) table[i] = max(table[i], table[j] + 1);
+			res = max(res, table[i]);
+		}
+		return res;
+	}
 };
 class Solution {
 public:
-    int lengthOfLIS(vector<int>& nums) {
-        vector<int> res;
-        for(int i : nums) {
-            auto it = lower_bound(res.begin(), res.end(), i);
-            if (it == res.end()) res.push_back(i);
-            else *it = i;
-        }
-        return res.size();
-    }
+	int lengthOfLIS(vector<int>& nums) {
+		vector<int> res;
+		for (int i : nums) {
+			auto it = lower_bound(res.begin(), res.end(), i);
+			if (it == res.end()) res.push_back(i);
+			else *it = i;
+		}
+		return res.size();
+	}
 };
 /*
 
@@ -861,21 +880,21 @@ The result can be in any order.
 */
 class Solution {
 public:
-    vector<int> intersection(vector<int>& nums1, vector<int>& nums2) {
-        vector<int> result;
-        if (nums1.empty() || nums2.empty()) return result;
-        unordered_map<int, bool> mapping;
-        for (auto i : nums1) {
-            mapping[i] = true;
-        }
-        for (auto i : nums2) {
-            if (mapping[i]) {
-                result.push_back(i);
-                mapping.erase(i);
-            }
-        }
-        return result;
-    }
+	vector<int> intersection(vector<int>& nums1, vector<int>& nums2) {
+		vector<int> result;
+		if (nums1.empty() || nums2.empty()) return result;
+		unordered_map<int, bool> mapping;
+		for (auto i : nums1) {
+			mapping[i] = true;
+		}
+		for (auto i : nums2) {
+			if (mapping[i]) {
+				result.push_back(i);
+				mapping.erase(i);
+			}
+		}
+		return result;
+	}
 };
 /*
 
@@ -897,20 +916,20 @@ What if elements of nums2 are stored on disk, and the memory is limited such tha
 */
 class Solution {
 public:
-    vector<int> intersect(vector<int>& nums1, vector<int>& nums2) {
-        vector<int> result;
-        if (nums1.empty() || nums2.empty()) return result;
-        unordered_map<int, int> mapping;
-        for (auto val : nums1) {
-            mapping[val]++;
-        }
-        for (auto val : nums2) {
-            if (mapping[val]-- > 0) {
-                result.push_back(val);
-            }
-        }
-        return result;
-    }
+	vector<int> intersect(vector<int>& nums1, vector<int>& nums2) {
+		vector<int> result;
+		if (nums1.empty() || nums2.empty()) return result;
+		unordered_map<int, int> mapping;
+		for (auto val : nums1) {
+			mapping[val]++;
+		}
+		for (auto val : nums2) {
+			if (mapping[val]-- > 0) {
+				result.push_back(val);
+			}
+		}
+		return result;
+	}
 };
 /*
 
@@ -932,17 +951,17 @@ Returns: False
 */
 class Solution {
 public:
-    bool isPerfectSquare(int num) {
-        int l = 1, r = num;
-        while (l < r - 1) {
-            int mid = (l + r) / 2;
-            if (mid * mid == num) return true;
-            else if (mid > num / mid) r = mid;
-            else l = mid;
-        }
-        if ((l * l == num) || (r * r == num))  return true;
-        return false;
-    }
+	bool isPerfectSquare(int num) {
+		int l = 1, r = num;
+		while (l < r - 1) {
+			int mid = (l + r) / 2;
+			if (mid * mid == num) return true;
+			else if (mid > num / mid) r = mid;
+			else l = mid;
+		}
+		if ((l * l == num) || (r * r == num))  return true;
+		return false;
+	}
 };
 /*
 
@@ -976,14 +995,14 @@ public:
 		int left = 1, right = n;
 		while (left != right) {
 			int mid = left / 2 + right / 2;
-            switch (guess(mid)) {
-             case 1: left = mid + 1; break;
-             case -1: right = mid - 1; break;
-             case 0: return mid;
-         }
-     }
-     return left;
- }
+			switch (guess(mid)) {
+			case 1: left = mid + 1; break;
+			case -1: right = mid - 1; break;
+			case 0: return mid;
+			}
+		}
+		return left;
+	}
 };
 /*
 
@@ -1003,22 +1022,22 @@ matrix = [
 k = 8,
 
 return 13.
-Note: 
+Note:
 You may assume k is always valid, 1 ≤ k ≤ n2.
 
 */
 class Solution {
 public:
-    int kthSmallest(vector<vector<int>>& matrix, int k) {
-        int r = matrix.size() - 1, min = matrix[0][0], max = matrix[r][r];
-        while (min < max) {
-            int cnt = 0, mid = (min + max) / 2;
-            for (int i = 0; i <= r && matrix[i][0] <= mid; i++)
-                cnt += upper_bound(matrix[i].begin(), matrix[i].end(), mid) - matrix[i].begin();
-            k <= cnt ? max = mid : min = mid + 1;
-        }
-        return min;
-    }
+	int kthSmallest(vector<vector<int>>& matrix, int k) {
+		int r = matrix.size() - 1, min = matrix[0][0], max = matrix[r][r];
+		while (min < max) {
+			int cnt = 0, mid = (min + max) / 2;
+			for (int i = 0; i <= r && matrix[i][0] <= mid; i++)
+				cnt += upper_bound(matrix[i].begin(), matrix[i].end(), mid) - matrix[i].begin();
+			k <= cnt ? max = mid : min = mid + 1;
+		}
+		return min;
+	}
 };
 /*
 
@@ -1026,11 +1045,11 @@ public:
 
 Given a string s and a string t, check if s is subsequence of t.
 
-You may assume that there is only lower case English letters in both s and t. t is potentially 
+You may assume that there is only lower case English letters in both s and t. t is potentially
 a very long (length ~= 500,000) string, and s is a short string (<=100).
 
-A subsequence of a string is a new string which is formed from the original string by deleting 
-some (can be none) of the characters without disturbing the relative positions of the remaining 
+A subsequence of a string is a new string which is formed from the original string by deleting
+some (can be none) of the characters without disturbing the relative positions of the remaining
 characters. (ie, "ace" is a subsequence of "abcde" while "aec" is not).
 
 Example 1:
@@ -1044,16 +1063,16 @@ s = "axc", t = "ahbgdc"
 Return false.
 
 Follow up:
-If there are lots of incoming S, say S1, S2, ... , Sk where k >= 1B, and you want to check one 
+If there are lots of incoming S, say S1, S2, ... , Sk where k >= 1B, and you want to check one
 by one to see if T has its subsequence. In this scenario, how would you change your code?
 
 */
 class Solution {
 public:
-    bool isSubsequence(string s, string t) {
-        int s_i = 0;
-        for (int t_i = 0; t_i < t.length() && s_i < s.length(); t_i++)
-            if (t[t_i] == s[s_i]) s_i++;
-        return s_i == s.length();
-    }
+	bool isSubsequence(string s, string t) {
+		int s_i = 0;
+		for (int t_i = 0; t_i < t.length() && s_i < s.length(); t_i++)
+			if (t[t_i] == s[s_i]) s_i++;
+		return s_i == s.length();
+	}
 };

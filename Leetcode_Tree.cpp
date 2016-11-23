@@ -7,9 +7,9 @@ Given a binary tree, return the inorder traversal of its nodes' values.
 For example:
 Given binary tree [1,null,2,3],
    1
-    \
-     2
-    /
+	\
+	 2
+	/
    3
 return [1,3,2].
 
@@ -27,19 +27,19 @@ Note: Recursive solution is trivial, could you do it iteratively?
  */
 class Solution {
 public:
-    vector<int> inorderTraversal(TreeNode* root) {
-        vector<int> res;
-        inorderTraversal(root, res);
-        return res;
-    }
+	vector<int> inorderTraversal(TreeNode* root) {
+		vector<int> res;
+		inorderTraversal(root, res);
+		return res;
+	}
 private:
-    void inorderTraversal(TreeNode* root, vector<int>& res) {
-        if (root) {
-            inorderTraversal(root -> left, res);
-            res.push_back(root -> val);
-            inorderTraversal(root -> right, res);
-        }
-    }
+	void inorderTraversal(TreeNode* root, vector<int>& res) {
+		if (root) {
+			inorderTraversal(root->left, res);
+			res.push_back(root->val);
+			inorderTraversal(root->right, res);
+		}
+	}
 };
 /*
 
@@ -68,30 +68,30 @@ Given n = 3, your program should return all 5 unique BST's shown below.
  */
 class Solution {
 private:
-    vector<vector<vector<TreeNode*>>> table;
-    vector<TreeNode*> generate(int l, int r) {
-        if (l > r) return {NULL};
-        if (table[l][r].empty()) {
-            for (int mid = l; mid <= r; mid++) {
-                vector<TreeNode*> left = generate(l, mid - 1), right = generate(mid + 1, r);
-                for (auto a : left) {
-                    for (auto b : right) {
-                        TreeNode* cur = new TreeNode(mid);
-                        cur -> left = a;
-                        cur -> right = b;
-                        table[l][r].push_back(cur);
-                    }
-                }
-            }
-        }
-        return table[l][r];
-    }
+	vector<vector<vector<TreeNode*>>> table;
+	vector<TreeNode*> generate(int l, int r) {
+		if (l > r) return{ NULL };
+		if (table[l][r].empty()) {
+			for (int mid = l; mid <= r; mid++) {
+				vector<TreeNode*> left = generate(l, mid - 1), right = generate(mid + 1, r);
+				for (auto a : left) {
+					for (auto b : right) {
+						TreeNode* cur = new TreeNode(mid);
+						cur->left = a;
+						cur->right = b;
+						table[l][r].push_back(cur);
+					}
+				}
+			}
+		}
+		return table[l][r];
+	}
 public:
-    vector<TreeNode*> generateTrees(int n) {
-        if (n < 1) return {};
-        table = vector<vector<vector<TreeNode*>>> (n + 1, vector<vector<TreeNode*>>(n + 1, vector<TreeNode*>()));
-        return generate(1, n);
-    }
+	vector<TreeNode*> generateTrees(int n) {
+		if (n < 1) return{};
+		table = vector<vector<vector<TreeNode*>>>(n + 1, vector<vector<TreeNode*>>(n + 1, vector<TreeNode*>()));
+		return generate(1, n);
+	}
 };
 /*
 
@@ -105,12 +105,12 @@ The left subtree of a node contains only nodes with keys less than the node's ke
 The right subtree of a node contains only nodes with keys greater than the node's key.
 Both the left and right subtrees must also be binary search trees.
 Example 1:
-    2
+	2
    / \
   1   3
 Binary tree [2,1,3], return true.
 Example 2:
-    1
+	1
    / \
   2   3
 Binary tree [1,2,3], return false.
@@ -127,22 +127,24 @@ Binary tree [1,2,3], return false.
  */
 class Solution {
 public:
-    bool isValidBST(TreeNode* root) {
-        TreeNode* prev = NULL;
-        return validate(root, prev);
-    }
+	bool isValidBST(TreeNode* root) {
+		TreeNode* prev = NULL;
+		return validate(root, prev);
+	}
 private:
-    bool validate(TreeNode* root, TreeNode* &prev) {
-        if (root == NULL) {
-            return true;
-        } else if (!validate(root->left, prev)) {
-            return false;
-        } else if (prev != NULL && prev->val >= root->val) {
-            return false;
-        }
-        prev = root;
-        return validate(root->right, prev);
-    }
+	bool validate(TreeNode* root, TreeNode* &prev) {
+		if (root == NULL) {
+			return true;
+		}
+		else if (!validate(root->left, prev)) {
+			return false;
+		}
+		else if (prev != NULL && prev->val >= root->val) {
+			return false;
+		}
+		prev = root;
+		return validate(root->right, prev);
+	}
 };
 /*
 
@@ -164,13 +166,13 @@ Two binary trees are considered equal if they are structurally identical and the
  */
 class Solution {
 public:
-    bool isSameTree(TreeNode* p, TreeNode* q) {
-        if (!p || !q) {
-            if (p || q) return false;
-            return true;
-        }
-        return p -> val == q -> val && isSameTree(p -> left, q -> left) && isSameTree(p -> right, q -> right);
-    }
+	bool isSameTree(TreeNode* p, TreeNode* q) {
+		if (!p || !q) {
+			if (p || q) return false;
+			return true;
+		}
+		return p->val == q->val && isSameTree(p->left, q->left) && isSameTree(p->right, q->right);
+	}
 };
 /*
 
@@ -180,13 +182,13 @@ Given a binary tree, check whether it is a mirror of itself (ie, symmetric aroun
 
 For example, this binary tree [1,2,2,3,4,4,3] is symmetric:
 
-    1
+	1
    / \
   2   2
  / \ / \
 3  4 4  3
 But the following [1,2,2,null,3,null,3] is not:
-    1
+	1
    / \
   2   2
    \   \
@@ -206,17 +208,17 @@ Bonus points if you could solve it both recursively and iteratively.
  */
 class Solution {
 public:
-    bool isSymmetric(TreeNode* root) {
-        if (!root) return true;
-        return check(root -> left, root -> right);
-    }
-    bool check(TreeNode* L, TreeNode* R) {
-        if (!L || !R) {
-            if (L || R) return false;
-            return true;
-        }
-        return L -> val == R -> val && check(L -> left, R -> right) && check(L -> right, R -> left);
-    }
+	bool isSymmetric(TreeNode* root) {
+		if (!root) return true;
+		return check(root->left, root->right);
+	}
+	bool check(TreeNode* L, TreeNode* R) {
+		if (!L || !R) {
+			if (L || R) return false;
+			return true;
+		}
+		return L->val == R->val && check(L->left, R->right) && check(L->right, R->left);
+	}
 };
 /*
 
@@ -226,10 +228,10 @@ Given a binary tree, return the level order traversal of its nodes' values. (ie,
 
 For example:
 Given binary tree [3,9,20,null,null,15,7],
-    3
+	3
    / \
   9  20
-    /  \
+	/  \
    15   7
 return its level order traversal as:
 [
@@ -250,25 +252,25 @@ return its level order traversal as:
  */
 class Solution {
 public:
-    vector<vector<int>> levelOrder(TreeNode* root) {
-        vector<vector<int>> res;
-        if (!root) return res;
-        queue<TreeNode*> q;
-        q.push(root);
-        while (!q.empty()) {
-            vector<int> lev;
-            int _size = q.size();
-            for (int i = 0; i < _size; i++) {
-                TreeNode *temp = q.front();
-                q.pop();
-                lev.push_back(temp -> val);
-                if (temp -> left) q.push(temp -> left);
-                if (temp -> right) q.push(temp -> right);
-            }
-            res.push_back(lev);
-        }
-        return res;
-    }
+	vector<vector<int>> levelOrder(TreeNode* root) {
+		vector<vector<int>> res;
+		if (!root) return res;
+		queue<TreeNode*> q;
+		q.push(root);
+		while (!q.empty()) {
+			vector<int> lev;
+			int _size = q.size();
+			for (int i = 0; i < _size; i++) {
+				TreeNode *temp = q.front();
+				q.pop();
+				lev.push_back(temp->val);
+				if (temp->left) q.push(temp->left);
+				if (temp->right) q.push(temp->right);
+			}
+			res.push_back(lev);
+		}
+		return res;
+	}
 };
 /*
 
@@ -278,10 +280,10 @@ Given a binary tree, return the zigzag level order traversal of its nodes' value
 
 For example:
 Given binary tree [3,9,20,null,null,15,7],
-    3
+	3
    / \
   9  20
-    /  \
+	/  \
    15   7
 return its zigzag level order traversal as:
 [
@@ -302,28 +304,28 @@ return its zigzag level order traversal as:
  */
 class Solution {
 public:
-    vector<vector<int>> zigzagLevelOrder(TreeNode* root) {
-        vector<vector<int>> res;
-        if (!root) return res;
-        queue<TreeNode*> q;
-        q.push(root);
-        int level = 0;
-        while (!q.empty()) {
-            vector<int> lev;
-            int _size = q.size();
-            for (int i = 0; i < _size; i++) {
-                TreeNode *temp = q.front();
-                q.pop();
-                lev.push_back(temp -> val);
-                if (temp -> left) q.push(temp -> left);
-                if (temp -> right) q.push(temp -> right);
-            }
-            if (level % 2) reverse(lev.begin(), lev.end());
-            res.push_back(lev);
-            level++;
-        }
-        return res;
-    }
+	vector<vector<int>> zigzagLevelOrder(TreeNode* root) {
+		vector<vector<int>> res;
+		if (!root) return res;
+		queue<TreeNode*> q;
+		q.push(root);
+		int level = 0;
+		while (!q.empty()) {
+			vector<int> lev;
+			int _size = q.size();
+			for (int i = 0; i < _size; i++) {
+				TreeNode *temp = q.front();
+				q.pop();
+				lev.push_back(temp->val);
+				if (temp->left) q.push(temp->left);
+				if (temp->right) q.push(temp->right);
+			}
+			if (level % 2) reverse(lev.begin(), lev.end());
+			res.push_back(lev);
+			level++;
+		}
+		return res;
+	}
 };
 /*
 
@@ -345,33 +347,33 @@ The maximum depth is the number of nodes along the longest path from the root no
  */
 class Solution {
 public:
-    int maxDepth(TreeNode* root) {
-        if (!root) return 0;
-        int res = 0;
-        queue<TreeNode*> q;
-        q.push(root);
-        while (!q.empty()) {
-            int _size = q.size();
-            res++;
-            for (int i = 0; i < _size; i++) {
-                TreeNode *temp = q.front();
-                q.pop();
-                if (temp -> left) q.push(temp -> left);
-                if (temp -> right) q.push(temp -> right);
-            }
-        }
-        return res;
-    }
+	int maxDepth(TreeNode* root) {
+		if (!root) return 0;
+		int res = 0;
+		queue<TreeNode*> q;
+		q.push(root);
+		while (!q.empty()) {
+			int _size = q.size();
+			res++;
+			for (int i = 0; i < _size; i++) {
+				TreeNode *temp = q.front();
+				q.pop();
+				if (temp->left) q.push(temp->left);
+				if (temp->right) q.push(temp->right);
+			}
+		}
+		return res;
+	}
 };
 class Solution {
 public:
-    int maxDepth(TreeNode* root) {
-        if (!root) return 0;
-        else if (!(root -> left) && !(root -> right)) return 1;
-        int depth_L = maxDepth(root -> left);
-        int depth_R = maxDepth(root -> right);
-        return depth_L > depth_R ? depth_L + 1 : depth_R + 1;
-    }
+	int maxDepth(TreeNode* root) {
+		if (!root) return 0;
+		else if (!(root->left) && !(root->right)) return 1;
+		int depth_L = maxDepth(root->left);
+		int depth_R = maxDepth(root->right);
+		return depth_L > depth_R ? depth_L + 1 : depth_R + 1;
+	}
 };
 /*
 
@@ -394,25 +396,25 @@ You may assume that duplicates do not exist in the tree.
  */
 class Solution {
 public:
-    TreeNode* buildTree(vector<int>& preorder, vector<int>& inorder) {
-        return BT(preorder, 0, preorder.size() - 1, inorder, 0, inorder.size() - 1);
-    }
-    TreeNode* BT(vector<int>& preorder, int pl, int pr, vector<int>& inorder, int il, int ir) {
-        if (il > ir) {
-            return NULL;
-        }
-        int val = preorder[pl];
-        TreeNode *root = new TreeNode(val);
-        int i = il;
-        for (; i < ir; i++) {
-            if (val == inorder[i]) {
-                break;
-            }
-        }
-        root -> left = BT(preorder, pl + 1, pl + i - il, inorder, il, i - 1);
-        root -> right = BT(preorder, pl + i - il + 1, pr, inorder, i + 1, ir);
-        return root;
-    }
+	TreeNode* buildTree(vector<int>& preorder, vector<int>& inorder) {
+		return BT(preorder, 0, preorder.size() - 1, inorder, 0, inorder.size() - 1);
+	}
+	TreeNode* BT(vector<int>& preorder, int pl, int pr, vector<int>& inorder, int il, int ir) {
+		if (il > ir) {
+			return NULL;
+		}
+		int val = preorder[pl];
+		TreeNode *root = new TreeNode(val);
+		int i = il;
+		for (; i < ir; i++) {
+			if (val == inorder[i]) {
+				break;
+			}
+		}
+		root->left = BT(preorder, pl + 1, pl + i - il, inorder, il, i - 1);
+		root->right = BT(preorder, pl + i - il + 1, pr, inorder, i + 1, ir);
+		return root;
+	}
 };
 /*
 
@@ -435,25 +437,25 @@ You may assume that duplicates do not exist in the tree.
  */
 class Solution {
 public:
-    TreeNode* buildTree(vector<int>& inorder, vector<int>& postorder) {
-        return BT(inorder, 0, inorder.size() - 1, postorder, 0, postorder.size() - 1);
-    }
-    TreeNode* BT(vector<int>& inorder, int il, int ir, vector<int>& postorder, int pl, int pr) {
-        if (il > ir) {
-            return NULL;
-        }
-        int val = postorder[pr];
-        TreeNode *root = new TreeNode(val);
-        int i = il;
-        for (; i < ir; i++) {
-            if (val == inorder[i]) {
-                break;
-            }
-        }
-        root -> left = BT(inorder, il, i - 1, postorder, pl, pl - il + i - 1);
-        root -> right = BT(inorder, i + 1, ir, postorder, pl - il + i, pr - 1);
-        return root;
-    }
+	TreeNode* buildTree(vector<int>& inorder, vector<int>& postorder) {
+		return BT(inorder, 0, inorder.size() - 1, postorder, 0, postorder.size() - 1);
+	}
+	TreeNode* BT(vector<int>& inorder, int il, int ir, vector<int>& postorder, int pl, int pr) {
+		if (il > ir) {
+			return NULL;
+		}
+		int val = postorder[pr];
+		TreeNode *root = new TreeNode(val);
+		int i = il;
+		for (; i < ir; i++) {
+			if (val == inorder[i]) {
+				break;
+			}
+		}
+		root->left = BT(inorder, il, i - 1, postorder, pl, pl - il + i - 1);
+		root->right = BT(inorder, i + 1, ir, postorder, pl - il + i, pr - 1);
+		return root;
+	}
 };
 /*
 
@@ -463,10 +465,10 @@ Given a binary tree, return the bottom-up level order traversal of its nodes' va
 
 For example:
 Given binary tree [3,9,20,null,null,15,7],
-    3
+	3
    / \
   9  20
-    /  \
+	/  \
    15   7
 return its bottom-up level order traversal as:
 [
@@ -487,26 +489,26 @@ return its bottom-up level order traversal as:
  */
 class Solution {
 public:
-    vector<vector<int>> levelOrderBottom(TreeNode* root) {
-        vector<vector<int>> res;
-        if (!root) return res;
-        queue<TreeNode*> q;
-        q.push(root);
-        while (!q.empty()) {
-            vector<int> lev;
-            int _size = q.size();
-            for (int i = 0; i < _size; i++) {
-                TreeNode *temp = q.front();
-                q.pop();
-                lev.push_back(temp -> val);
-                if (temp -> left) q.push(temp -> left);
-                if (temp -> right) q.push(temp -> right);
-            }
-            res.push_back(lev);
-        }
-        reverse(res.begin(), res.end());
-        return res;
-    }
+	vector<vector<int>> levelOrderBottom(TreeNode* root) {
+		vector<vector<int>> res;
+		if (!root) return res;
+		queue<TreeNode*> q;
+		q.push(root);
+		while (!q.empty()) {
+			vector<int> lev;
+			int _size = q.size();
+			for (int i = 0; i < _size; i++) {
+				TreeNode *temp = q.front();
+				q.pop();
+				lev.push_back(temp->val);
+				if (temp->left) q.push(temp->left);
+				if (temp->right) q.push(temp->right);
+			}
+			res.push_back(lev);
+		}
+		reverse(res.begin(), res.end());
+		return res;
+	}
 };
 /*
 
@@ -528,18 +530,18 @@ For this problem, a height-balanced binary tree is defined as a binary tree in w
  */
 class Solution {
 public:
-    bool isBalanced(TreeNode* root) {
-        if (!root) return true;
-        else if (abs(depth(root->left) - depth(root->right)) > 1) return false;
-        else return isBalanced(root->left) && isBalanced(root->right);
-    }
-    int depth(TreeNode* root) {
-        if (!root) return 0;
-        else if (!(root -> left) && !(root -> right)) return 1;
-        int depth_L = depth(root -> left);
-        int depth_R = depth(root -> right);
-        return depth_L > depth_R ? depth_L + 1 : depth_R + 1;
-    }
+	bool isBalanced(TreeNode* root) {
+		if (!root) return true;
+		else if (abs(depth(root->left) - depth(root->right)) > 1) return false;
+		else return isBalanced(root->left) && isBalanced(root->right);
+	}
+	int depth(TreeNode* root) {
+		if (!root) return 0;
+		else if (!(root->left) && !(root->right)) return 1;
+		int depth_L = depth(root->left);
+		int depth_R = depth(root->right);
+		return depth_L > depth_R ? depth_L + 1 : depth_R + 1;
+	}
 };
 /*
 
@@ -561,18 +563,18 @@ The minimum depth is the number of nodes along the shortest path from the root n
  */
 class Solution {
 public:
-    int minDepth(TreeNode* root) {
-        if (!root) return 0;
-        else if (!root -> left && !root -> right) return 1;
-        else {
-            int depth_L, depth_R;
-            if (root -> left) depth_L = minDepth(root -> left);
-            else depth_L = INT_MAX;
-            if (root -> right) depth_R = minDepth(root -> right);
-            else depth_R = INT_MAX;
-            return min(depth_L, depth_R) + 1;
-        }
-    }
+	int minDepth(TreeNode* root) {
+		if (!root) return 0;
+		else if (!root->left && !root->right) return 1;
+		else {
+			int depth_L, depth_R;
+			if (root->left) depth_L = minDepth(root->left);
+			else depth_L = INT_MAX;
+			if (root->right) depth_R = minDepth(root->right);
+			else depth_R = INT_MAX;
+			return min(depth_L, depth_R) + 1;
+		}
+	}
 };
 /*
 
@@ -582,13 +584,13 @@ Given a binary tree and a sum, determine if the tree has a root-to-leaf path suc
 
 For example:
 Given the below binary tree and sum = 22,
-              5
-             / \
-            4   8
-           /   / \
-          11  13  4
-         /  \      \
-        7    2      1
+			  5
+			 / \
+			4   8
+		   /   / \
+		  11  13  4
+		 /  \      \
+		7    2      1
 return true, as there exist a root-to-leaf path 5->4->11->2 which sum is 22.
 
 */
@@ -603,14 +605,15 @@ return true, as there exist a root-to-leaf path 5->4->11->2 which sum is 22.
  */
 class Solution {
 public:
-    bool hasPathSum(TreeNode* root, int sum) {
-        if (root == NULL) {
-            return false;
-        } else if (root->left == NULL && root->right == NULL && sum == root->val) {
-            return true;
-        }
-        return hasPathSum(root->left, sum - root->val) || hasPathSum(root->right, sum - root->val);
-    }
+	bool hasPathSum(TreeNode* root, int sum) {
+		if (root == NULL) {
+			return false;
+		}
+		else if (root->left == NULL && root->right == NULL && sum == root->val) {
+			return true;
+		}
+		return hasPathSum(root->left, sum - root->val) || hasPathSum(root->right, sum - root->val);
+	}
 };
 /*
 
@@ -620,13 +623,13 @@ Given a binary tree and a sum, find all root-to-leaf paths where each path's sum
 
 For example:
 Given the below binary tree and sum = 22,
-              5
-             / \
-            4   8
-           /   / \
-          11  13  4
-         /  \    / \
-        7    2  5   1
+			  5
+			 / \
+			4   8
+		   /   / \
+		  11  13  4
+		 /  \    / \
+		7    2  5   1
 return
 [
    [5,4,11,2],
@@ -645,32 +648,33 @@ return
  */
 class Solution {
 public:
-    vector<vector<int>> pathSum(TreeNode* root, int sum) {
-        vector<vector<int>> res;
-        vector<int> res_sub;
-        pathSum(root, res, res_sub, sum);
-        return res;
-    }
+	vector<vector<int>> pathSum(TreeNode* root, int sum) {
+		vector<vector<int>> res;
+		vector<int> res_sub;
+		pathSum(root, res, res_sub, sum);
+		return res;
+	}
 private:
-    void pathSum(TreeNode* root, vector<vector<int>>& res, vector<int>& res_sub, int sum) {
-        if (root == NULL) {
-            return;
-        } else if (root->left == NULL && root->right == NULL && sum == root->val) {
-            res_sub.push_back(root->val);
-            res.push_back(res_sub);
-            res_sub.pop_back();
-            return;
-        }
-        res_sub.push_back(root->val);
-        if (root->left != NULL) {
-            pathSum(root->left, res, res_sub, sum - root->val);
-        }
-        if (root->right != NULL) {
-            pathSum(root->right, res, res_sub, sum - root->val);
-        }
-        res_sub.pop_back();
-        
-    }
+	void pathSum(TreeNode* root, vector<vector<int>>& res, vector<int>& res_sub, int sum) {
+		if (root == NULL) {
+			return;
+		}
+		else if (root->left == NULL && root->right == NULL && sum == root->val) {
+			res_sub.push_back(root->val);
+			res.push_back(res_sub);
+			res_sub.pop_back();
+			return;
+		}
+		res_sub.push_back(root->val);
+		if (root->left != NULL) {
+			pathSum(root->left, res, res_sub, sum - root->val);
+		}
+		if (root->right != NULL) {
+			pathSum(root->right, res, res_sub, sum - root->val);
+		}
+		res_sub.pop_back();
+
+	}
 };
 /*
 
@@ -683,9 +687,9 @@ For this problem, a path is defined as any sequence of nodes from some starting 
 For example:
 Given the below binary tree,
 
-       1
-      / \
-     2   3
+	   1
+	  / \
+	 2   3
 Return 6.
 
 */
@@ -700,22 +704,22 @@ Return 6.
  */
 class Solution {
 public:
-    int maxPathSum(TreeNode* root) {
-        int res = INT_MIN;
-        maxPathSum(root, res);
-        return res;
-    }
+	int maxPathSum(TreeNode* root) {
+		int res = INT_MIN;
+		maxPathSum(root, res);
+		return res;
+	}
 private:
-    int maxPathSum(TreeNode* root, int& max) {
-        if (root == NULL) {
-            return 0;
-        }
-        int l = maxPathSum(root->left, max), r = maxPathSum(root->right, max);
-        l = l < 0 ? 0 : l;
-        r = r < 0 ? 0 : r;
-        max = max > l + r + root->val ? max : l + r + root->val;
-        return l > r ? l + root->val : r + root->val;
-    }
+	int maxPathSum(TreeNode* root, int& max) {
+		if (root == NULL) {
+			return 0;
+		}
+		int l = maxPathSum(root->left, max), r = maxPathSum(root->right, max);
+		l = l < 0 ? 0 : l;
+		r = r < 0 ? 0 : r;
+		max = max > l + r + root->val ? max : l + r + root->val;
+		return l > r ? l + root->val : r + root->val;
+	}
 };
 /*
 
@@ -726,9 +730,9 @@ Given a binary tree, return the preorder traversal of its nodes' values.
 For example:
 Given binary tree {1,#,2,3},
    1
-    \
-     2
-    /
+	\
+	 2
+	/
    3
 return [1,2,3].
 
@@ -746,18 +750,87 @@ Note: Recursive solution is trivial, could you do it iteratively?
  */
 class Solution {
 public:
-    vector<int> preorderTraversal(TreeNode* root) {
-        vector<int> res;
-        traversal(root, res);
-        return res;
-    }
-    void traversal(TreeNode* root, vector<int>& res) {
-        if (root) {
-            res.push_back(root -> val);
-            traversal(root -> left, res);
-            traversal(root -> right, res);
-        }
-    }
+	vector<int> preorderTraversal(TreeNode* root) {
+		vector<int> res;
+		traversal(root, res);
+		return res;
+	}
+	void traversal(TreeNode* root, vector<int>& res) {
+		if (root) {
+			res.push_back(root->val);
+			traversal(root->left, res);
+			traversal(root->right, res);
+		}
+	}
+};
+/*
+
+145. Binary Tree Postorder Traversal (Hard)
+
+Given a binary tree, return the postorder traversal of its nodes' values.
+
+For example:
+Given binary tree {1,#,2,3},
+   1
+	\
+	 2
+	/
+   3
+return [3,2,1].
+
+Note: Recursive solution is trivial, could you do it iteratively?
+
+*/
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+class Solution {
+public:
+	vector<int> postorderTraversal(TreeNode* root) {
+		if (root == NULL) {
+			return{};
+		}
+		vector<int> res;
+		stack<TreeNode*> s;
+		TreeNode *pre = NULL;
+		s.push(root);
+		while (!s.empty()) {
+			TreeNode *cur = s.top();
+			if (pre == NULL || pre->left == cur || pre->right == cur) {
+				if (cur->left != NULL) {
+					s.push(cur->left);
+				}
+				else if (cur->right != NULL) {
+					s.push(cur->right);
+				}
+				else {
+					res.push_back(cur->val);
+					s.pop();
+				}
+			}
+			else if (pre == cur->left) {
+				if (cur->right != NULL) {
+					s.push(cur->right);
+				}
+				else {
+					res.push_back(cur->val);
+					s.pop();
+				}
+			}
+			else {
+				res.push_back(cur->val);
+				s.pop();
+			}
+			pre = cur;
+		}
+		return res;
+	}
 };
 /*
 
@@ -781,30 +854,30 @@ Note: next() and hasNext() should run in average O(1) time and uses O(h) memory,
  */
 class BSTIterator {
 private:
-    stack<int> s;
-    void traversal(TreeNode* root, stack<int>& s) {
-        if (root) {
-            traversal(root -> right, s);
-            s.push(root -> val);
-            traversal(root -> left, s);
-        }
-    }
+	stack<int> s;
+	void traversal(TreeNode* root, stack<int>& s) {
+		if (root) {
+			traversal(root->right, s);
+			s.push(root->val);
+			traversal(root->left, s);
+		}
+	}
 public:
-    BSTIterator(TreeNode *root) {
-        traversal(root, s);
-    }
+	BSTIterator(TreeNode *root) {
+		traversal(root, s);
+	}
 
-    /** @return whether we have a next smallest number */
-    bool hasNext() {
-        return !s.empty();
-    }
+	/** @return whether we have a next smallest number */
+	bool hasNext() {
+		return !s.empty();
+	}
 
-    /** @return the next smallest number */
-    int next() {
-        int num = s.top();
-        s.pop();
-        return num;
-    }
+	/** @return the next smallest number */
+	int next() {
+		int num = s.top();
+		s.pop();
+		return num;
+	}
 };
 
 /**
@@ -812,52 +885,53 @@ public:
  * BSTIterator i = BSTIterator(root);
  * while (i.hasNext()) cout << i.next();
  */
-/*
+ /*
 
-222. Count Complete Tree Nodes (Medium)
+ 222. Count Complete Tree Nodes (Medium)
 
-Given a complete binary tree, count the number of nodes.
+ Given a complete binary tree, count the number of nodes.
 
-Definition of a complete binary tree from Wikipedia:
-In a complete binary tree every level, except possibly the last, is completely filled, 
-and all nodes in the last level are as far left as possible. It can have between 1 and 
-2h nodes inclusive at the last level h.
+ Definition of a complete binary tree from Wikipedia:
+ In a complete binary tree every level, except possibly the last, is completely filled,
+ and all nodes in the last level are as far left as possible. It can have between 1 and
+ 2h nodes inclusive at the last level h.
 
-*/
-/**
- * Definition for a binary tree node.
- * struct TreeNode {
- *     int val;
- *     TreeNode *left;
- *     TreeNode *right;
- *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
- * };
  */
+ /**
+  * Definition for a binary tree node.
+  * struct TreeNode {
+  *     int val;
+  *     TreeNode *left;
+  *     TreeNode *right;
+  *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+  * };
+  */
 class Solution {
 public:
-    int countNodes(TreeNode* root) {
-        if (!root) return 0;
-        int h = 0, sum = 0;
-        TreeNode *t = root, *t0 = NULL;
-        while (t) {
-            t = t -> left;
-            h++;
-        }
-        t = root;
-        int level = h - 2;
-        while (level > -1) {
-            t0 = t -> left;
-            for (int i = 0; i < level; i++) 
-                t0 = t0 -> right;
-            if (t0) {
-                sum += 1<<level;
-                t = t -> right;
-            } else t = t -> left;
-            level--;
-        }
-        if (t) sum++;
-        return sum+((1<<(h-1))-1);
-    }
+	int countNodes(TreeNode* root) {
+		if (!root) return 0;
+		int h = 0, sum = 0;
+		TreeNode *t = root, *t0 = NULL;
+		while (t) {
+			t = t->left;
+			h++;
+		}
+		t = root;
+		int level = h - 2;
+		while (level > -1) {
+			t0 = t->left;
+			for (int i = 0; i < level; i++)
+				t0 = t0->right;
+			if (t0) {
+				sum += 1 << level;
+				t = t->right;
+			}
+			else t = t->left;
+			level--;
+		}
+		if (t) sum++;
+		return sum + ((1 << (h - 1)) - 1);
+	}
 };
 /*
 
@@ -865,13 +939,13 @@ public:
 
 Invert a binary tree.
 
-     4
+	 4
    /   \
   2     7
  / \   / \
 1   3 6   9
 to
-     4
+	 4
    /   \
   7     2
  / \   / \
@@ -889,16 +963,16 @@ to
  */
 class Solution {
 public:
-  TreeNode* invertTree(TreeNode* root) {
-   if (!root || !(root -> left) && !(root -> right))
-    return root;
-else {
-    swap(root -> left, root -> right);
-    invertTree(root -> left);
-    invertTree(root -> right);
-}
-return root;
-}
+	TreeNode* invertTree(TreeNode* root) {
+		if (!root || !(root->left) && !(root->right))
+			return root;
+		else {
+			swap(root->left, root->right);
+			invertTree(root->left);
+			invertTree(root->right);
+		}
+		return root;
+	}
 };
 /*
 
@@ -906,7 +980,7 @@ return root;
 
 Given a binary search tree, write a function kthSmallest to find the kth smallest element in it.
 
-Note: 
+Note:
 You may assume k is always valid, 1 ≤ k ≤ BST's total elements.
 
 Follow up:
@@ -930,39 +1004,39 @@ The optimal runtime complexity is O(height of BST).
  */
 class Solution {
 public:
-    int kthSmallest(TreeNode* root, int k) {
-        vector<int> res;
-        traversal(root, res);
-        return res[k - 1];
-    }
-    void traversal(TreeNode* root, vector<int>& res) {
-        if (root) {
-            traversal(root -> left, res);
-            res.push_back(root -> val);
-            traversal(root -> right, res);
-        }
-    }
+	int kthSmallest(TreeNode* root, int k) {
+		vector<int> res;
+		traversal(root, res);
+		return res[k - 1];
+	}
+	void traversal(TreeNode* root, vector<int>& res) {
+		if (root) {
+			traversal(root->left, res);
+			res.push_back(root->val);
+			traversal(root->right, res);
+		}
+	}
 };
 class Solution {
 public:
-    int kthSmallest(TreeNode* root, int k) {
-        stack<TreeNode*> s;
-        int cnt = 0, res = root -> val;
-        while (true) {
-            TreeNode* temp = root;
-            while(temp) {
-                s.push(temp);
-                temp = temp -> left;
-            }
-            if (s.empty() || cnt == k) return res;
-            cnt++;
-            root = s.top();
-            s.pop();
-            res = root -> val;
-            root = root -> right;
-        }
-        return res;
-    }
+	int kthSmallest(TreeNode* root, int k) {
+		stack<TreeNode*> s;
+		int cnt = 0, res = root->val;
+		while (true) {
+			TreeNode* temp = root;
+			while (temp) {
+				s.push(temp);
+				temp = temp->left;
+			}
+			if (s.empty() || cnt == k) return res;
+			cnt++;
+			root = s.top();
+			s.pop();
+			res = root->val;
+			root = root->right;
+		}
+		return res;
+	}
 };
 /*
 
@@ -972,13 +1046,13 @@ Given a binary search tree (BST), find the lowest common ancestor (LCA) of two g
 
 According to the definition of LCA on Wikipedia: “The lowest common ancestor is defined between two nodes v and w as the lowest node in T that has both v and w as descendants (where we allow a node to be a descendant of itself).”
 
-        _______6______
-       /              \
-    ___2__          ___8__
+		_______6______
+	   /              \
+	___2__          ___8__
    /      \        /      \
    0      _4       7       9
-         /  \
-         3   5
+		 /  \
+		 3   5
 For example, the lowest common ancestor (LCA) of nodes 2 and 8 is 6. Another example is LCA of nodes 2 and 4 is 2, since a node can be a descendant of itself according to the LCA definition.
 
 */
@@ -993,16 +1067,16 @@ For example, the lowest common ancestor (LCA) of nodes 2 and 8 is 6. Another exa
  */
 class Solution {
 public:
-  TreeNode* lowestCommonAncestor(TreeNode* root, TreeNode* p, TreeNode* q) {
-   if (min(p -> val, q -> val) < root -> val && max(p -> val, q -> val) > root -> val)
-    return root;
-else if (root -> val < min(p -> val, q -> val))
-    return lowestCommonAncestor(root -> right, p, q);
-else if (root -> val > max(p -> val, q -> val))
-    return lowestCommonAncestor(root -> left, p, q);
-else
-    return root;
-}
+	TreeNode* lowestCommonAncestor(TreeNode* root, TreeNode* p, TreeNode* q) {
+		if (min(p->val, q->val) < root->val && max(p->val, q->val) > root->val)
+			return root;
+		else if (root->val < min(p->val, q->val))
+			return lowestCommonAncestor(root->right, p, q);
+		else if (root->val > max(p->val, q->val))
+			return lowestCommonAncestor(root->left, p, q);
+		else
+			return root;
+	}
 };
 /*
 
@@ -1012,13 +1086,13 @@ Given a binary tree, find the lowest common ancestor (LCA) of two given nodes in
 
 According to the definition of LCA on Wikipedia: “The lowest common ancestor is defined between two nodes v and w as the lowest node in T that has both v and w as descendants (where we allow a node to be a descendant of itself).”
 
-        _______3______
-       /              \
-    ___5__          ___1__
+		_______3______
+	   /              \
+	___5__          ___1__
    /      \        /      \
    6      _2       0       8
-         /  \
-         7   4
+		 /  \
+		 7   4
 For example, the lowest common ancestor (LCA) of nodes 5 and 1 is 3. Another example is LCA of nodes 5 and 4 is 5, since a node can be a descendant of itself according to the LCA definition.
 
 */
@@ -1033,20 +1107,22 @@ For example, the lowest common ancestor (LCA) of nodes 5 and 1 is 3. Another exa
  */
 class Solution {
 public:
-    TreeNode* lowestCommonAncestor(TreeNode* root, TreeNode* p, TreeNode* q) {
-        if (root == NULL || root == p || root == q) {
-            return root;
-        }
-        TreeNode *l = lowestCommonAncestor(root->left, p, q), *r = lowestCommonAncestor(root->right, p, q);
-        if (l != NULL && r != NULL) {
-            return root;
-        } else if (l != NULL) {
-            return l;
-        } else if (r != NULL) {
-            return r;
-        }
-        return NULL;
-    }
+	TreeNode* lowestCommonAncestor(TreeNode* root, TreeNode* p, TreeNode* q) {
+		if (root == NULL || root == p || root == q) {
+			return root;
+		}
+		TreeNode *l = lowestCommonAncestor(root->left, p, q), *r = lowestCommonAncestor(root->right, p, q);
+		if (l != NULL && r != NULL) {
+			return root;
+		}
+		else if (l != NULL) {
+			return l;
+		}
+		else if (r != NULL) {
+			return r;
+		}
+		return NULL;
+	}
 };
 /*
 
@@ -1077,19 +1153,19 @@ All root-to-leaf paths are:
  */
 class Solution {
 public:
-  vector<string> binaryTreePaths(TreeNode* root) {
-   vector<string> res;
-   if (!root)
-    return res;
-else if (!(root -> left) && !(root -> right))
-    res.push_back(to_string(root -> val));
-string head = to_string(root->val) + "->";
-for(auto item: binaryTreePaths(root->left))
-    res.push_back(head + item);
-for(auto item: binaryTreePaths(root->right))
-    res.push_back(head + item);
-return res;
-}
+	vector<string> binaryTreePaths(TreeNode* root) {
+		vector<string> res;
+		if (!root)
+			return res;
+		else if (!(root->left) && !(root->right))
+			res.push_back(to_string(root->val));
+		string head = to_string(root->val) + "->";
+		for (auto item : binaryTreePaths(root->left))
+			res.push_back(head + item);
+		for (auto item : binaryTreePaths(root->right))
+			res.push_back(head + item);
+		return res;
+	}
 };
 /*
 
@@ -1113,18 +1189,19 @@ You are guaranteed to have only one unique value in the BST that is closest to t
  */
 class Solution {
 public:
-    int closestValue(TreeNode* root, double target) {
-        int res = root->val;
-        while(root != NULL) {
-            if (abs(root->val - target) < abs(res - target)) {
-                res = root->val;
-            }
-            if (root->val < target) {
-                root = root->right;
-            } else {
-                root = root->left;
-            }
-        }
-        return res;
-    }
+	int closestValue(TreeNode* root, double target) {
+		int res = root->val;
+		while (root != NULL) {
+			if (abs(root->val - target) < abs(res - target)) {
+				res = root->val;
+			}
+			if (root->val < target) {
+				root = root->right;
+			}
+			else {
+				root = root->left;
+			}
+		}
+		return res;
+	}
 };

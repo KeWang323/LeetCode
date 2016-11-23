@@ -15,14 +15,14 @@ If you have figured out the O(n) solution, try coding another solution using the
 */
 class Solution {
 public:
-    int maxSubArray(vector<int>& nums) {
-        int _sum = INT_MIN, prev = 0;
-        for (int i = 0; i < nums.size(); i++) {
-            prev = max(prev + nums[i], nums[i]);
-            _sum = max(_sum, prev);
-        }
-        return _sum;
-    }
+	int maxSubArray(vector<int>& nums) {
+		int _sum = INT_MIN, prev = 0;
+		for (int i = 0; i < nums.size(); i++) {
+			prev = max(prev + nums[i], nums[i]);
+			_sum = max(_sum, prev);
+		}
+		return _sum;
+	}
 };
 /*
 
@@ -37,18 +37,18 @@ How many possible unique paths are there?
 */
 class Solution {
 public:
-    int uniquePaths(int m, int n) {
-        if (m == 0 || n == 0) {
-            return 0;
-        }
-        vector<int> res(n, 1);
-        for (int i = 1; i < m; i++) {
-            for (int j = 1; j < n; j++) {
-                res[j] = res[j - 1] + res[j];
-            }
-        }
-        return res[n - 1];
-    }
+	int uniquePaths(int m, int n) {
+		if (m == 0 || n == 0) {
+			return 0;
+		}
+		vector<int> res(n, 1);
+		for (int i = 1; i < m; i++) {
+			for (int j = 1; j < n; j++) {
+				res[j] = res[j - 1] + res[j];
+			}
+		}
+		return res[n - 1];
+	}
 };
 /*
 
@@ -75,24 +75,25 @@ Note: m and n will be at most 100.
 */
 class Solution {
 public:
-    int uniquePathsWithObstacles(vector<vector<int>>& obstacleGrid) {
-        if (obstacleGrid.empty()) {
-            return 0;
-        }
-        int _size = obstacleGrid[0].size();
-        vector<int> res(_size, 0);
-        res[0] = 1;
-        for (int i = 0; i < obstacleGrid.size(); i++) {
-            for (int j = 0; j < _size; j++) {
-                if (obstacleGrid[i][j] == 1) {
-                    res[j] = 0;
-                } else if (j > 0) {
-                    res[j] = res[j - 1] + res[j];
-                }
-            }
-        }
-        return res[_size - 1];
-    }
+	int uniquePathsWithObstacles(vector<vector<int>>& obstacleGrid) {
+		if (obstacleGrid.empty()) {
+			return 0;
+		}
+		int _size = obstacleGrid[0].size();
+		vector<int> res(_size, 0);
+		res[0] = 1;
+		for (int i = 0; i < obstacleGrid.size(); i++) {
+			for (int j = 0; j < _size; j++) {
+				if (obstacleGrid[i][j] == 1) {
+					res[j] = 0;
+				}
+				else if (j > 0) {
+					res[j] = res[j - 1] + res[j];
+				}
+			}
+		}
+		return res[_size - 1];
+	}
 };
 /*
 
@@ -105,21 +106,21 @@ Note: You can only move either down or right at any point in time.
 */
 class Solution {
 public:
-    int minPathSum(vector<vector<int>>& grid) {
-        if (grid.empty()) {
-            return 0;
-        }
-        int _size = grid[0].size();
-        vector<int> res(_size, INT_MAX);
-        res[0] = 0;
-        for (int i = 0; i < grid.size(); i++) {
-            res[0] += grid[i][0];
-            for (int j = 1; j < _size; j++) {
-                res[j] = min(res[j - 1], res[j]) + grid[i][j];
-            }
-        }
-        return res[_size - 1];
-    }
+	int minPathSum(vector<vector<int>>& grid) {
+		if (grid.empty()) {
+			return 0;
+		}
+		int _size = grid[0].size();
+		vector<int> res(_size, INT_MAX);
+		res[0] = 0;
+		for (int i = 0; i < grid.size(); i++) {
+			res[0] += grid[i][0];
+			for (int j = 1; j < _size; j++) {
+				res[j] = min(res[j - 1], res[j]) + grid[i][j];
+			}
+		}
+		return res[_size - 1];
+	}
 };
 /*
 
@@ -132,17 +133,17 @@ Each time you can either climb 1 or 2 steps. In how many distinct ways can you c
 */
 class Solution {
 public:
-    int climbStairs(int n) {
-    	if (n < 4) return n;
-    	int i = 4, prev1 = 2, prev2 = 3;
-    	while (i <= n) {
-    		int temp = prev2;
-    		prev2 += prev1;
-    		prev1 = temp;
-    		i++;
-    	}
-    	return prev2;
-    }
+	int climbStairs(int n) {
+		if (n < 4) return n;
+		int i = 4, prev1 = 2, prev2 = 3;
+		while (i <= n) {
+			int temp = prev2;
+			prev2 += prev1;
+			prev1 = temp;
+			i++;
+		}
+		return prev2;
+	}
 };
 /*
 
@@ -159,24 +160,27 @@ c) Replace a character
 */
 class Solution {
 public:
-    int minDistance(string word1, string word2) {
-        int row = word1.size(), col = word2.size();
-        vector<vector<int>> t(row + 1, vector<int>(col + 1, 0));
-        for (int i = 0; i < row + 1; i++) {
-            for (int j = 0; j < col + 1; j++) {
-                if (i == 0) {
-                    t[i][j] = j;
-                } else if (j == 0) {
-                    t[i][j] = i;
-                } else if (word1[i - 1] == word2[j - 1]) {
-                    t[i][j] = t[i - 1][j - 1];
-                } else {
-                    t[i][j] = min(min(t[i - 1][j - 1], t[i][j - 1]), t[i - 1][j]) + 1;
-                }
-            }
-        }
-        return t.back().back();
-    }
+	int minDistance(string word1, string word2) {
+		int row = word1.size(), col = word2.size();
+		vector<vector<int>> t(row + 1, vector<int>(col + 1, 0));
+		for (int i = 0; i < row + 1; i++) {
+			for (int j = 0; j < col + 1; j++) {
+				if (i == 0) {
+					t[i][j] = j;
+				}
+				else if (j == 0) {
+					t[i][j] = i;
+				}
+				else if (word1[i - 1] == word2[j - 1]) {
+					t[i][j] = t[i - 1][j - 1];
+				}
+				else {
+					t[i][j] = min(min(t[i - 1][j - 1], t[i][j - 1]), t[i - 1][j]) + 1;
+				}
+			}
+		}
+		return t.back().back();
+	}
 };
 /*
 
@@ -198,17 +202,17 @@ The number of ways decoding "12" is 2.
 */
 class Solution {
 public:
-    int numDecodings(string s) {
-        if (s.empty() || s[0] == '0') return 0;
-        int _size = s.length();
-        int t1 = 1, t2 = 1;
-        for (int i = 2; i <= _size; i++) {
-            int temp = (int)(s[i - 1] != '0') * t2 + (int)(s[i - 2] == '1' || s[i - 2] == '2' && s[i - 1] < '7') * t1;
-            t1 = t2;
-            t2 = temp;
-        }
-        return t2;
-    }
+	int numDecodings(string s) {
+		if (s.empty() || s[0] == '0') return 0;
+		int _size = s.length();
+		int t1 = 1, t2 = 1;
+		for (int i = 2; i <= _size; i++) {
+			int temp = (int)(s[i - 1] != '0') * t2 + (int)(s[i - 2] == '1' || s[i - 2] == '2' && s[i - 1] < '7') * t1;
+			t1 = t2;
+			t2 = temp;
+		}
+		return t2;
+	}
 };
 /*
 
@@ -237,30 +241,30 @@ Given n = 3, your program should return all 5 unique BST's shown below.
  */
 class Solution {
 private:
-    vector<vector<vector<TreeNode*>>> table;
-    vector<TreeNode*> generate(int l, int r) {
-        if (l > r) return {NULL};
-        if (table[l][r].empty()) {
-            for (int mid = l; mid <= r; mid++) {
-                vector<TreeNode*> left = generate(l, mid - 1), right = generate(mid + 1, r);
-                for (auto a : left) {
-                    for (auto b : right) {
-                        TreeNode* cur = new TreeNode(mid);
-                        cur -> left = a;
-                        cur -> right = b;
-                        table[l][r].push_back(cur);
-                    }
-                }
-            }
-        }
-        return table[l][r];
-    }
+	vector<vector<vector<TreeNode*>>> table;
+	vector<TreeNode*> generate(int l, int r) {
+		if (l > r) return{ NULL };
+		if (table[l][r].empty()) {
+			for (int mid = l; mid <= r; mid++) {
+				vector<TreeNode*> left = generate(l, mid - 1), right = generate(mid + 1, r);
+				for (auto a : left) {
+					for (auto b : right) {
+						TreeNode* cur = new TreeNode(mid);
+						cur->left = a;
+						cur->right = b;
+						table[l][r].push_back(cur);
+					}
+				}
+			}
+		}
+		return table[l][r];
+	}
 public:
-    vector<TreeNode*> generateTrees(int n) {
-        if (n < 1) return {};
-        table = vector<vector<vector<TreeNode*>>> (n + 1, vector<vector<TreeNode*>>(n + 1, vector<TreeNode*>()));
-        return generate(1, n);
-    }
+	vector<TreeNode*> generateTrees(int n) {
+		if (n < 1) return{};
+		table = vector<vector<vector<TreeNode*>>>(n + 1, vector<vector<TreeNode*>>(n + 1, vector<TreeNode*>()));
+		return generate(1, n);
+	}
 };
 /*
 
@@ -273,22 +277,22 @@ Given n = 3, there are a total of 5 unique BST's.
 
   1         3     3      2      1
    \       /     /      / \      \
-    3     2     1      1   3      2
+	3     2     1      1   3      2
    /     /       \                 \
   2     1         2                 3
 
 */
 class Solution {
 public:
-    int numTrees(int n) {
-        vector<int> table(n + 1, 0);
-        table[0] = 1;
-        for (int i = 1; i <= n; i++) {
-            for (int j = 1; j <= i; j++)
-                table[i] += table[j - 1] * table[i - j];
-        }
-        return table[n];
-    }
+	int numTrees(int n) {
+		vector<int> table(n + 1, 0);
+		table[0] = 1;
+		for (int i = 1; i <= n; i++) {
+			for (int j = 1; j <= i; j++)
+				table[i] += table[j - 1] * table[i - j];
+		}
+		return table[n];
+	}
 };
 /*
 
@@ -298,8 +302,8 @@ Given a triangle, find the minimum path sum from top to bottom. Each step you ma
 
 For example, given the following triangle
 [
-     [2],
-    [3,4],
+	 [2],
+	[3,4],
    [6,5,7],
   [4,1,8,3]
 ]
@@ -311,15 +315,15 @@ Bonus point if you are able to do this using only O(n) extra space, where n is t
 */
 class Solution {
 public:
-    int minimumTotal(vector<vector<int>>& triangle) {
-        vector<int> res = triangle.back();
-        for (int i = triangle.size() - 2; i >= 0; i--) {
-            for (int j = 0; j < triangle[i].size(); j++) {
-                res[j] = min(res[j], res[j + 1]) + triangle[i][j];
-            }
-        }
-        return res[0];
-    }
+	int minimumTotal(vector<vector<int>>& triangle) {
+		vector<int> res = triangle.back();
+		for (int i = triangle.size() - 2; i >= 0; i--) {
+			for (int j = 0; j < triangle[i].size(); j++) {
+				res[j] = min(res[j], res[j + 1]) + triangle[i][j];
+			}
+		}
+		return res[0];
+	}
 };
 /*
 
@@ -343,20 +347,21 @@ In this case, no transaction is done, i.e. max profit = 0.
 */
 class Solution {
 public:
-    int maxProfit(vector<int>& prices) {
-        if (!prices.size()) {
-            return 0;
-        }
-        int pro, low = prices[0];
-        for (int i = 0; i < prices.size(); i++) {
-            if (low > prices[i]) {
-                low = prices[i];
-            } else {
-                pro = max(prices[i] - low, pro);
-            }
-        }
-        return pro;
-    }
+	int maxProfit(vector<int>& prices) {
+		if (!prices.size()) {
+			return 0;
+		}
+		int pro, low = prices[0];
+		for (int i = 0; i < prices.size(); i++) {
+			if (low > prices[i]) {
+				low = prices[i];
+			}
+			else {
+				pro = max(prices[i] - low, pro);
+			}
+		}
+		return pro;
+	}
 };
 /*
 
@@ -370,19 +375,19 @@ the contiguous subarray [2,3] has the largest product = 6.
 */
 class Solution {
 public:
-    int maxProduct(vector<int>& nums) {
-        if(nums.empty()) {
-            return 0;
-        }
-        int cur_max = nums[0], cur_min = nums[0], maxProduct = nums[0];
-        for(int i = 1; i < nums.size(); i++) {
-            int prev_min = cur_min, prev_max = cur_max;
-            cur_max = max(nums[i], max(prev_max * nums[i], prev_min * nums[i]));
-            cur_min = min(nums[i], min(prev_max * nums[i], prev_min * nums[i]));
-            maxProduct = max(cur_max, maxProduct);
-        }
-        return maxProduct;
-    }
+	int maxProduct(vector<int>& nums) {
+		if (nums.empty()) {
+			return 0;
+		}
+		int cur_max = nums[0], cur_min = nums[0], maxProduct = nums[0];
+		for (int i = 1; i < nums.size(); i++) {
+			int prev_min = cur_min, prev_max = cur_max;
+			cur_max = max(nums[i], max(prev_max * nums[i], prev_min * nums[i]));
+			cur_min = min(nums[i], min(prev_max * nums[i], prev_min * nums[i]));
+			maxProduct = max(cur_max, maxProduct);
+		}
+		return maxProduct;
+	}
 };
 /*
 
@@ -404,34 +409,39 @@ For example, given the dungeon below, the initial health of the knight must be a
 */
 class Solution {
 public:
-    int calculateMinimumHP(vector<vector<int>>& dungeon) {
-        vector<int> t(dungeon[0].size(), 0);
-        for (int i = dungeon.size() - 1; i >= 0; i--) {
-            for (int j = dungeon[0].size() - 1; j >= 0; j--) {
-                if (i == dungeon.size() - 1 && j == dungeon[0].size() - 1) {
-                    t[j] = update(dungeon[i][j], 1);
-                } else if (i == dungeon.size() - 1) {
-                    t[j] = update(dungeon[i][j], t[j + 1]);
-                } else if (j == dungeon[0].size() - 1) {
-                    t[j] = update(dungeon[i][j], t[j]);
-                } else {
-                    t[j] = min(update(dungeon[i][j], t[j + 1]), update(dungeon[i][j], t[j]));
-                }
-            }
-        }
-        return t[0];
-    }
+	int calculateMinimumHP(vector<vector<int>>& dungeon) {
+		vector<int> t(dungeon[0].size(), 0);
+		for (int i = dungeon.size() - 1; i >= 0; i--) {
+			for (int j = dungeon[0].size() - 1; j >= 0; j--) {
+				if (i == dungeon.size() - 1 && j == dungeon[0].size() - 1) {
+					t[j] = update(dungeon[i][j], 1);
+				}
+				else if (i == dungeon.size() - 1) {
+					t[j] = update(dungeon[i][j], t[j + 1]);
+				}
+				else if (j == dungeon[0].size() - 1) {
+					t[j] = update(dungeon[i][j], t[j]);
+				}
+				else {
+					t[j] = min(update(dungeon[i][j], t[j + 1]), update(dungeon[i][j], t[j]));
+				}
+			}
+		}
+		return t[0];
+	}
 private:
-    int update(int cur, int pre) {
-        if (cur < 0) {
-            return -cur + pre;
-        } else if (cur >= pre) {
-            return 1;
-        } else {
-            return pre - cur;
-        }
-        return 0;
-    }
+	int update(int cur, int pre) {
+		if (cur < 0) {
+			return -cur + pre;
+		}
+		else if (cur >= pre) {
+			return 1;
+		}
+		else {
+			return pre - cur;
+		}
+		return 0;
+	}
 };
 /*
 
@@ -444,20 +454,20 @@ Given a list of non-negative integers representing the amount of money of each h
 */
 class Solution {
 public:
-    int rob(vector<int>& nums) {
-    	int n = nums.size();
-    	switch(n) {
-    		case 0: return 0; break;
-    		case 1: return nums[0]; break; 
-    	}
-        vector<int> res(n, 0);
-        res[0] = nums[0];
-        res[1] = max(nums[0], nums[1]);
-        for (int i = 2; i < n; i++) {
-        	res[i] = max(nums[i] + res[i - 2], res[i - 1]);
-        }
-        return res[n - 1];
-    }
+	int rob(vector<int>& nums) {
+		int n = nums.size();
+		switch (n) {
+		case 0: return 0; break;
+		case 1: return nums[0]; break;
+		}
+		vector<int> res(n, 0);
+		res[0] = nums[0];
+		res[1] = max(nums[0], nums[1]);
+		for (int i = 2; i < n; i++) {
+			res[i] = max(nums[i] + res[i - 2], res[i - 1]);
+		}
+		return res[n - 1];
+	}
 };
 /*
 
@@ -472,20 +482,20 @@ Given a list of non-negative integers representing the amount of money of each h
 */
 class Solution {
 public:
-    int rob(vector<int>& nums) {
-        int _size = nums.size();
-        if (_size < 2) return _size ? nums[0] : 0;
-        return max(robber(nums, 0, _size - 2), robber(nums, 1, _size - 1));
-    }
-    int robber(vector<int>& nums, int l, int r) {
-        int pre = 0, cur = 0;
-        for (int i = l; i <= r; i++) {
-            int temp = max(pre + nums[i], cur);
-            pre = cur;
-            cur = temp;
-        }
-        return cur;
-    }
+	int rob(vector<int>& nums) {
+		int _size = nums.size();
+		if (_size < 2) return _size ? nums[0] : 0;
+		return max(robber(nums, 0, _size - 2), robber(nums, 1, _size - 1));
+	}
+	int robber(vector<int>& nums, int l, int r) {
+		int pre = 0, cur = 0;
+		for (int i = l; i <= r; i++) {
+			int temp = max(pre + nums[i], cur);
+			pre = cur;
+			cur = temp;
+		}
+		return cur;
+	}
 };
 /*
 
@@ -504,25 +514,26 @@ Return 4.
 */
 class Solution {
 public:
-    int maximalSquare(vector<vector<char>>& matrix) {
-        if (matrix.empty()) {
-            return 0;
-        }
-        int row = matrix.size(), col = matrix[0].size();
-        vector<vector<int>> t(row, vector<int>(col, 0));
-        int cur = 0;
-        for (int i = 0; i < matrix.size(); i++) {
-            for (int j = 0; j < matrix[0].size(); j++) {
-                if (i == 0 || j == 0) {
-                    t[i][j] = matrix[i][j] - '0';
-                } else if (matrix[i][j] == '1'){
-                    t[i][j] = min(min(t[i - 1][j - 1], t[i][j - 1]), t[i - 1][j]) + 1;
-                }
-                cur = max(cur, t[i][j]);
-            }
-        }
-        return cur * cur;
-    }
+	int maximalSquare(vector<vector<char>>& matrix) {
+		if (matrix.empty()) {
+			return 0;
+		}
+		int row = matrix.size(), col = matrix[0].size();
+		vector<vector<int>> t(row, vector<int>(col, 0));
+		int cur = 0;
+		for (int i = 0; i < matrix.size(); i++) {
+			for (int j = 0; j < matrix[0].size(); j++) {
+				if (i == 0 || j == 0) {
+					t[i][j] = matrix[i][j] - '0';
+				}
+				else if (matrix[i][j] == '1') {
+					t[i][j] = min(min(t[i - 1][j - 1], t[i][j - 1]), t[i - 1][j]) + 1;
+				}
+				cur = max(cur, t[i][j]);
+			}
+		}
+		return cur * cur;
+	}
 };
 /*
 
@@ -544,20 +555,20 @@ Assume you have Uk, the kth ugly number. Then Uk+1 must be Min(L1 * 2, L2 * 3, L
 */
 class Solution {
 public:
-    int nthUglyNumber(int n) {
-        if (!n) return 0;
-        static vector<int> table(1,1);
-        static int i2 = 0,i3 = 0, i5 =0;
-        int k(table.size());
-        for (; k < n; k++) {
-            int tmp = min(table[i2] * 2, min(table[i3] * 3, table[i5] * 5));
-            if (!(tmp % 2)) i2++;
-            if (!(tmp % 3)) i3++;
-            if (!(tmp % 5)) i5++;
-            table.push_back(tmp);
-        }
-        return table[n-1];
-    }
+	int nthUglyNumber(int n) {
+		if (!n) return 0;
+		static vector<int> table(1, 1);
+		static int i2 = 0, i3 = 0, i5 = 0;
+		int k(table.size());
+		for (; k < n; k++) {
+			int tmp = min(table[i2] * 2, min(table[i3] * 3, table[i5] * 5));
+			if (!(tmp % 2)) i2++;
+			if (!(tmp % 3)) i3++;
+			if (!(tmp % 5)) i5++;
+			table.push_back(tmp);
+		}
+		return table[n - 1];
+	}
 };
 /*
 
@@ -570,18 +581,18 @@ For example, given n = 12, return 3 because 12 = 4 + 4 + 4; given n = 13, return
 */
 class Solution {
 public:
-    int numSquares(int n) {
-        if (n <= 0) return 0;
-        static vector<int> table{(0)};
-        while (table.size() <= n) {
-            int _size = table.size();
-            int temp = INT_MAX;
-            for (int i = 1; i * i <= _size; i++)
-                temp = min(temp, table[_size - i * i] + 1);
-            table.push_back(temp);
-        }
-        return table[n];
-    }
+	int numSquares(int n) {
+		if (n <= 0) return 0;
+		static vector<int> table{ (0) };
+		while (table.size() <= n) {
+			int _size = table.size();
+			int temp = INT_MAX;
+			for (int i = 1; i * i <= _size; i++)
+				temp = min(temp, table[_size - i * i] + 1);
+			table.push_back(temp);
+		}
+		return table[n];
+	}
 };
 /*
 
@@ -600,29 +611,29 @@ Follow up: Could you improve it to O(n log n) time complexity?
 */
 class Solution {
 public:
-    int lengthOfLIS(vector<int>& nums) {
-        int res = 0;
-        int table[nums.size()];
-        for (int i = 0; i < nums.size(); i++) {
-            table[i] = 1;
-            for (int j = 0; j < i; j++)
-                if (nums[j] < nums[i]) table[i] = max(table[i], table[j] + 1);
-            res = max(res, table[i]);
-        }
-        return res;
-    }
+	int lengthOfLIS(vector<int>& nums) {
+		int res = 0;
+		int table[nums.size()];
+		for (int i = 0; i < nums.size(); i++) {
+			table[i] = 1;
+			for (int j = 0; j < i; j++)
+				if (nums[j] < nums[i]) table[i] = max(table[i], table[j] + 1);
+			res = max(res, table[i]);
+		}
+		return res;
+	}
 };
 class Solution {
 public:
-    int lengthOfLIS(vector<int>& nums) {
-        vector<int> res;
-        for(int i : nums) {
-            auto it = lower_bound(res.begin(), res.end(), i);
-            if (it == res.end()) res.push_back(i);
-            else *it = i;
-        }
-        return res.size();
-    }
+	int lengthOfLIS(vector<int>& nums) {
+		vector<int> res;
+		for (int i : nums) {
+			auto it = lower_bound(res.begin(), res.end(), i);
+			if (it == res.end()) res.push_back(i);
+			else *it = i;
+		}
+		return res.size();
+	}
 };
 /*
 
@@ -644,19 +655,19 @@ There are many calls to sumRange function.
 */
 class NumArray {
 public:
-    vector<int> table;
-    NumArray(vector<int> &nums) {
-        int sum = 0;
-        for (int i : nums) {
-            sum += i;
-            table.push_back(sum);
-        }
-    }
+	vector<int> table;
+	NumArray(vector<int> &nums) {
+		int sum = 0;
+		for (int i : nums) {
+			sum += i;
+			table.push_back(sum);
+		}
+	}
 
-    int sumRange(int i, int j) {
-        if (!i) return table[j];
-        return table[j] - table[i - 1];
-    }
+	int sumRange(int i, int j) {
+		if (!i) return table[j];
+		return table[j] - table[i - 1];
+	}
 };
 
 
@@ -693,20 +704,20 @@ You may assume that row1 ≤ row2 and col1 ≤ col2.
 */
 class NumMatrix {
 public:
-    vector<vector<int>> table;
-    NumMatrix(vector<vector<int>> &matrix) {
-        int row = matrix.size(), col = row > 0 ? matrix[0].size() : 0;
-        table = vector<vector<int>>(row + 1, vector<int>(col + 1, 0));
-        for (int i = 1; i <= row; i++) {
-            for (int j = 1; j <= col; j++) {
-                table[i][j] = matrix[i - 1][j - 1] + table[i - 1][j] + table[i][j - 1] - table[i - 1][j - 1];
-            }
-        }
-    }
+	vector<vector<int>> table;
+	NumMatrix(vector<vector<int>> &matrix) {
+		int row = matrix.size(), col = row > 0 ? matrix[0].size() : 0;
+		table = vector<vector<int>>(row + 1, vector<int>(col + 1, 0));
+		for (int i = 1; i <= row; i++) {
+			for (int j = 1; j <= col; j++) {
+				table[i][j] = matrix[i - 1][j - 1] + table[i - 1][j] + table[i][j - 1] - table[i - 1][j - 1];
+			}
+		}
+	}
 
-    int sumRegion(int row1, int col1, int row2, int col2) {
-        return table[row2+1][col2+1] - table[row2+1][col1] - table[row1][col2+1] + table[row1][col1];
-    }
+	int sumRegion(int row1, int col1, int row2, int col2) {
+		return table[row2 + 1][col2 + 1] - table[row2 + 1][col1] - table[row1][col2 + 1] + table[row1][col1];
+	}
 };
 
 
@@ -720,7 +731,7 @@ public:
 
 Say you have an array for which the ith element is the price of a given stock on day i.
 
-Design an algorithm to find the maximum profit. You may complete as many transactions as you like 
+Design an algorithm to find the maximum profit. You may complete as many transactions as you like
 (ie, buy one and sell one share of the stock multiple times) with the following restrictions:
 
 You may not engage in multiple transactions at the same time (ie, you must sell the stock before you buy again).
@@ -734,18 +745,18 @@ transactions = [buy, sell, cooldown, buy, sell]
 */
 class Solution {
 public:
-    int maxProfit(vector<int>& prices) {
-        int _size = prices.size();
-        if (_size < 2) return 0;
-        vector<int> table(_size, 0);
-        int temp = -prices[0];
-        for (int i = 1; i < _size; i++) {
-            table[i] = max(table[i], max(table[i - 1], prices[i] + temp));
-            if (i > 1) temp = max(temp, table[i - 2] - prices[i]);
-            else temp = max(temp, -prices[i]);
-        } 
-        return table.back();
-    }
+	int maxProfit(vector<int>& prices) {
+		int _size = prices.size();
+		if (_size < 2) return 0;
+		vector<int> table(_size, 0);
+		int temp = -prices[0];
+		for (int i = 1; i < _size; i++) {
+			table[i] = max(table[i], max(table[i - 1], prices[i] + temp));
+			if (i > 1) temp = max(temp, table[i - 2] - prices[i]);
+			else temp = max(temp, -prices[i]);
+		}
+		return table.back();
+	}
 };
 /*
 
@@ -767,33 +778,33 @@ You may assume that you have an infinite number of each kind of coin.
 */
 class Solution {
 public:
-    int coinChange(vector<int>& coins, int amount) {
-        vector<int> table(amount + 1, INT_MAX - 1);
-        table[0] = 0;
-        for (int i = 0; i < coins.size(); i++) {
-            for (int j = coins[i]; j <= amount; j++) {
-                table[j] = min(table[j], table[j - coins[i]] + 1);
-            }
-        }
-        return (table[amount] == INT_MAX - 1 ? -1 : table[amount]);
-    }
+	int coinChange(vector<int>& coins, int amount) {
+		vector<int> table(amount + 1, INT_MAX - 1);
+		table[0] = 0;
+		for (int i = 0; i < coins.size(); i++) {
+			for (int j = coins[i]; j <= amount; j++) {
+				table[j] = min(table[j], table[j - coins[i]] + 1);
+			}
+		}
+		return (table[amount] == INT_MAX - 1 ? -1 : table[amount]);
+	}
 };
 class Solution {
 public:
-    int coinChange(vector<int>& coins, int amount) {
-        sort(coins.begin(), coins.end());
-        return coinChange(coins, amount, coins.size() - 1, 0, *(new int(INT_MAX)));
-    }
-    int coinChange(vector<int>&coins,int amount,int idx,int cur,int &cand){
-        if(!amount) return cand=cur;
-        if(idx < 0)return -1;
-        int flag = 0, n = amount / coins[idx];
-        if(n + cur >= cand) return -1;
-        for(int i = n; i >= 0; i--)
-            if(coinChange(coins,amount-i*coins[idx],idx-1,cur+i,cand)!=-1) flag=1;
-        if(flag) return cand;
-        return -1;
-    }
+	int coinChange(vector<int>& coins, int amount) {
+		sort(coins.begin(), coins.end());
+		return coinChange(coins, amount, coins.size() - 1, 0, *(new int(INT_MAX)));
+	}
+	int coinChange(vector<int>&coins, int amount, int idx, int cur, int &cand) {
+		if (!amount) return cand = cur;
+		if (idx < 0)return -1;
+		int flag = 0, n = amount / coins[idx];
+		if (n + cur >= cand) return -1;
+		for (int i = n; i >= 0; i--)
+			if (coinChange(coins, amount - i*coins[idx], idx - 1, cur + i, cand) != -1) flag = 1;
+		if (flag) return cand;
+		return -1;
+	}
 };
 /*
 
@@ -818,12 +829,12 @@ Or does the odd/even status of the number help you in calculating the number of 
 */
 class Solution {
 public:
-    vector<int> countBits(int num) {
-        vector<int> table(num + 1);
-        for (int i = 1; i <= num; i++)
-            table[i] = 1 + table[i & (i - 1)];
-        return table;
-    }
+	vector<int> countBits(int num) {
+		vector<int> table(num + 1);
+		for (int i = 1; i <= num; i++)
+			table[i] = 1 + table[i & (i - 1)];
+		return table;
+	}
 };
 /*
 
@@ -832,35 +843,35 @@ public:
 Given a non-negative integer n, count all numbers with unique digits, x, where 0 ≤ x < 10n.
 
 Example:
-Given n = 2, return 91. (The answer should be the total numbers in the range of 0 ≤ x < 100, 
+Given n = 2, return 91. (The answer should be the total numbers in the range of 0 ≤ x < 100,
 excluding [11,22,33,44,55,66,77,88,99])
 
 Hint:
 
 A direct way is to use the backtracking approach.
-Backtracking should contains three states which are (the current number, number of steps to 
-get that number and a bitmask which represent which number is marked as visited so far in the 
-current number). Start with state (0,0,0) and count all valid number till we reach number of 
+Backtracking should contains three states which are (the current number, number of steps to
+get that number and a bitmask which represent which number is marked as visited so far in the
+current number). Start with state (0,0,0) and count all valid number till we reach number of
 steps equals to 10n.
 
-This problem can also be solved using a dynamic programming approach and some knowledge of 
+This problem can also be solved using a dynamic programming approach and some knowledge of
 combinatorics.
 Let f(k) = count of numbers with unique digits with length equals k.
-f(1) = 10, ..., f(k) = 9 * 9 * 8 * ... (9 - k + 2) [The first factor is 9 because a number 
+f(1) = 10, ..., f(k) = 9 * 9 * 8 * ... (9 - k + 2) [The first factor is 9 because a number
 cannot start with 0].
 
 */
 class Solution {
 public:
-    int countNumbersWithUniqueDigits(int n) {
-        if (n < 1) return 1;
-        int pre = 9, sum = 10;
-        for (int i = 1; i < n; i++) {
-            pre *= (10 - i);
-            sum += pre;
-        }
-        return sum;
-    }
+	int countNumbersWithUniqueDigits(int n) {
+		if (n < 1) return 1;
+		int pre = 9, sum = 10;
+		for (int i = 1; i < n; i++) {
+			pre *= (10 - i);
+			sum += pre;
+		}
+		return sum;
+	}
 };
 /*
 
@@ -884,31 +895,31 @@ Result: [1,2,4,8]
 */
 class Solution {
 public:
-    vector<int> largestDivisibleSubset(vector<int>& nums) {
-        int _size = nums.size();
-        if (!_size) return nums;
-        sort(nums.begin(), nums.end());
-        vector<pair<int, int>> table(1, make_pair(1, -1));
-        int globalMax = 1, index = 0;
-        for (int i = 1; i < _size; i++) {
-            int tempmax = 1, pre_index = -1;
-            for (int j = i - 1; j >= 0; j--) {
-                if (nums[i] % nums[j] == 0 && table[j].first >= tempmax) {
-                    tempmax = table[j].first + 1;
-                    pre_index = j;
-                }
-            }
-            table.emplace_back(tempmax, pre_index);
-            if (tempmax > globalMax) {
-                globalMax = tempmax;
-                index = i;
-            }
-        }
-        vector<int> res;
-        for (int i = 0; i < globalMax; i++, index = table[index].second)
-            res.insert(res.begin(), nums[index]);
-        return res;
-    }
+	vector<int> largestDivisibleSubset(vector<int>& nums) {
+		int _size = nums.size();
+		if (!_size) return nums;
+		sort(nums.begin(), nums.end());
+		vector<pair<int, int>> table(1, make_pair(1, -1));
+		int globalMax = 1, index = 0;
+		for (int i = 1; i < _size; i++) {
+			int tempmax = 1, pre_index = -1;
+			for (int j = i - 1; j >= 0; j--) {
+				if (nums[i] % nums[j] == 0 && table[j].first >= tempmax) {
+					tempmax = table[j].first + 1;
+					pre_index = j;
+				}
+			}
+			table.emplace_back(tempmax, pre_index);
+			if (tempmax > globalMax) {
+				globalMax = tempmax;
+				index = i;
+			}
+		}
+		vector<int> res;
+		for (int i = 0; i < globalMax; i++, index = table[index].second)
+			res.insert(res.begin(), nums[index]);
+		return res;
+	}
 };
 /*
 
@@ -946,42 +957,42 @@ As a follow-up, how would you modify your code to solve the problem of minimizin
 */
 class Solution {
 public:
-    int getMoneyAmount(int n) {
-        vector<vector<int>> dp(n + 1, vector<int>(n + 3));
-        for (int i = 1; i <= n; i++) {
-            dp[i][i] = 0;
-            dp[i][i + 1] = i;
-            dp[i][i + 2] = i + 1;
-        }
-        for (int nn = 3; nn <= n; nn++) {
-            for (int m = 1; m <= n - nn; m++){
-                int mini = 0x7fffffff;
-                for (int i = m + 2; i < m + nn; i++){
-                    int l = dp[m][i - 1];
-                    int r = dp[i + 1][m + nn];
-                    mini = min(mini, max(l, r) + i);
-                }
-                dp[m][m + nn] = mini;
-            }
-        }
-        return dp[1][n];
-    }
+	int getMoneyAmount(int n) {
+		vector<vector<int>> dp(n + 1, vector<int>(n + 3));
+		for (int i = 1; i <= n; i++) {
+			dp[i][i] = 0;
+			dp[i][i + 1] = i;
+			dp[i][i + 2] = i + 1;
+		}
+		for (int nn = 3; nn <= n; nn++) {
+			for (int m = 1; m <= n - nn; m++) {
+				int mini = 0x7fffffff;
+				for (int i = m + 2; i < m + nn; i++) {
+					int l = dp[m][i - 1];
+					int r = dp[i + 1][m + nn];
+					mini = min(mini, max(l, r) + i);
+				}
+				dp[m][m + nn] = mini;
+			}
+		}
+		return dp[1][n];
+	}
 };
 /*
 
 376. Wiggle Subsequence (Medium)
 
-A sequence of numbers is called a wiggle sequence if the differences between successive 
-numbers strictly alternate between positive and negative. The first difference (if one 
-exists) may be either positive or negative. A sequence with fewer than two elements is 
+A sequence of numbers is called a wiggle sequence if the differences between successive
+numbers strictly alternate between positive and negative. The first difference (if one
+exists) may be either positive or negative. A sequence with fewer than two elements is
 trivially a wiggle sequence.
 
-For example, [1,7,4,9,2,5] is a wiggle sequence because the differences (6,-3,5,-7,3) 
-are alternately positive and negative. In contrast, [1,4,7,2,5] and [1,7,4,5,5] are not 
-wiggle sequences, the first because its first two differences are positive and the second 
+For example, [1,7,4,9,2,5] is a wiggle sequence because the differences (6,-3,5,-7,3)
+are alternately positive and negative. In contrast, [1,4,7,2,5] and [1,7,4,5,5] are not
+wiggle sequences, the first because its first two differences are positive and the second
 because its last difference is zero.
 
-Given a sequence of integers, return the length of the longest subsequence that is a 
+Given a sequence of integers, return the length of the longest subsequence that is a
 wiggle sequence. A subsequence is obtained by deleting some number of elements (eventually,
  also zero) from the original sequence, leaving the remaining elements in their original order.
 
@@ -1001,14 +1012,14 @@ Can you do it in O(n) time?
 */
 class Solution {
 public:
-    int wiggleMaxLength(vector<int>& nums) {
-        int _size = nums.size(), p = 1, n = 1;
-        for (int i = 1; i < _size; i++){
-            if (nums[i] > nums[i-1]) p = n + 1;
-            else if(nums[i] < nums[i-1]) n = p + 1;
-        }
-        return _size == 0 ? 0 : max(p, n);
-    }
+	int wiggleMaxLength(vector<int>& nums) {
+		int _size = nums.size(), p = 1, n = 1;
+		for (int i = 1; i < _size; i++) {
+			if (nums[i] > nums[i - 1]) p = n + 1;
+			else if (nums[i] < nums[i - 1]) n = p + 1;
+		}
+		return _size == 0 ? 0 : max(p, n);
+	}
 };
 /*
 
@@ -1041,16 +1052,16 @@ What limitation we need to add to the question to allow negative numbers?
 */
 class Solution {
 public:
-    int combinationSum4(vector<int>& nums, int target) {
-        vector<int> table(target + 1);
-        table[0] = 1;
-        for (int i = 1; i <= target; i++) {
-            for (int j : nums) {
-                if (i - j >= 0) table[i] += table[i - j]; 
-            }
-        }
-        return table.back();
-    }
+	int combinationSum4(vector<int>& nums, int target) {
+		vector<int> table(target + 1);
+		table[0] = 1;
+		for (int i = 1; i <= target; i++) {
+			for (int j : nums) {
+				if (i - j >= 0) table[i] += table[i - j];
+			}
+		}
+		return table.back();
+	}
 };
 /*
 
@@ -1058,11 +1069,11 @@ public:
 
 Given a string s and a string t, check if s is subsequence of t.
 
-You may assume that there is only lower case English letters in both s and t. t is potentially 
+You may assume that there is only lower case English letters in both s and t. t is potentially
 a very long (length ~= 500,000) string, and s is a short string (<=100).
 
-A subsequence of a string is a new string which is formed from the original string by deleting 
-some (can be none) of the characters without disturbing the relative positions of the remaining 
+A subsequence of a string is a new string which is formed from the original string by deleting
+some (can be none) of the characters without disturbing the relative positions of the remaining
 characters. (ie, "ace" is a subsequence of "abcde" while "aec" is not).
 
 Example 1:
@@ -1076,16 +1087,16 @@ s = "axc", t = "ahbgdc"
 Return false.
 
 Follow up:
-If there are lots of incoming S, say S1, S2, ... , Sk where k >= 1B, and you want to check one 
+If there are lots of incoming S, say S1, S2, ... , Sk where k >= 1B, and you want to check one
 by one to see if T has its subsequence. In this scenario, how would you change your code?
 
 */
 class Solution {
 public:
-    bool isSubsequence(string s, string t) {
-        int s_i = 0;
-        for (int t_i = 0; t_i < t.length() && s_i < s.length(); t_i++)
-            if (t[t_i] == s[s_i]) s_i++;
-        return s_i == s.length();
-    }
+	bool isSubsequence(string s, string t) {
+		int s_i = 0;
+		for (int t_i = 0; t_i < t.length() && s_i < s.length(); t_i++)
+			if (t[t_i] == s[s_i]) s_i++;
+		return s_i == s.length();
+	}
 };
