@@ -228,6 +228,52 @@ private:
 };
 /*
 
+44. Wildcard Matching (Hard)
+
+Implement wildcard pattern matching with support for '?' and '*'.
+
+'?' Matches any single character.
+'*' Matches any sequence of characters (including the empty sequence).
+
+The matching should cover the entire input string (not partial).
+
+The function prototype should be:
+bool isMatch(const char *s, const char *p)
+
+Some examples:
+isMatch("aa","a") → false
+isMatch("aa","aa") → true
+isMatch("aaa","aa") → false
+isMatch("aa", "*") → true
+isMatch("aa", "a*") → true
+isMatch("ab", "?*") → true
+isMatch("aab", "c*a*b") → false
+
+*/
+class Solution {
+public:
+	bool isMatch(string s, string p) {
+		int m = s.size(), n = p.size();
+		vector<vector<bool>> t(m + 1, vector<bool>(n + 1, false));
+		t[0][0] = true;
+		for (int j = 1; j <= n; j++) {
+			t[0][j] = p[j - 1] == '*' && t[0][j - 1];
+		}
+		for (int i = 1; i <= m; i++) {
+			for (int j = 1; j <= n; j++) {
+				if (p[j - 1] != '*') {
+					t[i][j] = t[i - 1][j - 1] && (s[i - 1] == p[j - 1] || p[j - 1] == '?');
+				}
+				else {
+					t[i][j] = t[i][j - 1] || t[i - 1][j];
+				}
+			}
+		}
+		return t[m][n];
+	}
+};
+/*
+
 77. Combinations (Medium)
 
 Given two integers n and k, return all possible combinations of k numbers out of 1 ... n.

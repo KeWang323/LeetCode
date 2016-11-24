@@ -405,6 +405,45 @@ public:
 };
 /*
 
+32. Longest Valid Parentheses (Hard)
+
+Given a string containing just the characters '(' and ')', find the length of the longest valid (well-formed) parentheses substring.
+
+For "(()", the longest valid parentheses substring is "()", which has length = 2.
+
+Another example is ")()())", where the longest valid parentheses substring is "()()", which has length = 4.
+
+*/
+class Solution {
+public:
+	int longestValidParentheses(string s) {
+		vector<bool> t(s.size(), false);
+		stack<int> sta;
+		for (int i = 0; i < s.length(); ++i) {
+			if (s[i] == '(') {
+				sta.push(i);
+			}
+			else if (s[i] == ')' && !sta.empty()) {
+				t[i] = true;
+				t[sta.top()] = true;
+				sta.pop();
+			}
+		}
+		int max_len = 0, cur_len = 0;
+		for (int i = 0; i < s.size(); i++) {
+			if (t[i] == true) {
+				cur_len++;
+			}
+			else {
+				cur_len = 0;
+			}
+			max_len = max(max_len, cur_len);
+		}
+		return max_len;
+	}
+};
+/*
+
 42. Trapping Rain Water (Hard)
 
 Given n non-negative integers representing an elevation map where the width of each bar is 1, compute how much water it is able to trap after raining.

@@ -352,6 +352,55 @@ public:
 };
 /*
 
+10. Regular Expression Matching (Hard)
+
+Implement regular expression matching with support for '.' and '*'.
+
+'.' Matches any single character.
+'*' Matches zero or more of the preceding element.
+
+The matching should cover the entire input string (not partial).
+
+The function prototype should be:
+bool isMatch(const char *s, const char *p)
+
+Some examples:
+isMatch("aa","a") → false
+isMatch("aa","aa") → true
+isMatch("aaa","aa") → false
+isMatch("aa", "a*") → true
+isMatch("aa", ".*") → true
+isMatch("ab", ".*") → true
+isMatch("aab", "c*a*b") → true
+
+*/
+class Solution {
+public:
+	bool isMatch(string s, string p) {
+		int m = s.size(), n = p.size();
+		vector<vector<bool>> t(m + 1, vector<bool>(n + 1, false));
+		t[0][0] = true;
+		for (int i = 1; i <= m; i++) {
+			t[i][0] = false;
+		}
+		for (int j = 1; j <= n; j++) {
+			t[0][j] = j > 1 && '*' == p[j - 1] && t[0][j - 2];
+		}
+		for (int i = 1; i <= m; i++) {
+			for (int j = 1; j <= n; j++) {
+				if (p[j - 1] != '*') {
+					t[i][j] = t[i - 1][j - 1] && (s[i - 1] == p[j - 1] || '.' == p[j - 1]);
+				}
+				else {
+					t[i][j] = t[i][j - 2] || (s[i - 1] == p[j - 2] || '.' == p[j - 2]) && t[i - 1][j];
+				}
+			}
+		}
+		return t[m][n];
+	}
+};
+/*
+
 11. Container With Most Water (Medium)
 
 Given n non-negative integers a1, a2, ..., an, where each represents a point at coordinate (i, ai). n vertical lines are drawn such that the two endpoints of line i is at (i, ai) and (i, 0). Find two lines, which together with x-axis forms a container, such that the container contains the most water.
@@ -1122,6 +1171,45 @@ public:
 	}
 };
 /*
+
+32. Longest Valid Parentheses (Hard)
+
+Given a string containing just the characters '(' and ')', find the length of the longest valid (well-formed) parentheses substring.
+
+For "(()", the longest valid parentheses substring is "()", which has length = 2.
+
+Another example is ")()())", where the longest valid parentheses substring is "()()", which has length = 4.
+
+*/
+class Solution {
+public:
+	int longestValidParentheses(string s) {
+		vector<bool> t(s.size(), false);
+		stack<int> sta;
+		for (int i = 0; i < s.length(); ++i) {
+			if (s[i] == '(') {
+				sta.push(i);
+			}
+			else if (s[i] == ')' && !sta.empty()) {
+				t[i] = true;
+				t[sta.top()] = true;
+				sta.pop();
+			}
+		}
+		int max_len = 0, cur_len = 0;
+		for (int i = 0; i < s.size(); i++) {
+			if (t[i] == true) {
+				cur_len++;
+			}
+			else {
+				cur_len = 0;
+			}
+			max_len = max(max_len, cur_len);
+		}
+		return max_len;
+	}
+};
+/*
 33. Search in Rotated Sorted Array (Hard)
 
 Suppose a sorted array is rotated at some pivot unknown to you beforehand.
@@ -1508,6 +1596,52 @@ public:
 			carry /= 10;
 		}
 		return res;
+	}
+};
+/*
+
+44. Wildcard Matching (Hard)
+
+Implement wildcard pattern matching with support for '?' and '*'.
+
+'?' Matches any single character.
+'*' Matches any sequence of characters (including the empty sequence).
+
+The matching should cover the entire input string (not partial).
+
+The function prototype should be:
+bool isMatch(const char *s, const char *p)
+
+Some examples:
+isMatch("aa","a") → false
+isMatch("aa","aa") → true
+isMatch("aaa","aa") → false
+isMatch("aa", "*") → true
+isMatch("aa", "a*") → true
+isMatch("ab", "?*") → true
+isMatch("aab", "c*a*b") → false
+
+*/
+class Solution {
+public:
+	bool isMatch(string s, string p) {
+		int m = s.size(), n = p.size();
+		vector<vector<bool>> t(m + 1, vector<bool>(n + 1, false));
+		t[0][0] = true;
+		for (int j = 1; j <= n; j++) {
+			t[0][j] = p[j - 1] == '*' && t[0][j - 1];
+		}
+		for (int i = 1; i <= m; i++) {
+			for (int j = 1; j <= n; j++) {
+				if (p[j - 1] != '*') {
+					t[i][j] = t[i - 1][j - 1] && (s[i - 1] == p[j - 1] || p[j - 1] == '?');
+				}
+				else {
+					t[i][j] = t[i][j - 1] || t[i - 1][j];
+				}
+			}
+		}
+		return t[m][n];
 	}
 };
 /*
