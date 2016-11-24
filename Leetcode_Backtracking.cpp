@@ -1,5 +1,54 @@
 /*
 
+10. Regular Expression Matching (Hard)
+
+Implement regular expression matching with support for '.' and '*'.
+
+'.' Matches any single character.
+'*' Matches zero or more of the preceding element.
+
+The matching should cover the entire input string (not partial).
+
+The function prototype should be:
+bool isMatch(const char *s, const char *p)
+
+Some examples:
+isMatch("aa","a") → false
+isMatch("aa","aa") → true
+isMatch("aaa","aa") → false
+isMatch("aa", "a*") → true
+isMatch("aa", ".*") → true
+isMatch("ab", ".*") → true
+isMatch("aab", "c*a*b") → true
+
+*/
+class Solution {
+public:
+	bool isMatch(string s, string p) {
+		int m = s.size(), n = p.size();
+		vector<vector<bool>> t(m + 1, vector<bool>(n + 1, false));
+		t[0][0] = true;
+		for (int i = 1; i <= m; i++) {
+			t[i][0] = false;
+		}
+		for (int j = 1; j <= n; j++) {
+			t[0][j] = j > 1 && '*' == p[j - 1] && t[0][j - 2];
+		}
+		for (int i = 1; i <= m; i++) {
+			for (int j = 1; j <= n; j++) {
+				if (p[j - 1] != '*') {
+					t[i][j] = t[i - 1][j - 1] && (s[i - 1] == p[j - 1] || '.' == p[j - 1]);
+				}
+				else {
+					t[i][j] = t[i][j - 2] || (s[i - 1] == p[j - 2] || '.' == p[j - 2]) && t[i - 1][j];
+				}
+			}
+		}
+		return t[m][n];
+	}
+};
+/*
+
 17. Letter Combinations of a Phone Number (Medium)
 
 Given a digit string, return all possible letter combinations that the number could represent.

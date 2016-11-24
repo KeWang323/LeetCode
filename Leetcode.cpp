@@ -170,7 +170,9 @@ public:
 		int _size = s.length(), l_max = 0, len_max = 0, l, r;
 		for (int i = 0; i < _size && _size - i > len_max / 2;) {
 			l = r = i;
-			while (r < _size - 1 && s[r] == s[r + 1]) r++;
+			while (r < _size - 1 && s[r] == s[r + 1]) {
+				r++;
+			}
 			i = r + 1;
 			while (l > 0 && r < _size - 1 && s[l - 1] == s[r + 1]) {
 				l--;
