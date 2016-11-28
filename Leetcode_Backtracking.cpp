@@ -274,6 +274,128 @@ public:
 };
 /*
 
+51. N-Queens (Hard)
+
+The n-queens puzzle is the problem of placing n queens on an n×n chessboard such that no two queens attack each other.
+
+Given an integer n, return all distinct solutions to the n-queens puzzle.
+
+Each solution contains a distinct board configuration of the n-queens' placement, where 'Q' and '.' both indicate a queen and an empty space respectively.
+
+For example,
+There exist two distinct solutions to the 4-queens puzzle:
+
+[
+[".Q..",  // Solution 1
+"...Q",
+"Q...",
+"..Q."],
+
+["..Q.",  // Solution 2
+"Q...",
+"...Q",
+".Q.."]
+]
+
+*/
+class Solution {
+public:
+	vector<vector<string>> solveNQueens(int n) {
+		vector<vector<string>> res;
+		vector<string> res_sub(n);
+		for (int i = 0; i < n; i++) {
+			for (int j = 0; j < n; j++) {
+				res_sub[i].push_back('.');
+			}
+		}
+		unordered_map<int, bool> v;
+		unordered_map<int, bool> u;
+		unordered_map<int, bool> d;
+		solve(res, res_sub, 0, v, u, d);
+		return res;
+	}
+private:
+	void solve(vector<vector<string>>& res, vector<string>& res_sub, int col, unordered_map<int, bool>& v, unordered_map<int, bool>& u, unordered_map<int, bool>& d) {
+		if (res_sub.size() == col) {
+			res.push_back(res_sub);
+			return;
+		}
+		for (int i = 0; i < res_sub.size(); i++) {
+			if (valid(col, v, u, d, i)) {
+				res_sub[i][col] = 'Q';
+				solve(res, res_sub, col + 1, v, u, d);
+				res_sub[i][col] = '.';
+				back(col, v, u, d, i);
+			}
+		}
+	}
+	bool valid(int col, unordered_map<int, bool>& v, unordered_map<int, bool>& u, unordered_map<int, bool>& d, int row) {
+		if (v[row] == false && u[row - col] == false && d[row + col] == false) {
+			v[row] = true;
+			u[row - col] = true;
+			d[row + col] = true;
+			return true;
+		}
+		return false;
+	}
+	void back(int col, unordered_map<int, bool>& v, unordered_map<int, bool>& u, unordered_map<int, bool>& d, int row) {
+		v[row] = false;
+		u[row - col] = false;
+		d[row + col] = false;
+	}
+};
+/*
+
+52. N-Queens II (Hard)
+
+Follow up for N-Queens problem.
+
+Now, instead outputting board configurations, return the total number of distinct solutions.
+
+*/
+class Solution {
+public:
+	int totalNQueens(int n) {
+		int res;
+		vector<int> res_sub;
+		unordered_map<int, bool> v;
+		unordered_map<int, bool> u;
+		unordered_map<int, bool> d;
+		solve(res, res_sub, n, v, u, d);
+		return res;
+	}
+private:
+	void solve(int& res, vector<int>& res_sub, int size, unordered_map<int, bool>& v, unordered_map<int, bool>& u, unordered_map<int, bool>& d) {
+		if (res_sub.size() == size) {
+			res++;
+			return;
+		}
+		for (int i = 0; i < size; i++) {
+			if (valid(res_sub.size(), v, u, d, i)) {
+				res_sub.push_back(i);
+				solve(res, res_sub, size, v, u, d);
+				res_sub.pop_back();
+				back(res_sub.size(), v, u, d, i);
+			}
+		}
+	}
+	bool valid(int col, unordered_map<int, bool>& v, unordered_map<int, bool>& u, unordered_map<int, bool>& d, int row) {
+		if (v[row] == false && u[row - col] == false && d[row + col] == false) {
+			v[row] = true;
+			u[row - col] = true;
+			d[row + col] = true;
+			return true;
+		}
+		return false;
+	}
+	void back(int col, unordered_map<int, bool>& v, unordered_map<int, bool>& u, unordered_map<int, bool>& d, int row) {
+		v[row] = false;
+		u[row - col] = false;
+		d[row + col] = false;
+	}
+};
+/*
+
 77. Combinations (Medium)
 
 Given two integers n and k, return all possible combinations of k numbers out of 1 ... n.

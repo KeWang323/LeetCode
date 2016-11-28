@@ -1740,6 +1740,128 @@ public:
 };
 /*
 
+51. N-Queens (Hard)
+
+The n-queens puzzle is the problem of placing n queens on an n×n chessboard such that no two queens attack each other.
+
+Given an integer n, return all distinct solutions to the n-queens puzzle.
+
+Each solution contains a distinct board configuration of the n-queens' placement, where 'Q' and '.' both indicate a queen and an empty space respectively.
+
+For example,
+There exist two distinct solutions to the 4-queens puzzle:
+
+[
+[".Q..",  // Solution 1
+"...Q",
+"Q...",
+"..Q."],
+
+["..Q.",  // Solution 2
+"Q...",
+"...Q",
+".Q.."]
+]
+
+*/
+class Solution {
+public:
+	vector<vector<string>> solveNQueens(int n) {
+		vector<vector<string>> res;
+		vector<string> res_sub(n);
+		for (int i = 0; i < n; i++) {
+			for (int j = 0; j < n; j++) {
+				res_sub[i].push_back('.');
+			}
+		}
+		unordered_map<int, bool> v;
+		unordered_map<int, bool> u;
+		unordered_map<int, bool> d;
+		solve(res, res_sub, 0, v, u, d);
+		return res;
+	}
+private:
+	void solve(vector<vector<string>>& res, vector<string>& res_sub, int col, unordered_map<int, bool>& v, unordered_map<int, bool>& u, unordered_map<int, bool>& d) {
+		if (res_sub.size() == col) {
+			res.push_back(res_sub);
+			return;
+		}
+		for (int i = 0; i < res_sub.size(); i++) {
+			if (valid(col, v, u, d, i)) {
+				res_sub[i][col] = 'Q';
+				solve(res, res_sub, col + 1, v, u, d);
+				res_sub[i][col] = '.';
+				back(col, v, u, d, i);
+			}
+		}
+	}
+	bool valid(int col, unordered_map<int, bool>& v, unordered_map<int, bool>& u, unordered_map<int, bool>& d, int row) {
+		if (v[row] == false && u[row - col] == false && d[row + col] == false) {
+			v[row] = true;
+			u[row - col] = true;
+			d[row + col] = true;
+			return true;
+		}
+		return false;
+	}
+	void back(int col, unordered_map<int, bool>& v, unordered_map<int, bool>& u, unordered_map<int, bool>& d, int row) {
+		v[row] = false;
+		u[row - col] = false;
+		d[row + col] = false;
+	}
+};
+/*
+
+52. N-Queens II (Hard)
+
+Follow up for N-Queens problem.
+
+Now, instead outputting board configurations, return the total number of distinct solutions.
+
+*/
+class Solution {
+public:
+	int totalNQueens(int n) {
+		int res;
+		vector<int> res_sub;
+		unordered_map<int, bool> v;
+		unordered_map<int, bool> u;
+		unordered_map<int, bool> d;
+		solve(res, res_sub, n, v, u, d);
+		return res;
+	}
+private:
+	void solve(int& res, vector<int>& res_sub, int size, unordered_map<int, bool>& v, unordered_map<int, bool>& u, unordered_map<int, bool>& d) {
+		if (res_sub.size() == size) {
+			res++;
+			return;
+		}
+		for (int i = 0; i < size; i++) {
+			if (valid(res_sub.size(), v, u, d, i)) {
+				res_sub.push_back(i);
+				solve(res, res_sub, size, v, u, d);
+				res_sub.pop_back();
+				back(res_sub.size(), v, u, d, i);
+			}
+		}
+	}
+	bool valid(int col, unordered_map<int, bool>& v, unordered_map<int, bool>& u, unordered_map<int, bool>& d, int row) {
+		if (v[row] == false && u[row - col] == false && d[row + col] == false) {
+			v[row] = true;
+			u[row - col] = true;
+			d[row + col] = true;
+			return true;
+		}
+		return false;
+	}
+	void back(int col, unordered_map<int, bool>& v, unordered_map<int, bool>& u, unordered_map<int, bool>& d, int row) {
+		v[row] = false;
+		u[row - col] = false;
+		d[row + col] = false;
+	}
+};
+/*
+
 53. Maximum Subarray (Medium)
 
 Find the contiguous subarray within an array (containing at least one number) which has the largest sum.
@@ -4933,37 +5055,81 @@ public:
  */
  /*
 
- 160. Intersection of Two Linked Lists (Easy)
+ 156. Binary Tree Upside Down (Medium)
 
- Write a program to find the node at which the intersection of two singly linked lists begins.
+ Given a binary tree where all the right nodes are either leaf nodes with a sibling (a left node that shares the same parent node) or empty, flip it upside down and turn it into a tree where the original right nodes turned into left leaf nodes. Return the new root.
 
-
- For example, the following two linked lists:
-
- A:          a1 → a2
-					↘
-					  c1 → c2 → c3
-					↗
- B:     b1 → b2 → b3
- begin to intersect at node c1.
-
-
- Notes:
-
- If the two linked lists have no intersection at all, return null.
- The linked lists must retain their original structure after the function returns.
- You may assume there are no cycles anywhere in the entire linked structure.
- Your code should preferably run in O(n) time and use only O(1) memory.
+ For example:
+ Given a binary tree {1,2,3,4,5},
+ 1
+ / \
+ 2   3
+ / \
+ 4   5
+ return the root of the binary tree [4,5,2,#,#,3,1].
+ 4
+ / \
+ 5   2
+ / \
+ 3   1
 
  */
  /**
-  * Definition for singly-linked list.
-  * struct ListNode {
-  *     int val;
-  *     ListNode *next;
-  *     ListNode(int x) : val(x), next(NULL) {}
-  * };
-  */
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+class Solution {
+public:
+	TreeNode* upsideDownBinaryTree(TreeNode* root) {
+		if (root == NULL || root->left == NULL) {
+			return root;
+		}
+		TreeNode *node = upsideDownBinaryTree(root->left);
+		root->left->left = root->right;
+		root->left->right = root;
+		root->left = NULL;
+		root->right = NULL;
+		return node;
+	}
+};
+/*
+
+160. Intersection of Two Linked Lists (Easy)
+
+Write a program to find the node at which the intersection of two singly linked lists begins.
+
+
+For example, the following two linked lists:
+
+A:          a1 → a2
+				   ↘
+					 c1 → c2 → c3
+				   ↗
+B:     b1 → b2 → b3
+begin to intersect at node c1.
+
+
+Notes:
+
+If the two linked lists have no intersection at all, return null.
+The linked lists must retain their original structure after the function returns.
+You may assume there are no cycles anywhere in the entire linked structure.
+Your code should preferably run in O(n) time and use only O(1) memory.
+
+*/
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode(int x) : val(x), next(NULL) {}
+ * };
+ */
 class Solution {
 public:
 	ListNode *getIntersectionNode(ListNode *headA, ListNode *headB) {
@@ -9326,6 +9492,59 @@ public:
 			num /= 10;
 		}
 		return num % 10;
+	}
+};
+/*
+
+404. Sum of Left Leaves (Easy)
+
+Find the sum of all left leaves in a given binary tree.
+
+Example:
+
+3
+/ \
+9  20
+/  \
+15   7
+
+There are two left leaves in the binary tree, with values 9 and 15 respectively. Return 24.
+
+*/
+/**
+* Definition for a binary tree node.
+* struct TreeNode {
+*     int val;
+*     TreeNode *left;
+*     TreeNode *right;
+*     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+* };
+*/
+class Solution {
+public:
+	int sumOfLeftLeaves(TreeNode* root) {
+		int res = 0;
+		sumOfLeftLeaves(root, NULL, res);
+		return res;
+	}
+private:
+	void sumOfLeftLeaves(TreeNode* root, TreeNode* pre, int& res) {
+		if (root == NULL) {
+			return;
+		}
+		else if (pre == NULL) {
+			sumOfLeftLeaves(root->left, root, res);
+			sumOfLeftLeaves(root->right, root, res);
+		}
+		else if (root->left == NULL && root->right == NULL && pre->left == root) {
+			res += root->val;
+			return;
+		}
+		else {
+			sumOfLeftLeaves(root->left, root, res);
+			sumOfLeftLeaves(root->right, root, res);
+		}
+
 	}
 };
 /*
