@@ -941,6 +941,62 @@ public:
 };
 /*
 
+25. Reverse Nodes in k-Group (Hard)
+
+Given a linked list, reverse the nodes of a linked list k at a time and return its modified list.
+
+If the number of nodes is not a multiple of k then left-out nodes in the end should remain as it is.
+
+You may not alter the values in the nodes, only nodes itself may be changed.
+
+Only constant memory is allowed.
+
+For example,
+Given this linked list: 1->2->3->4->5
+
+For k = 2, you should return: 2->1->4->3->5
+
+For k = 3, you should return: 3->2->1->4->5
+
+*/
+/**
+* Definition for singly-linked list.
+* struct ListNode {
+*     int val;
+*     ListNode *next;
+*     ListNode(int x) : val(x), next(NULL) {}
+* };
+*/
+class Solution {
+public:
+	ListNode* reverseKGroup(ListNode* head, int k) {
+		if (head == NULL || head->next == NULL) {
+			return head;
+		}
+		ListNode *node = head;
+		int index = 1;
+		while (index < k) {
+			node = node->next;
+			if (node == NULL) {
+				return head;
+			}
+			index++;
+		}
+		ListNode *next = head->next;
+		head->next = reverseKGroup(node->next, k);
+		index = 1;
+		while (index < k) {
+			ListNode *post = next->next;
+			next->next = head;
+			head = next;
+			next = post;
+			index++;
+		}
+		return node;
+	}
+};
+/*
+
 26. Remove Duplicates from Sorted Array (Easy)
 
 Given a sorted array, remove the duplicates in place such that each element appear only once and return the new length.
@@ -1642,6 +1698,83 @@ public:
 			}
 		}
 		return t[m][n];
+	}
+};
+/*
+
+46. Permutations (Medium)
+
+Given a collection of distinct numbers, return all possible permutations.
+
+For example,
+[1,2,3] have the following permutations:
+[
+[1,2,3],
+[1,3,2],
+[2,1,3],
+[2,3,1],
+[3,1,2],
+[3,2,1]
+]
+
+*/
+class Solution {
+public:
+	vector<vector<int>> permute(vector<int>& nums) {
+		vector<vector<int>> res;
+		permute(res, nums, 0);
+		return res;
+	}
+private:
+	void permute(vector<vector<int>>& res, vector<int>& nums, int index) {
+		if (index == nums.size()) {
+			res.push_back(nums);
+			return;
+		}
+		for (int i = index; i < nums.size(); i++) {
+			swap(nums[i], nums[index]);
+			permute(res, nums, index + 1);
+			swap(nums[i], nums[index]);
+		}
+	}
+};
+/*
+
+47. Permutations II (Medium)
+
+Given a collection of numbers that might contain duplicates, return all possible unique permutations.
+
+For example,
+[1,1,2] have the following unique permutations:
+[
+[1,1,2],
+[1,2,1],
+[2,1,1]
+]
+
+*/
+class Solution {
+public:
+	vector<vector<int>> permuteUnique(vector<int>& nums) {
+		vector<vector<int>> res;
+		permuteUnique(res, nums, 0);
+		return res;
+	}
+private:
+	void permuteUnique(vector<vector<int>>& res, vector<int>& nums, int index) {
+		if (index == nums.size()) {
+			res.push_back(nums);
+			return;
+		}
+		unordered_set<int> s;
+		for (int i = index; i < nums.size(); i++) {
+			if (s.find(nums[i]) == s.end()) {
+				swap(nums[i], nums[index]);
+				permuteUnique(res, nums, index + 1);
+				swap(nums[i], nums[index]);
+				s.insert(nums[i]);
+			}
+		}
 	}
 };
 /*

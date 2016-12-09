@@ -274,6 +274,83 @@ public:
 };
 /*
 
+46. Permutations (Medium)
+
+Given a collection of distinct numbers, return all possible permutations.
+
+For example,
+[1,2,3] have the following permutations:
+[
+[1,2,3],
+[1,3,2],
+[2,1,3],
+[2,3,1],
+[3,1,2],
+[3,2,1]
+]
+
+*/
+class Solution {
+public:
+	vector<vector<int>> permute(vector<int>& nums) {
+		vector<vector<int>> res;
+		permute(res, nums, 0);
+		return res;
+	}
+private:
+	void permute(vector<vector<int>>& res, vector<int>& nums, int index) {
+		if (index == nums.size()) {
+			res.push_back(nums);
+			return;
+		}
+		for (int i = index; i < nums.size(); i++) {
+			swap(nums[i], nums[index]);
+			permute(res, nums, index + 1);
+			swap(nums[i], nums[index]);
+		}
+	}
+};
+/*
+
+47. Permutations II (Medium)
+
+Given a collection of numbers that might contain duplicates, return all possible unique permutations.
+
+For example,
+[1,1,2] have the following unique permutations:
+[
+[1,1,2],
+[1,2,1],
+[2,1,1]
+]
+
+*/
+class Solution {
+public:
+	vector<vector<int>> permuteUnique(vector<int>& nums) {
+		vector<vector<int>> res;
+		permuteUnique(res, nums, 0);
+		return res;
+	}
+private:
+	void permuteUnique(vector<vector<int>>& res, vector<int>& nums, int index) {
+		if (index == nums.size()) {
+			res.push_back(nums);
+			return;
+		}
+		unordered_set<int> s;
+		for (int i = index; i < nums.size(); i++) {
+			if (s.find(nums[i]) == s.end()) {
+				swap(nums[i], nums[index]);
+				permuteUnique(res, nums, index + 1);
+				swap(nums[i], nums[index]);
+				s.insert(nums[i]);
+			}
+		}
+	}
+};
+/*
+
 51. N-Queens (Hard)
 
 The n-queens puzzle is the problem of placing n queens on an n×n chessboard such that no two queens attack each other.
