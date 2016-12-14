@@ -317,6 +317,47 @@ public:
 };
 /*
 
+252. Meeting Rooms (Easy)
+
+Given an array of meeting time intervals consisting of start and end times [[s1,e1],[s2,e2],...] (si < ei), determine if a person could attend all meetings.
+
+For example,
+Given [[0, 30],[5, 10],[15, 20]],
+return false.
+
+*/
+/**
+* Definition for an interval.
+* struct Interval {
+*     int start;
+*     int end;
+*     Interval() : start(0), end(0) {}
+*     Interval(int s, int e) : start(s), end(e) {}
+* };
+*/
+class Comp {
+public:
+	bool operator()(Interval i1, Interval i2) {
+		return i1.end < i2.end;
+	}
+} comp;
+class Solution {
+public:
+	bool canAttendMeetings(vector<Interval>& intervals) {
+		if (intervals.empty()) {
+			return true;
+		}
+		sort(intervals.begin(), intervals.end(), comp);
+		for (int i = 0; i < intervals.size() - 1; i++) {
+			if (intervals[i].end > intervals[i + 1].start) {
+				return false;
+			}
+		}
+		return true;
+	}
+};
+/*
+
 274. H-Index (Medium)
 
 Given an array of citations (each citation is a non-negative integer) of a researcher, write a function to compute the researcher's h-index.

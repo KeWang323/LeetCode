@@ -315,6 +315,117 @@ public:
 };
 /*
 
+295. Find Median from Data Stream (Hard)
+
+Median is the middle value in an ordered integer list. If the size of the list is even, there is no middle value. So the median is the mean of the two middle value.
+
+Examples:
+[2,3,4] , the median is 3
+
+[2,3], the median is (2 + 3) / 2 = 2.5
+
+Design a data structure that supports the following two operations:
+
+void addNum(int num) - Add a integer number from the data stream to the data structure.
+double findMedian() - Return the median of all elements so far.
+For example:
+
+add(1)
+add(2)
+findMedian() -> 1.5
+add(3)
+findMedian() -> 2
+
+*/
+class min_h {
+public:
+	bool operator()(int num1, int num2) {
+		return num1 > num2;
+	}
+};
+class MedianFinder {
+public:
+	priority_queue<int, vector<int>, min_h> pr;
+	priority_queue<int, vector<int>> pl;
+	// Adds a number into the data structure.
+	void addNum(int num) {
+		if (pl.size() == pr.size()) {
+			if (pl.empty() || num < pl.top()) {
+				pl.push(num);
+			}
+			else {
+				pr.push(num);
+			}
+		}
+		else if (pl.size() < pr.size()) {
+			pr.push(num);
+			pl.push(pr.top());
+			pr.pop();
+		}
+		else {
+			pl.push(num);
+			pr.push(pl.top());
+			pl.pop();
+		}
+	}
+	// Returns the median of current data stream
+	double findMedian() {
+		if (pr.size() == pl.size()) {
+			if (pr.empty()) {
+				return (double)0;
+			}
+			return (double)(pr.top() + pl.top()) / 2;
+		}
+		else if (pr.size() > pl.size()) {
+			return (double)pr.top();
+		}
+		return (double)pl.top();
+	}
+};
+// Your MedianFinder object will be instantiated and called as such:
+// MedianFinder mf;
+// mf.addNum(1);
+// mf.findMedian();
+/*
+
+346. Moving Average from Data Stream (Easy)
+
+Given a stream of integers and a window size, calculate the moving average of all integers in the sliding window.
+
+For example,
+MovingAverage m = new MovingAverage(3);
+m.next(1) = 1
+m.next(10) = (1 + 10) / 2
+m.next(3) = (1 + 10 + 3) / 3
+m.next(5) = (10 + 3 + 5) / 3
+
+*/
+class MovingAverage {
+public:
+	/** Initialize your data structure here. */
+	int _size = 0, sum = 0;
+	deque<int> d;
+	MovingAverage(int size) {
+		_size = size;
+	}
+
+	double next(int val) {
+		while (d.size() >= _size) {
+			sum -= d.front();
+			d.pop_front();
+		}
+		sum += val;
+		d.push_back(val);
+		return (double)sum / d.size();
+	}
+};
+/**
+* Your MovingAverage object will be instantiated and called as such:
+* MovingAverage obj = new MovingAverage(size);
+* double param_1 = obj.next(val);
+*/
+/*
+
 355. Design Twitter (Medium)
 
 Design a simplified version of Twitter where users can post tweets, follow/unfollow another user and is able to see the 10 most recent tweets in the user's news feed. Your design should support the following methods:

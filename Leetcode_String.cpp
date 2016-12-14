@@ -769,6 +769,55 @@ public:
 };
 /*
 
+76. Minimum Window Substring (Hard)
+
+Given a string S and a string T, find the minimum window in S which will contain all the characters in T in complexity O(n).
+
+For example,
+S = "ADOBECODEBANC"
+T = "ABC"
+Minimum window is "BANC".
+
+Note:
+If there is no such window in S that covers all characters in T, return the empty string "".
+
+If there are multiple such windows, you are guaranteed that there will always be only one unique minimum window in S.
+
+*/
+class Solution {
+public:
+	string minWindow(string s, string t) {
+		unordered_map<char, int> mapping;
+		for (char cha : t) {
+			mapping[cha]++;
+		}
+		int i = 0, len = s.size() + 1;
+		int slow = 0, fast = 0, cnt = mapping.size();
+		while (fast < s.size()) {
+			if (mapping.find(s[fast]) != mapping.end()) {
+				if (--mapping[s[fast]] == 0) {
+					cnt--;
+				}
+				while (cnt == 0 && (mapping.find(s[slow]) == mapping.end() || mapping[s[slow]] < 0)) {
+					slow++;
+					if (mapping.find(s[slow - 1]) != mapping.end()) {
+						mapping[s[slow - 1]]++;
+					}
+				}
+			}
+			if (cnt == 0) {
+				if (len > fast - slow) {
+					i = slow;
+					len = fast - slow + 1;
+				}
+			}
+			fast++;
+		}
+		return len == s.size() + 1 ? "" : s.substr(i, len);
+	}
+};
+/*
+
 91. Decode Ways (Medium)
 
 A message containing letters from A-Z is being encoded to numbers using the following mapping:

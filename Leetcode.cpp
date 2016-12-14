@@ -2285,6 +2285,48 @@ public:
 };
 /*
 
+60. Permutation Sequence (Medium)
+
+The set [1,2,3,…,n] contains a total of n! unique permutations.
+
+By listing and labeling all of the permutations in order,
+We get the following sequence (ie, for n = 3):
+
+"123"
+"132"
+"213"
+"231"
+"312"
+"321"
+Given n and k, return the kth permutation sequence.
+
+Note: Given n will be between 1 and 9 inclusive.
+
+*/
+class Solution {
+public:
+	string getPermutation(int n, int k) {
+		int i, j, f = 1;
+		string s(n, '0');
+		for (i = 1;i <= n;i++) {
+			f *= i;
+			s[i - 1] += i;
+		}
+		for (i = 0, k--; i < n; i++) {
+			f /= n - i;
+			j = i + k / f;
+			char c = s[j];
+			for (;j > i;j--) {
+				s[j] = s[j - 1];
+			}
+			k %= f;
+			s[i] = c;
+		}
+		return s;
+	}
+};
+/*
+
 61. Rotate List (Medium)
 
 Given a list, rotate the list to the right by k places, where k is non-negative.
@@ -2755,6 +2797,55 @@ public:
 				k++;
 			}
 		}
+	}
+};
+/*
+
+76. Minimum Window Substring (Hard)
+
+Given a string S and a string T, find the minimum window in S which will contain all the characters in T in complexity O(n).
+
+For example,
+S = "ADOBECODEBANC"
+T = "ABC"
+Minimum window is "BANC".
+
+Note:
+If there is no such window in S that covers all characters in T, return the empty string "".
+
+If there are multiple such windows, you are guaranteed that there will always be only one unique minimum window in S.
+
+*/
+class Solution {
+public:
+	string minWindow(string s, string t) {
+		unordered_map<char, int> mapping;
+		for (char cha : t) {
+			mapping[cha]++;
+		}
+		int i = 0, len = s.size() + 1;
+		int slow = 0, fast = 0, cnt = mapping.size();
+		while (fast < s.size()) {
+			if (mapping.find(s[fast]) != mapping.end()) {
+				if (--mapping[s[fast]] == 0) {
+					cnt--;
+				}
+				while (cnt == 0 && (mapping.find(s[slow]) == mapping.end() || mapping[s[slow]] < 0)) {
+					slow++;
+					if (mapping.find(s[slow - 1]) != mapping.end()) {
+						mapping[s[slow - 1]]++;
+					}
+				}
+			}
+			if (cnt == 0) {
+				if (len > fast - slow) {
+					i = slow;
+					len = fast - slow + 1;
+				}
+			}
+			fast++;
+		}
+		return len == s.size() + 1 ? "" : s.substr(i, len);
 	}
 };
 /*
@@ -7991,6 +8082,79 @@ public:
 };
 /*
 
+295. Find Median from Data Stream (Hard)
+
+Median is the middle value in an ordered integer list. If the size of the list is even, there is no middle value. So the median is the mean of the two middle value.
+
+Examples:
+[2,3,4] , the median is 3
+
+[2,3], the median is (2 + 3) / 2 = 2.5
+
+Design a data structure that supports the following two operations:
+
+void addNum(int num) - Add a integer number from the data stream to the data structure.
+double findMedian() - Return the median of all elements so far.
+For example:
+
+add(1)
+add(2)
+findMedian() -> 1.5
+add(3)
+findMedian() -> 2
+
+*/
+class min_h {
+public:
+	bool operator()(int num1, int num2) {
+		return num1 > num2;
+	}
+};
+class MedianFinder {
+public:
+	priority_queue<int, vector<int>, min_h> pr;
+	priority_queue<int, vector<int>> pl;
+	// Adds a number into the data structure.
+	void addNum(int num) {
+		if (pl.size() == pr.size()) {
+			if (pl.empty() || num < pl.top()) {
+				pl.push(num);
+			}
+			else {
+				pr.push(num);
+			}
+		}
+		else if (pl.size() < pr.size()) {
+			pr.push(num);
+			pl.push(pr.top());
+			pr.pop();
+		}
+		else {
+			pl.push(num);
+			pr.push(pl.top());
+			pl.pop();
+		}
+	}
+	// Returns the median of current data stream
+	double findMedian() {
+		if (pr.size() == pl.size()) {
+			if (pr.empty()) {
+				return (double)0;
+			}
+			return (double)(pr.top() + pl.top()) / 2;
+		}
+		else if (pr.size() > pl.size()) {
+			return (double)pr.top();
+		}
+		return (double)pl.top();
+	}
+};
+// Your MedianFinder object will be instantiated and called as such:
+// MedianFinder mf;
+// mf.addNum(1);
+// mf.findMedian();
+/*
+
 299. Bulls and Cows (Easy)
 
 You are playing the following Bulls and Cows game with your friend: You write down a number and ask your friend to guess what the number is. Each time your friend makes a guess, you provide a hint that indicates how many digits in said guess match your secret number exactly in both digit and position (called "bulls") and how many digits match the secret number but locate in the wrong position (called "cows"). Your friend will use successive guesses and hints to eventually derive the secret number.
@@ -8537,6 +8701,44 @@ public:
 		return s;
 	}
 };
+/*
+
+346. Moving Average from Data Stream (Easy)
+
+Given a stream of integers and a window size, calculate the moving average of all integers in the sliding window.
+
+For example,
+MovingAverage m = new MovingAverage(3);
+m.next(1) = 1
+m.next(10) = (1 + 10) / 2
+m.next(3) = (1 + 10 + 3) / 3
+m.next(5) = (10 + 3 + 5) / 3
+
+*/
+class MovingAverage {
+public:
+	/** Initialize your data structure here. */
+	int _size = 0, sum = 0;
+	deque<int> d;
+	MovingAverage(int size) {
+		_size = size;
+	}
+
+	double next(int val) {
+		while (d.size() >= _size) {
+			sum -= d.front();
+			d.pop_front();
+		}
+		sum += val;
+		d.push_back(val);
+		return (double)sum / d.size();
+	}
+};
+/**
+* Your MovingAverage object will be instantiated and called as such:
+* MovingAverage obj = new MovingAverage(size);
+* double param_1 = obj.next(val);
+*/
 /*
 
 347. Top K Frequent Elements (Medium)
@@ -9373,11 +9575,9 @@ public:
 
 383. Ransom Note (Easy)
 
- Given  an arbitrary  ransom  note  string and another string containing letters from  all the 
-magazines,  write a function that will return true if the ransom  note can be constructed 
-from the magazines ; otherwise, it will return false.  
+ Given an arbitrary ransom note string and another string containing letters from all the magazines, write a function that will return true if the ransom note can be constructed from the magazines ; otherwise, it will return false.
 
-Each letter  in  the  magazine string can  only be  used once  in  your ransom  note.
+Each letter in the magazine string can only be used once in your ransom note.
 
 Note:
 You may assume that both strings contain only lowercase letters.
@@ -9396,6 +9596,85 @@ public:
 			magazine.erase(cha_m, 1);
 		}
 		return true;
+	}
+};
+/*
+
+384. Shuffle an Array (Medium)
+
+Shuffle a set of numbers without duplicates.
+
+Example:
+
+// Init an array with set 1, 2, and 3.
+int[] nums = {1,2,3};
+Solution solution = new Solution(nums);
+
+// Shuffle the array [1,2,3] and return its result. Any permutation of [1,2,3] must equally likely to be returned.
+solution.shuffle();
+
+// Resets the array back to its original configuration [1,2,3].
+solution.reset();
+
+// Returns the random shuffling of array [1,2,3].
+solution.shuffle();
+
+*/
+class Solution {
+public:
+	vector<int> original, shuffled;
+	Solution(vector<int> nums) {
+		original = nums;
+		shuffled = nums;
+	}
+	/** Resets the array to its original configuration and return it. */
+	vector<int> reset() {
+		return original;
+	}
+	/** Returns a random shuffling of the array. */
+	vector<int> shuffle() {
+		for (int i = 0; i < shuffled.size(); i++) {
+			int index = rand() % (shuffled.size() - i);
+			swap(shuffled[i], shuffled[index + i]);
+		}
+		return shuffled;
+	}
+};
+/**
+* Your Solution object will be instantiated and called as such:
+* Solution obj = new Solution(nums);
+* vector<int> param_1 = obj.reset();
+* vector<int> param_2 = obj.shuffle();
+*/
+/*
+
+387. First Unique Character in a String (Easy)
+
+Given a string, find the first non-repeating character in it and return it's index. If it doesn't exist, return -1.
+
+Examples:
+
+s = "leetcode"
+return 0.
+
+s = "loveleetcode",
+return 2.
+Note: You may assume the string contain only lowercase letters.
+
+*/
+class Solution {
+public:
+	int firstUniqChar(string s) {
+		int t[26] = { 0 };
+		for (int i = 0;i < s.size();i++) {
+			t[s[i] - 'a']++;
+		}
+		for (int i = 0;i < s.size();i++) {
+			if (t[s[i] - 'a'] == 1) {
+				return i;
+			}
+		}
+		return -1;
 	}
 };
 /*
@@ -9678,6 +9957,57 @@ private:
 			sumOfLeftLeaves(root->right, root, res);
 		}
 
+	}
+};
+/*
+
+405. Convert a Number to Hexadecimal (Easy)
+
+Given an integer, write an algorithm to convert it to hexadecimal. For negative integer, two’s complement method is used.
+
+Note:
+
+All letters in hexadecimal (a-f) must be in lowercase.
+The hexadecimal string must not contain extra leading 0s. If the number is zero, it is represented by a single zero character '0'; otherwise, the first character in the hexadecimal string will not be the zero character.
+The given number is guaranteed to fit within the range of a 32-bit signed integer.
+You must not use any method provided by the library which converts/formats the number to hex directly.
+Example 1:
+
+Input:
+26
+
+Output:
+"1a"
+Example 2:
+
+Input:
+-1
+
+Output:
+"ffffffff"
+
+*/
+class Solution {
+public:
+	string toHex(int num) {
+		if (num == 0) {
+			return "0";
+		}
+		int cnt = 0;
+		string res;
+		while (num != 0 && cnt < 8) {
+			int temp = num & 15;
+			if (temp < 10) {
+				res += temp + '0';
+			}
+			else {
+				res += temp - 10 + 'a';
+			}
+			num = num >> 4;
+			cnt++;
+		}
+		reverse(res.begin(), res.end());
+		return res;
 	}
 };
 /*
