@@ -1702,6 +1702,44 @@ public:
 };
 /*
 
+45. Jump Game II (Hard)
+
+Given an array of non-negative integers, you are initially positioned at the first index of the array.
+
+Each element in the array represents your maximum jump length at that position.
+
+Your goal is to reach the last index in the minimum number of jumps.
+
+For example:
+Given array A = [2,3,1,1,4]
+
+The minimum number of jumps to reach the last index is 2. (Jump 1 step from index 0 to 1, then 3 steps to the last index.)
+
+Note:
+You can assume that you can always reach the last index.
+
+*/
+class Solution {
+public:
+	int jump(vector<int>& nums) {
+		int n = nums.size(), start = 0, end = 0, step = 0;
+		while (end < n - 1) {
+			step++;
+			int maxend = end + 1;
+			for (int i = start; i <= end; i++) {
+				if (i + nums[i] >= n - 1) {
+					return step;
+				}
+				maxend = max(maxend, i + nums[i]);
+			}
+			start = end + 1;
+			end = maxend;
+		}
+		return step;
+	}
+};
+/*
+
 46. Permutations (Medium)
 
 Given a collection of distinct numbers, return all possible permutations.
@@ -3149,6 +3187,39 @@ public:
 			}
 		}
 		return head;
+	}
+};
+/*
+
+84. Largest Rectangle in Histogram (Hard)
+
+Given n non-negative integers representing the histogram's bar height where the width of each bar is 1, find the area of largest rectangle in the histogram.
+
+Above is a histogram where width of each bar is 1, given height = [2,1,5,6,2,3].
+
+The largest rectangle is shown in the shaded area, which has area = 10 unit.
+
+For example,
+Given heights = [2,1,5,6,2,3],
+return 10.
+
+*/
+class Solution {
+public:
+	int largestRectangleArea(vector<int>& heights) {
+		stack<int> s;
+		int res = 0;
+		for (int i = 0; i <= heights.size(); i++) {
+			int cur = i == heights.size() ? 0 : heights[i];
+			while (!s.empty() && cur <= heights[s.top()]) {
+				int height = heights[s.top()];
+				s.pop();
+				int left = s.empty() ? 0 : s.top() + 1;
+				res = max(res, height * (i - left));
+			}
+			s.push(i);
+		}
+		return res;
 	}
 };
 /*
@@ -4630,6 +4701,37 @@ public:
 			cur = cur->next;
 		}
 		return newhead;
+	}
+};
+/*
+
+139. Word Break (Medium)
+
+Given a string s and a dictionary of words dict, determine if s can be segmented into a space-separated sequence of one or more dictionary words.
+
+For example, given
+s = "leetcode",
+dict = ["leet", "code"].
+
+Return true because "leetcode" can be segmented as "leet code".
+
+*/
+class Solution {
+public:
+	bool wordBreak(string s, unordered_set<string>& wordDict) {
+		vector<bool> t(s.size() + 1, false);
+		t[0] = true;
+		for (int i = 1; i <= s.size(); i++) {
+			for (int j = i - 1; j >= 0; j--) {
+				if (t[j]) {
+					if (wordDict.find(s.substr(j, i - j)) != wordDict.end()) {
+						t[i] = true;
+						break;
+					}
+				}
+			}
+		}
+		return t.back();
 	}
 };
 /*
@@ -8082,6 +8184,43 @@ public:
 };
 /*
 
+293. Flip Game (Easy)
+
+You are playing the following Flip Game with your friend: Given a string that contains only these two characters: + and -, you and your friend take turns to flip two consecutive "++" into "--". The game ends when a person can no longer make a move and therefore the other person will be the winner.
+
+Write a function to compute all possible states of the string after one valid move.
+
+For example, given s = "++++", after one move, it may become one of the following states:
+
+[
+"--++",
+"+--+",
+"++--"
+]
+If there is no valid move, return an empty list [].
+
+*/
+class Solution {
+public:
+	vector<string> generatePossibleNextMoves(string s) {
+		if (s.empty()) {
+			return{};
+		}
+		vector<string> res;
+		for (int i = 0; i < s.size() - 1; i++) {
+			if (s[i] == '+' && s[i + 1] == '+') {
+				s[i] = '-';
+				s[i + 1] = '-';
+				res.push_back(s);
+				s[i] = '+';
+				s[i + 1] = '+';
+			}
+		}
+		return res;
+	}
+};
+/*
+
 295. Find Median from Data Stream (Hard)
 
 Median is the middle value in an ordered integer list. If the size of the list is even, there is no middle value. So the median is the mean of the two middle value.
@@ -10126,5 +10265,118 @@ public:
 		}
 		reverse(res.begin(), res.end());
 		return res;
+	}
+};
+/*
+
+438. Find All Anagrams in a String (Easy)
+
+Given a string s and a non-empty string p, find all the start indices of p's anagrams in s.
+
+Strings consists of lowercase English letters only and the length of both strings s and p will not be larger than 20,100.
+
+The order of output does not matter.
+
+Example 1:
+
+Input:
+s: "cbaebabacd" p: "abc"
+
+Output:
+[0, 6]
+
+Explanation:
+The substring with start index = 0 is "cba", which is an anagram of "abc".
+The substring with start index = 6 is "bac", which is an anagram of "abc".
+Example 2:
+
+Input:
+s: "abab" p: "ab"
+
+Output:
+[0, 1, 2]
+
+Explanation:
+The substring with start index = 0 is "ab", which is an anagram of "ab".
+The substring with start index = 1 is "ba", which is an anagram of "ab".
+The substring with start index = 2 is "ab", which is an anagram of "ab".
+
+*/
+class Solution {
+public:
+	vector<int> findAnagrams(string s, string p) {
+		if (s.length() < p.length()) {
+			return{};
+		}
+		vector<int> res;
+		int mapping[26] = { 0 };
+		for (char cha : p) {
+			mapping[cha - 'a']++;
+		}
+		int cnt = p.size(), i = 0, j = 0;
+		while (j < s.length()) {
+			if (j - i == p.length() && mapping[s[i++] - 'a']++ >= 0) {
+				cnt++;
+			}
+			if (--mapping[s[j++] - 'a'] >= 0) {
+				cnt--;
+			}
+			if (cnt == 0) {
+				res.push_back(i);
+			}
+		}
+		return res;
+	}
+};
+/*
+
+441. Arranging Coins (Easy)
+
+You have a total of n coins that you want to form in a staircase shape, where every k-th row must have exactly k coins.
+
+Given n, find the total number of full staircase rows that can be formed.
+
+n is a non-negative integer and fits within the range of a 32-bit signed integer.
+
+Example 1:
+
+n = 5
+
+The coins can form the following rows:
+¤
+¤ ¤
+¤ ¤
+
+Because the 3rd row is incomplete, we return 2.
+Example 2:
+
+n = 8
+
+The coins can form the following rows:
+¤
+¤ ¤
+¤ ¤ ¤
+¤ ¤
+
+Because the 4th row is incomplete, we return 3.
+
+*/
+class Solution {
+public:
+	int arrangeCoins(int n) {
+		if (n == 0) {
+			return 0;
+		}
+		int l = 1, r = n;
+		while (l < r) {
+			long mid = l + (r - l + 1) / 2;
+			if (mid * (mid + 1) / 2.0 <= n) {
+				l = mid;
+			}
+			else if (mid * (mid + 1) / 2 > n) {
+				r = mid - 1;
+			}
+		}
+		return r;
 	}
 };

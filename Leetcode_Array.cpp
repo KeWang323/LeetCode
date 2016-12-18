@@ -634,6 +634,44 @@ public:
 };
 /*
 
+45. Jump Game II (Hard)
+
+Given an array of non-negative integers, you are initially positioned at the first index of the array.
+
+Each element in the array represents your maximum jump length at that position.
+
+Your goal is to reach the last index in the minimum number of jumps.
+
+For example:
+Given array A = [2,3,1,1,4]
+
+The minimum number of jumps to reach the last index is 2. (Jump 1 step from index 0 to 1, then 3 steps to the last index.)
+
+Note:
+You can assume that you can always reach the last index.
+
+*/
+class Solution {
+public:
+	int jump(vector<int>& nums) {
+		int n = nums.size(), start = 0, end = 0, step = 0;
+		while (end < n - 1) {
+			step++;
+			int maxend = end + 1;
+			for (int i = start; i <= end; i++) {
+				if (i + nums[i] >= n - 1) {
+					return step;
+				}
+				maxend = max(maxend, i + nums[i]);
+			}
+			start = end + 1;
+			end = maxend;
+		}
+		return step;
+	}
+};
+/*
+
 48. Rotate Image (Medium)
 
 You are given an n x n 2D matrix representing an image.
@@ -1372,6 +1410,39 @@ public:
 			}
 		}
 		return false;
+	}
+};
+/*
+
+84. Largest Rectangle in Histogram (Hard)
+
+Given n non-negative integers representing the histogram's bar height where the width of each bar is 1, find the area of largest rectangle in the histogram.
+
+Above is a histogram where width of each bar is 1, given height = [2,1,5,6,2,3].
+
+The largest rectangle is shown in the shaded area, which has area = 10 unit.
+
+For example,
+Given heights = [2,1,5,6,2,3],
+return 10.
+
+*/
+class Solution {
+public:
+	int largestRectangleArea(vector<int>& heights) {
+		stack<int> s;
+		int res = 0;
+		for (int i = 0; i <= heights.size(); i++) {
+			int cur = i == heights.size() ? 0 : heights[i];
+			while (!s.empty() && cur <= heights[s.top()]) {
+				int height = heights[s.top()];
+				s.pop();
+				int left = s.empty() ? 0 : s.top() + 1;
+				res = max(res, height * (i - left));
+			}
+			s.push(i);
+		}
+		return res;
 	}
 };
 /*

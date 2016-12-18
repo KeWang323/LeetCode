@@ -103,6 +103,39 @@ public:
 };
 /*
 
+84. Largest Rectangle in Histogram (Hard)
+
+Given n non-negative integers representing the histogram's bar height where the width of each bar is 1, find the area of largest rectangle in the histogram.
+
+Above is a histogram where width of each bar is 1, given height = [2,1,5,6,2,3].
+
+The largest rectangle is shown in the shaded area, which has area = 10 unit.
+
+For example,
+Given heights = [2,1,5,6,2,3],
+return 10.
+
+*/
+class Solution {
+public:
+	int largestRectangleArea(vector<int>& heights) {
+		stack<int> s;
+		int res = 0;
+		for (int i = 0; i <= heights.size(); i++) {
+			int cur = i == heights.size() ? 0 : heights[i];
+			while (!s.empty() && cur <= heights[s.top()]) {
+				int height = heights[s.top()];
+				s.pop();
+				int left = s.empty() ? 0 : s.top() + 1;
+				res = max(res, height * (i - left));
+			}
+			s.push(i);
+		}
+		return res;
+	}
+};
+/*
+
 94. Binary Tree Inorder Traversal (Medium)
 
 Given a binary tree, return the inorder traversal of its nodes' values.
