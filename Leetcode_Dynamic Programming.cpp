@@ -499,6 +499,57 @@ public:
 };
 /*
 
+132. Palindrome Partitioning II (Hard)
+
+Given a string s, partition s such that every substring of the partition is a palindrome.
+
+Return the minimum cuts needed for a palindrome partitioning of s.
+
+For example, given s = "aab",
+Return 1 since the palindrome partitioning ["aa","b"] could be produced using 1 cut.
+
+*/
+class Solution {
+public:
+	int minCut(string s) {
+		int _size = s.size();
+		vector<vector<bool>> t(_size, vector<bool>(_size, false));
+		vector<int> t2(_size + 1);
+		for (int i = 0; i <= _size; i++) {
+			t2[i] = i - 1;
+		}
+		for (int j = 1; j < _size; j++) {
+			for (int i = j; i >= 0; i--) {
+				if (s[i] == s[j] && (j - i < 2 || t[i + 1][j - 1])) {
+					t[i][j] = true;
+					t2[j + 1] = min(t2[j + 1], 1 + t2[i]);
+				}
+			}
+		}
+		return t2.back();
+	}
+};
+class Solution {
+public:
+	int minCut(string s) {
+		int _size = s.size();
+		vector<int> t(_size + 1);
+		for (int i = 0; i <= _size; i++) {
+			t[i] = i - 1;
+		}
+		for (int i = 1; i < _size; i++) {
+			for (int j = 0; i - j >= 0 && i + j < _size && s[i - j] == s[i + j]; j++) {
+				t[i + j + 1] = min(t[i + j + 1], 1 + t[i - j]);
+			}
+			for (int j = 0; i - j - 1 >= 0 && i + j < _size && s[i - j - 1] == s[i + j]; j++) {
+				t[i + j + 1] = min(t[i + j + 1], 1 + t[i - j - 1]);
+			}
+		}
+		return t.back();
+	}
+};
+/*
+
 152. Maximum Product Subarray (Medium)
 
 Find the contiguous subarray within an array (containing at least one number) which has the largest product.
@@ -671,6 +722,40 @@ public:
 };
 /*
 
+256. Paint House (Medium)
+
+There are a row of n houses, each house can be painted with one of the three colors: red, blue or green. The cost of painting each house with a certain color is different. You have to paint all the houses such that no two adjacent houses have the same color.
+
+The cost of painting each house with a certain color is represented by a n x 3 cost matrix. For example, costs[0][0] is the cost of painting house 0 with color red; costs[1][2] is the cost of painting house 1 with color green, and so on... Find the minimum cost to paint all houses.
+
+Note:
+All costs are positive integers.
+
+*/
+class Solution {
+public:
+	int minCost(vector<vector<int>>& costs) {
+		if (costs.size() == 0 || costs[0].size() == 0) {
+			return 0;
+		}
+		for (int i = 1; i < costs.size(); i++) {
+			for (int j = 0; j < 3; j++) {
+				if (j == 0) {
+					costs[i][0] += min(costs[i - 1][1], costs[i - 1][2]);
+				}
+				else if (j == 1) {
+					costs[i][1] += min(costs[i - 1][0], costs[i - 1][2]);
+				}
+				else {
+					costs[i][2] += min(costs[i - 1][0], costs[i - 1][1]);
+				}
+			}
+		}
+		return min(costs.back()[0], min(costs.back()[1], costs.back()[2]));
+	}
+};
+/*
+
 264. Ugly Number II (Medium)
 
 Write a program to find the n-th ugly number.
@@ -702,6 +787,40 @@ public:
 			table.push_back(tmp);
 		}
 		return table[n - 1];
+	}
+};
+/*
+
+276. Paint Fence (Easy)
+
+There is a fence with n posts, each post can be painted with one of the k colors.
+
+You have to paint all the posts such that no more than two adjacent fence posts have the same color.
+
+Return the total number of ways you can paint the fence.
+
+Note:
+n and k are non-negative integers.
+
+*/
+class Solution {
+public:
+	int numWays(int n, int k) {
+		if (n == 0 || k == 0) {
+			return 0;
+		}
+		pair<int, int> p1 = make_pair(0, k), p2;
+		for (int i = 2; i <= n; i++) {
+			if (i & 1) {
+				p1.first = p2.second;
+				p1.second = (p2.first + p2.second) * (k - 1);
+			}
+			else {
+				p2.first = p1.second;
+				p2.second = (p1.first + p1.second) * (k - 1);
+			}
+		}
+		return n & 1 ? p1.first + p1.second : p2.first + p2.second;
 	}
 };
 /*
@@ -968,6 +1087,37 @@ public:
 		for (int i = 1; i <= num; i++)
 			table[i] = 1 + table[i & (i - 1)];
 		return table;
+	}
+};
+/*
+
+343. Integer Break (Medium)
+
+Given a positive integer n, break it into the sum of at least two positive integers and maximize the product of those integers. Return the maximum product you can get.
+
+For example, given n = 2, return 1 (2 = 1 + 1); given n = 10, return 36 (10 = 3 + 3 + 4).
+
+Note: You may assume that n is not less than 2 and not larger than 58.
+
+Hint:
+
+There is a simple O(n) solution to this problem.
+You may check the breaking results of n ranging from 7 to 10 to discover the regularities.
+
+*/
+class Solution {
+public:
+	int integerBreak(int n) {
+		if (n < 3) {
+			return 1;
+		}
+		vector<int> t(n + 1, 1);
+		for (int i = 3; i <= n; i++) {
+			for (int j = 1; j < i; j++) {
+				t[i] = max(t[i], max(t[j], j) * (i - j));
+			}
+		}
+		return t.back();
 	}
 };
 /*
