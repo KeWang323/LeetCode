@@ -44,8 +44,12 @@ public:
 		while (i < j) {
 			int h_min = min(height[i], height[j]);
 			water = max(water, h_min * (j - i));
-			while (height[j] <= h_min && i < j) j--;
-			while (height[i] <= h_min && i < j) i++;
+			while (height[j] <= h_min && i < j) {
+				j--;
+			}
+			while (height[i] <= h_min && i < j) {
+				i++;
+			}
 		}
 		return water;
 	}
