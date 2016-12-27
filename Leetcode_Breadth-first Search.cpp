@@ -322,3 +322,47 @@ public:
 		return newhead;
 	}
 };
+/*
+
+199. Binary Tree Right Side View (Medium)
+
+Given a binary tree, imagine yourself standing on the right side of it, return the values of the nodes you can see ordered from top to bottom.
+
+For example:
+Given the following binary tree,
+1            <---
+/   \
+2     3         <---
+\     \
+5     4       <---
+You should return [1, 3, 4].
+
+*/
+class Solution {
+public:
+	vector<int> rightSideView(TreeNode* root) {
+		if (root == NULL) {
+			return{};
+		}
+		vector<int> res;
+		queue<TreeNode*> q;
+		q.push(root);
+		while (!q.empty()) {
+			int _size = q.size();
+			for (int i = 0; i < _size; i++) {
+				TreeNode* node = q.front();
+				q.pop();
+				if (node->left != NULL) {
+					q.push(node->left);
+				}
+				if (node->right != NULL) {
+					q.push(node->right);
+				}
+				if (i == _size - 1) {
+					res.push_back(node->val);
+				}
+			}
+		}
+		return res;
+	}
+};

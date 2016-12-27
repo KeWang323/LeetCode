@@ -508,6 +508,196 @@ private:
 };
 /*
 
+114. Flatten Binary Tree to Linked List (Medium)
+
+Given a binary tree, flatten it to a linked list in-place.
+
+For example,
+Given
+
+1
+/ \
+2   5
+/ \   \
+3   4   6
+The flattened tree should look like:
+1
+\
+2
+\
+3
+\
+4
+\
+5
+\
+6
+
+*/
+/**
+* Definition for a binary tree node.
+* struct TreeNode {
+*     int val;
+*     TreeNode *left;
+*     TreeNode *right;
+*     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+* };
+*/
+class Solution {
+public:
+	void flatten(TreeNode *root) {
+		while (root) {
+			if (root->left && root->right) {
+				TreeNode* t = root->left;
+				while (t->right) {
+					t = t->right;
+				}
+				t->right = root->right;
+			}
+			if (root->left) {
+				root->right = root->left;
+			}
+			root->left = NULL;
+			root = root->right;
+		}
+	}
+};
+/*
+
+116. Populating Next Right Pointers in Each Node (Medium)
+
+Given a binary tree
+
+struct TreeLinkNode {
+TreeLinkNode *left;
+TreeLinkNode *right;
+TreeLinkNode *next;
+}
+Populate each next pointer to point to its next right node. If there is no next right node, the next pointer should be set to NULL.
+
+Initially, all next pointers are set to NULL.
+
+Note:
+
+You may only use constant extra space.
+You may assume that it is a perfect binary tree (ie, all leaves are at the same level, and every parent has two children).
+For example,
+Given the following perfect binary tree,
+1
+/  \
+2    3
+/ \  / \
+4  5  6  7
+After calling your function, the tree should look like:
+1 -> NULL
+/  \
+2 -> 3 -> NULL
+/ \  / \
+4->5->6->7 -> NULL
+
+*/
+/**
+* Definition for binary tree with next pointer.
+* struct TreeLinkNode {
+*  int val;
+*  TreeLinkNode *left, *right, *next;
+*  TreeLinkNode(int x) : val(x), left(NULL), right(NULL), next(NULL) {}
+* };
+*/
+class Solution {
+public:
+	void connect(TreeLinkNode *root) {
+		if (root == NULL) {
+			return;
+		}
+		queue<TreeLinkNode*> q;
+		q.push(root);
+		while (!q.empty()) {
+			int _size = q.size();
+			for (int i = 0; i < _size; i++) {
+				TreeLinkNode* node = q.front();
+				q.pop();
+				if (i < _size - 1) {
+					node->next = q.front();
+				}
+				else {
+					node->next = NULL;
+				}
+				if (node->left != NULL) {
+					q.push(node->left);
+				}
+				if (node->right != NULL) {
+					q.push(node->right);
+				}
+			}
+		}
+	}
+};
+/*
+
+117. Populating Next Right Pointers in Each Node II (Hard)
+
+Follow up for problem "Populating Next Right Pointers in Each Node".
+
+What if the given tree could be any binary tree? Would your previous solution still work?
+
+Note:
+
+You may only use constant extra space.
+For example,
+Given the following binary tree,
+1
+/  \
+2    3
+/ \    \
+4   5    7
+After calling your function, the tree should look like:
+1 -> NULL
+/  \
+2 -> 3 -> NULL
+/ \    \
+4-> 5 -> 7 -> NULL
+
+*/
+/**
+* Definition for binary tree with next pointer.
+* struct TreeLinkNode {
+*  int val;
+*  TreeLinkNode *left, *right, *next;
+*  TreeLinkNode(int x) : val(x), left(NULL), right(NULL), next(NULL) {}
+* };
+*/
+class Solution {
+public:
+	void connect(TreeLinkNode *root) {
+		if (root == NULL) {
+			return;
+		}
+		queue<TreeLinkNode*> q;
+		q.push(root);
+		while (!q.empty()) {
+			int _size = q.size();
+			for (int i = 0; i < _size; i++) {
+				TreeLinkNode* node = q.front();
+				q.pop();
+				if (i < _size - 1) {
+					node->next = q.front();
+				}
+				else {
+					node->next = NULL;
+				}
+				if (node->left != NULL) {
+					q.push(node->left);
+				}
+				if (node->right != NULL) {
+					q.push(node->right);
+				}
+			}
+		}
+	}
+};
+/*
+
 124. Binary Tree Maximum Path Sum (Hard)
 
 Given a binary tree, find the maximum path sum.
@@ -673,6 +863,50 @@ public:
 			}
 		}
 		return newhead;
+	}
+};
+/*
+
+199. Binary Tree Right Side View (Medium)
+
+Given a binary tree, imagine yourself standing on the right side of it, return the values of the nodes you can see ordered from top to bottom.
+
+For example:
+Given the following binary tree,
+1            <---
+/   \
+2     3         <---
+\     \
+5     4       <---
+You should return [1, 3, 4].
+
+*/
+class Solution {
+public:
+	vector<int> rightSideView(TreeNode* root) {
+		if (root == NULL) {
+			return{};
+		}
+		vector<int> res;
+		queue<TreeNode*> q;
+		q.push(root);
+		while (!q.empty()) {
+			int _size = q.size();
+			for (int i = 0; i < _size; i++) {
+				TreeNode* node = q.front();
+				q.pop();
+				if (node->left != NULL) {
+					q.push(node->left);
+				}
+				if (node->right != NULL) {
+					q.push(node->right);
+				}
+				if (i == _size - 1) {
+					res.push_back(node->val);
+				}
+			}
+		}
+		return res;
 	}
 };
 /*

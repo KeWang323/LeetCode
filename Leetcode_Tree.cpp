@@ -711,6 +711,196 @@ private:
 };
 /*
 
+114. Flatten Binary Tree to Linked List (Medium)
+
+Given a binary tree, flatten it to a linked list in-place.
+
+For example,
+Given
+
+1
+/ \
+2   5
+/ \   \
+3   4   6
+The flattened tree should look like:
+1
+\
+2
+\
+3
+\
+4
+\
+5
+\
+6
+
+*/
+/**
+* Definition for a binary tree node.
+* struct TreeNode {
+*     int val;
+*     TreeNode *left;
+*     TreeNode *right;
+*     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+* };
+*/
+class Solution {
+public:
+	void flatten(TreeNode *root) {
+		while (root) {
+			if (root->left && root->right) {
+				TreeNode* t = root->left;
+				while (t->right) {
+					t = t->right;
+				}
+				t->right = root->right;
+			}
+			if (root->left) {
+				root->right = root->left;
+			}
+			root->left = NULL;
+			root = root->right;
+		}
+	}
+};
+/*
+
+116. Populating Next Right Pointers in Each Node (Medium)
+
+Given a binary tree
+
+struct TreeLinkNode {
+TreeLinkNode *left;
+TreeLinkNode *right;
+TreeLinkNode *next;
+}
+Populate each next pointer to point to its next right node. If there is no next right node, the next pointer should be set to NULL.
+
+Initially, all next pointers are set to NULL.
+
+Note:
+
+You may only use constant extra space.
+You may assume that it is a perfect binary tree (ie, all leaves are at the same level, and every parent has two children).
+For example,
+Given the following perfect binary tree,
+1
+/  \
+2    3
+/ \  / \
+4  5  6  7
+After calling your function, the tree should look like:
+1 -> NULL
+/  \
+2 -> 3 -> NULL
+/ \  / \
+4->5->6->7 -> NULL
+
+*/
+/**
+* Definition for binary tree with next pointer.
+* struct TreeLinkNode {
+*  int val;
+*  TreeLinkNode *left, *right, *next;
+*  TreeLinkNode(int x) : val(x), left(NULL), right(NULL), next(NULL) {}
+* };
+*/
+class Solution {
+public:
+	void connect(TreeLinkNode *root) {
+		if (root == NULL) {
+			return;
+		}
+		queue<TreeLinkNode*> q;
+		q.push(root);
+		while (!q.empty()) {
+			int _size = q.size();
+			for (int i = 0; i < _size; i++) {
+				TreeLinkNode* node = q.front();
+				q.pop();
+				if (i < _size - 1) {
+					node->next = q.front();
+				}
+				else {
+					node->next = NULL;
+				}
+				if (node->left != NULL) {
+					q.push(node->left);
+				}
+				if (node->right != NULL) {
+					q.push(node->right);
+				}
+			}
+		}
+	}
+};
+/*
+
+117. Populating Next Right Pointers in Each Node II (Hard)
+
+Follow up for problem "Populating Next Right Pointers in Each Node".
+
+What if the given tree could be any binary tree? Would your previous solution still work?
+
+Note:
+
+You may only use constant extra space.
+For example,
+Given the following binary tree,
+1
+/  \
+2    3
+/ \    \
+4   5    7
+After calling your function, the tree should look like:
+1 -> NULL
+/  \
+2 -> 3 -> NULL
+/ \    \
+4-> 5 -> 7 -> NULL
+
+*/
+/**
+* Definition for binary tree with next pointer.
+* struct TreeLinkNode {
+*  int val;
+*  TreeLinkNode *left, *right, *next;
+*  TreeLinkNode(int x) : val(x), left(NULL), right(NULL), next(NULL) {}
+* };
+*/
+class Solution {
+public:
+	void connect(TreeLinkNode *root) {
+		if (root == NULL) {
+			return;
+		}
+		queue<TreeLinkNode*> q;
+		q.push(root);
+		while (!q.empty()) {
+			int _size = q.size();
+			for (int i = 0; i < _size; i++) {
+				TreeLinkNode* node = q.front();
+				q.pop();
+				if (i < _size - 1) {
+					node->next = q.front();
+				}
+				else {
+					node->next = NULL;
+				}
+				if (node->left != NULL) {
+					q.push(node->left);
+				}
+				if (node->right != NULL) {
+					q.push(node->right);
+				}
+			}
+		}
+	}
+};
+/*
+
 124. Binary Tree Maximum Path Sum (Hard)
 
 Given a binary tree, find the maximum path sum.
@@ -1019,33 +1209,76 @@ public:
 		return num;
 	}
 };
+///**
+// * Your BSTIterator will be called like this:
+// * BSTIterator i = BSTIterator(root);
+// * while (i.hasNext()) cout << i.next();
+// */
+/*
 
+199. Binary Tree Right Side View (Medium)
+
+Given a binary tree, imagine yourself standing on the right side of it, return the values of the nodes you can see ordered from top to bottom.
+
+For example:
+Given the following binary tree,
+1            <---
+/   \
+2     3         <---
+\     \
+5     4       <---
+You should return [1, 3, 4].
+
+*/
+class Solution {
+public:
+	vector<int> rightSideView(TreeNode* root) {
+		if (root == NULL) {
+			return{};
+		}
+		vector<int> res;
+		queue<TreeNode*> q;
+		q.push(root);
+		while (!q.empty()) {
+			int _size = q.size();
+			for (int i = 0; i < _size; i++) {
+				TreeNode* node = q.front();
+				q.pop();
+				if (node->left != NULL) {
+					q.push(node->left);
+				}
+				if (node->right != NULL) {
+					q.push(node->right);
+				}
+				if (i == _size - 1) {
+					res.push_back(node->val);
+				}
+			}
+		}
+		return res;
+	}
+};
+/*
+
+222. Count Complete Tree Nodes (Medium)
+
+Given a complete binary tree, count the number of nodes.
+
+Definition of a complete binary tree from Wikipedia:
+In a complete binary tree every level, except possibly the last, is completely filled,
+and all nodes in the last level are as far left as possible. It can have between 1 and
+2h nodes inclusive at the last level h.
+
+*/
 /**
- * Your BSTIterator will be called like this:
- * BSTIterator i = BSTIterator(root);
- * while (i.hasNext()) cout << i.next();
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
  */
- /*
-
- 222. Count Complete Tree Nodes (Medium)
-
- Given a complete binary tree, count the number of nodes.
-
- Definition of a complete binary tree from Wikipedia:
- In a complete binary tree every level, except possibly the last, is completely filled,
- and all nodes in the last level are as far left as possible. It can have between 1 and
- 2h nodes inclusive at the last level h.
-
- */
- /**
-  * Definition for a binary tree node.
-  * struct TreeNode {
-  *     int val;
-  *     TreeNode *left;
-  *     TreeNode *right;
-  *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
-  * };
-  */
 class Solution {
 public:
 	int countNodes(TreeNode* root) {
@@ -1266,6 +1499,70 @@ public:
 };
 /*
 
+250. Count Univalue Subtrees (Medium)
+
+Given a binary tree, count the number of uni-value subtrees.
+
+A Uni-value subtree means all nodes of the subtree have the same value.
+
+For example:
+Given binary tree,
+5
+/ \
+1   5
+/ \   \
+5   5   5
+return 4.
+
+*/
+/**
+* Definition for a binary tree node.
+* struct TreeNode {
+*     int val;
+*     TreeNode *left;
+*     TreeNode *right;
+*     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+* };
+*/
+class Solution {
+public:
+	int countUnivalSubtrees(TreeNode* root) {
+		int res = 0;
+		cout(root, res);
+		return res;
+	}
+private:
+	int cout(TreeNode* root, int& res) {
+		if (root == NULL) {
+			return 0;
+		}
+		else if (root->left == NULL && root->right == NULL) {
+			res++;
+			return 1;
+		}
+		int l = cout(root->left, res), r = cout(root->right, res);
+		if (l == 1 && r == 1) {
+			if (root->val == root->left->val && root->val == root->right->val) {
+				res += 1;
+				return 1;
+			}
+		}
+		else if (l == -1 || r == -1) {
+			return -1;
+		}
+		else if (l != 0 && root->val == root->left->val) {
+			res += 1;
+			return 1;
+		}
+		else if (r != 0 && root->val == root->right->val) {
+			res += 1;
+			return 1;
+		}
+		return -1;
+	}
+};
+/*
+
 255. Verify Preorder Sequence in Binary Search Tree (Medium)
 
 Given an array of numbers, verify whether it is the correct preorder traversal sequence of a binary search tree.
@@ -1371,6 +1668,131 @@ public:
 			}
 		}
 		return res;
+	}
+};
+/*
+
+297. Serialize and Deserialize Binary Tree (Hard)
+
+Serialization is the process of converting a data structure or object into a sequence of bits so that it can be stored in a file or memory buffer, or transmitted across a network connection link to be reconstructed later in the same or another computer environment.
+
+Design an algorithm to serialize and deserialize a binary tree. There is no restriction on how your serialization/deserialization algorithm should work. You just need to ensure that a binary tree can be serialized to a string and this string can be deserialized to the original tree structure.
+
+For example, you may serialize the following tree
+
+1
+/ \
+2   3
+/ \
+4   5
+as "[1,2,3,null,null,4,5]", just the same as how LeetCode OJ serializes a binary tree. You do not necessarily need to follow this format, so please be creative and come up with different approaches yourself.
+Note: Do not use class member/global/static variables to store states. Your serialize and deserialize algorithms should be stateless.
+
+*/
+/**
+* Definition for a binary tree node.
+* struct TreeNode {
+*     int val;
+*     TreeNode *left;
+*     TreeNode *right;
+*     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+* };
+*/
+class Codec {
+public:
+
+	// Encodes a tree to a single string.
+	string serialize(TreeNode* root) {
+		ostringstream out;
+		serialize(root, out);
+		return out.str();
+	}
+
+	// Decodes your encoded data to tree.
+	TreeNode* deserialize(string data) {
+		istringstream in(data);
+		return deserialize(in);
+	}
+private:
+	void serialize(TreeNode* root, ostringstream& out) {
+		if (root) {
+			out << root->val << ' ';
+			serialize(root->left, out);
+			serialize(root->right, out);
+		}
+		else {
+			out << "# ";
+		}
+	}
+	TreeNode* deserialize(istringstream& in) {
+		string val;
+		in >> val;
+		if (val == "#")
+			return nullptr;
+		TreeNode* root = new TreeNode(stoi(val));
+		root->left = deserialize(in);
+		root->right = deserialize(in);
+		return root;
+	}
+};
+// Your Codec object will be instantiated and called as such:
+// Codec codec;
+// codec.deserialize(codec.serialize(root));
+/*
+
+333. Largest BST Subtree (Medium)
+
+Given a binary tree, find the largest subtree which is a Binary Search Tree (BST), where largest means subtree with largest number of nodes in it.
+
+Note:
+A subtree must include all of its descendants.
+Here's an example:
+10
+/ \
+5  15
+/ \   \
+1   8   7
+The Largest BST Subtree in this case is the highlighted one.
+The return value is the subtree's size, which is 3.
+Hint:
+
+You can recursively use algorithm similar to 98. Validate Binary Search Tree at each node of the tree, which will result in O(nlogn) time complexity.
+
+*/
+/**
+* Definition for a binary tree node.
+* struct TreeNode {
+*     int val;
+*     TreeNode *left;
+*     TreeNode *right;
+*     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+* };
+*/
+class Solution {
+public:
+	int largestBSTSubtree(TreeNode* root) {
+		int res = 0;
+		largestBSTSubtree(root, res);
+		return res;
+	}
+private:
+	vector<int> largestBSTSubtree(TreeNode* root, int& res) {
+		if (root == NULL) {
+			return{ 0,0,0 };
+		}
+		else if (root->left == NULL && root->right == NULL) {
+			res = max(res, 1);
+			return{ 1, root->val, root->val };
+		}
+		vector<int> l = largestBSTSubtree(root->left, res), r = largestBSTSubtree(root->right, res);
+		if (l[0] != -1 && r[0] != -1) {
+			if ((l[0] == 0 || root->val > l[2]) && (r[0] == 0 || root->val < r[1])) {
+				res = max(res, l[0] + r[0] + 1);
+				int small = l[1] == 0 ? root->val : l[1], large = r[2] == 0 ? root->val : r[2];
+				return{ l[0] + r[0] + 1, small, large };
+			}
+		}
+		return{ -1,0,0 };
 	}
 };
 /*
@@ -1539,5 +1961,209 @@ private:
 			sumOfLeftLeaves(root->right, root, res);
 		}
 
+	}
+};
+/*
+
+437. Path Sum III (Easy)
+
+You are given a binary tree in which each node contains an integer value.
+
+Find the number of paths that sum to a given value.
+
+The path does not need to start or end at the root or a leaf, but it must go downwards (traveling only from parent nodes to child nodes).
+
+The tree has no more than 1,000 nodes and the values are in the range -1,000,000 to 1,000,000.
+
+Example:
+
+root = [10,5,-3,3,2,null,11,3,-2,null,1], sum = 8
+
+10
+/  \
+5   -3
+/ \    \
+3   2   11
+/ \   \
+3  -2   1
+
+Return 3. The paths that sum to 8 are:
+
+1.  5 -> 3
+2.  5 -> 2 -> 1
+3. -3 -> 11
+
+*/
+/**
+* Definition for a binary tree node.
+* struct TreeNode {
+*     int val;
+*     TreeNode *left;
+*     TreeNode *right;
+*     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+* };
+*/
+class Solution {
+public:
+	int pathSum(TreeNode* root, int sum) {
+		unordered_map<int, int> mapping;
+		mapping[0] = 1;
+		return pathSum(root, 0, sum, mapping);
+	}
+private:
+	int pathSum(TreeNode* root, int sum, const int& target, unordered_map<int, int>& mapping) {
+		if (root == NULL) {
+			return 0;
+		}
+		sum += root->val;
+		int res = mapping.find(sum - target) != mapping.end() ? mapping[sum - target] : 0;
+		mapping[sum]++;
+		res += pathSum(root->left, sum, target, mapping) + pathSum(root->right, sum, target, mapping);
+		mapping[sum]--;
+		return res;
+	}
+};
+/*
+
+449. Serialize and Deserialize BST (Medium)
+
+Serialization is the process of converting a data structure or object into a sequence of bits so that it can be stored in a file or memory buffer, or transmitted across a network connection link to be reconstructed later in the same or another computer environment.
+
+Design an algorithm to serialize and deserialize a binary search tree. There is no restriction on how your serialization/deserialization algorithm should work. You just need to ensure that a binary search tree can be serialized to a string and this string can be deserialized to the original tree structure.
+
+The encoded string should be as compact as possible.
+
+Note: Do not use class member/global/static variables to store states. Your serialize and deserialize algorithms should be stateless.
+
+*/
+/**
+* Definition for a binary tree node.
+* struct TreeNode {
+*     int val;
+*     TreeNode *left;
+*     TreeNode *right;
+*     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+* };
+*/
+class Codec {
+public:
+
+	// Encodes a tree to a single string.
+	string serialize(TreeNode* root) {
+		ostringstream out;
+		serialize(root, out);
+		return out.str();
+	}
+
+	// Decodes your encoded data to tree.
+	TreeNode* deserialize(string data) {
+		istringstream in(data);
+		return deserialize(in);
+	}
+private:
+	void serialize(TreeNode* root, ostringstream& out) {
+		if (root) {
+			out << root->val << ' ';
+			serialize(root->left, out);
+			serialize(root->right, out);
+		}
+		else {
+			out << "# ";
+		}
+	}
+	TreeNode* deserialize(istringstream& in) {
+		string val;
+		in >> val;
+		if (val == "#")
+			return nullptr;
+		TreeNode* root = new TreeNode(stoi(val));
+		root->left = deserialize(in);
+		root->right = deserialize(in);
+		return root;
+	}
+};
+// Your Codec object will be instantiated and called as such:
+// Codec codec;
+// codec.deserialize(codec.serialize(root));
+/*
+
+450. Delete Node in a BST (Medium)
+
+Given a root node reference of a BST and a key, delete the node with the given key in the BST. Return the root node reference (possibly updated) of the BST.
+
+Basically, the deletion can be divided into two stages:
+
+Search for a node to remove.
+If the node is found, delete the node.
+Note: Time complexity should be O(height of tree).
+
+Example:
+
+root = [5,3,6,2,4,null,7]
+key = 3
+
+5
+/ \
+3   6
+/ \   \
+2   4   7
+
+Given key to delete is 3. So we find the node with value 3 and delete it.
+
+One valid answer is [5,4,6,2,null,null,7], shown in the following BST.
+
+5
+/ \
+4   6
+/     \
+2       7
+
+Another valid answer is [5,2,6,null,4,null,7].
+
+5
+/ \
+2   6
+\   \
+4   7
+
+*/
+/**
+* Definition for a binary tree node.
+* struct TreeNode {
+*     int val;
+*     TreeNode *left;
+*     TreeNode *right;
+*     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+* };
+*/
+class Solution {
+public:
+	TreeNode* deleteNode(TreeNode* root, int key) {
+		if (root == NULL) {
+			return root;
+		}
+		else if (root->val > key) {
+			root->left = deleteNode(root->left, key);
+		}
+		else if (root->val < key) {
+			root->right = deleteNode(root->right, key);
+		}
+		else {
+			if (root->right == NULL || root->left == NULL) {
+				return root->left == NULL ? root->right : root->left;
+			}
+			else {
+				root->val = findSmallest(root->right);
+				root->right = deleteNode(root->right, root->val);
+			}
+		}
+		return root;
+	}
+private:
+	int findSmallest(TreeNode* root) {
+		while (root->left != NULL) {
+			root = root->left;
+		}
+		return root->val;
 	}
 };

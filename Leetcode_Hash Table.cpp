@@ -350,6 +350,54 @@ public:
 };
 /*
 
+85. Maximal Rectangle (Hard)
+
+Given a 2D binary matrix filled with 0's and 1's, find the largest rectangle containing only 1's and return its area.
+
+For example, given the following matrix:
+
+1 0 1 0 0
+1 0 1 1 1
+1 1 1 1 1
+1 0 0 1 0
+Return 6.
+
+*/
+class Solution {
+public:
+	int maximalRectangle(vector<vector<char>>& matrix) {
+		if (matrix.empty()) {
+			return 0;
+		}
+		int maxRec = 0;
+		vector<int> height(matrix[0].size());
+		for (int i = 0; i < matrix.size(); i++) {
+			for (int j = 0; j < matrix[0].size(); j++) {
+				height[j] = matrix[i][j] == '0' ? 0 : height[j] + 1;
+			}
+			maxRec = max(maxRec, largestRectangleArea(height));
+		}
+		return maxRec;
+	}
+private:
+	int largestRectangleArea(const vector<int>& heights) {
+		stack<int> s;
+		int maxSize = 0;
+		for (int i = 0; i <= heights.size(); i++) {
+			int cur = i == heights.size() ? 0 : heights[i];
+			while (!s.empty() && heights[s.top()] >= cur) {
+				int height = heights[s.top()];
+				s.pop();
+				int left = s.empty() ? 0 : s.top() + 1;
+				maxSize = max(maxSize, (i - left) * height);
+			}
+			s.push(i);
+		}
+		return maxSize;
+	}
+};
+/*
+
 94. Binary Tree Inorder Traversal (Medium)
 
 Given a binary tree, return the inorder traversal of its nodes' values.

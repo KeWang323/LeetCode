@@ -318,6 +318,54 @@ public:
 };
 /*
 
+85. Maximal Rectangle (Hard)
+
+Given a 2D binary matrix filled with 0's and 1's, find the largest rectangle containing only 1's and return its area.
+
+For example, given the following matrix:
+
+1 0 1 0 0
+1 0 1 1 1
+1 1 1 1 1
+1 0 0 1 0
+Return 6.
+
+*/
+class Solution {
+public:
+	int maximalRectangle(vector<vector<char>>& matrix) {
+		if (matrix.empty()) {
+			return 0;
+		}
+		int maxRec = 0;
+		vector<int> height(matrix[0].size());
+		for (int i = 0; i < matrix.size(); i++) {
+			for (int j = 0; j < matrix[0].size(); j++) {
+				height[j] = matrix[i][j] == '0' ? 0 : height[j] + 1;
+			}
+			maxRec = max(maxRec, largestRectangleArea(height));
+		}
+		return maxRec;
+	}
+private:
+	int largestRectangleArea(const vector<int>& heights) {
+		stack<int> s;
+		int maxSize = 0;
+		for (int i = 0; i <= heights.size(); i++) {
+			int cur = i == heights.size() ? 0 : heights[i];
+			while (!s.empty() && heights[s.top()] >= cur) {
+				int height = heights[s.top()];
+				s.pop();
+				int left = s.empty() ? 0 : s.top() + 1;
+				maxSize = max(maxSize, (i - left) * height);
+			}
+			s.push(i);
+		}
+		return maxSize;
+	}
+};
+/*
+
 91. Decode Ways (Medium)
 
 A message containing letters from A-Z is being encoded to numbers using the following mapping:
@@ -1155,6 +1203,57 @@ public:
 			sum += pre;
 		}
 		return sum;
+	}
+};
+/*
+
+361. Bomb Enemy (Medium)
+
+Given a 2D grid, each cell is either a wall 'W', an enemy 'E' or empty '0' (the number zero), return the maximum enemies you can kill using one bomb.
+The bomb kills all the enemies in the same row and column from the planted point until it hits the wall since the wall is too strong to be destroyed.
+Note that you can only put the bomb at an empty cell.
+
+Example:
+For the given grid
+
+0 E 0 0
+E 0 W E
+0 E 0 0
+
+return 3. (Placing a bomb at (1,1) kills 3 enemies)
+
+*/
+class Solution {
+public:
+	int maxKilledEnemies(vector<vector<char>>& grid) {
+		if (grid.size() == 0 || grid[0].size() == 0) {
+			return 0;
+		}
+		int col = grid[0].size(), row = grid.size();
+		vector<vector<int>> vrl(row, vector<int>(col)), vbu(row, vector<int>(col));
+		for (int j = col - 1; j >= 0; j--) {
+			for (int i = row - 1; i >= 0; i--) {
+				if (grid[i][j] != 'W') {
+					int e = grid[i][j] == 'E';
+					vrl[i][j] = j == col - 1 ? e : e + vrl[i][j + 1];
+					vbu[i][j] = i == row - 1 ? e : e + vbu[i + 1][j];
+				}
+			}
+		}
+		vector<int> vlr(row), vub(col);
+		int res = 0;
+		for (int i = 0; i < row; i++) {
+			for (int j = 0; j < col; j++) {
+				if (grid[i][j] == '0') {
+					res = max(vlr[i] + vrl[i][j] + vub[j] + vbu[i][j], res);
+				}
+				else {
+					vub[j] = grid[i][j] == 'W' ? 0 : vub[j] + 1;
+					vlr[i] = grid[i][j] == 'W' ? 0 : vlr[i] + 1;
+				}
+			}
+		}
+		return res;
 	}
 };
 /*
