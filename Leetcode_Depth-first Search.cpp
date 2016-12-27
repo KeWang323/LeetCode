@@ -53,6 +53,53 @@ private:
 };
 /*
 
+99. Recover Binary Search Tree (Hard)
+
+Two elements of a binary search tree (BST) are swapped by mistake.
+
+Recover the tree without changing its structure.
+
+Note:
+A solution using O(n) space is pretty straight forward. Could you devise a constant space solution?
+
+*/
+/**
+* Definition for a binary tree node.
+* struct TreeNode {
+*     int val;
+*     TreeNode *left;
+*     TreeNode *right;
+*     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+* };
+*/
+class Solution {
+public:
+	void recoverTree(TreeNode* root) {
+		TreeNode* first = NULL, *second = NULL, *pre = new TreeNode(INT_MIN);
+		inOrder(root, first, second, pre);
+		swap(first->val, second->val);
+		return;
+	}
+private:
+	void inOrder(TreeNode* root, TreeNode*& first, TreeNode*& second, TreeNode*& pre) {
+		if (root == NULL) {
+			return;
+		}
+		inOrder(root->left, first, second, pre);
+		if (pre->val >= root->val) {
+			if (first == NULL) {
+				first = pre;
+			}
+			if (first != NULL) {
+				second = root;
+			}
+		}
+		pre = root;
+		inOrder(root->right, first, second, pre);
+	}
+};
+/*
+
 100. Same Tree (Easy)
 
 Given two binary trees, write a function to check if they are equal or not.

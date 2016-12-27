@@ -148,6 +148,53 @@ private:
 };
 /*
 
+99. Recover Binary Search Tree (Hard)
+
+Two elements of a binary search tree (BST) are swapped by mistake.
+
+Recover the tree without changing its structure.
+
+Note:
+A solution using O(n) space is pretty straight forward. Could you devise a constant space solution?
+
+*/
+/**
+* Definition for a binary tree node.
+* struct TreeNode {
+*     int val;
+*     TreeNode *left;
+*     TreeNode *right;
+*     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+* };
+*/
+class Solution {
+public:
+	void recoverTree(TreeNode* root) {
+		TreeNode* first = NULL, *second = NULL, *pre = new TreeNode(INT_MIN);
+		inOrder(root, first, second, pre);
+		swap(first->val, second->val);
+		return;
+	}
+private:
+	void inOrder(TreeNode* root, TreeNode*& first, TreeNode*& second, TreeNode*& pre) {
+		if (root == NULL) {
+			return;
+		}
+		inOrder(root->left, first, second, pre);
+		if (pre->val >= root->val) {
+			if (first == NULL) {
+				first = pre;
+			}
+			if (first != NULL) {
+				second = root;
+			}
+		}
+		pre = root;
+		inOrder(root->right, first, second, pre);
+	}
+};
+/*
+
 100. Same Tree (Easy)
 
 Given two binary trees, write a function to check if they are equal or not.
@@ -1672,6 +1719,179 @@ public:
 };
 /*
 
+272. Closest Binary Search Tree Value II (Hard)
+
+Given a non-empty binary search tree and a target value, find k values in the BST that are closest to the target.
+
+Note:
+Given target value is a floating point.
+You may assume k is always valid, that is: k ≤ total nodes.
+You are guaranteed to have only one unique set of k values in the BST that are closest to the target.
+Follow up:
+Assume that the BST is balanced, could you solve it in less than O(n) runtime (where n = total nodes)?
+
+Hint:
+
+Consider implement these two helper functions:
+getPredecessor(N), which returns the next smaller node to N.
+getSuccessor(N), which returns the next larger node to N.
+Try to assume that each node has a parent pointer, it makes the problem much easier.
+Without parent pointer we just need to keep track of the path from the root to the current node using a stack.
+You would need two stacks to track the path in finding predecessor and successor node separately.
+
+*/
+/**
+* Definition for a binary tree node.
+* struct TreeNode {
+*     int val;
+*     TreeNode *left;
+*     TreeNode *right;
+*     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+* };
+*/
+class Solution {
+public:
+	vector<int> closestKValues(TreeNode* root, double target, int k) {
+		stack<TreeNode*> suc, pre;
+		vector<int> res;
+		iniPreSta(root, target, pre);
+		iniSucSta(root, target, suc);
+		if (!suc.empty() && !pre.empty() && suc.top()->val == pre.top()->val) {
+			getNextPredecessor(pre);
+		}
+		while (k-- > 0) {
+			if (suc.empty()) {
+				res.push_back(getNextPredecessor(pre));
+			}
+			else if (pre.empty()) {
+				res.push_back(getNextSuccessor(suc));
+			}
+			else {
+				if (abs((double)pre.top()->val - target) < abs((double)suc.top()->val - target)) {
+					res.push_back(getNextPredecessor(pre));
+				}
+				else {
+					res.push_back(getNextSuccessor(suc));
+				}
+			}
+		}
+		return res;
+	}
+private:
+	void iniPreSta(TreeNode* root, double target, stack<TreeNode*>& pre) {
+		while (root != NULL) {
+			if (root->val < target) {
+				pre.push(root);
+				root = root->right;
+			}
+			else if (root->val > target) {
+				root = root->left;
+			}
+			else {
+				pre.push(root);
+				break;
+			}
+		}
+	}
+	void iniSucSta(TreeNode* root, double target, stack<TreeNode*>& suc) {
+		while (root != NULL) {
+			if (root->val > target) {
+				suc.push(root);
+				root = root->left;
+			}
+			else if (root->val < target) {
+				root = root->right;
+			}
+			else {
+				suc.push(root);
+				break;
+			}
+		}
+	}
+	int getNextSuccessor(stack<TreeNode*>& suc) {
+		TreeNode* cur = suc.top();
+		suc.pop();
+		int res = cur->val;
+		cur = cur->right;
+		while (cur != NULL) {
+			suc.push(cur);
+			cur = cur->left;
+		}
+		return res;
+	}
+	int getNextPredecessor(stack<TreeNode*>& pre) {
+		TreeNode* cur = pre.top();
+		pre.pop();
+		int res = cur->val;
+		cur = cur->left;
+		while (cur != NULL) {
+			pre.push(cur);
+			cur = cur->right;
+		}
+		return res;
+	}
+};
+/*
+
+285. Inorder Successor in BST (Medium)
+
+Given a binary search tree and a node in it, find the in-order successor of that node in the BST.
+
+Note: If the given node has no in-order successor in the tree, return null.
+
+*/
+/**
+* Definition for a binary tree node.
+* struct TreeNode {
+*     int val;
+*     TreeNode *left;
+*     TreeNode *right;
+*     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+* };
+*/
+class Solution {
+public:
+	TreeNode* inorderSuccessor(TreeNode* root, TreeNode* p) {
+		stack<TreeNode*> s;
+		iniSucSta(root, p, s);
+		if (!s.empty() && s.top() == p) {
+			getNextSuccessor(s);
+		}
+		return getNextSuccessor(s);
+	}
+private:
+	void iniSucSta(TreeNode* root, TreeNode* p, stack<TreeNode*>& s) {
+		while (root != NULL) {
+			if (root->val > p->val) {
+				s.push(root);
+				root = root->left;
+			}
+			else if (root->val < p->val) {
+				root = root->right;
+			}
+			else {
+				s.push(root);
+				break;
+			}
+		}
+	}
+	TreeNode* getNextSuccessor(stack<TreeNode*>& s) {
+		if (s.empty()) {
+			return NULL;
+		}
+		TreeNode* cur = s.top();
+		s.pop();
+		TreeNode* temp = cur;
+		cur = cur->right;
+		while (cur != NULL) {
+			s.push(cur);
+			cur = cur->left;
+		}
+		return temp;
+	}
+};
+/*
+
 297. Serialize and Deserialize Binary Tree (Hard)
 
 Serialization is the process of converting a data structure or object into a sequence of bits so that it can be stored in a file or memory buffer, or transmitted across a network connection link to be reconstructed later in the same or another computer environment.
@@ -1740,6 +1960,68 @@ private:
 // codec.deserialize(codec.serialize(root));
 /*
 
+298. Binary Tree Longest Consecutive Sequence (Medium)
+
+Given a binary tree, find the length of the longest consecutive sequence path.
+
+The path refers to any sequence of nodes from some starting node to any node in the tree along the parent-child connections. The longest consecutive path need to be from parent to child (cannot be the reverse).
+
+For example,
+1
+\
+3
+/ \
+2   4
+\
+5
+Longest consecutive sequence path is 3-4-5, so return 3.
+2
+\
+3
+/
+2
+/
+1
+Longest consecutive sequence path is 2-3,not3-2-1, so return 2.
+
+*/
+/**
+* Definition for a binary tree node.
+* struct TreeNode {
+*     int val;
+*     TreeNode *left;
+*     TreeNode *right;
+*     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+* };
+*/
+class Solution {
+public:
+	int longestConsecutive(TreeNode* root) {
+		if (root == NULL) {
+			return 0;
+		}
+		int res = 0;
+		longestConsecutive(root, res, 0, root->val);
+		return res;
+	}
+private:
+	void longestConsecutive(TreeNode* root, int& res, int cur, int tar) {
+		if (root == NULL) {
+			return;
+		}
+		if (root->val == tar) {
+			cur++;
+		}
+		else {
+			cur = 1;
+		}
+		res = max(res, cur);
+		longestConsecutive(root->left, res, cur, root->val + 1);
+		longestConsecutive(root->right, res, cur, root->val + 1);
+	}
+};
+/*
+
 333. Largest BST Subtree (Medium)
 
 Given a binary tree, find the largest subtree which is a Binary Search Tree (BST), where largest means subtree with largest number of nodes in it.
@@ -1793,6 +2075,56 @@ private:
 			}
 		}
 		return{ -1,0,0 };
+	}
+};
+/*
+
+337. House Robber III (Medium)
+
+The thief has found himself a new place for his thievery again. There is only one entrance to this area, called the "root." Besides the root, each house has one and only one parent house. After a tour, the smart thief realized that "all houses in this place forms a binary tree". It will automatically contact the police if two directly-linked houses were broken into on the same night.
+
+Determine the maximum amount of money the thief can rob tonight without alerting the police.
+
+Example 1:
+3
+/ \
+2   3
+\   \
+3   1
+Maximum amount of money the thief can rob = 3 + 3 + 1 = 7.
+Example 2:
+3
+/ \
+4   5
+/ \   \
+1   3   1
+Maximum amount of money the thief can rob = 4 + 5 = 9.
+
+*/
+/**
+* Definition for a binary tree node.
+* struct TreeNode {
+*     int val;
+*     TreeNode *left;
+*     TreeNode *right;
+*     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+* };
+*/
+class Solution {
+public:
+	int rob(TreeNode* root) {
+		int l = 0, r = 0;
+		return rob(root, l, r);
+	}
+private:
+	int rob(TreeNode* root, int& l, int& r) {
+		if (root == NULL) {
+			return 0;
+		}
+		int ll = 0, lr = 0, rl = 0, rr = 0;
+		l = rob(root->left, ll, lr);
+		r = rob(root->right, rl, rr);
+		return max(root->val + ll + lr + rl + rr, l + r);
 	}
 };
 /*

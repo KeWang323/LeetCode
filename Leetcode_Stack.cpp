@@ -699,6 +699,120 @@ private:
 };
 /*
 
+272. Closest Binary Search Tree Value II (Hard)
+
+Given a non-empty binary search tree and a target value, find k values in the BST that are closest to the target.
+
+Note:
+Given target value is a floating point.
+You may assume k is always valid, that is: k ¡Ü total nodes.
+You are guaranteed to have only one unique set of k values in the BST that are closest to the target.
+Follow up:
+Assume that the BST is balanced, could you solve it in less than O(n) runtime (where n = total nodes)?
+
+Hint:
+
+Consider implement these two helper functions:
+getPredecessor(N), which returns the next smaller node to N.
+getSuccessor(N), which returns the next larger node to N.
+Try to assume that each node has a parent pointer, it makes the problem much easier.
+Without parent pointer we just need to keep track of the path from the root to the current node using a stack.
+You would need two stacks to track the path in finding predecessor and successor node separately.
+
+*/
+/**
+* Definition for a binary tree node.
+* struct TreeNode {
+*     int val;
+*     TreeNode *left;
+*     TreeNode *right;
+*     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+* };
+*/
+class Solution {
+public:
+	vector<int> closestKValues(TreeNode* root, double target, int k) {
+		stack<TreeNode*> suc, pre;
+		vector<int> res;
+		iniPreSta(root, target, pre);
+		iniSucSta(root, target, suc);
+		if (!suc.empty() && !pre.empty() && suc.top()->val == pre.top()->val) {
+			getNextPredecessor(pre);
+		}
+		while (k-- > 0) {
+			if (suc.empty()) {
+				res.push_back(getNextPredecessor(pre));
+			}
+			else if (pre.empty()) {
+				res.push_back(getNextSuccessor(suc));
+			}
+			else {
+				if (abs((double)pre.top()->val - target) < abs((double)suc.top()->val - target)) {
+					res.push_back(getNextPredecessor(pre));
+				}
+				else {
+					res.push_back(getNextSuccessor(suc));
+				}
+			}
+		}
+		return res;
+	}
+private:
+	void iniPreSta(TreeNode* root, double target, stack<TreeNode*>& pre) {
+		while (root != NULL) {
+			if (root->val < target) {
+				pre.push(root);
+				root = root->right;
+			}
+			else if (root->val > target) {
+				root = root->left;
+			}
+			else {
+				pre.push(root);
+				break;
+			}
+		}
+	}
+	void iniSucSta(TreeNode* root, double target, stack<TreeNode*>& suc) {
+		while (root != NULL) {
+			if (root->val > target) {
+				suc.push(root);
+				root = root->left;
+			}
+			else if (root->val < target) {
+				root = root->right;
+			}
+			else {
+				suc.push(root);
+				break;
+			}
+		}
+	}
+	int getNextSuccessor(stack<TreeNode*>& suc) {
+		TreeNode* cur = suc.top();
+		suc.pop();
+		int res = cur->val;
+		cur = cur->right;
+		while (cur != NULL) {
+			suc.push(cur);
+			cur = cur->left;
+		}
+		return res;
+	}
+	int getNextPredecessor(stack<TreeNode*>& pre) {
+		TreeNode* cur = pre.top();
+		pre.pop();
+		int res = cur->val;
+		cur = cur->left;
+		while (cur != NULL) {
+			pre.push(cur);
+			cur = cur->right;
+		}
+		return res;
+	}
+};
+/*
+
 331. Verify Preorder Serialization of a Binary Tree (Medium)
 
 One way to serialize a binary tree is to use pre-order traversal. When we encounter a non-null node, we record the node's value. If it is a null node, we record using a sentinel value such as #.

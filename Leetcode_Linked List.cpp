@@ -1141,3 +1141,73 @@ private:
 		return pre;
 	}
 };
+/*
+
+445. Add Two Numbers II (Medium)
+
+You are given two linked lists representing two non-negative numbers. The most significant digit comes first and each of their nodes contain a single digit. Add the two numbers and return it as a linked list.
+
+You may assume the two numbers do not contain any leading zero, except the number 0 itself.
+
+Follow up:
+What if you cannot modify the input lists? In other words, reversing the lists is not allowed.
+
+Example:
+
+Input: (7 -> 2 -> 4 -> 3) + (5 -> 6 -> 4)
+Output: 7 -> 8 -> 0 -> 7
+
+*/
+/**
+* Definition for singly-linked list.
+* struct ListNode {
+*     int val;
+*     ListNode *next;
+*     ListNode(int x) : val(x), next(NULL) {}
+* };
+*/
+class Solution {
+public:
+	ListNode* addTwoNumbers(ListNode* l1, ListNode* l2) {
+		if (l1 == NULL || l2 == NULL) {
+			return l1 == NULL ? l2 : l1;
+		}
+		extend(l1, l2);
+		ListNode *temp = add(l1, l2);
+		return temp->val == 0 ? l1 : temp;
+	}
+private:
+	int getLength(ListNode* l) {
+		int res = 0;
+		while (l != NULL) {
+			res++;
+			l = l->next;
+		}
+		return res;
+	}
+	void extend(ListNode*& l1, ListNode*& l2) {
+		int len1 = getLength(l1), len2 = getLength(l2);
+		while (len1 > len2) {
+			ListNode *n = new ListNode(0);
+			n->next = l2;
+			l2 = n;
+			len1--;
+		}
+		while (len1 < len2) {
+			ListNode *n = new ListNode(0);
+			n->next = l1;
+			l1 = n;
+			len2--;
+		}
+	}
+	ListNode* add(ListNode* l1, ListNode* l2) {
+		if (l1 == NULL) {
+			return new ListNode(0);
+		}
+		l1->val += l2->val + add(l1->next, l2->next)->val;
+		ListNode *tmp = new ListNode(l1->val / 10);
+		l1->val %= 10;
+		tmp->next = l1;
+		return tmp;
+	}
+};
