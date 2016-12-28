@@ -4682,6 +4682,39 @@ public:
 };
 /*
 
+123. Best Time to Buy and Sell Stock III (Hard)
+
+Say you have an array for which the ith element is the price of a given stock on day i.
+
+Design an algorithm to find the maximum profit. You may complete at most two transactions.
+
+Note:
+You may not engage in multiple transactions at the same time (ie, you must sell the stock before you buy again).
+
+*/
+class Solution {
+public:
+	int maxProfit(vector<int>& prices) {
+		if (prices.size() < 2) {
+			return 0;
+		}
+		vector<int> pro(prices.size());
+		pro[0] = 0;
+		int buy = prices[0];
+		for (int i = 1; i < prices.size(); i++) {
+			pro[i] = max(pro[i - 1], prices[i] - buy);
+			buy = min(buy, prices[i]);
+		}
+		int sell = prices.back(), best = 0;
+		for (int i = prices.size() - 2; i >= 0; i--) {
+			best = max(best, sell - prices[i] + pro[i]);
+			sell = max(sell, prices[i]);
+		}
+		return best;
+	}
+};
+/*
+
 124. Binary Tree Maximum Path Sum (Hard)
 
 Given a binary tree, find the maximum path sum.
@@ -6416,6 +6449,46 @@ public:
 			if (mapping[t = t << 3 & 0x3FFFFFFF | s[i] & 7]++ == 1) {
 				res.push_back(s.substr(i - 9, 10));
 			}
+		}
+		return res;
+	}
+};
+/*
+
+188. Best Time to Buy and Sell Stock IV (Hard)
+
+Say you have an array for which the ith element is the price of a given stock on day i.
+
+Design an algorithm to find the maximum profit. You may complete at most k transactions.
+
+Note:
+You may not engage in multiple transactions at the same time (ie, you must sell the stock before you buy again).
+
+*/
+class Solution {
+public:
+	int maxProfit(int k, vector<int>& prices) {
+		if (prices.size() < 2) {
+			return 0;
+		}
+		int res = 0;
+		if (k >= prices.size() / 2) {
+			for (int i = 1; i < prices.size(); i++) {
+				if (prices[i] > prices[i - 1]) {
+					res += prices[i] - prices[i - 1];
+				}
+			}
+		}
+		else {
+			vector<int> cur(k + 1), glo(k + 1);
+			for (int i = 0; i < prices.size() - 1; i++) {
+				int increase = prices[i + 1] - prices[i];
+				for (int j = k; j >= 1; j--) {
+					cur[j] = max(glo[j - 1] + max(increase, 0), cur[j] + increase);
+					glo[j] = max(glo[j], cur[j]);
+				}
+			}
+			res = glo.back();
 		}
 		return res;
 	}
