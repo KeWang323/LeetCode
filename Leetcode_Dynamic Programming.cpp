@@ -1556,3 +1556,98 @@ public:
 		return s_i == s.length();
 	}
 };
+/*
+
+416. Partition Equal Subset Sum (Medium)
+
+Given a non-empty array containing only positive integers, find if the array can be partitioned into two subsets such that the sum of elements in both subsets is equal.
+
+Note:
+Each of the array element will not exceed 100.
+The array size will not exceed 200.
+Example 1:
+
+Input: [1, 5, 11, 5]
+
+Output: true
+
+Explanation: The array can be partitioned as [1, 5, 5] and [11].
+Example 2:
+
+Input: [1, 2, 3, 5]
+
+Output: false
+
+Explanation: The array cannot be partitioned into equal sum subsets.
+
+*/
+class Solution {
+public:
+	bool canPartition(vector<int>& nums) {
+		int sum = accumulate(nums.begin(), nums.end(), 0);
+		if (sum & 1) {
+			return false;
+		}
+		sum >>= 1;
+		bool t[sum + 1] = { false };
+		t[0] = true;
+		for (int i = 0; i < nums.size(); i++) {
+			for (int j = sum; j >= nums[i]; j--) {
+				if (t[j]) {
+					break;
+				}
+				t[j] = t[j] || t[j - nums[i]];
+			}
+		}
+		return t[sum];
+	}
+};
+/*
+
+474. Ones and Zeroes (Medium)
+
+In the computer world, use restricted resource you have to generate maximum benefit is what we always want to pursue.
+
+For now, suppose you are a dominator of m 0s and n 1s respectively. On the other hand, there is an array with strings consisting of only 0s and 1s.
+
+Now your task is to find the maximum number of strings that you can form with given m 0s and n 1s. Each 0 and 1 can be used at most once.
+
+Note:
+The given numbers of 0s and 1s will both not exceed 100
+The size of given string array won't exceed 600.
+Example 1:
+Input: Array = {"10", "0001", "111001", "1", "0"}, m = 5, n = 3
+Output: 4
+
+Explanation: This are totally 4 strings can be formed by the using of 5 0s and 3 1s, which are “10,”0001”,”1”,”0”
+Example 2:
+Input: Array = {"10", "0", "1"}, m = 1, n = 1
+Output: 2
+
+Explanation: You could form "10", but then you'd have nothing left. Better form "0" and "1".
+
+*/
+class Solution {
+public:
+	int findMaxForm(vector<string>& strs, int m, int n) {
+		vector<vector<int>> memo(m + 1, vector<int>(n + 1, 0));
+		int numZeroes, numOnes;
+		for (auto &s : strs) {
+			numZeroes = numOnes = 0;
+			for (auto c : s) {
+				if (c == '0') {
+					numZeroes++;
+				}
+				else if (c == '1') {
+					numOnes++;
+				}
+			}
+			for (int i = m; i >= numZeroes; i--) {
+				for (int j = n; j >= numOnes; j--) {
+					memo[i][j] = max(memo[i][j], memo[i - numZeroes][j - numOnes] + 1);
+				}
+			}
+		}
+		return memo[m][n];
+	}
+};

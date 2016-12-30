@@ -554,6 +554,40 @@ public:
 };
 /*
 
+159. Longest Substring with At Most Two Distinct Characters (Hard)
+
+Given a string, find the length of the longest substring T that contains at most 2 distinct characters.
+
+For example, Given s = “eceba”,
+
+T is "ece" which its length is 3.
+
+*/
+class Solution {
+public:
+	int lengthOfLongestSubstringTwoDistinct(string s) {
+		if (s.size() < 3) {
+			return s.size();
+		}
+		vector<int> t(256, 0);
+		int sl = 0, f = 0, res = 0, cnt = 0;
+		while (f < s.size()) {
+			if (++t[s[f++]] == 1) {
+				cnt++;
+			}
+			while (cnt > 2) {
+				--t[s[sl++]];
+				if (t[s[sl - 1]] == 0) {
+					cnt--;
+				}
+			}
+			res = max(f - sl, res);
+		}
+		return res;
+	}
+};
+/*
+
 166. Fraction to Recurring Decimal (Medium)
 
 Given two integers representing the numerator and denominator of a fraction, return the fraction in string format.
@@ -1044,6 +1078,50 @@ public:
 		char result[10];
 		sprintf(result, "%dA%dB", bulls, cows);
 		return result;
+	}
+};
+/*
+
+311. Sparse Matrix Multiplication (Medium)
+
+Given two sparse matrices A and B, return the result of AB.
+
+You may assume that A's column number is equal to B's row number.
+
+Example:
+
+A = [
+[ 1, 0, 0],
+[-1, 0, 3]
+]
+
+B = [
+[ 7, 0, 0 ],
+[ 0, 0, 0 ],
+[ 0, 0, 1 ]
+]
+
+
+	|  1 0 0 |   | 7 0 0 |   |  7 0 0 |
+AB = | -1 0 3 | x | 0 0 0 | = | -7 0 3 |
+	| 0 0 1 |
+
+*/
+class Solution {
+public:
+	vector<vector<int>> multiply(vector<vector<int>>& A, vector<vector<int>>& B) {
+		int m = A.size(), n = A[0].size();
+		vector<vector<int>> res(m, vector<int>(B[0].size(), 0));
+		for (int i = 0; i < m; i++) {
+			for (int k = 0; k < n; k++) {
+				if (A[i][k] != 0) {
+					for (int j = 0; j < B[0].size(); j++) {
+						res[i][j] += A[i][k] * B[k][j];
+					}
+				}
+			}
+		}
+		return res;
 	}
 };
 /*
