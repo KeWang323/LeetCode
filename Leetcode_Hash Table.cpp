@@ -23,7 +23,7 @@ public:
 		unordered_map<int, int> mapping;
 		for (int i = 0; i < nums.size(); i++) {
 			int gap = target - nums[i];
-			if (mapping.count(gap)) {
+			if (mapping.find(gap) != mapping.end()) {
 				return{ i, mapping[gap] };
 			}
 			mapping[nums[i]] = i;

@@ -279,11 +279,13 @@ Given a = 1 and b = 2, return 3.
 class Solution {
 public:
 	int getSum(int a, int b) {
-		while (b) {
-			int x = a ^ b, y = (a & b) << 1;
-			a = x; b = y;
+		int sum = 0;
+		while (b != 0) {
+			sum = a ^ b;
+			b = (a & b) << 1;
+			a = sum;
 		}
-		return a;
+		return sum;
 	}
 };
 /*

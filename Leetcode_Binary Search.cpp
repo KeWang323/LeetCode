@@ -22,33 +22,29 @@ class Solution {
 public:
 	double findMedianSortedArrays(vector<int>& nums1, vector<int>& nums2) {
 		int sum = nums1.size() + nums2.size();
-		double res;
-		if (sum % 2) {
-			res = findKth(nums1, nums2, 0, 0, sum / 2 + 1);
+		if (sum & 1) {
+			return findMedian(nums1, 0, nums2, 0, sum / 2 + 1);
 		}
 		else {
-			res = (findKth(nums1, nums2, 0, 0, sum / 2) + findKth(nums1, nums2, 0, 0, sum / 2 + 1)) / 2.0;
+			return (findMedian(nums1, 0, nums2, 0, sum / 2) + findMedian(nums1, 0, nums2, 0, sum / 2 + 1)) / 2.0;
 		}
-		return res;
+		return 0.0;
 	}
 private:
-	double findKth(vector<int>& nums1, vector<int>& nums2, int s1, int s2, int k) {
-		if (s1 >= nums1.size()) {
-			return nums2[s2 + k - 1];
-		}
-		else if (s2 >= nums2.size()) {
-			return nums1[s1 + k - 1];
+	double findMedian(const vector<int>& nums1, int ind1, const vector<int>& nums2, int ind2, int k) {
+		if (ind1 >= nums1.size() || ind2 >= nums2.size()) {
+			return ind1 >= nums1.size() ? nums2[ind2 + k - 1] : nums1[ind1 + k - 1];
 		}
 		if (k == 1) {
-			return min(nums1[s1], nums2[s2]);
+			return min(nums1[ind1], nums2[ind2]);
 		}
-		int mid1 = s1 + k / 2 - 1 >= nums1.size() ? INT_MAX : nums1[s1 + k / 2 - 1];
-		int mid2 = s2 + k / 2 - 1 >= nums2.size() ? INT_MAX : nums2[s2 + k / 2 - 1];
+		int mid1 = ind1 + k / 2 - 1 >= nums1.size() ? INT_MAX : nums1[ind1 + k / 2 - 1];
+		int mid2 = ind2 + k / 2 - 1 >= nums2.size() ? INT_MAX : nums2[ind2 + k / 2 - 1];
 		if (mid1 < mid2) {
-			return findKth(nums1, nums2, s1 + k / 2, s2, k - k / 2);
+			return findMedian(nums1, ind1 + k / 2, nums2, ind2, k - k / 2);
 		}
 		else {
-			return findKth(nums1, nums2, s1, s2 + k / 2, k - k / 2);
+			return findMedian(nums1, ind1, nums2, ind2 + k / 2, k - k / 2);
 		}
 	}
 };

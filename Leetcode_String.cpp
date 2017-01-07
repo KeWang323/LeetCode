@@ -237,18 +237,17 @@ Input is guaranteed to be within the range from 1 to 3999.
 class Solution {
 public:
 	int romanToInt(string s) {
-		int num = ChatoNum(s[0]);
-		for (int i = 1; i < s.length(); i++) {
-			if (ChatoNum(s[i]) > ChatoNum(s[i - 1])) {
-				num += ChatoNum(s[i]) - 2 * ChatoNum(s[i - 1]);
-			}
-			else {
-				num += ChatoNum(s[i]);
+		int res = ChartoNum(s[0]);
+		for (int i = 1; i < s.size(); i++) {
+			res += ChartoNum(s[i]);
+			if (ChartoNum(s[i]) > ChartoNum(s[i - 1])) {
+				res -= 2 * ChartoNum(s[i - 1]);
 			}
 		}
-		return num;
+		return res;
 	}
-	int ChatoNum(char cha) {
+private:
+	int ChartoNum(const char& cha) {
 		switch (cha) {
 		case 'I': return 1;
 		case 'V': return 5;

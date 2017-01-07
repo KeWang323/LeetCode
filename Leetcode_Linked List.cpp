@@ -8,32 +8,27 @@ Input: (2 -> 4 -> 3) + (5 -> 6 -> 4)
 Output: 7 -> 0 -> 8
 
 */
-/*
-
- * Definition for singly-linked list.
- * struct ListNode {
- *     int val;
- *     ListNode *next;
- *     ListNode(int x) : val(x), next(NULL) {}
- * };
-
- */
+/**
+* Definition for singly-linked list.
+* struct ListNode {
+*     int val;
+*     ListNode *next;
+*     ListNode(int x) : val(x), next(NULL) {}
+* };
+*/
 class Solution {
 public:
 	ListNode* addTwoNumbers(ListNode* l1, ListNode* l2) {
-		int carry = 0;
 		ListNode *dummy = new ListNode(-1), *p = dummy;
-		for (ListNode *pa = l1, *pb = l2; pa || pb; p = p->next) {
-			int ai = pa != NULL ? pa->val : 0;
-			int bi = pb != NULL ? pb->val : 0;
-			carry = ai + bi + carry;
+		int carry = 0;
+		while (carry != 0 || l1 != NULL || l2 != NULL) {
+			int a = l1 == NULL ? 0 : l1->val, b = l2 == NULL ? 0 : l2->val;
+			carry += a + b;
 			p->next = new ListNode(carry % 10);
+			p = p->next;
 			carry /= 10;
-			pa = pa != NULL ? pa->next : NULL;
-			pb = pb != NULL ? pb->next : NULL;
-		}
-		if (carry) {
-			p->next = new ListNode(carry);
+			l1 = l1 == NULL ? NULL : l1->next;
+			l2 = l2 == NULL ? NULL : l2->next;
 		}
 		return dummy->next;
 	}
@@ -1022,13 +1017,13 @@ Supposed the linked list is 1 -> 2 -> 3 -> 4 and you are given the third node wi
 
 */
 /**
- * Definition for singly-linked list.
- * struct ListNode {
- *     int val;
- *     ListNode *next;
- *     ListNode(int x) : val(x), next(NULL) {}
- * };
- */
+* Definition for singly-linked list.
+* struct ListNode {
+*     int val;
+*     ListNode *next;
+*     ListNode(int x) : val(x), next(NULL) {}
+* };
+*/
 class Solution {
 public:
 	void deleteNode(ListNode* node) {

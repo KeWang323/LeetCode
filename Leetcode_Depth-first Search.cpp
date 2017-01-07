@@ -182,42 +182,22 @@ The maximum depth is the number of nodes along the longest path from the root no
 
 */
 /**
- * Definition for a binary tree node.
- * struct TreeNode {
- *     int val;
- *     TreeNode *left;m
- *     TreeNode *right;
- *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
- * };
- */
+* Definition for a binary tree node.
+* struct TreeNode {
+*     int val;
+*     TreeNode *left;
+*     TreeNode *right;
+*     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+* };
+*/
 class Solution {
 public:
 	int maxDepth(TreeNode* root) {
-		if (!root) return 0;
-		int res = 0;
-		queue<TreeNode*> q;
-		q.push(root);
-		while (!q.empty()) {
-			int _size = q.size();
-			res++;
-			for (int i = 0; i < _size; i++) {
-				TreeNode *temp = q.front();
-				q.pop();
-				if (temp->left) q.push(temp->left);
-				if (temp->right) q.push(temp->right);
-			}
+		if (root == NULL) {
+			return 0;
 		}
-		return res;
-	}
-};
-class Solution {
-public:
-	int maxDepth(TreeNode* root) {
-		if (!root) return 0;
-		else if (!(root->left) && !(root->right)) return 1;
-		int depth_L = maxDepth(root->left);
-		int depth_R = maxDepth(root->right);
-		return depth_L > depth_R ? depth_L + 1 : depth_R + 1;
+		int l = maxDepth(root->left), r = maxDepth(root->right);
+		return max(l, r) + 1;
 	}
 };
 /*

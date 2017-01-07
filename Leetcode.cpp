@@ -23,7 +23,7 @@ public:
 		unordered_map<int, int> mapping;
 		for (int i = 0; i < nums.size(); i++) {
 			int gap = target - nums[i];
-			if (mapping.count(gap)) {
+			if (mapping.find(gap) != mapping.end()) {
 				return{ i, mapping[gap] };
 			}
 			mapping[nums[i]] = i;
@@ -41,32 +41,27 @@ Input: (2 -> 4 -> 3) + (5 -> 6 -> 4)
 Output: 7 -> 0 -> 8
 
 */
-/*
-
- * Definition for singly-linked list.
- * struct ListNode {
- *     int val;
- *     ListNode *next;
- *     ListNode(int x) : val(x), next(NULL) {}
- * };
-
- */
+/**
+* Definition for singly-linked list.
+* struct ListNode {
+*     int val;
+*     ListNode *next;
+*     ListNode(int x) : val(x), next(NULL) {}
+* };
+*/
 class Solution {
 public:
 	ListNode* addTwoNumbers(ListNode* l1, ListNode* l2) {
-		int carry = 0;
 		ListNode *dummy = new ListNode(-1), *p = dummy;
-		for (ListNode *pa = l1, *pb = l2; pa || pb; p = p->next) {
-			int ai = pa != NULL ? pa->val : 0;
-			int bi = pb != NULL ? pb->val : 0;
-			carry = ai + bi + carry;
+		int carry = 0;
+		while (carry != 0 || l1 != NULL || l2 != NULL) {
+			int a = l1 == NULL ? 0 : l1->val, b = l2 == NULL ? 0 : l2->val;
+			carry += a + b;
 			p->next = new ListNode(carry % 10);
+			p = p->next;
 			carry /= 10;
-			pa = pa != NULL ? pa->next : NULL;
-			pb = pb != NULL ? pb->next : NULL;
-		}
-		if (carry) {
-			p->next = new ListNode(carry);
+			l1 = l1 == NULL ? NULL : l1->next;
+			l2 = l2 == NULL ? NULL : l2->next;
 		}
 		return dummy->next;
 	}
@@ -125,33 +120,29 @@ class Solution {
 public:
 	double findMedianSortedArrays(vector<int>& nums1, vector<int>& nums2) {
 		int sum = nums1.size() + nums2.size();
-		double res;
-		if (sum % 2) {
-			res = findKth(nums1, nums2, 0, 0, sum / 2 + 1);
+		if (sum & 1) {
+			return findMedian(nums1, 0, nums2, 0, sum / 2 + 1);
 		}
 		else {
-			res = (findKth(nums1, nums2, 0, 0, sum / 2) + findKth(nums1, nums2, 0, 0, sum / 2 + 1)) / 2.0;
+			return (findMedian(nums1, 0, nums2, 0, sum / 2) + findMedian(nums1, 0, nums2, 0, sum / 2 + 1)) / 2.0;
 		}
-		return res;
+		return 0.0;
 	}
 private:
-	double findKth(vector<int>& nums1, vector<int>& nums2, int s1, int s2, int k) {
-		if (s1 >= nums1.size()) {
-			return nums2[s2 + k - 1];
-		}
-		else if (s2 >= nums2.size()) {
-			return nums1[s1 + k - 1];
+	double findMedian(const vector<int>& nums1, int ind1, const vector<int>& nums2, int ind2, int k) {
+		if (ind1 >= nums1.size() || ind2 >= nums2.size()) {
+			return ind1 >= nums1.size() ? nums2[ind2 + k - 1] : nums1[ind1 + k - 1];
 		}
 		if (k == 1) {
-			return min(nums1[s1], nums2[s2]);
+			return min(nums1[ind1], nums2[ind2]);
 		}
-		int mid1 = s1 + k / 2 - 1 >= nums1.size() ? INT_MAX : nums1[s1 + k / 2 - 1];
-		int mid2 = s2 + k / 2 - 1 >= nums2.size() ? INT_MAX : nums2[s2 + k / 2 - 1];
+		int mid1 = ind1 + k / 2 - 1 >= nums1.size() ? INT_MAX : nums1[ind1 + k / 2 - 1];
+		int mid2 = ind2 + k / 2 - 1 >= nums2.size() ? INT_MAX : nums2[ind2 + k / 2 - 1];
 		if (mid1 < mid2) {
-			return findKth(nums1, nums2, s1 + k / 2, s2, k - k / 2);
+			return findMedian(nums1, ind1 + k / 2, nums2, ind2, k - k / 2);
 		}
 		else {
-			return findKth(nums1, nums2, s1, s2 + k / 2, k - k / 2);
+			return findMedian(nums1, ind1, nums2, ind2 + k / 2, k - k / 2);
 		}
 	}
 };
@@ -463,18 +454,17 @@ Input is guaranteed to be within the range from 1 to 3999.
 class Solution {
 public:
 	int romanToInt(string s) {
-		int num = ChatoNum(s[0]);
-		for (int i = 1; i < s.length(); i++) {
-			if (ChatoNum(s[i]) > ChatoNum(s[i - 1])) {
-				num += ChatoNum(s[i]) - 2 * ChatoNum(s[i - 1]);
-			}
-			else {
-				num += ChatoNum(s[i]);
+		int res = ChartoNum(s[0]);
+		for (int i = 1; i < s.size(); i++) {
+			res += ChartoNum(s[i]);
+			if (ChartoNum(s[i]) > ChartoNum(s[i - 1])) {
+				res -= 2 * ChartoNum(s[i - 1]);
 			}
 		}
-		return num;
+		return res;
 	}
-	int ChatoNum(char cha) {
+private:
+	int ChartoNum(const char& cha) {
 		switch (cha) {
 		case 'I': return 1;
 		case 'V': return 5;
@@ -3912,42 +3902,22 @@ The maximum depth is the number of nodes along the longest path from the root no
 
 */
 /**
- * Definition for a binary tree node.
- * struct TreeNode {
- *     int val;
- *     TreeNode *left;
- *     TreeNode *right;
- *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
- * };
- */
+* Definition for a binary tree node.
+* struct TreeNode {
+*     int val;
+*     TreeNode *left;
+*     TreeNode *right;
+*     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+* };
+*/
 class Solution {
 public:
 	int maxDepth(TreeNode* root) {
-		if (!root) return 0;
-		int res = 0;
-		queue<TreeNode*> q;
-		q.push(root);
-		while (!q.empty()) {
-			int _size = q.size();
-			res++;
-			for (int i = 0; i < _size; i++) {
-				TreeNode *temp = q.front();
-				q.pop();
-				if (temp->left) q.push(temp->left);
-				if (temp->right) q.push(temp->right);
-			}
+		if (root == NULL) {
+			return 0;
 		}
-		return res;
-	}
-};
-class Solution {
-public:
-	int maxDepth(TreeNode* root) {
-		if (!root) return 0;
-		else if (!(root->left) && !(root->right)) return 1;
-		int depth_L = maxDepth(root->left);
-		int depth_R = maxDepth(root->right);
-		return depth_L > depth_R ? depth_L + 1 : depth_R + 1;
+		int l = maxDepth(root->left), r = maxDepth(root->right);
+		return max(l, r) + 1;
 	}
 };
 /*
@@ -9976,7 +9946,13 @@ Given s = "hello", return "olleh".
 class Solution {
 public:
 	string reverseString(string s) {
-		reverse(s.begin(), s.end());
+		if (s.size() < 2) {
+			return s;
+		}
+		int i = 0, j = s.size() - 1;
+		while (i < j) {
+			swap(s[i++], s[j--]);
+		}
 		return s;
 	}
 };
@@ -10669,11 +10645,13 @@ Given a = 1 and b = 2, return 3.
 class Solution {
 public:
 	int getSum(int a, int b) {
-		while (b) {
-			int x = a ^ b, y = (a & b) << 1;
-			a = x; b = y;
+		int sum = 0;
+		while (b != 0) {
+			sum = a ^ b;
+			b = (a & b) << 1;
+			a = sum;
 		}
-		return a;
+		return sum;
 	}
 };
 /*
