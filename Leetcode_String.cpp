@@ -16,16 +16,16 @@ Given "pwwkew", the answer is "wke", with the length of 3. Note that the answer 
 class Solution {
 public:
 	int lengthOfLongestSubstring(string s) {
-		int start = 0, max_len = 0;
-		vector<int> last_position(255, -1);
-		for (int i = 0; i < s.size(); i++) {
-			if (last_position[s[i]] >= start) {
-				max_len = max(i - start, max_len);
-				start = last_position[s[i]] + 1;
+		char t[256] = { 0 };
+		int i = 0, j = 0, res = 0;
+		while (j < s.size()) {
+			t[s[j++]]++;
+			while (t[s[j - 1]] > 1) {
+				t[s[i++]]--;
 			}
-			last_position[s[i]] = i;
+			res = max(res, j - i);
 		}
-		return max((int)s.size() - start, max_len);
+		return res;
 	}
 };
 /*
@@ -72,7 +72,7 @@ Y   I   R
 And then read line by line: "PAHNAPLSIIGYIR"
 
 Write the code that will take a string and make this conversion given a number of rows:
-
+s
 string convert(string text, int nRows);
 
 convert("PAYPALISHIRING", 3) should return "PAHNAPLSIIGYIR".
@@ -81,17 +81,23 @@ convert("PAYPALISHIRING", 3) should return "PAHNAPLSIIGYIR".
 class Solution {
 public:
 	string convert(string s, int numRows) {
-		if (numRows == 1) return s;
+		if (numRows == 1) {
+			return s;
+		}
 		string res;
 		int delta1 = 2 * numRows - 2;
 		for (int i = 0; i < numRows; i++) {
-			int j = i, delta2 = delta1 - 2 * i;
+			int delta2 = delta1 - 2 * i, j = i;
 			while (j < s.size()) {
 				res += s[j];
-				if (delta2 == 0 || delta2 == delta1) j += delta1;
+				if (delta2 == 0 || delta2 == delta1) {
+					j += delta1;
+				}
 				else {
 					j += delta2;
-					if (j >= s.size()) break;
+					if (j >= s.size()) {
+						break;
+					}
 					res += s[j];
 					j += delta1 - delta2;
 				}
@@ -945,8 +951,33 @@ public:
 		string temp;
 		ss >> temp;
 		s = temp;
-		while (ss >> temp) s = temp + ' ' + s;
+		while (ss >> temp) {
+			s = temp + ' ' + s;
+		}
 		return;
+	}
+};
+class Solution {
+public:
+	void reverseWords(string &s) {
+		int i = 0, j = 0;
+		bool wordfound = false;
+		while (j < s.size()) {
+			if (s[j] != ' ') {
+				if (wordfound) {
+					s[i++] = ' ';
+				}
+				int start = i;
+				while (j < s.size() && s[j] != ' ') {
+					s[i++] = s[j++];
+				}
+				wordfound = true;
+				reverse(s.begin() + start, s.begin() + i);
+			}
+			j++;
+		}
+		s.resize(i);
+		reverse(s.begin(), s.end());
 	}
 };
 /*

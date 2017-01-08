@@ -11,28 +11,17 @@ set(key, value) - Set or insert the value if the key is not already present. Whe
 class KeyValue {
 public:
 	int key, value;
-	KeyValue *next;
-	KeyValue(int key, int value) {
-		next = NULL;
-		this->key = key;
-		this->value = value;
-	}
-	KeyValue() {
-		this->next = NULL;
-		this->key = 0;
-		this->value = 0;
-	}
+	KeyValue* next;
+	KeyValue(int k, int v) : key(k), value(v), next(NULL) {}
 };
 class LRUCache {
 public:
-	unordered_map<int, KeyValue*> mapping;
+	unordered_map<int, KeyValue*> mapping;//map key the the previous node
 	KeyValue *head, *tail;
 	int capacity, size;
-	LRUCache(int capacity) {
+	LRUCache(int capacity) : capacity(capacity), size(0) {
 		this->head = new KeyValue(0, 0);
 		this->tail = head;
-		this->capacity = capacity;
-		this->size = 0;
 		mapping.clear();
 	}
 
@@ -40,7 +29,7 @@ public:
 		if (mapping.find(key) == mapping.end()) {
 			return -1;
 		}
-		moveToTail(mapping[key]);
+		moveToTail(mapping[key]);//move this one to the tail
 		return mapping[key]->next->value;
 	}
 
@@ -66,14 +55,14 @@ public:
 		}
 	}
 private:
-	void moveToTail(KeyValue *prev) {
-		if (prev->next == tail) {
+	void moveToTail(KeyValue *pre) {
+		if (pre->next == tail) {
 			return;
 		}
-		KeyValue *node = prev->next;
-		prev->next = node->next;
+		KeyValue *node = pre->next;
+		pre->next = node->next;
 		if (node->next != NULL) {
-			mapping[node->next->key] = prev;
+			mapping[node->next->key] = pre;
 		}
 		tail->next = node;
 		node->next = NULL;
@@ -102,10 +91,11 @@ minStack.getMin();   --> Returns -3.
 minStack.pop();
 minStack.top();      --> Returns 0.
 minStack.getMin();   --> Returns -2.
+
 */
 class MinStack {
 public:
-	stack<int> s, min;
+	stack<int> s, s_min;
 	/** initialize your data structure here. */
 	MinStack() {
 
@@ -113,14 +103,14 @@ public:
 
 	void push(int x) {
 		s.push(x);
-		if (min.empty() || x <= min.top()) {
-			min.push(x);
+		if (s_min.empty() || x <= s_min.top()) {
+			s_min.push(x);
 		}
 	}
 
 	void pop() {
-		if (s.top() == min.top()) {
-			min.pop();
+		if (s.top() == s_min.top()) {
+			s_min.pop();
 		}
 		s.pop();
 	}
@@ -130,17 +120,17 @@ public:
 	}
 
 	int getMin() {
-		return min.top();
+		return s_min.top();
 	}
 };
 /**
- * Your MinStack object will be instantiated and called as such:
- * MinStack obj = new MinStack();
- * obj.push(x);
- * obj.pop();
- * int param_3 = obj.top();
- * int param_4 = obj.getMin();
- */
+* Your MinStack object will be instantiated and called as such:
+* MinStack obj = new MinStack();
+* obj.push(x);
+* obj.pop();
+* int param_3 = obj.top();
+* int param_4 = obj.getMin();
+*/
  /*
 
  173. Binary Search Tree Iterator (Medium)

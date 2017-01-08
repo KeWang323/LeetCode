@@ -920,27 +920,27 @@ A linked list can be reversed either iteratively or recursively. Could you imple
 
 */
 /**
- * Definition for singly-linked list.
- * struct ListNode {
- *     int val;
- *     ListNode *next;
- *     ListNode(int x) : val(x), next(NULL) {}
- * };
- */
+* Definition for singly-linked list.
+* struct ListNode {
+*     int val;
+*     ListNode *next;
+*     ListNode(int x) : val(x), next(NULL) {}
+* };
+*/
 class Solution {
 public:
 	ListNode* reverseList(ListNode* head) {
 		if (head == NULL || head->next == NULL) {
 			return head;
 		}
-		ListNode *p = head, *prev = NULL;
+		ListNode *pre = NULL;
 		while (head != NULL) {
 			ListNode *post = head->next;
-			head->next = prev;
-			prev = head;
+			head->next = pre;
+			pre = head;
 			head = post;
 		}
-		return prev;
+		return pre;
 	}
 };
 class Solution {

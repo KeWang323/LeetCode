@@ -16,16 +16,16 @@ Given "pwwkew", the answer is "wke", with the length of 3. Note that the answer 
 class Solution {
 public:
 	int lengthOfLongestSubstring(string s) {
-		int start = 0, max_len = 0;
-		vector<int> last_position(255, -1);
-		for (int i = 0; i < s.size(); i++) {
-			if (last_position[s[i]] >= start) {
-				max_len = max(i - start, max_len);
-				start = last_position[s[i]] + 1;
+		char t[256] = { 0 };
+		int i = 0, j = 0, res = 0;
+		while (j < s.size()) {
+			t[s[j++]]++;
+			while (t[s[j - 1]] > 1) {
+				t[s[i++]]--;
 			}
-			last_position[s[i]] = i;
+			res = max(res, j - i);
 		}
-		return max((int)s.size() - start, max_len);
+		return res;
 	}
 };
 /*

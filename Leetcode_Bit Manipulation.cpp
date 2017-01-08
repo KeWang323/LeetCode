@@ -92,23 +92,20 @@ You may assume that the array is non-empty and the majority element always exist
 class Solution {
 public:
 	int majorityElement(vector<int>& nums) {
-		if (nums.size() == 1) {
-			return nums[0];
-		}
-		int cnt = 0, majority;
-		for (int i = 0; i < nums.size(); i++) {
+		int res, cnt = 0;
+		for (int num : nums) {
 			if (cnt == 0) {
-				majority = nums[i];
-				cnt++;
+				cnt = 1;
+				res = num;
 			}
 			else {
-				majority == nums[i] ? cnt++ : cnt--;
+				cnt = num == res ? cnt + 1 : cnt - 1;
 				if (cnt > nums.size() / 2) {
-					return majority;
+					return res;
 				}
 			}
 		}
-		return majority;
+		return res;
 	}
 };
 /*
@@ -174,10 +171,10 @@ For example, the 32-bit integer ’11' has binary representation 000000000000000
 class Solution {
 public:
 	int hammingWeight(uint32_t n) {
-		int res;
-		while (n > 0) {
-			res += n & 0x1;
-			n = n >> 1;
+		int res = 0;
+		while (n != 0) {
+			res++;
+			n &= (n - 1);
 		}
 		return res;
 	}
