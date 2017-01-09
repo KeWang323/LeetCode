@@ -40,18 +40,18 @@ Note: You may not slant the container.
 class Solution {
 public:
 	int maxArea(vector<int>& height) {
-		int water = 0, i = 0, j = height.size() - 1;
+		int res = 0, i = 0, j = height.size() - 1;
 		while (i < j) {
-			int h_min = min(height[i], height[j]);
-			water = max(water, h_min * (j - i));
-			while (height[j] <= h_min && i < j) {
-				j--;
-			}
-			while (height[i] <= h_min && i < j) {
+			int hei = min(height[i], height[j]);
+			res = max(res, (j - i) * hei);
+			while (height[i] <= hei) {
 				i++;
 			}
+			while (height[j] <= hei) {
+				j--;
+			}
 		}
-		return water;
+		return res;
 	}
 };
 /*
@@ -806,29 +806,28 @@ Can you solve it without using extra space?
 
 */
 /**
- * Definition for singly-linked list.
- * struct ListNode {
- *     int val;
- *     ListNode *next;
- *     ListNode(int x) : val(x), next(NULL) {}
- * };
- */
+* Definition for singly-linked list.
+* struct ListNode {
+*     int val;
+*     ListNode *next;
+*     ListNode(int x) : val(x), next(NULL) {}
+* };
+*/
 class Solution {
 public:
 	bool hasCycle(ListNode *head) {
-		if (head == NULL) {
+		if (head == NULL || head->next == NULL) {
 			return false;
 		}
-		ListNode *s = head, *f = head;
-		while (f->next != NULL && f->next->next != NULL) {
-			s = s->next;
-			f = f->next->next;
-			if (s == f) {
+		ListNode *slow = head, *fast = head;
+		while (fast->next != NULL && fast->next->next != NULL) {
+			slow = slow->next;
+			fast = fast->next->next;
+			if (fast == slow) {
 				return true;
 			}
 		}
 		return false;
-
 	}
 };
 /*
@@ -1109,9 +1108,9 @@ Minimize the total number of operations.
 class Solution {
 public:
 	void moveZeroes(vector<int>& nums) {
-		for (int i = 0, j = 0; i < nums.size(); i++) {
-			if (nums[i]) {
-				swap(nums[i], nums[j++]);
+		for (int i = 0, j = 0; j < nums.size(); j++) {
+			if (nums[j] != 0) {
+				swap(nums[i++], nums[j]);
 			}
 		}
 	}

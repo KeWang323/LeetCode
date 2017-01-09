@@ -172,10 +172,10 @@ public:
 	string intToRoman(int num) {
 		string res;
 		char* c[4][10] = {
-			{"", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX"},
-			{"", "X", "XX", "XXX", "XL", "L", "LX", "LXX", "LXXX", "XC"},
-			{"", "C", "CC", "CCC", "CD", "D", "DC", "DCC", "DCCC", "CM"},
-			{"", "M", "MM", "MMM"}
+			{ "", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX" },
+			{ "", "X", "XX", "XXX", "XL", "L", "LX", "LXX", "LXXX", "XC" },
+			{ "", "C", "CC", "CCC", "CD", "D", "DC", "DCC", "DCCC", "CM" },
+			{ "", "M", "MM", "MMM" }
 		};
 		res += c[3][num / 1000 % 10];
 		res += c[2][num / 100 % 10];
@@ -378,14 +378,18 @@ class Solution {
 public:
 	vector<int> plusOne(vector<int>& digits) {
 		reverse(digits.begin(), digits.end());
-		int flag = 1;
+		int digit = 1;
 		for (int i = 0; i < digits.size(); i++) {
-			digits[i] += flag;
-			flag = digits[i] / 10;
-			digits[i] %= 10;
+			digit += digits[i];
+			digits[i] = digit % 10;
+			digit /= 10;
+			if (digit == 0) {
+				reverse(digits.begin(), digits.end());
+				return digits;
+			}
 		}
-		if (flag) {
-			digits.push_back(1);
+		if (digit > 0) {
+			digits.push_back(digit);
 		}
 		reverse(digits.begin(), digits.end());
 		return digits;

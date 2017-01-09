@@ -39,24 +39,24 @@ length of S is 1000, and there exists one unique longest palindromic substring.
 class Solution {
 public:
 	string longestPalindrome(string s) {
-		string res;
-		int _size = s.length(), l_max = 0, len_max = 0, l, r;
-		for (int i = 0; i < _size && _size - i > len_max / 2;) {
-			l = r = i;
-			while (r < _size - 1 && s[r] == s[r + 1]) {
+		int len_max = 0, left_max = 0, l, r, i = 0;
+		while (i < s.size() && s.size() - i > len_max / 2) {
+			l = i;
+			r = i;
+			while (r < s.size() - 1 && s[r] == s[r + 1]) {
 				r++;
 			}
 			i = r + 1;
-			while (l > 0 && r < _size - 1 && s[l - 1] == s[r + 1]) {
+			while (l > 0 && r < s.size() - 1 && s[l - 1] == s[r + 1]) {
 				l--;
 				r++;
 			}
 			if (r - l + 1 > len_max) {
+				left_max = l;
 				len_max = r - l + 1;
-				l_max = l;
 			}
 		}
-		return s.substr(l_max, len_max);
+		return s.substr(left_max, len_max);
 	}
 };
 /*
@@ -219,10 +219,10 @@ public:
 	string intToRoman(int num) {
 		string res;
 		char* c[4][10] = {
-			{"", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX"},
-			{"", "X", "XX", "XXX", "XL", "L", "LX", "LXX", "LXXX", "XC"},
-			{"", "C", "CC", "CCC", "CD", "D", "DC", "DCC", "DCCC", "CM"},
-			{"", "M", "MM", "MMM"}
+			{ "", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX" },
+			{ "", "X", "XX", "XXX", "XL", "L", "LX", "LXX", "LXXX", "XC" },
+			{ "", "C", "CC", "CCC", "CD", "D", "DC", "DCC", "DCCC", "CM" },
+			{ "", "M", "MM", "MMM" }
 		};
 		res += c[3][num / 1000 % 10];
 		res += c[2][num / 100 % 10];

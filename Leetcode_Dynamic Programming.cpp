@@ -268,15 +268,16 @@ Each time you can either climb 1 or 2 steps. In how many distinct ways can you c
 class Solution {
 public:
 	int climbStairs(int n) {
-		if (n < 4) return n;
-		int i = 4, prev1 = 2, prev2 = 3;
-		while (i <= n) {
-			int temp = prev2;
-			prev2 += prev1;
-			prev1 = temp;
-			i++;
+		if (n == 1) {
+			return 1;
 		}
-		return prev2;
+		int prepre = 1, pre = 2;
+		while (n-- > 2) {
+			int temp = prepre;
+			prepre = pre;
+			pre += temp;
+		}
+		return pre;
 	}
 };
 /*
@@ -530,19 +531,19 @@ In this case, no transaction is done, i.e. max profit = 0.
 class Solution {
 public:
 	int maxProfit(vector<int>& prices) {
-		if (!prices.size()) {
+		if (prices.empty()) {
 			return 0;
 		}
-		int pro, low = prices[0];
-		for (int i = 0; i < prices.size(); i++) {
-			if (low > prices[i]) {
-				low = prices[i];
+		int res = 0, min = prices[0];
+		for (int i = 1; i < prices.size(); i++) {
+			if (prices[i] >= min) {
+				res = max(res, prices[i] - min);
 			}
 			else {
-				pro = max(prices[i] - low, pro);
+				min = prices[i];
 			}
 		}
-		return pro;
+		return res;
 	}
 };
 /*
@@ -761,18 +762,15 @@ Given a list of non-negative integers representing the amount of money of each h
 class Solution {
 public:
 	int rob(vector<int>& nums) {
-		int n = nums.size();
-		switch (n) {
-		case 0: return 0; break;
-		case 1: return nums[0]; break;
+		if (nums.empty()) {
+			return 0;
 		}
-		vector<int> res(n, 0);
-		res[0] = nums[0];
-		res[1] = max(nums[0], nums[1]);
-		for (int i = 2; i < n; i++) {
-			res[i] = max(nums[i] + res[i - 2], res[i - 1]);
+		vector<int> t(nums.size(), 0);
+		t[0] = nums[0];
+		for (int i = 1; i < nums.size(); i++) {
+			t[i] = max(t[i - 1], nums[i] + t[i - 2]);
 		}
-		return res[n - 1];
+		return t.back();
 	}
 };
 /*

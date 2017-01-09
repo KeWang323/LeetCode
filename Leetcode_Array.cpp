@@ -93,18 +93,18 @@ Note: You may not slant the container.
 class Solution {
 public:
 	int maxArea(vector<int>& height) {
-		int water = 0, i = 0, j = height.size() - 1;
+		int res = 0, i = 0, j = height.size() - 1;
 		while (i < j) {
-			int h_min = min(height[i], height[j]);
-			water = max(water, h_min * (j - i));
-			while (height[j] <= h_min && i < j) {
-				j--;
-			}
-			while (height[i] <= h_min && i < j) {
+			int hei = min(height[i], height[j]);
+			res = max(res, (j - i) * hei);
+			while (height[i] <= hei) {
 				i++;
 			}
+			while (height[j] <= hei) {
+				j--;
+			}
 		}
-		return water;
+		return res;
 	}
 };
 /*
@@ -1069,14 +1069,18 @@ class Solution {
 public:
 	vector<int> plusOne(vector<int>& digits) {
 		reverse(digits.begin(), digits.end());
-		int flag = 1;
+		int digit = 1;
 		for (int i = 0; i < digits.size(); i++) {
-			digits[i] += flag;
-			flag = digits[i] / 10;
-			digits[i] %= 10;
+			digit += digits[i];
+			digits[i] = digit % 10;
+			digit /= 10;
+			if (digit == 0) {
+				reverse(digits.begin(), digits.end());
+				return digits;
+			}
 		}
-		if (flag) {
-			digits.push_back(1);
+		if (digit > 0) {
+			digits.push_back(digit);
 		}
 		reverse(digits.begin(), digits.end());
 		return digits;
@@ -1758,19 +1762,19 @@ In this case, no transaction is done, i.e. max profit = 0.
 class Solution {
 public:
 	int maxProfit(vector<int>& prices) {
-		if (!prices.size()) {
+		if (prices.empty()) {
 			return 0;
 		}
-		int pro, low = prices[0];
-		for (int i = 0; i < prices.size(); i++) {
-			if (low > prices[i]) {
-				low = prices[i];
+		int res = 0, min = prices[0];
+		for (int i = 1; i < prices.size(); i++) {
+			if (prices[i] >= min) {
+				res = max(res, prices[i] - min);
 			}
 			else {
-				pro = max(prices[i] - low, pro);
+				min = prices[i];
 			}
 		}
-		return pro;
+		return res;
 	}
 };
 /*
@@ -2564,9 +2568,9 @@ Minimize the total number of operations.
 class Solution {
 public:
 	void moveZeroes(vector<int>& nums) {
-		for (int i = 0, j = 0; i < nums.size(); i++) {
-			if (nums[i]) {
-				swap(nums[i], nums[j++]);
+		for (int i = 0, j = 0; j < nums.size(); j++) {
+			if (nums[j] != 0) {
+				swap(nums[i++], nums[j]);
 			}
 		}
 	}

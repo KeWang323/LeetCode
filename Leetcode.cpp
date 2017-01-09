@@ -84,16 +84,16 @@ Given "pwwkew", the answer is "wke", with the length of 3. Note that the answer 
 class Solution {
 public:
 	int lengthOfLongestSubstring(string s) {
-		int start = 0, max_len = 0;
-		vector<int> last_position(255, -1);
-		for (int i = 0; i < s.size(); i++) {
-			if (last_position[s[i]] >= start) {
-				max_len = max(i - start, max_len);
-				start = last_position[s[i]] + 1;
+		char t[256] = { 0 };
+		int i = 0, j = 0, res = 0;
+		while (j < s.size()) {
+			t[s[j++]]++;
+			while (t[s[j - 1]] > 1) {
+				t[s[i++]]--;
 			}
-			last_position[s[i]] = i;
+			res = max(res, j - i);
 		}
-		return max((int)s.size() - start, max_len);
+		return res;
 	}
 };
 /*
@@ -157,24 +157,24 @@ length of S is 1000, and there exists one unique longest palindromic substring.
 class Solution {
 public:
 	string longestPalindrome(string s) {
-		string res;
-		int _size = s.length(), l_max = 0, len_max = 0, l, r;
-		for (int i = 0; i < _size && _size - i > len_max / 2;) {
-			l = r = i;
-			while (r < _size - 1 && s[r] == s[r + 1]) {
+		int len_max = 0, left_max = 0, l, r, i = 0;
+		while (i < s.size() && s.size() - i > len_max / 2) {
+			l = i;
+			r = i;
+			while (r < s.size() - 1 && s[r] == s[r + 1]) {
 				r++;
 			}
 			i = r + 1;
-			while (l > 0 && r < _size - 1 && s[l - 1] == s[r + 1]) {
+			while (l > 0 && r < s.size() - 1 && s[l - 1] == s[r + 1]) {
 				l--;
 				r++;
 			}
 			if (r - l + 1 > len_max) {
+				left_max = l;
 				len_max = r - l + 1;
-				l_max = l;
 			}
 		}
-		return s.substr(l_max, len_max);
+		return s.substr(left_max, len_max);
 	}
 };
 /*
@@ -199,17 +199,23 @@ convert("PAYPALISHIRING", 3) should return "PAHNAPLSIIGYIR".
 class Solution {
 public:
 	string convert(string s, int numRows) {
-		if (numRows == 1) return s;
+		if (numRows == 1) {
+			return s;
+		}
 		string res;
 		int delta1 = 2 * numRows - 2;
 		for (int i = 0; i < numRows; i++) {
-			int j = i, delta2 = delta1 - 2 * i;
+			int delta2 = delta1 - 2 * i, j = i;
 			while (j < s.size()) {
 				res += s[j];
-				if (delta2 == 0 || delta2 == delta1) j += delta1;
+				if (delta2 == 0 || delta2 == delta1) {
+					j += delta1;
+				}
 				else {
 					j += delta2;
-					if (j >= s.size()) break;
+					if (j >= s.size()) {
+						break;
+					}
 					res += s[j];
 					j += delta1 - delta2;
 				}
@@ -402,18 +408,18 @@ Note: You may not slant the container.
 class Solution {
 public:
 	int maxArea(vector<int>& height) {
-		int water = 0, i = 0, j = height.size() - 1;
+		int res = 0, i = 0, j = height.size() - 1;
 		while (i < j) {
-			int h_min = min(height[i], height[j]);
-			water = max(water, h_min * (j - i));
-			while (height[j] <= h_min && i < j) {
-				j--;
-			}
-			while (height[i] <= h_min && i < j) {
+			int hei = min(height[i], height[j]);
+			res = max(res, (j - i) * hei);
+			while (height[i] <= hei) {
 				i++;
 			}
+			while (height[j] <= hei) {
+				j--;
+			}
 		}
-		return water;
+		return res;
 	}
 };
 /*
@@ -2535,14 +2541,18 @@ class Solution {
 public:
 	vector<int> plusOne(vector<int>& digits) {
 		reverse(digits.begin(), digits.end());
-		int flag = 1;
+		int digit = 1;
 		for (int i = 0; i < digits.size(); i++) {
-			digits[i] += flag;
-			flag = digits[i] / 10;
-			digits[i] %= 10;
+			digit += digits[i];
+			digits[i] = digit % 10;
+			digit /= 10;
+			if (digit == 0) {
+				reverse(digits.begin(), digits.end());
+				return digits;
+			}
 		}
-		if (flag) {
-			digits.push_back(1);
+		if (digit > 0) {
+			digits.push_back(digit);
 		}
 		reverse(digits.begin(), digits.end());
 		return digits;
@@ -2614,15 +2624,16 @@ Each time you can either climb 1 or 2 steps. In how many distinct ways can you c
 class Solution {
 public:
 	int climbStairs(int n) {
-		if (n < 4) return n;
-		int i = 4, prev1 = 2, prev2 = 3;
-		while (i <= n) {
-			int temp = prev2;
-			prev2 += prev1;
-			prev1 = temp;
-			i++;
+		if (n == 1) {
+			return 1;
 		}
-		return prev2;
+		int prepre = 1, pre = 2;
+		while (n-- > 2) {
+			int temp = prepre;
+			prepre = pre;
+			pre += temp;
+		}
+		return pre;
 	}
 };
 /*
@@ -4616,19 +4627,19 @@ In this case, no transaction is done, i.e. max profit = 0.
 class Solution {
 public:
 	int maxProfit(vector<int>& prices) {
-		if (!prices.size()) {
+		if (prices.empty()) {
 			return 0;
 		}
-		int pro, low = prices[0];
-		for (int i = 0; i < prices.size(); i++) {
-			if (low > prices[i]) {
-				low = prices[i];
+		int res = 0, min = prices[0];
+		for (int i = 1; i < prices.size(); i++) {
+			if (prices[i] >= min) {
+				res = max(res, prices[i] - min);
 			}
 			else {
-				pro = max(prices[i] - low, pro);
+				min = prices[i];
 			}
 		}
-		return pro;
+		return res;
 	}
 };
 /*
@@ -5160,19 +5171,18 @@ Can you solve it without using extra space?
 class Solution {
 public:
 	bool hasCycle(ListNode *head) {
-		if (head == NULL) {
+		if (head == NULL || head->next == NULL) {
 			return false;
 		}
-		ListNode *s = head, *f = head;
-		while (f->next != NULL && f->next->next != NULL) {
-			s = s->next;
-			f = f->next->next;
-			if (s == f) {
+		ListNode *slow = head, *fast = head;
+		while (fast->next != NULL && fast->next->next != NULL) {
+			slow = slow->next;
+			fast = fast->next->next;
+			if (fast == slow) {
 				return true;
 			}
 		}
 		return false;
-
 	}
 };
 /*
@@ -5393,28 +5403,17 @@ set(key, value) - Set or insert the value if the key is not already present. Whe
 class KeyValue {
 public:
 	int key, value;
-	KeyValue *next;
-	KeyValue(int key, int value) {
-		next = NULL;
-		this->key = key;
-		this->value = value;
-	}
-	KeyValue() {
-		this->next = NULL;
-		this->key = 0;
-		this->value = 0;
-	}
+	KeyValue* next;
+	KeyValue(int k, int v) : key(k), value(v), next(NULL) {}
 };
 class LRUCache {
 public:
-	unordered_map<int, KeyValue*> mapping;
+	unordered_map<int, KeyValue*> mapping;//map key the the previous node
 	KeyValue *head, *tail;
 	int capacity, size;
-	LRUCache(int capacity) {
+	LRUCache(int capacity) : capacity(capacity), size(0) {
 		this->head = new KeyValue(0, 0);
 		this->tail = head;
-		this->capacity = capacity;
-		this->size = 0;
 		mapping.clear();
 	}
 
@@ -5422,7 +5421,7 @@ public:
 		if (mapping.find(key) == mapping.end()) {
 			return -1;
 		}
-		moveToTail(mapping[key]);
+		moveToTail(mapping[key]);//move this one to the tail
 		return mapping[key]->next->value;
 	}
 
@@ -5448,14 +5447,14 @@ public:
 		}
 	}
 private:
-	void moveToTail(KeyValue *prev) {
-		if (prev->next == tail) {
+	void moveToTail(KeyValue *pre) {
+		if (pre->next == tail) {
 			return;
 		}
-		KeyValue *node = prev->next;
-		prev->next = node->next;
+		KeyValue *node = pre->next;
+		pre->next = node->next;
 		if (node->next != NULL) {
-			mapping[node->next->key] = prev;
+			mapping[node->next->key] = pre;
 		}
 		tail->next = node;
 		node->next = NULL;
@@ -5669,8 +5668,33 @@ public:
 		string temp;
 		ss >> temp;
 		s = temp;
-		while (ss >> temp) s = temp + ' ' + s;
+		while (ss >> temp) {
+			s = temp + ' ' + s;
+		}
 		return;
+	}
+};
+class Solution {
+public:
+	void reverseWords(string &s) {
+		int i = 0, j = 0;
+		bool wordfound = false;
+		while (j < s.size()) {
+			if (s[j] != ' ') {
+				if (wordfound) {
+					s[i++] = ' ';
+				}
+				int start = i;
+				while (j < s.size() && s[j] != ' ') {
+					s[i++] = s[j++];
+				}
+				wordfound = true;
+				reverse(s.begin() + start, s.begin() + i);
+			}
+			j++;
+		}
+		s.resize(i);
+		reverse(s.begin(), s.end());
 	}
 };
 /*
@@ -5745,10 +5769,11 @@ minStack.getMin();   --> Returns -3.
 minStack.pop();
 minStack.top();      --> Returns 0.
 minStack.getMin();   --> Returns -2.
+
 */
 class MinStack {
 public:
-	stack<int> s, min;
+	stack<int> s, s_min;
 	/** initialize your data structure here. */
 	MinStack() {
 
@@ -5756,14 +5781,14 @@ public:
 
 	void push(int x) {
 		s.push(x);
-		if (min.empty() || x <= min.top()) {
-			min.push(x);
+		if (s_min.empty() || x <= s_min.top()) {
+			s_min.push(x);
 		}
 	}
 
 	void pop() {
-		if (s.top() == min.top()) {
-			min.pop();
+		if (s.top() == s_min.top()) {
+			s_min.pop();
 		}
 		s.pop();
 	}
@@ -5773,47 +5798,47 @@ public:
 	}
 
 	int getMin() {
-		return min.top();
+		return s_min.top();
 	}
 };
 /**
- * Your MinStack object will be instantiated and called as such:
- * MinStack obj = new MinStack();
- * obj.push(x);
- * obj.pop();
- * int param_3 = obj.top();
- * int param_4 = obj.getMin();
- */
- /*
+* Your MinStack object will be instantiated and called as such:
+* MinStack obj = new MinStack();
+* obj.push(x);
+* obj.pop();
+* int param_3 = obj.top();
+* int param_4 = obj.getMin();
+*/
+/*
 
- 156. Binary Tree Upside Down (Medium)
+156. Binary Tree Upside Down (Medium)
 
- Given a binary tree where all the right nodes are either leaf nodes with a sibling (a left node that shares the same parent node) or empty, flip it upside down and turn it into a tree where the original right nodes turned into left leaf nodes. Return the new root.
+Given a binary tree where all the right nodes are either leaf nodes with a sibling (a left node that shares the same parent node) or empty, flip it upside down and turn it into a tree where the original right nodes turned into left leaf nodes. Return the new root.
 
- For example:
- Given a binary tree {1,2,3,4,5},
- 1
- / \
- 2   3
- / \
- 4   5
- return the root of the binary tree [4,5,2,#,#,3,1].
- 4
- / \
- 5   2
- / \
- 3   1
+For example:
+Given a binary tree {1,2,3,4,5},
+1
+/ \
+2   3
+/ \
+4   5
+return the root of the binary tree [4,5,2,#,#,3,1].
+4
+/ \
+5   2
+/ \
+3   1
 
- */
- /**
- * Definition for a binary tree node.
- * struct TreeNode {
- *     int val;
- *     TreeNode *left;
- *     TreeNode *right;
- *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
- * };
- */
+*/
+/**
+* Definition for a binary tree node.
+* struct TreeNode {
+*     int val;
+*     TreeNode *left;
+*     TreeNode *right;
+*     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+* };
+*/
 class Solution {
 public:
 	TreeNode* upsideDownBinaryTree(TreeNode* root) {
@@ -6197,23 +6222,20 @@ You may assume that the array is non-empty and the majority element always exist
 class Solution {
 public:
 	int majorityElement(vector<int>& nums) {
-		if (nums.size() == 1) {
-			return nums[0];
-		}
-		int cnt = 0, majority;
-		for (int i = 0; i < nums.size(); i++) {
+		int res, cnt = 0;
+		for (int num : nums) {
 			if (cnt == 0) {
-				majority = nums[i];
-				cnt++;
+				cnt = 1;
+				res = num;
 			}
 			else {
-				majority == nums[i] ? cnt++ : cnt--;
+				cnt = num == res ? cnt + 1 : cnt - 1;
 				if (cnt > nums.size() / 2) {
-					return majority;
+					return res;
 				}
 			}
 		}
-		return majority;
+		return res;
 	}
 };
 /*
@@ -6556,10 +6578,10 @@ For example, the 32-bit integer ’11' has binary representation 000000000000000
 class Solution {
 public:
 	int hammingWeight(uint32_t n) {
-		int res;
-		while (n > 0) {
-			res += n & 0x1;
-			n = n >> 1;
+		int res = 0;
+		while (n != 0) {
+			res++;
+			n &= (n - 1);
 		}
 		return res;
 	}
@@ -6576,18 +6598,15 @@ Given a list of non-negative integers representing the amount of money of each h
 class Solution {
 public:
 	int rob(vector<int>& nums) {
-		int n = nums.size();
-		switch (n) {
-		case 0: return 0; break;
-		case 1: return nums[0]; break;
+		if (nums.empty()) {
+			return 0;
 		}
-		vector<int> res(n, 0);
-		res[0] = nums[0];
-		res[1] = max(nums[0], nums[1]);
-		for (int i = 2; i < n; i++) {
-			res[i] = max(nums[i] + res[i - 2], res[i - 1]);
+		vector<int> t(nums.size(), 0);
+		t[0] = nums[0];
+		for (int i = 1; i < nums.size(); i++) {
+			t[i] = max(t[i - 1], nums[i] + t[i - 2]);
 		}
-		return res[n - 1];
+		return t.back();
 	}
 };
 /*
@@ -6826,14 +6845,14 @@ public:
 		if (head == NULL || head->next == NULL) {
 			return head;
 		}
-		ListNode *p = head, *prev = NULL;
+		ListNode *pre = NULL;
 		while (head != NULL) {
 			ListNode *post = head->next;
-			head->next = prev;
-			prev = head;
+			head->next = pre;
+			pre = head;
 			head = post;
 		}
-		return prev;
+		return pre;
 	}
 };
 class Solution {
@@ -7251,13 +7270,12 @@ to
 class Solution {
 public:
 	TreeNode* invertTree(TreeNode* root) {
-		if (!root || !(root->left) && !(root->right))
+		if (root == NULL) {
 			return root;
-		else {
-			swap(root->left, root->right);
-			invertTree(root->left);
-			invertTree(root->right);
 		}
+		swap(root->left, root->right);
+		invertTree(root->left);
+		invertTree(root->right);
 		return root;
 	}
 };
@@ -8166,7 +8184,7 @@ Could you do it without any loop/recursion in O(1) runtime?
 class Solution {
 public:
 	int addDigits(int num) {
-		return num - (num - 1) / 9 * 9;
+		return 1 + (num - 1) % 9;
 	}
 };
 /*
@@ -8796,9 +8814,9 @@ Minimize the total number of operations.
 class Solution {
 public:
 	void moveZeroes(vector<int>& nums) {
-		for (int i = 0, j = 0; i < nums.size(); i++) {
-			if (nums[i]) {
-				swap(nums[i], nums[j++]);
+		for (int i = 0, j = 0; j < nums.size(); j++) {
+			if (nums[j] != 0) {
+				swap(nums[i++], nums[j]);
 			}
 		}
 	}
@@ -11017,6 +11035,71 @@ public:
 };
 /*
 
+388. Longest Absolute File Path (Medium)
+
+Suppose we abstract our file system by a string in the following manner:
+
+The string "dir\n\tsubdir1\n\tsubdir2\n\t\tfile.ext" represents:
+
+dir
+subdir1
+subdir2
+file.ext
+The directory dir contains an empty sub-directory subdir1 and a sub-directory subdir2 containing a file file.ext.
+
+The string "dir\n\tsubdir1\n\t\tfile1.ext\n\t\tsubsubdir1\n\tsubdir2\n\t\tsubsubdir2\n\t\t\tfile2.ext" represents:
+
+dir
+subdir1
+file1.ext
+subsubdir1
+subdir2
+subsubdir2
+file2.ext
+The directory dir contains two sub-directories subdir1 and subdir2. subdir1 contains a file file1.ext and an empty second-level sub-directory subsubdir1. subdir2 contains a second-level sub-directory subsubdir2 containing a file file2.ext.
+
+We are interested in finding the longest (number of characters) absolute path to a file within our file system. For example, in the second example above, the longest absolute path is "dir/subdir2/subsubdir2/file2.ext", and its length is 32 (not including the double quotes).
+
+Given a string representing the file system in the above format, return the length of the longest absolute path to file in the abstracted file system. If there is no file in the system, return 0.
+
+Note:
+The name of a file contains at least a . and an extension.
+The name of a directory or sub-directory will not contain a ..
+Time complexity required: O(n) where n is the size of the input string.
+
+Notice that a/aa/aaa/file1.txt is not the longest file path, if there is another path aaaaaaaaaaaaaaaaaaaaa/sth.png.
+
+*/
+class Solution {
+public:
+	int lengthLongestPath(string input) {
+		int res = 0, n = input.size(), level = 0;
+		unordered_map<int, int> m{ { 0, 0 } };
+		for (int i = 0; i < n; i++) {
+			int start = i;
+			while (i < n && input[i] != '\n' && input[i] != '\t') {
+				i++;
+			}
+			if (i >= n || input[i] == '\n') {
+				string t = input.substr(start, i - start);
+				if (t.find('.') != string::npos) {
+					res = max(res, m[level] + (int)t.size());
+				}
+				else {
+					level++;
+					m[level] = m[level - 1] + (int)t.size() + 1;
+				}
+				level = 0;
+			}
+			else {
+				level++;
+			}
+		}
+		return res;
+	}
+};
+/*
+
 389. Find the Difference (Easy)
 
 Given two strings s and t which consist of only lowercase letters.
@@ -11387,6 +11470,59 @@ public:
 			}
 		}
 		return flag == true ? res + 1 : res;
+	}
+};
+/*
+
+412. Fizz Buzz (Easy)
+
+Write a program that outputs the string representation of numbers from 1 to n.
+
+But for multiples of three it should output “Fizz” instead of the number and for the multiples of five output “Buzz”. For numbers which are multiples of both three and five output “FizzBuzz”.
+
+Example:
+
+n = 15,
+
+Return:
+[
+"1",
+"2",
+"Fizz",
+"4",
+"Buzz",
+"Fizz",
+"7",
+"8",
+"Fizz",
+"Buzz",
+"11",
+"Fizz",
+"13",
+"14",
+"FizzBuzz"
+]
+
+*/
+class Solution {
+public:
+	vector<string> fizzBuzz(int n) {
+		vector<string> res(n);
+		for (int i = 1; i <= n; i++) {
+			if (i % 3 != 0 && i % 5 != 0) {
+				res[i - 1] = to_string(i);
+			}
+			else if (i % 3 == 0 && i % 5 == 0) {
+				res[i - 1] = "FizzBuzz";
+			}
+			else if (i % 3 == 0) {
+				res[i - 1] = "Fizz";
+			}
+			else {
+				res[i - 1] = "Buzz";
+			}
+		}
+		return res;
 	}
 };
 /*
