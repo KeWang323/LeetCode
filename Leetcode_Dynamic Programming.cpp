@@ -637,6 +637,43 @@ public:
 };
 /*
 
+139. Word Break (Medium)
+
+Given a string s and a dictionary of words dict, determine if s can be segmented into a space-separated sequence of one or more dictionary words.
+
+For example, given
+s = "leetcode",
+dict = ["leet", "code"].
+
+Return true because "leetcode" can be segmented as "leet code".
+
+*/
+class Solution {
+public:
+	bool wordBreak(string s, vector<string>& wordDict) {
+		unordered_set<string> set;
+		for (string str : wordDict) {
+			set.insert(str);
+		}
+		vector<bool> t(s.size(), false);
+		t[0] = set.find(s.substr(0, 1)) != set.end();
+		for (int i = 1; i < s.size(); i++) {
+			t[i] = set.find(s.substr(0, i + 1)) != set.end();
+			if (t[i] == true) {
+				continue;
+			}
+			for (int j = 0; j < i; j++) {
+				if (t[j] == true && set.find(s.substr(j + 1, i - j)) != set.end()) {
+					t[i] = true;
+					break;
+				}
+			}
+		}
+		return t.back();
+	}
+};
+/*
+
 152. Maximum Product Subarray (Medium)
 
 Find the contiguous subarray within an array (containing at least one number) which has the largest product.

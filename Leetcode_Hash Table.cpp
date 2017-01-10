@@ -684,27 +684,26 @@ Example: 19 is a happy number
 */
 class Solution {
 public:
-	int cal(int n) {
-		int temp = 0;
-		while (n) {
-			temp += pwo(n % 10, 2);
+	bool isHappy(int n) {
+		unordered_set<int> s;
+		int sum = calculate(n);
+		while (s.find(sum) == s.end()) {
+			if (sum == 1) {
+				return true;
+			}
+			s.insert(sum);
+			sum = calculate(sum);
+		}
+		return false;
+	}
+private:
+	int calculate(int n) {
+		int res = 0;
+		while (n > 0) {
+			res += pow(n % 10, 2);
 			n /= 10;
 		}
-		return temp;
-	}
-	bool isHappy(int n) {
-		unordered_map<int, bool> mapping;
-		int sum = cal(n);
-		while (sum != 1) {
-			if (mapping[sum]) {
-				return false;
-			}
-			else {
-				mapping[sum] = true;
-				sum = cal(sum);
-			}
-		}
-		return true;
+		return res;
 	}
 };
 /*

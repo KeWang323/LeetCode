@@ -87,28 +87,28 @@ Merge two sorted linked lists and return it as a new list. The new list should b
 
 */
 /**
- * Definition for singly-linked list.
- * struct ListNode {
- *     int val;
- *     ListNode *next;
- *     ListNode(int x) : val(x), next(NULL) {}
- * };
- */
+* Definition for singly-linked list.
+* struct ListNode {
+*     int val;
+*     ListNode *next;
+*     ListNode(int x) : val(x), next(NULL) {}
+* };
+*/
 class Solution {
 public:
 	ListNode* mergeTwoLists(ListNode* l1, ListNode* l2) {
-		ListNode* dummy = new ListNode(-1);
-		for (ListNode* p = dummy; l1 != NULL || l2 != NULL; p = p->next) {
-			if (l1 == NULL || l2 != NULL && l2->val < l1->val) {
-				p->next = l2;
-				l2 = l2->next;
-			}
-			else {
-				p->next = l1;
-				l1 = l1->next;
-			}
+		if (l1 == NULL) {
+			return l2;
 		}
-		return dummy->next;
+		else if (l2 == NULL) {
+			return l1;
+		}
+		else if (l1->val < l2->val) {
+			l1->next = mergeTwoLists(l1->next, l2);
+			return l1;
+		}
+		l2->next = mergeTwoLists(l2->next, l1);
+		return l2;
 	}
 };
 /*
@@ -815,9 +815,9 @@ Write a program to find the node at which the intersection of two singly linked 
 For example, the following two linked lists:
 
 A:          a1 → a2
-				   ↘
-					 c1 → c2 → c3
-				   ↗
+↘
+c1 → c2 → c3
+↗
 B:     b1 → b2 → b3
 begin to intersect at node c1.
 
@@ -831,43 +831,34 @@ Your code should preferably run in O(n) time and use only O(1) memory.
 
 */
 /**
- * Definition for singly-linked list.
- * struct ListNode {
- *     int val;
- *     ListNode *next;
- *     ListNode(int x) : val(x), next(NULL) {}
- * };
- */
+* Definition for singly-linked list.
+* struct ListNode {
+*     int val;
+*     ListNode *next;
+*     ListNode(int x) : val(x), next(NULL) {}
+* };
+*/
 class Solution {
 public:
 	ListNode *getIntersectionNode(ListNode *headA, ListNode *headB) {
 		if (headA == NULL || headB == NULL) {
 			return NULL;
 		}
-		ListNode *headA1 = headA, *headB1 = headB;
-		int flag1 = 0, flag2 = 0;
-		while (flag1 + flag2 <= 2) {
-			if (headA1->val != headB1->val) {
-				if (!headA1->next) {
-					headA1 = headB;
-					flag1++;
-				}
-				else {
-					headA1 = headA1->next;
-				}
-				if (!headB1->next) {
-					headB1 = headA;
-					flag2++;
-				}
-				else {
-					headB1 = headB1->next;
-				}
+		ListNode *p1 = headA, *p2 = headB;
+		while (p1 != NULL && p2 != NULL && p1 != p2) {
+			p1 = p1->next;
+			p2 = p2->next;
+			if (p1 == p2) {
+				return p1;
 			}
-			else {
-				return headA1;
+			if (p1 == NULL) {
+				p1 = headB;
+			}
+			if (p2 == NULL) {
+				p2 = headA;
 			}
 		}
-		return NULL;
+		return p1;
 	}
 };
 /*

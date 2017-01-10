@@ -335,9 +335,10 @@ public:
 			return false;
 		}
 		int len = 1;
-		for (; x / len >= 10; len *= 10) {
+		while (x / len >= 10) {
+			len *= 10;
 		}
-		while (x != 0) {
+		while (len > 1) {
 			if (x / len != x % 10) {
 				return false;
 			}
@@ -800,18 +801,18 @@ Merge two sorted linked lists and return it as a new list. The new list should b
 class Solution {
 public:
 	ListNode* mergeTwoLists(ListNode* l1, ListNode* l2) {
-		ListNode* dummy = new ListNode(-1);
-		for (ListNode* p = dummy; l1 != NULL || l2 != NULL; p = p->next) {
-			if (l1 == NULL || l2 != NULL && l2->val < l1->val) {
-				p->next = l2;
-				l2 = l2->next;
-			}
-			else {
-				p->next = l1;
-				l1 = l1->next;
-			}
+		if (l1 == NULL) {
+			return l2;
 		}
-		return dummy->next;
+		else if (l2 == NULL) {
+			return l1;
+		}
+		else if (l1->val < l2->val) {
+			l1->next = mergeTwoLists(l1->next, l2);
+			return l1;
+		}
+		l2->next = mergeTwoLists(l2->next, l1);
+		return l2;
 	}
 };
 /*
@@ -4650,7 +4651,9 @@ public:
 	int maxProfit(vector<int>& prices) {
 		int res = 0;
 		for (int i = 1; i < prices.size(); i++) {
-			res += max(prices[i] - prices[i - 1], 0);
+			if (prices[i] - prices[i - 1] > 0) {
+				res += prices[i] - prices[i - 1];
+			}
 		}
 		return res;
 	}
@@ -5128,16 +5131,22 @@ Return true because "leetcode" can be segmented as "leet code".
 */
 class Solution {
 public:
-	bool wordBreak(string s, unordered_set<string>& wordDict) {
-		vector<bool> t(s.size() + 1, false);
-		t[0] = true;
-		for (int i = 1; i <= s.size(); i++) {
-			for (int j = i - 1; j >= 0; j--) {
-				if (t[j]) {
-					if (wordDict.find(s.substr(j, i - j)) != wordDict.end()) {
-						t[i] = true;
-						break;
-					}
+	bool wordBreak(string s, vector<string>& wordDict) {
+		unordered_set<string> set;
+		for (string str : wordDict) {
+			set.insert(str);
+		}
+		vector<bool> t(s.size(), false);
+		t[0] = set.find(s.substr(0, 1)) != set.end();
+		for (int i = 1; i < s.size(); i++) {
+			t[i] = set.find(s.substr(0, i + 1)) != set.end();
+			if (t[i] == true) {
+				continue;
+			}
+			for (int j = 0; j < i; j++) {
+				if (t[j] == true && set.find(s.substr(j + 1, i - j)) != set.end()) {
+					t[i] = true;
+					break;
 				}
 			}
 		}
@@ -5907,43 +5916,34 @@ Your code should preferably run in O(n) time and use only O(1) memory.
 
 */
 /**
- * Definition for singly-linked list.
- * struct ListNode {
- *     int val;
- *     ListNode *next;
- *     ListNode(int x) : val(x), next(NULL) {}
- * };
- */
+* Definition for singly-linked list.
+* struct ListNode {
+*     int val;
+*     ListNode *next;
+*     ListNode(int x) : val(x), next(NULL) {}
+* };
+*/
 class Solution {
 public:
 	ListNode *getIntersectionNode(ListNode *headA, ListNode *headB) {
 		if (headA == NULL || headB == NULL) {
 			return NULL;
 		}
-		ListNode *headA1 = headA, *headB1 = headB;
-		int flag1 = 0, flag2 = 0;
-		while (flag1 + flag2 <= 2) {
-			if (headA1->val != headB1->val) {
-				if (!headA1->next) {
-					headA1 = headB;
-					flag1++;
-				}
-				else {
-					headA1 = headA1->next;
-				}
-				if (!headB1->next) {
-					headB1 = headA;
-					flag2++;
-				}
-				else {
-					headB1 = headB1->next;
-				}
+		ListNode *p1 = headA, *p2 = headB;
+		while (p1 != NULL && p2 != NULL && p1 != p2) {
+			p1 = p1->next;
+			p2 = p2->next;
+			if (p1 == p2) {
+				return p1;
 			}
-			else {
-				return headA1;
+			if (p1 == NULL) {
+				p1 = headB;
+			}
+			if (p2 == NULL) {
+				p2 = headA;
 			}
 		}
-		return NULL;
+		return p1;
 	}
 };
 /*
@@ -6255,8 +6255,8 @@ class Solution {
 public:
 	int titleToNumber(string s) {
 		int res = 0;
-		for (int i = 0; i < s.length(); i++) {
-			res = res * 26 + (s[i] - '@');
+		for (char cha : s) {
+			res = 26 * res + (cha - 'A' + 1);
 		}
 		return res;
 	}
@@ -6665,27 +6665,26 @@ Example: 19 is a happy number
 */
 class Solution {
 public:
-	int cal(int n) {
-		int temp = 0;
-		while (n) {
-			temp += pwo(n % 10, 2);
+	bool isHappy(int n) {
+		unordered_set<int> s;
+		int sum = calculate(n);
+		while (s.find(sum) == s.end()) {
+			if (sum == 1) {
+				return true;
+			}
+			s.insert(sum);
+			sum = calculate(sum);
+		}
+		return false;
+	}
+private:
+	int calculate(int n) {
+		int res = 0;
+		while (n > 0) {
+			res += pow(n % 10, 2);
 			n /= 10;
 		}
-		return temp;
-	}
-	bool isHappy(int n) {
-		unordered_map<int, bool> mapping;
-		int sum = cal(n);
-		while (sum != 1) {
-			if (mapping[sum]) {
-				return false;
-			}
-			else {
-				mapping[sum] = true;
-				sum = cal(sum);
-			}
-		}
-		return true;
+		return res;
 	}
 };
 /*
@@ -9521,7 +9520,7 @@ public:
 };
 /*
 
-319. Bulb Switcher (Easy)
+319. Bulb Switcher (Medium)
 
 There are n bulbs that are initially off. You first turn on all the bulbs. Then, you turn off every second bulb. On the third round, you toggle every third bulb (turning on if it's off or turning off if it's on). For the ith round, you toggle every i bulb. For the nth round, you only toggle the last bulb. Find how many bulbs are on after n rounds.
 
@@ -9631,6 +9630,7 @@ public:
 	}
 };
 /*
+
 326. Power of Three (Easy)
 
 Given an integer, write a function to determine if it is a power of three.
@@ -9642,22 +9642,7 @@ Could you do it without using any loop / recursion?
 class Solution {
 public:
 	bool isPowerOfThree(int n) {
-		if (n <= 0)
-			return false;
-		if (n == 1)
-			return true;
-		if (n % 3 == 0)
-			return isPowerOfThree(n / 3);
-		return false;
-	}
-};
-class Solution {
-public:
-	bool isPowerOfThree(int n) {
-		if (n > 0)
-			return 1162261467 % n == 0;
-		else
-			return false;
+		return n > 0 && 1162261467 % n == 0;
 	}
 };
 /*

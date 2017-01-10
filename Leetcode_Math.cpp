@@ -146,9 +146,10 @@ public:
 			return false;
 		}
 		int len = 1;
-		for (; x / len >= 10; len *= 10) {
+		while (x / len >= 10) {
+			len *= 10;
 		}
-		while (x != 0) {
+		while (len > 1) {
 			if (x / len != x % 10) {
 				return false;
 			}
@@ -597,8 +598,8 @@ class Solution {
 public:
 	int titleToNumber(string s) {
 		int res = 0;
-		for (int i = 0; i < s.length(); i++) {
-			res = res * 26 + (s[i] - '@');
+		for (char cha : s) {
+			res = 26 * res + (cha - 'A' + 1);
 		}
 		return res;
 	}
@@ -641,27 +642,26 @@ Example: 19 is a happy number
 */
 class Solution {
 public:
-	int cal(int n) {
-		int temp = 0;
-		while (n) {
-			temp += pwo(n % 10, 2);
+	bool isHappy(int n) {
+		unordered_set<int> s;
+		int sum = calculate(n);
+		while (s.find(sum) == s.end()) {
+			if (sum == 1) {
+				return true;
+			}
+			s.insert(sum);
+			sum = calculate(sum);
+		}
+		return false;
+	}
+private:
+	int calculate(int n) {
+		int res = 0;
+		while (n > 0) {
+			res += pow(n % 10, 2);
 			n /= 10;
 		}
-		return temp;
-	}
-	bool isHappy(int n) {
-		unordered_map<int, bool> mapping;
-		int sum = cal(n);
-		while (sum != 1) {
-			if (mapping[sum]) {
-				return false;
-			}
-			else {
-				mapping[sum] = true;
-				sum = cal(sum);
-			}
-		}
-		return true;
+		return res;
 	}
 };
 /*
@@ -913,7 +913,7 @@ public:
 };
 /*
 
-319. Bulb Switcher (Easy)
+319. Bulb Switcher (Medium)
 
 There are n bulbs that are initially off. You first turn on all the bulbs. Then, you turn off every second bulb. On the third round, you toggle every third bulb (turning on if it's off or turning off if it's on). For the ith round, you toggle every i bulb. For the nth round, you only toggle the last bulb. Find how many bulbs are on after n rounds.
 
@@ -936,6 +936,7 @@ public:
 	}
 };
 /*
+
 326. Power of Three (Easy)
 
 Given an integer, write a function to determine if it is a power of three.
@@ -947,22 +948,7 @@ Could you do it without using any loop / recursion?
 class Solution {
 public:
 	bool isPowerOfThree(int n) {
-		if (n <= 0)
-			return false;
-		if (n == 1)
-			return true;
-		if (n % 3 == 0)
-			return isPowerOfThree(n / 3);
-		return false;
-	}
-};
-class Solution {
-public:
-	bool isPowerOfThree(int n) {
-		if (n > 0)
-			return 1162261467 % n == 0;
-		else
-			return false;
+		return n > 0 && 1162261467 % n == 0;
 	}
 };
 /*
