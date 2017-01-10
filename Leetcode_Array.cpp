@@ -606,24 +606,11 @@ The above elevation map is represented by array [0,1,0,2,1,0,1,3,2,1,2,1]. In th
 class Solution {
 public:
 	int trap(vector<int>& height) {
-		if (height.size() < 3) {
-			return 0;
-		}
-		int res = 0, i = 0, j = height.size() - 1;
-		while (i < j - 1) {
-			int bar = min(height[i], height[j]);
-			for (int k = i + 1; k < j; k++) {
-				if (height[k] < bar) {
-					res += bar - height[k];
-					height[k] = bar;
-				}
-			}
-			while (height[i] == bar) {
-				i++;
-			}
-			while (height[j] == bar) {
-				j--;
-			}
+		int i = 0, j = height.size() - 1, res = 0, left = 0, right = 0;
+		while (i <= j) {
+			left = max(left, height[i]);
+			right = max(right, height[j]);
+			res += left < right ? left - height[i++] : right - height[j--];
 		}
 		return res;
 	}
@@ -709,12 +696,17 @@ If you have figured out the O(n) solution, try coding another solution using the
 class Solution {
 public:
 	int maxSubArray(vector<int>& nums) {
-		int _sum = INT_MIN, prev = 0;
-		for (int i = 0; i < nums.size(); i++) {
-			prev = max(prev + nums[i], nums[i]);
-			_sum = max(_sum, prev);
+		int res = nums[0], cur = nums[0];
+		for (int i = 1; i < nums.size(); i++) {
+			if (cur > 0) {
+				cur += nums[i];
+			}
+			else {
+				cur = nums[i];
+			}
+			res = max(res, cur);
 		}
-		return _sum;
+		return res;
 	}
 };
 /*
@@ -2150,12 +2142,12 @@ Given an array of integers, find if the array contains any duplicates. Your func
 class Solution {
 public:
 	bool containsDuplicate(vector<int>& nums) {
-		unordered_map<int, bool> mapping;
+		unordered_set<int> s;
 		for (int i : nums) {
-			if (mapping[i]) {
+			if (s.find(i) != s.end()) {
 				return true;
 			}
-			mapping[i] = true;
+			s.insert(i);
 		}
 		return false;
 	}
@@ -2278,14 +2270,15 @@ Could you solve it with constant space complexity? (Note: The output array does 
 class Solution {
 public:
 	vector<int> productExceptSelf(vector<int>& nums) {
-		int _size = nums.size(), temp = 1;
-		vector<int> res(_size);
+		vector<int> res(nums.size());
 		res[0] = 1;
-		for (int i = 1; i < _size; i++) {
-			res[i] = res[i - 1] * nums[i - 1];
+		for (int i = 1; i < res.size(); i++) {
+			res[i] = nums[i - 1] * res[i - 1];
 		}
-		for (int i = _size - 2; i >= 0; i--) {
-			res[i] *= (temp *= nums[i + 1]);
+		int post = 1;
+		for (int i = res.size() - 2; i >= 0; i--) {
+			post *= nums[i + 1];
+			res[i] *= post;
 		}
 		return res;
 	}

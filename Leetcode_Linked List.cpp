@@ -1051,27 +1051,28 @@ The first node is considered odd, the second node even and so on ...
 
 */
 /**
- * Definition for singly-linked list.
- * struct ListNode {
- *     int val;
- *     ListNode *next;
- *     ListNode(int x) : val(x), next(NULL) {}
- * };
- */
+* Definition for singly-linked list.
+* struct ListNode {
+*     int val;
+*     ListNode *next;
+*     ListNode(int x) : val(x), next(NULL) {}
+* };
+*/
 class Solution {
 public:
 	ListNode* oddEvenList(ListNode* head) {
 		if (head == NULL || head->next == NULL) {
 			return head;
 		}
-		ListNode *o = head, *eh = head->next, *e = head->next;
-		while (o->next && e->next) {
-			o->next = e->next;
-			o = e->next;
-			e->next = o->next;
-			e = o->next;
+		ListNode *odd = head, *even = head->next;
+		ListNode *p = even;
+		while (p != NULL && p->next != NULL) {
+			odd->next = p->next;
+			p->next = odd->next->next;
+			odd = odd->next;
+			p = p->next;
 		}
-		o->next = eh;
+		odd->next = even;
 		return head;
 	}
 };

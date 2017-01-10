@@ -462,24 +462,11 @@ The above elevation map is represented by array [0,1,0,2,1,0,1,3,2,1,2,1]. In th
 class Solution {
 public:
 	int trap(vector<int>& height) {
-		if (height.size() < 3) {
-			return 0;
-		}
-		int res = 0, i = 0, j = height.size() - 1;
-		while (i < j - 1) {
-			int bar = min(height[i], height[j]);
-			for (int k = i + 1; k < j; k++) {
-				if (height[k] < bar) {
-					res += bar - height[k];
-					height[k] = bar;
-				}
-			}
-			while (height[i] == bar) {
-				i++;
-			}
-			while (height[j] == bar) {
-				j--;
-			}
+		int i = 0, j = height.size() - 1, res = 0, left = 0, right = 0;
+		while (i <= j) {
+			left = max(left, height[i]);
+			right = max(right, height[j]);
+			res += left < right ? left - height[i++] : right - height[j--];
 		}
 		return res;
 	}

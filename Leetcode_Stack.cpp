@@ -10,18 +10,19 @@ The brackets must close in the correct order, "()" and "()[]{}" are all valid bu
 class Solution {
 public:
 	bool isValid(string s) {
-		stack<char> str;
-		for (int i = 0; i < s.length(); i++) {
-			if (s[i] == '(' || s[i] == '{' || s[i] == '[') {
-				str.push(s[i]);
+		stack<char> sta;
+		for (char cha : s) {
+			if (cha == '(' || cha == '{' || cha == '[') {
+				sta.push(cha);
+			}
+			else if (sta.empty() || cha == ')' && sta.top() != '(' || cha == '}' && sta.top() != '{' || cha == ']' && sta.top() != '[') {
+				return false;
 			}
 			else {
-				if (str.empty()) return false;
-				if ((s[i] == ')' && str.top() != '(') || (s[i] == '}' && str.top() != '{') || (s[i] == ']' && str.top() != '[')) return false;
-				str.pop();
+				sta.pop();
 			}
 		}
-		return str.empty();
+		return sta.empty();
 	}
 };
 /*
@@ -485,26 +486,26 @@ public:
 * int param_3 = obj.top();
 * int param_4 = obj.getMin();
 */
- /*
+/*
 
- 173. Binary Search Tree Iterator (Medium)
+173. Binary Search Tree Iterator (Medium)
 
- Implement an iterator over a binary search tree (BST). Your iterator will be initialized with the root node of a BST.
+Implement an iterator over a binary search tree (BST). Your iterator will be initialized with the root node of a BST.
 
- Calling next() will return the next smallest number in the BST.
+Calling next() will return the next smallest number in the BST.
 
- Note: next() and hasNext() should run in average O(1) time and uses O(h) memory, where h is the height of the tree.
+Note: next() and hasNext() should run in average O(1) time and uses O(h) memory, where h is the height of the tree.
 
+*/
+/**
+ * Definition for binary tree
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
  */
- /**
-  * Definition for binary tree
-  * struct TreeNode {
-  *     int val;
-  *     TreeNode *left;
-  *     TreeNode *right;
-  *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
-  * };
-  */
 class BSTIterator {
 private:
 	stack<int> s;

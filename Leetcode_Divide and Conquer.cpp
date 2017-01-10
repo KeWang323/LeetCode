@@ -111,12 +111,17 @@ If you have figured out the O(n) solution, try coding another solution using the
 class Solution {
 public:
 	int maxSubArray(vector<int>& nums) {
-		int _sum = INT_MIN, prev = 0;
-		for (int i = 0; i < nums.size(); i++) {
-			prev = max(prev + nums[i], nums[i]);
-			_sum = max(_sum, prev);
+		int res = nums[0], cur = nums[0];
+		for (int i = 1; i < nums.size(); i++) {
+			if (cur > 0) {
+				cur += nums[i];
+			}
+			else {
+				cur = nums[i];
+			}
+			res = max(res, cur);
 		}
-		return _sum;
+		return res;
 	}
 };
 /*

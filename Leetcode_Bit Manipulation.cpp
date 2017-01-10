@@ -239,10 +239,11 @@ Or does the odd/even status of the number help you in calculating the number of 
 class Solution {
 public:
 	vector<int> countBits(int num) {
-		vector<int> table(num + 1);
-		for (int i = 1; i <= num; i++)
-			table[i] = 1 + table[i & (i - 1)];
-		return table;
+		vector<int> t(num + 1);
+		for (int i = 1; i <= num; i++) {
+			t[i] = 1 + t[i & (i - 1)];
+		}
+		return t;
 	}
 };
 /*

@@ -251,13 +251,13 @@ Test cases had been added to test the overflow behavior.
 class Solution {
 public:
 	int reverse(int x) {
-		long long num_rev = 0;
-		while (x) {
+		long num_rev = 0;
+		while (x != 0) {
 			num_rev = num_rev * 10 + x % 10;
+			if (num_rev < INT_MIN || num_rev > INT_MAX) {
+				return 0;
+			}
 			x /= 10;
-		}
-		if (num_rev < INT_MIN || num_rev > INT_MAX) {
-			return 0;
 		}
 		return num_rev;
 	}
@@ -492,20 +492,21 @@ Write a function to find the longest common prefix string amongst an array of st
 */
 class Solution {
 public:
-	string longestCommonPrefix(vector<string>& strs) {
-		if (strs.empty()) return "";
-		int len = strs[0].length();
-		int i, j;
-		for (i = 1; i < strs.size(); i++) {
-			for (j = 0; j < len; j++) {
-				if (strs[i - 1][j] != strs[i][j]) {
-					len = min(len, j);
-					break;
-				}
-			}
-		}
-		return strs[0].substr(0, len);
-	}
+    string longestCommonPrefix(vector<string>& strs) {
+        if (strs.empty()) {
+            return "";
+        }
+        int len = strs[0].size();
+        for (int i = 1; i < strs.size(); i++) {
+            for (int j = 0; j < len; j++) {
+                if (strs[i][j] != strs[i - 1][j]) {
+                    len = min(len, j);
+                    break;
+                }
+            } 
+        }
+        return strs[0].substr(0, len);
+    }
 };
 /*
 
@@ -766,18 +767,19 @@ The brackets must close in the correct order, "()" and "()[]{}" are all valid bu
 class Solution {
 public:
 	bool isValid(string s) {
-		stack<char> str;
-		for (int i = 0; i < s.length(); i++) {
-			if (s[i] == '(' || s[i] == '{' || s[i] == '[') {
-				str.push(s[i]);
+		stack<char> sta;
+		for (char cha : s) {
+			if (cha == '(' || cha == '{' || cha == '[') {
+				sta.push(cha);
+			}
+			else if (sta.empty() || cha == ')' && sta.top() != '(' || cha == '}' && sta.top() != '{' || cha == ']' && sta.top() != '[') {
+				return false;
 			}
 			else {
-				if (str.empty()) return false;
-				if ((s[i] == ')' && str.top() != '(') || (s[i] == '}' && str.top() != '{') || (s[i] == ']' && str.top() != '[')) return false;
-				str.pop();
+				sta.pop();
 			}
 		}
-		return str.empty();
+		return sta.empty();
 	}
 };
 /*
@@ -1470,19 +1472,19 @@ Note: The sequence of integers will be represented as a string.
 class Solution {
 public:
 	string countAndSay(int n) {
-		string res = "";
-		if (n == 1) res = "1";
-		if (n - 1) {
-			string str = countAndSay(n - 1) + "*";
-			int cnt = 1;
-			for (int i = 0; i < str.length() - 1; i++) {
-				if (str[i] == str[i + 1]) cnt++;
-				else {
-					res.push_back(cnt + '0');
-					res.push_back(str[i]);
-					cnt = 1;
-				}
+		if (n == 1) {
+			return "1";
+		}
+		string pre = countAndSay(n - 1), res;
+		int i = 0, j = 0;
+		while (j < pre.size()) {
+			char cur = pre[j];
+			while (j + 1 < pre.size() && pre[j] == pre[j + 1]) {
+				j++;
 			}
+			j++;
+			res += to_string(j - i) + cur;
+			i = j;
 		}
 		return res;
 	}
@@ -1594,24 +1596,11 @@ The above elevation map is represented by array [0,1,0,2,1,0,1,3,2,1,2,1]. In th
 class Solution {
 public:
 	int trap(vector<int>& height) {
-		if (height.size() < 3) {
-			return 0;
-		}
-		int res = 0, i = 0, j = height.size() - 1;
-		while (i < j - 1) {
-			int bar = min(height[i], height[j]);
-			for (int k = i + 1; k < j; k++) {
-				if (height[k] < bar) {
-					res += bar - height[k];
-					height[k] = bar;
-				}
-			}
-			while (height[i] == bar) {
-				i++;
-			}
-			while (height[j] == bar) {
-				j--;
-			}
+		int i = 0, j = height.size() - 1, res = 0, left = 0, right = 0;
+		while (i <= j) {
+			left = max(left, height[i]);
+			right = max(right, height[j]);
+			res += left < right ? left - height[i++] : right - height[j--];
 		}
 		return res;
 	}
@@ -2049,12 +2038,17 @@ If you have figured out the O(n) solution, try coding another solution using the
 class Solution {
 public:
 	int maxSubArray(vector<int>& nums) {
-		int _sum = INT_MIN, prev = 0;
-		for (int i = 0; i < nums.size(); i++) {
-			prev = max(prev + nums[i], nums[i]);
-			_sum = max(_sum, prev);
+		int res = nums[0], cur = nums[0];
+		for (int i = 1; i < nums.size(); i++) {
+			if (cur > 0) {
+				cur += nums[i];
+			}
+			else {
+				cur = nums[i];
+			}
+			res = max(res, cur);
 		}
-		return _sum;
+		return res;
 	}
 };
 /*
@@ -7001,12 +6995,12 @@ Given an array of integers, find if the array contains any duplicates. Your func
 class Solution {
 public:
 	bool containsDuplicate(vector<int>& nums) {
-		unordered_map<int, bool> mapping;
+		unordered_set<int> s;
 		for (int i : nums) {
-			if (mapping[i]) {
+			if (s.find(i) != s.end()) {
 				return true;
 			}
-			mapping[i] = true;
+			s.insert(i);
 		}
 		return false;
 	}
@@ -7691,14 +7685,15 @@ Could you solve it with constant space complexity? (Note: The output array does 
 class Solution {
 public:
 	vector<int> productExceptSelf(vector<int>& nums) {
-		int _size = nums.size(), temp = 1;
-		vector<int> res(_size);
+		vector<int> res(nums.size());
 		res[0] = 1;
-		for (int i = 1; i < _size; i++) {
-			res[i] = res[i - 1] * nums[i - 1];
+		for (int i = 1; i < res.size(); i++) {
+			res[i] = nums[i - 1] * res[i - 1];
 		}
-		for (int i = _size - 2; i >= 0; i--) {
-			res[i] *= (temp *= nums[i + 1]);
+		int post = 1;
+		for (int i = res.size() - 2; i >= 0; i--) {
+			post *= nums[i + 1];
+			res[i] *= post;
 		}
 		return res;
 	}
@@ -9696,14 +9691,15 @@ public:
 		if (head == NULL || head->next == NULL) {
 			return head;
 		}
-		ListNode *o = head, *eh = head->next, *e = head->next;
-		while (o->next && e->next) {
-			o->next = e->next;
-			o = e->next;
-			e->next = o->next;
-			e = o->next;
+		ListNode *odd = head, *even = head->next;
+		ListNode *p = even;
+		while (p != NULL && p->next != NULL) {
+			odd->next = p->next;
+			p->next = odd->next->next;
+			odd = odd->next;
+			p = p->next;
 		}
-		o->next = eh;
+		odd->next = even;
 		return head;
 	}
 };
@@ -9896,10 +9892,11 @@ Or does the odd/even status of the number help you in calculating the number of 
 class Solution {
 public:
 	vector<int> countBits(int num) {
-		vector<int> table(num + 1);
-		for (int i = 1; i <= num; i++)
-			table[i] = 1 + table[i & (i - 1)];
-		return table;
+		vector<int> t(num + 1);
+		for (int i = 1; i <= num; i++) {
+			t[i] = 1 + t[i & (i - 1)];
+		}
+		return t;
 	}
 };
 /*

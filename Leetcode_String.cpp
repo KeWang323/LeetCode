@@ -276,12 +276,13 @@ Write a function to find the longest common prefix string amongst an array of st
 class Solution {
 public:
 	string longestCommonPrefix(vector<string>& strs) {
-		if (strs.empty()) return "";
-		int len = strs[0].length();
-		int i, j;
-		for (i = 1; i < strs.size(); i++) {
-			for (j = 0; j < len; j++) {
-				if (strs[i - 1][j] != strs[i][j]) {
+		if (strs.empty()) {
+			return "";
+		}
+		int len = strs[0].size();
+		for (int i = 1; i < strs.size(); i++) {
+			for (int j = 0; j < len; j++) {
+				if (strs[i][j] != strs[i - 1][j]) {
 					len = min(len, j);
 					break;
 				}
@@ -340,18 +341,19 @@ The brackets must close in the correct order, "()" and "()[]{}" are all valid bu
 class Solution {
 public:
 	bool isValid(string s) {
-		stack<char> str;
-		for (int i = 0; i < s.length(); i++) {
-			if (s[i] == '(' || s[i] == '{' || s[i] == '[') {
-				str.push(s[i]);
+		stack<char> sta;
+		for (char cha : s) {
+			if (cha == '(' || cha == '{' || cha == '[') {
+				sta.push(cha);
+			}
+			else if (sta.empty() || cha == ')' && sta.top() != '(' || cha == '}' && sta.top() != '{' || cha == ']' && sta.top() != '[') {
+				return false;
 			}
 			else {
-				if (str.empty()) return false;
-				if ((s[i] == ')' && str.top() != '(') || (s[i] == '}' && str.top() != '{') || (s[i] == ']' && str.top() != '[')) return false;
-				str.pop();
+				sta.pop();
 			}
 		}
-		return str.empty();
+		return sta.empty();
 	}
 };
 /*
@@ -497,19 +499,19 @@ Note: The sequence of integers will be represented as a string.
 class Solution {
 public:
 	string countAndSay(int n) {
-		string res = "";
-		if (n == 1) res = "1";
-		if (n - 1) {
-			string str = countAndSay(n - 1) + "*";
-			int cnt = 1;
-			for (int i = 0; i < str.length() - 1; i++) {
-				if (str[i] == str[i + 1]) cnt++;
-				else {
-					res.push_back(cnt + '0');
-					res.push_back(str[i]);
-					cnt = 1;
-				}
+		if (n == 1) {
+			return "1";
+		}
+		string pre = countAndSay(n - 1), res;
+		int i = 0, j = 0;
+		while (j < pre.size()) {
+			char cur = pre[j];
+			while (j + 1 < pre.size() && pre[j] == pre[j + 1]) {
+				j++;
 			}
+			j++;
+			res += to_string(j - i) + cur;
+			i = j;
 		}
 		return res;
 	}

@@ -150,12 +150,17 @@ If you have figured out the O(n) solution, try coding another solution using the
 class Solution {
 public:
 	int maxSubArray(vector<int>& nums) {
-		int _sum = INT_MIN, prev = 0;
-		for (int i = 0; i < nums.size(); i++) {
-			prev = max(prev + nums[i], nums[i]);
-			_sum = max(_sum, prev);
+		int res = nums[0], cur = nums[0];
+		for (int i = 1; i < nums.size(); i++) {
+			if (cur > 0) {
+				cur += nums[i];
+			}
+			else {
+				cur = nums[i];
+			}
+			res = max(res, cur);
 		}
-		return _sum;
+		return res;
 	}
 };
 /*
@@ -1202,10 +1207,11 @@ Or does the odd/even status of the number help you in calculating the number of 
 class Solution {
 public:
 	vector<int> countBits(int num) {
-		vector<int> table(num + 1);
-		for (int i = 1; i <= num; i++)
-			table[i] = 1 + table[i & (i - 1)];
-		return table;
+		vector<int> t(num + 1);
+		for (int i = 1; i <= num; i++) {
+			t[i] = 1 + t[i & (i - 1)];
+		}
+		return t;
 	}
 };
 /*

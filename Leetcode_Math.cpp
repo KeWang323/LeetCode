@@ -60,13 +60,13 @@ Test cases had been added to test the overflow behavior.
 class Solution {
 public:
 	int reverse(int x) {
-		long long num_rev = 0;
-		while (x) {
+		long num_rev = 0;
+		while (x != 0) {
 			num_rev = num_rev * 10 + x % 10;
+			if (num_rev < INT_MIN || num_rev > INT_MAX) {
+				return 0;
+			}
 			x /= 10;
-		}
-		if (num_rev < INT_MIN || num_rev > INT_MAX) {
-			return 0;
 		}
 		return num_rev;
 	}

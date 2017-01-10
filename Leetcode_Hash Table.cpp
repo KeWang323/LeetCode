@@ -806,12 +806,12 @@ Given an array of integers, find if the array contains any duplicates. Your func
 class Solution {
 public:
 	bool containsDuplicate(vector<int>& nums) {
-		unordered_map<int, bool> mapping;
+		unordered_set<int> s;
 		for (int i : nums) {
-			if (mapping[i]) {
+			if (s.find(i) != s.end()) {
 				return true;
 			}
-			mapping[i] = true;
+			s.insert(i);
 		}
 		return false;
 	}
