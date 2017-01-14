@@ -240,18 +240,27 @@ For example, given [3, 30, 34, 5, 9], the largest formed number is 9534330.
 Note: The result may be very large, so you need to return a string instead of an integer.
 
 */
+class Comp {
+public:
+	bool operator()(int i, int j) {
+		return to_string(i) + to_string(j) > to_string(j) + to_string(i);
+	}
+}comp;
 class Solution {
 public:
 	string largestNumber(vector<int>& nums) {
-		string res;
+		if (nums.empty()) {
+			return "";
+		}
 		sort(nums.begin(), nums.end(), comp);
-		if (nums[0] == 0) return "0";
-		for (int num : nums)
+		if (nums[0] == 0) {
+			return "0";
+		}
+		string res;
+		for (int num : nums) {
 			res += to_string(num);
+		}
 		return res;
-	}
-	static bool comp(int i, int j) {
-		return to_string(i) + to_string(j) > to_string(j) + to_string(i);
 	}
 };
 /*
@@ -274,43 +283,18 @@ What if the inputs contain unicode characters? How would you adapt your solution
 class Solution {
 public:
 	bool isAnagram(string s, string t) {
-		if (s.empty() != t.empty() || s.length() != t.length()) {
+		if (s.size() != t.size()) {
 			return false;
 		}
-		if (s.empty() && t.empty()) {
-			return true;
+		int a[256] = { 0 };
+		for (char cha : s) {
+			a[cha]++;
 		}
-		unordered_map<char, int> mapping;
-		for (auto cha : s) {
-			mapping[cha] += 1;
-		}
-		for (auto cha : t) {
-			if (mapping[cha] == 0) {
+		for (char cha : t) {
+			if (a[cha] == 0) {
 				return false;
 			}
-			else {
-				mapping[cha]--;
-			}
-		}
-		return true;
-	}
-};
-class Solution {
-public:
-	bool isAnagram(string s, string t) {
-		if (s.empty() != t.empty() || s.length() != t.length()) {
-			return false;
-		}
-		if (s.empty() && t.empty()) {
-			return true;
-		}
-		vector<int> cnt(26, 0);
-		for (int i = 0; i < s.size(); i++) {
-			cnt[s[i] - 'a']++;
-		}
-		for (int i = 0; i < t.size(); i++) {
-			if (cnt[t[i] - 'a'] == 0) return false;
-			cnt[t[i] - 'a']--;
+			a[cha]--;
 		}
 		return true;
 	}

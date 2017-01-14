@@ -28,23 +28,20 @@ public:
 		int m = s.size(), n = p.size();
 		vector<vector<bool>> t(m + 1, vector<bool>(n + 1, false));
 		t[0][0] = true;
-		for (int i = 1; i <= m; i++) {
-			t[i][0] = false;
-		}
 		for (int j = 1; j <= n; j++) {
-			t[0][j] = j > 1 && '*' == p[j - 1] && t[0][j - 2];
+			t[0][j] = j > 1 && p[j - 1] == '*' && t[0][j - 2] == true;
 		}
 		for (int i = 1; i <= m; i++) {
 			for (int j = 1; j <= n; j++) {
-				if (p[j - 1] != '*') {
-					t[i][j] = t[i - 1][j - 1] && (s[i - 1] == p[j - 1] || '.' == p[j - 1]);
+				if (p[j - 1] == '*') {
+					t[i][j] = t[i][j - 2] || (s[i - 1] == p[j - 2] || p[j - 2] == '.') && t[i - 1][j];
 				}
 				else {
-					t[i][j] = t[i][j - 2] || (s[i - 1] == p[j - 2] || '.' == p[j - 2]) && t[i - 1][j];
+					t[i][j] = t[i - 1][j - 1] && (s[i - 1] == p[j - 1] || p[j - 1] == '.');
 				}
 			}
 		}
-		return t[m][n];
+		return t.back().back();
 	}
 };
 /*
@@ -65,23 +62,24 @@ Although the above answer is in lexicographical order, your answer could be in a
 class Solution {
 public:
 	vector<string> letterCombinations(string digits) {
-		vector<string> res;
-		if (digits.empty()) return res;
-		vector<string> letters = { "", "", "abc", "def", "ghi", "jkl", "mno", "pqrs", "tuv", "wxyz" };
-		string s;
-		generate(digits, res, 0, s, letters);
+		if (digits.empty()) {
+			return{};
+		}
+		vector<string> t = { "", "","abc","def","ghi","jkl","mno","pqrs","tuv","wxyz" }, res;
+		string res_sub;
+		letterCombinations(res, res_sub, 0, digits, t);
 		return res;
 	}
-	void generate(string digits, vector<string>& res, int start, string s, vector<string>& letters) {
-		if (start == digits.length()) {
-			res.push_back(s);
+private:
+	void letterCombinations(vector<string>& res, string& res_sub, int index, const string& digits, const vector<string>& t) {
+		if (index == digits.size()) {
+			res.push_back(res_sub);
 			return;
 		}
-		int num = digits[start] - '0';
-		for (int j = 0; j < letters[num].length(); j++) {
-			s.push_back(letters[num][j]);
-			generate(digits, res, start + 1, s, letters);
-			s.pop_back();
+		for (int i = 0; i < t[digits[index] - '0'].size(); i++) {
+			res_sub += t[digits[index] - '0'][i];
+			letterCombinations(res, res_sub, index + 1, digits, t);
+			res_sub.pop_back();
 		}
 	}
 };
@@ -94,11 +92,11 @@ Given n pairs of parentheses, write a function to generate all combinations of w
 For example, given n = 3, a solution set is:
 
 [
-  "((()))",
-  "(()())",
-  "(())()",
-  "()(())",
-  "()()()"
+"((()))",
+"(()())",
+"(())()",
+"()(())",
+"()()()"
 ]
 
 */
@@ -106,32 +104,25 @@ class Solution {
 public:
 	vector<string> generateParenthesis(int n) {
 		vector<string> res;
-		string s;
-		generate(n, n, res, s);
+		string res_sub;
+		generateParenthesis(res, res_sub, 0, 0, n);
 		return res;
 	}
-	void generate(int p, int q, vector<string>& res, string s) {
-		if (!p) {
-			if (q) {
-				s.push_back(')');
-				generate(0, q - 1, res, s);
-			}
-			else {
-				res.push_back(s);
-				return;
-			}
+private:
+	void generateParenthesis(vector<string>& res, string& res_sub, int l, int r, const int& n) {
+		if (l == n && r == n) {
+			res.push_back(res_sub);
+			return;
 		}
-		else if (p == q) {
-			s.push_back('(');
-			generate(p - 1, q, res, s);
+		if (l < n) {
+			res_sub += "(";
+			generateParenthesis(res, res_sub, l + 1, r, n);
+			res_sub.pop_back();
 		}
-		else {
-			s.push_back('(');
-			generate(p - 1, q, res, s);
-			s.pop_back();
-			s.push_back(')');
-			generate(p, q - 1, res, s);
-			s.pop_back();
+		if (r < l) {
+			res_sub += ")";
+			generateParenthesis(res, res_sub, l, r + 1, n);
+			res_sub.pop_back();
 		}
 	}
 };

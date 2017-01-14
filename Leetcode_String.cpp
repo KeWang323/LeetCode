@@ -137,23 +137,27 @@ public:
 		if (str.empty()) {
 			return 0;
 		}
-		long long num = 0;
+		long res = 0;
 		int i = 0, sign = 1;
-		for (; str[i] == ' '; i++) {
+		while (i < str.size() && str[i] == ' ') {
+			i++;
 		}
-		if (str[i] == '-' || str[i] == '+') {
-			sign = 1 - 2 * (str[i++] == '-');
+		if (str[i] == '+' || str[i] == '-') {
+			sign = str[i++] == '+' ? 1 : -1;
 		}
-		for (; i < str.length(); i++) {
+		while (i < str.size()) {
 			if (isdigit(str[i])) {
-				num = num * 10 + (str[i] - '0');
-				if (num > INT_MAX) {
-					return sign > 0 ? INT_MAX : INT_MIN;
+				res = res * 10 + str[i] - '0';
+				if (res > INT_MAX) {
+					return sign == 1 ? INT_MAX : INT_MIN;
 				}
+				i++;
 			}
-			else break;
+			else {
+				break;
+			}
 		}
-		return (int)num * sign;
+		return (int)res * sign;
 	}
 };
 /*
@@ -186,23 +190,20 @@ public:
 		int m = s.size(), n = p.size();
 		vector<vector<bool>> t(m + 1, vector<bool>(n + 1, false));
 		t[0][0] = true;
-		for (int i = 1; i <= m; i++) {
-			t[i][0] = false;
-		}
 		for (int j = 1; j <= n; j++) {
-			t[0][j] = j > 1 && '*' == p[j - 1] && t[0][j - 2];
+			t[0][j] = j > 1 && p[j - 1] == '*' && t[0][j - 2] == true;
 		}
 		for (int i = 1; i <= m; i++) {
 			for (int j = 1; j <= n; j++) {
-				if (p[j - 1] != '*') {
-					t[i][j] = t[i - 1][j - 1] && (s[i - 1] == p[j - 1] || '.' == p[j - 1]);
+				if (p[j - 1] == '*') {
+					t[i][j] = t[i][j - 2] || (s[i - 1] == p[j - 2] || p[j - 2] == '.') && t[i - 1][j];
 				}
 				else {
-					t[i][j] = t[i][j - 2] || (s[i - 1] == p[j - 2] || '.' == p[j - 2]) && t[i - 1][j];
+					t[i][j] = t[i - 1][j - 1] && (s[i - 1] == p[j - 1] || p[j - 1] == '.');
 				}
 			}
 		}
-		return t[m][n];
+		return t.back().back();
 	}
 };
 /*
@@ -309,23 +310,24 @@ Although the above answer is in lexicographical order, your answer could be in a
 class Solution {
 public:
 	vector<string> letterCombinations(string digits) {
-		vector<string> res;
-		if (digits.empty()) return res;
-		vector<string> letters = { "", "", "abc", "def", "ghi", "jkl", "mno", "pqrs", "tuv", "wxyz" };
-		string s;
-		generate(digits, res, 0, s, letters);
+		if (digits.empty()) {
+			return{};
+		}
+		vector<string> t = { "", "","abc","def","ghi","jkl","mno","pqrs","tuv","wxyz" }, res;
+		string res_sub;
+		letterCombinations(res, res_sub, 0, digits, t);
 		return res;
 	}
-	void generate(string digits, vector<string>& res, int start, string s, vector<string>& letters) {
-		if (start == digits.length()) {
-			res.push_back(s);
+private:
+	void letterCombinations(vector<string>& res, string& res_sub, int index, const string& digits, const vector<string>& t) {
+		if (index == digits.size()) {
+			res.push_back(res_sub);
 			return;
 		}
-		int num = digits[start] - '0';
-		for (int j = 0; j < letters[num].length(); j++) {
-			s.push_back(letters[num][j]);
-			generate(digits, res, start + 1, s, letters);
-			s.pop_back();
+		for (int i = 0; i < t[digits[index] - '0'].size(); i++) {
+			res_sub += t[digits[index] - '0'][i];
+			letterCombinations(res, res_sub, index + 1, digits, t);
+			res_sub.pop_back();
 		}
 	}
 };
@@ -365,11 +367,11 @@ Given n pairs of parentheses, write a function to generate all combinations of w
 For example, given n = 3, a solution set is:
 
 [
-  "((()))",
-  "(()())",
-  "(())()",
-  "()(())",
-  "()()()"
+"((()))",
+"(()())",
+"(())()",
+"()(())",
+"()()()"
 ]
 
 */
@@ -377,32 +379,25 @@ class Solution {
 public:
 	vector<string> generateParenthesis(int n) {
 		vector<string> res;
-		string s;
-		generate(n, n, res, s);
+		string res_sub;
+		generateParenthesis(res, res_sub, 0, 0, n);
 		return res;
 	}
-	void generate(int p, int q, vector<string>& res, string s) {
-		if (!p) {
-			if (q) {
-				s.push_back(')');
-				generate(0, q - 1, res, s);
-			}
-			else {
-				res.push_back(s);
-				return;
-			}
+private:
+	void generateParenthesis(vector<string>& res, string& res_sub, int l, int r, const int& n) {
+		if (l == n && r == n) {
+			res.push_back(res_sub);
+			return;
 		}
-		else if (p == q) {
-			s.push_back('(');
-			generate(p - 1, q, res, s);
+		if (l < n) {
+			res_sub += "(";
+			generateParenthesis(res, res_sub, l + 1, r, n);
+			res_sub.pop_back();
 		}
-		else {
-			s.push_back('(');
-			generate(p - 1, q, res, s);
-			s.pop_back();
-			s.push_back(')');
-			generate(p, q - 1, res, s);
-			s.pop_back();
+		if (r < l) {
+			res_sub += ")";
+			generateParenthesis(res, res_sub, l, r + 1, n);
+			res_sub.pop_back();
 		}
 	}
 };
@@ -610,9 +605,9 @@ For example, given: ["eat", "tea", "tan", "ate", "nat", "bat"],
 Return:
 
 [
-  ["ate", "eat","tea"],
-  ["nat","tan"],
-  ["bat"]
+["ate", "eat","tea"],
+["nat","tan"],
+["bat"]
 ]
 Note: All inputs will be in lower-case.
 
@@ -620,26 +615,20 @@ Note: All inputs will be in lower-case.
 class Solution {
 public:
 	vector<vector<string>> groupAnagrams(vector<string>& strs) {
-		vector<vector<string>> res;
 		vector<int> primes = { 2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 41, 43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89, 97, 101, 103, 107 };
+		vector<vector<string>> res;
 		unordered_map<long, int> mapping;
-		int pos = 0;
-		for (auto s : strs) {
+		for (int i = 0; i < strs.size(); i++) {
 			long temp = 1;
-			if (s != "") {
-				for (auto cha : s) {
-					temp *= primes[cha - 'a'];
-				}
-			}
-			else {
-				temp = 107;
+			for (int j = 0; j < strs[i].size(); j++) {
+				temp *= primes[strs[i][j] - 'a'];
 			}
 			if (mapping.find(temp) == mapping.end()) {
-				mapping[temp] = pos++;
-				res.push_back(vector<string>{s});
+				mapping[temp] = res.size();
+				res.push_back({ strs[i] });
 			}
 			else {
-				res[mapping[temp]].push_back(s);
+				res[mapping[temp]].push_back(strs[i]);
 			}
 		}
 		return res;
@@ -687,15 +676,18 @@ Return "100".
 class Solution {
 public:
 	string addBinary(string a, string b) {
-		int i = a.size(), j = b.size(), carry = 0;
-		string res;
-		while (i > 0 || j > 0 || carry > 0) {
-			int num1 = i > 0 ? a[(i--) - 1] - '0' : 0, num2 = j > 0 ? b[(j--) - 1] - '0' : 0;
-			carry += num1 + num2;
-			res = char(carry % 2 + '0') + res;
-			carry /= 2;
+		string s = "";
+		int c = 0, i = 0, j = 0;
+		reverse(a.begin(), a.end());
+		reverse(b.begin(), b.end());
+		while (i < a.size() || j < b.size() || c == 1) {
+			c += i < a.size() ? a[i++] - '0' : 0;
+			c += j < b.size() ? b[j++] - '0' : 0;
+			s += c % 2 + '0';
+			c /= 2;
 		}
-		return res;
+		reverse(s.begin(), s.end());
+		return s;
 	}
 };
 /*
@@ -1192,7 +1184,8 @@ public:
 /*
 
 383. Ransom Note (Easy)
- Given an arbitrary ransom note string and another string containing letters from all the magazines, write a function that will return true if the ransom note can be constructed from the magazines ; otherwise, it will return false.
+
+Given an arbitrary ransom note string and another string containing letters from all the magazines, write a function that will return true if the ransom note can be constructed from the magazines ; otherwise, it will return false.
 
 Each letter in the magazine string can only be used once in your ransom note.
 

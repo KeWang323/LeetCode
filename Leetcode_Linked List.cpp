@@ -119,38 +119,36 @@ Merge k sorted linked lists and return it as one sorted list. Analyze and descri
 
 */
 /**
- * Definition for singly-linked list.
- * struct ListNode {
- *     int val;
- *     ListNode *next;
- *     ListNode(int x) : val(x), next(NULL) {}
- * };
- */
+* Definition for singly-linked list.
+* struct ListNode {
+*     int val;
+*     ListNode *next;
+*     ListNode(int x) : val(x), next(NULL) {}
+* };
+*/
 class Comp {
 public:
-	bool operator()(pair<ListNode*, int> p1, pair<ListNode*, int> p2) {
-		return p1.first->val > p2.first->val;
+	bool operator()(ListNode* node1, ListNode* node2) {
+		return node1->val > node2->val;
 	}
 };
 class Solution {
 public:
 	ListNode* mergeKLists(vector<ListNode*>& lists) {
-		priority_queue<pair<ListNode*, int>, vector<pair<ListNode*, int>>, Comp> pq;
-		ListNode *dummy = new ListNode(-1);
-		ListNode *cur = dummy;
-		for (int i = 0; i < lists.size();i++) {
-			if (lists[i] != NULL) {
-				pq.push(make_pair(lists[i], i));
+		priority_queue<ListNode*, vector<ListNode*>, Comp> pq;
+		for (auto node : lists) {
+			if (node != NULL) {
+				pq.push(node);
 			}
 		}
+		ListNode* dummy = new ListNode(-1), *p = dummy;
 		while (!pq.empty()) {
-			pair<ListNode*, int> p = pq.top();
+			ListNode* node = pq.top();
 			pq.pop();
-			cur->next = p.first;
-			cur = cur->next;
-			lists[p.second] = lists[p.second]->next;
-			if (lists[p.second] != NULL) {
-				pq.push(make_pair(lists[p.second], p.second));
+			p->next = node;
+			p = p->next;
+			if (node->next != NULL) {
+				pq.push(node->next);
 			}
 		}
 		return dummy->next;
@@ -544,35 +542,35 @@ Return a deep copy of the list.
 
 */
 /**
- * Definition for singly-linked list with a random pointer.
- * struct RandomListNode {
- *     int label;
- *     RandomListNode *next, *random;
- *     RandomListNode(int x) : label(x), next(NULL), random(NULL) {}
- * };
- */
+* Definition for singly-linked list with a random pointer.
+* struct RandomListNode {
+*     int label;
+*     RandomListNode *next, *random;
+*     RandomListNode(int x) : label(x), next(NULL), random(NULL) {}
+* };
+*/
 class Solution {
 public:
 	RandomListNode *copyRandomList(RandomListNode *head) {
 		if (head == NULL) {
 			return NULL;
 		}
+		unordered_map<RandomListNode*, RandomListNode*> mapping;
 		RandomListNode *newhead = new RandomListNode(head->label);
 		RandomListNode *cur = newhead;
-		unordered_map<RandomListNode*, RandomListNode*> mapping;
 		mapping[head] = newhead;
 		while (head != NULL) {
 			if (head->next != NULL) {
 				if (mapping.find(head->next) == mapping.end()) {
-					RandomListNode *next = new RandomListNode(head->next->label);
-					mapping[head->next] = next;
+					RandomListNode *node = new RandomListNode(head->next->label);
+					mapping[head->next] = node;
 				}
 				cur->next = mapping[head->next];
 			}
 			if (head->random != NULL) {
 				if (mapping.find(head->random) == mapping.end()) {
-					RandomListNode *random = new RandomListNode(head->random->label);
-					mapping[head->random] = random;
+					RandomListNode *node = new RandomListNode(head->random->label);
+					mapping[head->random] = node;
 				}
 				cur->random = mapping[head->random];
 			}
@@ -953,31 +951,31 @@ Given a singly linked list, determine if it is a palindrome.
 
 */
 /**
- * Definition for singly-linked list.
- * struct ListNode {
- *     int val;
- *     ListNode *next;
- *     ListNode(int x) : val(x), next(NULL) {}
- * };
- */
+* Definition for singly-linked list.
+* struct ListNode {
+*     int val;
+*     ListNode *next;
+*     ListNode(int x) : val(x), next(NULL) {}
+* };
+*/
 class Solution {
 public:
 	bool isPalindrome(ListNode* head) {
 		if (head == NULL || head->next == NULL) {
 			return true;
 		}
-		ListNode *mid = head, *last = head;
-		while (last->next && last->next->next) {
-			mid = mid->next;
-			last = last->next->next;
+		ListNode *s = head, *f = head;
+		while (f->next != NULL && f->next->next != NULL) {
+			s = s->next;
+			f = f->next->next;
 		}
-		mid->next = reverse(mid->next);
-		mid = mid->next;
-		while (mid != NULL) {
-			if (mid->val != head->val) {
+		s->next = reverse(s->next);
+		s = s->next;
+		while (s != NULL) {
+			if (s->val != head->val) {
 				return false;
 			}
-			mid = mid->next;
+			s = s->next;
 			head = head->next;
 		}
 		return true;
@@ -987,7 +985,7 @@ private:
 		if (head == NULL || head->next == NULL) {
 			return head;
 		}
-		ListNode *p = head, *prev = NULL;
+		ListNode *prev = NULL;
 		while (head != NULL) {
 			ListNode *post = head->next;
 			head->next = prev;

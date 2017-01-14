@@ -28,23 +28,20 @@ public:
 		int m = s.size(), n = p.size();
 		vector<vector<bool>> t(m + 1, vector<bool>(n + 1, false));
 		t[0][0] = true;
-		for (int i = 1; i <= m; i++) {
-			t[i][0] = false;
-		}
 		for (int j = 1; j <= n; j++) {
-			t[0][j] = j > 1 && '*' == p[j - 1] && t[0][j - 2];
+			t[0][j] = j > 1 && p[j - 1] == '*' && t[0][j - 2] == true;
 		}
 		for (int i = 1; i <= m; i++) {
 			for (int j = 1; j <= n; j++) {
-				if (p[j - 1] != '*') {
-					t[i][j] = t[i - 1][j - 1] && (s[i - 1] == p[j - 1] || '.' == p[j - 1]);
+				if (p[j - 1] == '*') {
+					t[i][j] = t[i][j - 2] || (s[i - 1] == p[j - 2] || p[j - 2] == '.') && t[i - 1][j];
 				}
 				else {
-					t[i][j] = t[i][j - 2] || (s[i - 1] == p[j - 2] || '.' == p[j - 2]) && t[i - 1][j];
+					t[i][j] = t[i - 1][j - 1] && (s[i - 1] == p[j - 1] || p[j - 1] == '.');
 				}
 			}
 		}
-		return t[m][n];
+		return t.back().back();
 	}
 };
 /*
@@ -688,14 +685,14 @@ public:
 		if (nums.empty()) {
 			return 0;
 		}
-		int cur_max = nums[0], cur_min = nums[0], maxProduct = nums[0];
+		int cur_max = nums[0], cur_min = nums[0], glo_max = nums[0];
 		for (int i = 1; i < nums.size(); i++) {
-			int prev_min = cur_min, prev_max = cur_max;
-			cur_max = max(nums[i], max(prev_max * nums[i], prev_min * nums[i]));
-			cur_min = min(nums[i], min(prev_max * nums[i], prev_min * nums[i]));
-			maxProduct = max(cur_max, maxProduct);
+			int pre_max = cur_max, pre_min = cur_min;
+			cur_max = max(nums[i], max(pre_max * nums[i], pre_min * nums[i]));
+			cur_min = min(nums[i], min(pre_max * nums[i], pre_min * nums[i]));
+			glo_max = max(glo_max, cur_max);
 		}
-		return maxProduct;
+		return glo_max;
 	}
 };
 /*

@@ -56,38 +56,36 @@ Merge k sorted linked lists and return it as one sorted list. Analyze and descri
 
 */
 /**
- * Definition for singly-linked list.
- * struct ListNode {
- *     int val;
- *     ListNode *next;
- *     ListNode(int x) : val(x), next(NULL) {}
- * };
- */
+* Definition for singly-linked list.
+* struct ListNode {
+*     int val;
+*     ListNode *next;
+*     ListNode(int x) : val(x), next(NULL) {}
+* };
+*/
 class Comp {
 public:
-	bool operator()(pair<ListNode*, int> p1, pair<ListNode*, int> p2) {
-		return p1.first->val > p2.first->val;
+	bool operator()(ListNode* node1, ListNode* node2) {
+		return node1->val > node2->val;
 	}
 };
 class Solution {
 public:
 	ListNode* mergeKLists(vector<ListNode*>& lists) {
-		priority_queue<pair<ListNode*, int>, vector<pair<ListNode*, int>>, Comp> pq;
-		ListNode *dummy = new ListNode(-1);
-		ListNode *cur = dummy;
-		for (int i = 0; i < lists.size();i++) {
-			if (lists[i] != NULL) {
-				pq.push(make_pair(lists[i], i));
+		priority_queue<ListNode*, vector<ListNode*>, Comp> pq;
+		for (auto node : lists) {
+			if (node != NULL) {
+				pq.push(node);
 			}
 		}
+		ListNode* dummy = new ListNode(-1), *p = dummy;
 		while (!pq.empty()) {
-			pair<ListNode*, int> p = pq.top();
+			ListNode* node = pq.top();
 			pq.pop();
-			cur->next = p.first;
-			cur = cur->next;
-			lists[p.second] = lists[p.second]->next;
-			if (lists[p.second] != NULL) {
-				pq.push(make_pair(lists[p.second], p.second));
+			p->next = node;
+			p = p->next;
+			if (node->next != NULL) {
+				pq.push(node->next);
 			}
 		}
 		return dummy->next;

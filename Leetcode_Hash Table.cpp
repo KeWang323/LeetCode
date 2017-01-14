@@ -264,9 +264,9 @@ For example, given: ["eat", "tea", "tan", "ate", "nat", "bat"],
 Return:
 
 [
-  ["ate", "eat","tea"],
-  ["nat","tan"],
-  ["bat"]
+["ate", "eat","tea"],
+["nat","tan"],
+["bat"]
 ]
 Note: All inputs will be in lower-case.
 
@@ -274,26 +274,20 @@ Note: All inputs will be in lower-case.
 class Solution {
 public:
 	vector<vector<string>> groupAnagrams(vector<string>& strs) {
-		vector<vector<string>> res;
 		vector<int> primes = { 2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 41, 43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89, 97, 101, 103, 107 };
+		vector<vector<string>> res;
 		unordered_map<long, int> mapping;
-		int pos = 0;
-		for (auto s : strs) {
+		for (int i = 0; i < strs.size(); i++) {
 			long temp = 1;
-			if (s != "") {
-				for (auto cha : s) {
-					temp *= primes[cha - 'a'];
-				}
-			}
-			else {
-				temp = 107;
+			for (int j = 0; j < strs[i].size(); j++) {
+				temp *= primes[strs[i][j] - 'a'];
 			}
 			if (mapping.find(temp) == mapping.end()) {
-				mapping[temp] = pos++;
-				res.push_back(vector<string>{s});
+				mapping[temp] = res.size();
+				res.push_back({ strs[i] });
 			}
 			else {
-				res[mapping[temp]].push_back(s);
+				res[mapping[temp]].push_back(strs[i]);
 			}
 		}
 		return res;
@@ -468,35 +462,35 @@ Return a deep copy of the list.
 
 */
 /**
- * Definition for singly-linked list with a random pointer.
- * struct RandomListNode {
- *     int label;
- *     RandomListNode *next, *random;
- *     RandomListNode(int x) : label(x), next(NULL), random(NULL) {}
- * };
- */
+* Definition for singly-linked list with a random pointer.
+* struct RandomListNode {
+*     int label;
+*     RandomListNode *next, *random;
+*     RandomListNode(int x) : label(x), next(NULL), random(NULL) {}
+* };
+*/
 class Solution {
 public:
 	RandomListNode *copyRandomList(RandomListNode *head) {
 		if (head == NULL) {
 			return NULL;
 		}
+		unordered_map<RandomListNode*, RandomListNode*> mapping;
 		RandomListNode *newhead = new RandomListNode(head->label);
 		RandomListNode *cur = newhead;
-		unordered_map<RandomListNode*, RandomListNode*> mapping;
 		mapping[head] = newhead;
 		while (head != NULL) {
 			if (head->next != NULL) {
 				if (mapping.find(head->next) == mapping.end()) {
-					RandomListNode *next = new RandomListNode(head->next->label);
-					mapping[head->next] = next;
+					RandomListNode *node = new RandomListNode(head->next->label);
+					mapping[head->next] = node;
 				}
 				cur->next = mapping[head->next];
 			}
 			if (head->random != NULL) {
 				if (mapping.find(head->random) == mapping.end()) {
-					RandomListNode *random = new RandomListNode(head->random->label);
-					mapping[head->random] = random;
+					RandomListNode *node = new RandomListNode(head->random->label);
+					mapping[head->random] = node;
 				}
 				cur->random = mapping[head->random];
 			}
@@ -857,43 +851,18 @@ What if the inputs contain unicode characters? How would you adapt your solution
 class Solution {
 public:
 	bool isAnagram(string s, string t) {
-		if (s.empty() != t.empty() || s.length() != t.length()) {
+		if (s.size() != t.size()) {
 			return false;
 		}
-		if (s.empty() && t.empty()) {
-			return true;
+		int a[256] = { 0 };
+		for (char cha : s) {
+			a[cha]++;
 		}
-		unordered_map<char, int> mapping;
-		for (auto cha : s) {
-			mapping[cha] += 1;
-		}
-		for (auto cha : t) {
-			if (mapping[cha] == 0) {
+		for (char cha : t) {
+			if (a[cha] == 0) {
 				return false;
 			}
-			else {
-				mapping[cha]--;
-			}
-		}
-		return true;
-	}
-};
-class Solution {
-public:
-	bool isAnagram(string s, string t) {
-		if (s.empty() != t.empty() || s.length() != t.length()) {
-			return false;
-		}
-		if (s.empty() && t.empty()) {
-			return true;
-		}
-		vector<int> cnt(26, 0);
-		for (int i = 0; i < s.size(); i++) {
-			cnt[s[i] - 'a']++;
-		}
-		for (int i = 0; i < t.size(); i++) {
-			if (cnt[t[i] - 'a'] == 0) return false;
-			cnt[t[i] - 'a']--;
+			a[cha]--;
 		}
 		return true;
 	}

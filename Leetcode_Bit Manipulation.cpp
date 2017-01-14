@@ -71,13 +71,15 @@ Your algorithm should have a linear runtime complexity. Could you implement it w
 class Solution {
 public:
 	int singleNumber(vector<int>& nums) {
-		int a = 0, b = 0;
-		for (int c : nums) {
-			int ta = (~a&b&c) | (a&~b&~c);
-			b = (~a&~b&c) | (~a&b&~c);
-			a = ta;
+		int one = 0, two = 0, three = 0;
+		for (int num : nums) {
+			two |= one & num;
+			one ^= num;
+			three = one & two;
+			one &= ~three;
+			two &= ~three;
 		}
-		return a | b;
+		return one;
 	}
 };
 /*

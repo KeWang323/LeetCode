@@ -124,39 +124,57 @@ A solution set is:
 ]
 
 */
+/*
+
+15. 3Sum (Medium)
+
+Given an array S of n integers, are there elements a, b, c in S such that a + b + c = 0? Find all unique triplets in the array which gives the sum of zero.
+
+Note: The solution set must not contain duplicate triplets.
+
+For example, given array S = [-1, 0, 1, 2, -1, -4],
+
+A solution set is:
+[
+[-1, 0, 1],
+[-1, -1, 2]
+]
+
+*/
 class Solution {
 public:
 	vector<vector<int>> threeSum(vector<int>& nums) {
-		vector<vector<int>> res;
-		int _size = nums.size();
-		if (_size < 3) {
-			return res;
+		if (nums.size() < 3) {
+			return{};
 		}
+		vector<vector<int>> res;
 		sort(nums.begin(), nums.end());
-		for (int i = 0; i < _size - 2; i++) {
-			if (i > 0 && nums[i - 1] == nums[i] || nums[i] + nums[_size - 1] + nums[_size - 2] < 0) {
-				continue;
-			}
+		for (int i = 0; i < nums.size() - 2; i++) {
 			if (nums[i] + nums[i + 1] + nums[i + 2] > 0) {
 				break;
 			}
-			int j = i + 1, k = _size - 1;
+			else if (i > 0 && nums[i - 1] == nums[i] || nums[i] + nums[nums.size() - 2] + nums[nums.size() - 1] < 0) {
+				continue;
+			}
+			int j = i + 1, k = nums.size() - 1;
 			while (j < k) {
-				int _sum = nums[i] + nums[j] + nums[k];
-				if (_sum == 0) {
-					res.push_back(vector<int>{nums[i], nums[j], nums[k]});
-					do {
-						j++;
-					} while (nums[j] == nums[j - 1] && j < k);
-					do {
-						k--;
-					} while (nums[k] == nums[k + 1] && j < k);
+				int sum = nums[i] + nums[j] + nums[k];
+				if (sum < 0) {
+					j++;
 				}
-				else if (_sum > 0) {
+				else if (sum > 0) {
 					k--;
 				}
 				else {
+					res.push_back({ nums[i], nums[j], nums[k] });
+					while (j < k && nums[j] == nums[j + 1]) {
+						j++;
+					}
+					while (j < k && nums[k] == nums[k - 1]) {
+						k--;
+					}
 					j++;
+					k--;
 				}
 			}
 		}
@@ -331,12 +349,6 @@ public:
 			}
 		}
 		return index;
-	}
-};
-class Solution {
-public:
-	int removeElement(vector<int>& nums, int val) {
-		return distance(nums.begin(), remove(nums.begin(), nums.end(), val));
 	}
 };
 /*
@@ -1497,13 +1509,12 @@ You may assume that nums1 has enough space (size that is greater or equal to m +
 class Solution {
 public:
 	void merge(vector<int>& nums1, int m, vector<int>& nums2, int n) {
-		int i = m - 1, j = n - 1, k = m + n - 1;
-		while (j >= 0) {
-			if (i >= 0 && nums1[i] > nums2[j]) {
-				nums1[k--] = nums1[i--];
+		for (int i = m - 1, j = n - 1, k = m + n - 1; k >= 0; k--) {
+			if (i < 0 || j >= 0 && nums1[i] < nums2[j]) {
+				nums1[k] = nums2[j--];
 			}
 			else {
-				nums1[k--] = nums2[j--];
+				nums1[k] = nums1[i--];
 			}
 		}
 	}
@@ -1644,31 +1655,30 @@ For example, given numRows = 5,
 Return
 
 [
-	 [1],
-	[1,1],
-   [1,2,1],
-  [1,3,3,1],
- [1,4,6,4,1]
+[1],
+[1,1],
+[1,2,1],
+[1,3,3,1],
+[1,4,6,4,1]
 ]
 
 */
 class Solution {
 public:
 	vector<vector<int>> generate(int numRows) {
-		vector<vector<int>> vec;
-		if (numRows <= 0) {
-			return vec;
+		if (numRows < 1) {
+			return{};
 		}
-		vec.push_back(vector<int>(1, 1));
-		for (int i = 1; i < numRows; i++) {
-			vector<int> res(1, 1);
-			for (int j = 0, k = 1; k < vec[i - 1].size(); j++, k++) {
-				res.push_back(vec[i - 1][j] + vec[i - 1][k]);
+		vector<vector<int>> res;
+		vector<int> unit;
+		for (int i = 0; i < numRows; i++) {
+			for (int j = unit.size() - 1; j > 0; j--) {
+				unit[j] += unit[j - 1];
 			}
-			res.push_back(1);
-			vec.push_back(res);
+			unit.push_back(1);
+			res.push_back(unit);
 		}
-		return vec;
+		return res;
 	}
 };
 /*
@@ -1839,14 +1849,14 @@ public:
 		if (nums.empty()) {
 			return 0;
 		}
-		int cur_max = nums[0], cur_min = nums[0], maxProduct = nums[0];
+		int cur_max = nums[0], cur_min = nums[0], glo_max = nums[0];
 		for (int i = 1; i < nums.size(); i++) {
-			int prev_min = cur_min, prev_max = cur_max;
-			cur_max = max(nums[i], max(prev_max * nums[i], prev_min * nums[i]));
-			cur_min = min(nums[i], min(prev_max * nums[i], prev_min * nums[i]));
-			maxProduct = max(cur_max, maxProduct);
+			int pre_max = cur_max, pre_min = cur_min;
+			cur_max = max(nums[i], max(pre_max * nums[i], pre_min * nums[i]));
+			cur_min = min(nums[i], min(pre_max * nums[i], pre_min * nums[i]));
+			glo_max = max(glo_max, cur_max);
 		}
-		return maxProduct;
+		return glo_max;
 	}
 };
 /*
@@ -1868,11 +1878,11 @@ public:
 		int l = 0, r = nums.size() - 1;
 		while (l < r) {
 			int mid = l + (r - l) / 2;
-			if (nums[mid] < nums[r]) {
-				r = mid;
+			if (nums[mid] > nums[r]) {
+				l = mid + 1;
 			}
 			else {
-				l = mid + 1;
+				r = mid;
 			}
 		}
 		return nums[l];

@@ -66,44 +66,45 @@ For example, given array S = [-1, 0, 1, 2, -1, -4],
 
 A solution set is:
 [
-  [-1, 0, 1],
-  [-1, -1, 2]
+[-1, 0, 1],
+[-1, -1, 2]
 ]
 
 */
 class Solution {
 public:
 	vector<vector<int>> threeSum(vector<int>& nums) {
-		vector<vector<int>> res;
-		int _size = nums.size();
-		if (_size < 3) {
-			return res;
+		if (nums.size() < 3) {
+			return{};
 		}
+		vector<vector<int>> res;
 		sort(nums.begin(), nums.end());
-		for (int i = 0; i < _size - 2; i++) {
-			if (i > 0 && nums[i - 1] == nums[i] || nums[i] + nums[_size - 1] + nums[_size - 2] < 0) {
-				continue;
-			}
+		for (int i = 0; i < nums.size() - 2; i++) {
 			if (nums[i] + nums[i + 1] + nums[i + 2] > 0) {
 				break;
 			}
-			int j = i + 1, k = _size - 1;
+			else if (i > 0 && nums[i - 1] == nums[i] || nums[i] + nums[nums.size() - 2] + nums[nums.size() - 1] < 0) {
+				continue;
+			}
+			int j = i + 1, k = nums.size() - 1;
 			while (j < k) {
-				int _sum = nums[i] + nums[j] + nums[k];
-				if (_sum == 0) {
-					res.push_back(vector<int>{nums[i], nums[j], nums[k]});
-					do {
-						j++;
-					} while (nums[j] == nums[j - 1] && j < k);
-					do {
-						k--;
-					} while (nums[k] == nums[k + 1] && j < k);
+				int sum = nums[i] + nums[j] + nums[k];
+				if (sum < 0) {
+					j++;
 				}
-				else if (_sum > 0) {
+				else if (sum > 0) {
 					k--;
 				}
 				else {
+					res.push_back({ nums[i], nums[j], nums[k] });
+					while (j < k && nums[j] == nums[j + 1]) {
+						j++;
+					}
+					while (j < k && nums[k] == nums[k - 1]) {
+						k--;
+					}
 					j++;
+					k--;
 				}
 			}
 		}
@@ -324,12 +325,6 @@ public:
 			}
 		}
 		return index;
-	}
-};
-class Solution {
-public:
-	int removeElement(vector<int>& nums, int val) {
-		return distance(nums.begin(), remove(nums.begin(), nums.end(), val));
 	}
 };
 /*
@@ -740,13 +735,12 @@ You may assume that nums1 has enough space (size that is greater or equal to m +
 class Solution {
 public:
 	void merge(vector<int>& nums1, int m, vector<int>& nums2, int n) {
-		int i = m - 1, j = n - 1, k = m + n - 1;
-		while (j >= 0) {
-			if (i >= 0 && nums1[i] > nums2[j]) {
-				nums1[k--] = nums1[i--];
+		for (int i = m - 1, j = n - 1, k = m + n - 1; k >= 0; k--) {
+			if (i < 0 || j >= 0 && nums1[i] < nums2[j]) {
+				nums1[k] = nums2[j--];
 			}
 			else {
-				nums1[k--] = nums2[j--];
+				nums1[k] = nums1[i--];
 			}
 		}
 	}
@@ -993,31 +987,31 @@ Given a singly linked list, determine if it is a palindrome.
 
 */
 /**
- * Definition for singly-linked list.
- * struct ListNode {
- *     int val;
- *     ListNode *next;
- *     ListNode(int x) : val(x), next(NULL) {}
- * };
- */
+* Definition for singly-linked list.
+* struct ListNode {
+*     int val;
+*     ListNode *next;
+*     ListNode(int x) : val(x), next(NULL) {}
+* };
+*/
 class Solution {
 public:
 	bool isPalindrome(ListNode* head) {
 		if (head == NULL || head->next == NULL) {
 			return true;
 		}
-		ListNode *mid = head, *last = head;
-		while (last->next && last->next->next) {
-			mid = mid->next;
-			last = last->next->next;
+		ListNode *s = head, *f = head;
+		while (f->next != NULL && f->next->next != NULL) {
+			s = s->next;
+			f = f->next->next;
 		}
-		mid->next = reverse(mid->next);
-		mid = mid->next;
-		while (mid != NULL) {
-			if (mid->val != head->val) {
+		s->next = reverse(s->next);
+		s = s->next;
+		while (s != NULL) {
+			if (s->val != head->val) {
 				return false;
 			}
-			mid = mid->next;
+			s = s->next;
 			head = head->next;
 		}
 		return true;
@@ -1027,7 +1021,7 @@ private:
 		if (head == NULL || head->next == NULL) {
 			return head;
 		}
-		ListNode *p = head, *prev = NULL;
+		ListNode *prev = NULL;
 		while (head != NULL) {
 			ListNode *post = head->next;
 			head->next = prev;

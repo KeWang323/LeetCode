@@ -293,21 +293,27 @@ public:
 		if (str.empty()) {
 			return 0;
 		}
-		long long num = 0;
+		long res = 0;
 		int i = 0, sign = 1;
-		for (; str[i] == ' '; i++) {
+		while (i < str.size() && str[i] == ' ') {
+			i++;
 		}
-		if (str[i] == '-' || str[i] == '+') sign = 1 - 2 * (str[i++] == '-');
-		for (; i < str.length(); i++) {
+		if (str[i] == '+' || str[i] == '-') {
+			sign = str[i++] == '+' ? 1 : -1;
+		}
+		while (i < str.size()) {
 			if (isdigit(str[i])) {
-				num = num * 10 + (str[i] - '0');
-				if (num > INT_MAX) {
-					return sign > 0 ? INT_MAX : INT_MIN;
+				res = res * 10 + str[i] - '0';
+				if (res > INT_MAX) {
+					return sign == 1 ? INT_MAX : INT_MIN;
 				}
+				i++;
 			}
-			else break;
+			else {
+				break;
+			}
 		}
-		return (int)num * sign;
+		return (int)res * sign;
 	}
 };
 /*
@@ -378,23 +384,20 @@ public:
 		int m = s.size(), n = p.size();
 		vector<vector<bool>> t(m + 1, vector<bool>(n + 1, false));
 		t[0][0] = true;
-		for (int i = 1; i <= m; i++) {
-			t[i][0] = false;
-		}
 		for (int j = 1; j <= n; j++) {
-			t[0][j] = j > 1 && '*' == p[j - 1] && t[0][j - 2];
+			t[0][j] = j > 1 && p[j - 1] == '*' && t[0][j - 2] == true;
 		}
 		for (int i = 1; i <= m; i++) {
 			for (int j = 1; j <= n; j++) {
-				if (p[j - 1] != '*') {
-					t[i][j] = t[i - 1][j - 1] && (s[i - 1] == p[j - 1] || '.' == p[j - 1]);
+				if (p[j - 1] == '*') {
+					t[i][j] = t[i][j - 2] || (s[i - 1] == p[j - 2] || p[j - 2] == '.') && t[i - 1][j];
 				}
 				else {
-					t[i][j] = t[i][j - 2] || (s[i - 1] == p[j - 2] || '.' == p[j - 2]) && t[i - 1][j];
+					t[i][j] = t[i - 1][j - 1] && (s[i - 1] == p[j - 1] || p[j - 1] == '.');
 				}
 			}
 		}
-		return t[m][n];
+		return t.back().back();
 	}
 };
 /*
@@ -493,21 +496,21 @@ Write a function to find the longest common prefix string amongst an array of st
 */
 class Solution {
 public:
-    string longestCommonPrefix(vector<string>& strs) {
-        if (strs.empty()) {
-            return "";
-        }
-        int len = strs[0].size();
-        for (int i = 1; i < strs.size(); i++) {
-            for (int j = 0; j < len; j++) {
-                if (strs[i][j] != strs[i - 1][j]) {
-                    len = min(len, j);
-                    break;
-                }
-            } 
-        }
-        return strs[0].substr(0, len);
-    }
+	string longestCommonPrefix(vector<string>& strs) {
+		if (strs.empty()) {
+			return "";
+		}
+		int len = strs[0].size();
+		for (int i = 1; i < strs.size(); i++) {
+			for (int j = 0; j < len; j++) {
+				if (strs[i][j] != strs[i - 1][j]) {
+					len = min(len, j);
+					break;
+				}
+			}
+		}
+		return strs[0].substr(0, len);
+	}
 };
 /*
 
@@ -529,36 +532,37 @@ A solution set is:
 class Solution {
 public:
 	vector<vector<int>> threeSum(vector<int>& nums) {
-		vector<vector<int>> res;
-		int _size = nums.size();
-		if (_size < 3) {
-			return res;
+		if (nums.size() < 3) {
+			return{};
 		}
+		vector<vector<int>> res;
 		sort(nums.begin(), nums.end());
-		for (int i = 0; i < _size - 2; i++) {
-			if (i > 0 && nums[i - 1] == nums[i] || nums[i] + nums[_size - 1] + nums[_size - 2] < 0) {
-				continue;
-			}
+		for (int i = 0; i < nums.size() - 2; i++) {
 			if (nums[i] + nums[i + 1] + nums[i + 2] > 0) {
 				break;
 			}
-			int j = i + 1, k = _size - 1;
+			else if (i > 0 && nums[i - 1] == nums[i] || nums[i] + nums[nums.size() - 2] + nums[nums.size() - 1] < 0) {
+				continue;
+			}
+			int j = i + 1, k = nums.size() - 1;
 			while (j < k) {
-				int _sum = nums[i] + nums[j] + nums[k];
-				if (_sum == 0) {
-					res.push_back(vector<int>{nums[i], nums[j], nums[k]});
-					do {
-						j++;
-					} while (nums[j] == nums[j - 1] && j < k);
-					do {
-						k--;
-					} while (nums[k] == nums[k + 1] && j < k);
+				int sum = nums[i] + nums[j] + nums[k];
+				if (sum < 0) {
+					j++;
 				}
-				else if (_sum > 0) {
+				else if (sum > 0) {
 					k--;
 				}
 				else {
+					res.push_back({ nums[i], nums[j], nums[k] });
+					while (j < k && nums[j] == nums[j + 1]) {
+						j++;
+					}
+					while (j < k && nums[k] == nums[k - 1]) {
+						k--;
+					}
 					j++;
+					k--;
 				}
 			}
 		}
@@ -623,23 +627,24 @@ Although the above answer is in lexicographical order, your answer could be in a
 class Solution {
 public:
 	vector<string> letterCombinations(string digits) {
-		vector<string> res;
-		if (digits.empty()) return res;
-		vector<string> letters = { "", "", "abc", "def", "ghi", "jkl", "mno", "pqrs", "tuv", "wxyz" };
-		string s;
-		generate(digits, res, 0, s, letters);
+		if (digits.empty()) {
+			return{};
+		}
+		vector<string> t = { "", "","abc","def","ghi","jkl","mno","pqrs","tuv","wxyz" }, res;
+		string res_sub;
+		letterCombinations(res, res_sub, 0, digits, t);
 		return res;
 	}
-	void generate(string digits, vector<string>& res, int start, string s, vector<string>& letters) {
-		if (start == digits.length()) {
-			res.push_back(s);
+private:
+	void letterCombinations(vector<string>& res, string& res_sub, int index, const string& digits, const vector<string>& t) {
+		if (index == digits.size()) {
+			res.push_back(res_sub);
 			return;
 		}
-		int num = digits[start] - '0';
-		for (int j = 0; j < letters[num].length(); j++) {
-			s.push_back(letters[num][j]);
-			generate(digits, res, start + 1, s, letters);
-			s.pop_back();
+		for (int i = 0; i < t[digits[index] - '0'].size(); i++) {
+			res_sub += t[digits[index] - '0'][i];
+			letterCombinations(res, res_sub, index + 1, digits, t);
+			res_sub.pop_back();
 		}
 	}
 };
@@ -836,32 +841,25 @@ class Solution {
 public:
 	vector<string> generateParenthesis(int n) {
 		vector<string> res;
-		string s;
-		generate(n, n, res, s);
+		string res_sub;
+		generateParenthesis(res, res_sub, 0, 0, n);
 		return res;
 	}
-	void generate(int p, int q, vector<string>& res, string s) {
-		if (!p) {
-			if (q) {
-				s.push_back(')');
-				generate(0, q - 1, res, s);
-			}
-			else {
-				res.push_back(s);
-				return;
-			}
+private:
+	void generateParenthesis(vector<string>& res, string& res_sub, int l, int r, const int& n) {
+		if (l == n && r == n) {
+			res.push_back(res_sub);
+			return;
 		}
-		else if (p == q) {
-			s.push_back('(');
-			generate(p - 1, q, res, s);
+		if (l < n) {
+			res_sub += "(";
+			generateParenthesis(res, res_sub, l + 1, r, n);
+			res_sub.pop_back();
 		}
-		else {
-			s.push_back('(');
-			generate(p - 1, q, res, s);
-			s.pop_back();
-			s.push_back(')');
-			generate(p, q - 1, res, s);
-			s.pop_back();
+		if (r < l) {
+			res_sub += ")";
+			generateParenthesis(res, res_sub, l, r + 1, n);
+			res_sub.pop_back();
 		}
 	}
 };
@@ -873,38 +871,36 @@ Merge k sorted linked lists and return it as one sorted list. Analyze and descri
 
 */
 /**
- * Definition for singly-linked list.
- * struct ListNode {
- *     int val;
- *     ListNode *next;
- *     ListNode(int x) : val(x), next(NULL) {}
- * };
- */
+* Definition for singly-linked list.
+* struct ListNode {
+*     int val;
+*     ListNode *next;
+*     ListNode(int x) : val(x), next(NULL) {}
+* };
+*/
 class Comp {
 public:
-	bool operator()(pair<ListNode*, int> p1, pair<ListNode*, int> p2) {
-		return p1.first->val > p2.first->val;
+	bool operator()(ListNode* node1, ListNode* node2) {
+		return node1->val > node2->val;
 	}
 };
 class Solution {
 public:
 	ListNode* mergeKLists(vector<ListNode*>& lists) {
-		priority_queue<pair<ListNode*, int>, vector<pair<ListNode*, int>>, Comp> pq;
-		ListNode *dummy = new ListNode(-1);
-		ListNode *cur = dummy;
-		for (int i = 0; i < lists.size();i++) {
-			if (lists[i] != NULL) {
-				pq.push(make_pair(lists[i], i));
+		priority_queue<ListNode*, vector<ListNode*>, Comp> pq;
+		for (auto node : lists) {
+			if (node != NULL) {
+				pq.push(node);
 			}
 		}
+		ListNode* dummy = new ListNode(-1), *p = dummy;
 		while (!pq.empty()) {
-			pair<ListNode*, int> p = pq.top();
+			ListNode* node = pq.top();
 			pq.pop();
-			cur->next = p.first;
-			cur = cur->next;
-			lists[p.second] = lists[p.second]->next;
-			if (lists[p.second] != NULL) {
-				pq.push(make_pair(lists[p.second], p.second));
+			p->next = node;
+			p = p->next;
+			if (node->next != NULL) {
+				pq.push(node->next);
 			}
 		}
 		return dummy->next;
@@ -1059,12 +1055,6 @@ public:
 			}
 		}
 		return index;
-	}
-};
-class Solution {
-public:
-	int removeElement(vector<int>& nums, int val) {
-		return distance(nums.begin(), remove(nums.begin(), nums.end(), val));
 	}
 };
 /*
@@ -1850,26 +1840,20 @@ Note: All inputs will be in lower-case.
 class Solution {
 public:
 	vector<vector<string>> groupAnagrams(vector<string>& strs) {
-		vector<vector<string>> res;
 		vector<int> primes = { 2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 41, 43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89, 97, 101, 103, 107 };
+		vector<vector<string>> res;
 		unordered_map<long, int> mapping;
-		int pos = 0;
-		for (auto s : strs) {
+		for (int i = 0; i < strs.size(); i++) {
 			long temp = 1;
-			if (s != "") {
-				for (auto cha : s) {
-					temp *= primes[cha - 'a'];
-				}
-			}
-			else {
-				temp = 107;
+			for (int j = 0; j < strs[i].size(); j++) {
+				temp *= primes[strs[i][j] - 'a'];
 			}
 			if (mapping.find(temp) == mapping.end()) {
-				mapping[temp] = pos++;
-				res.push_back(vector<string>{s});
+				mapping[temp] = res.size();
+				res.push_back({ strs[i] });
 			}
 			else {
-				res[mapping[temp]].push_back(s);
+				res[mapping[temp]].push_back(strs[i]);
 			}
 		}
 		return res;
@@ -1886,7 +1870,7 @@ class Solution {
 public:
 	double myPow(double x, int n) {
 		if (n == 0) {
-			return 1;
+			return (double)1;
 		}
 		if (n < 0) {
 			if (n == INT_MIN) {
@@ -1896,7 +1880,7 @@ public:
 			n = -n;
 		}
 		double temp = myPow(x, n / 2);
-		return n % 2 ? x * temp * temp : temp * temp;
+		return n & 1 ? temp *temp * x : temp *temp;
 	}
 };
 /*
@@ -2568,15 +2552,18 @@ Return "100".
 class Solution {
 public:
 	string addBinary(string a, string b) {
-		int i = a.size(), j = b.size(), carry = 0;
-		string res;
-		while (i > 0 || j > 0 || carry > 0) {
-			int num1 = i > 0 ? a[(i--) - 1] - '0' : 0, num2 = j > 0 ? b[(j--) - 1] - '0' : 0;
-			carry += num1 + num2;
-			res = char(carry % 2 + '0') + res;
-			carry /= 2;
+		string s = "";
+		int c = 0, i = 0, j = 0;
+		reverse(a.begin(), a.end());
+		reverse(b.begin(), b.end());
+		while (i < a.size() || j < b.size() || c == 1) {
+			c += i < a.size() ? a[i++] - '0' : 0;
+			c += j < b.size() ? b[j++] - '0' : 0;
+			s += c % 2 + '0';
+			c /= 2;
 		}
-		return res;
+		reverse(s.begin(), s.end());
+		return s;
 	}
 };
 /*
@@ -3327,13 +3314,12 @@ You may assume that nums1 has enough space (size that is greater or equal to m +
 class Solution {
 public:
 	void merge(vector<int>& nums1, int m, vector<int>& nums2, int n) {
-		int i = m - 1, j = n - 1, k = m + n - 1;
-		while (j >= 0) {
-			if (i >= 0 && nums1[i] > nums2[j]) {
-				nums1[k--] = nums1[i--];
+		for (int i = m - 1, j = n - 1, k = m + n - 1; k >= 0; k--) {
+			if (i < 0 || j >= 0 && nums1[i] < nums2[j]) {
+				nums1[k] = nums2[j--];
 			}
 			else {
-				nums1[k--] = nums2[j--];
+				nums1[k] = nums1[i--];
 			}
 		}
 	}
@@ -3727,22 +3713,24 @@ Two binary trees are considered equal if they are structurally identical and the
 
 */
 /**
- * Definition for a binary tree node.
- * struct TreeNode {
- *     int val;
- *     TreeNode *left;
- *     TreeNode *right;
- *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
- * };
- */
+* Definition for a binary tree node.
+* struct TreeNode {
+*     int val;
+*     TreeNode *left;
+*     TreeNode *right;
+*     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+* };
+*/
 class Solution {
 public:
 	bool isSameTree(TreeNode* p, TreeNode* q) {
-		if (!p || !q) {
-			if (p || q) return false;
+		if (p == NULL && q == NULL) {
 			return true;
 		}
-		return p->val == q->val && isSameTree(p->left, q->left) && isSameTree(p->right, q->right);
+		else if (p == NULL || q == NULL || p->val != q->val) {
+			return false;
+		}
+		return isSameTree(p->left, q->left) && isSameTree(p->right, q->right);
 	}
 };
 /*
@@ -4523,20 +4511,19 @@ Return
 class Solution {
 public:
 	vector<vector<int>> generate(int numRows) {
-		vector<vector<int>> vec;
-		if (numRows <= 0) {
-			return vec;
+		if (numRows < 1) {
+			return{};
 		}
-		vec.push_back(vector<int>(1, 1));
-		for (int i = 1; i < numRows; i++) {
-			vector<int> res(1, 1);
-			for (int j = 0, k = 1; k < vec[i - 1].size(); j++, k++) {
-				res.push_back(vec[i - 1][j] + vec[i - 1][k]);
+		vector<vector<int>> res;
+		vector<int> unit;
+		for (int i = 0; i < numRows; i++) {
+			for (int j = unit.size() - 1; j > 0; j--) {
+				unit[j] += unit[j - 1];
 			}
-			res.push_back(1);
-			vec.push_back(res);
+			unit.push_back(1);
+			res.push_back(unit);
 		}
-		return vec;
+		return res;
 	}
 };
 /*
@@ -5059,13 +5046,15 @@ Your algorithm should have a linear runtime complexity. Could you implement it w
 class Solution {
 public:
 	int singleNumber(vector<int>& nums) {
-		int a = 0, b = 0;
-		for (int c : nums) {
-			int ta = (~a&b&c) | (a&~b&~c);
-			b = (~a&~b&c) | (~a&b&~c);
-			a = ta;
+		int one = 0, two = 0, three = 0;
+		for (int num : nums) {
+			two |= one & num;
+			one ^= num;
+			three = one & two;
+			one &= ~three;
+			two &= ~three;
 		}
-		return a | b;
+		return one;
 	}
 };
 /*
@@ -5078,35 +5067,35 @@ Return a deep copy of the list.
 
 */
 /**
- * Definition for singly-linked list with a random pointer.
- * struct RandomListNode {
- *     int label;
- *     RandomListNode *next, *random;
- *     RandomListNode(int x) : label(x), next(NULL), random(NULL) {}
- * };
- */
+* Definition for singly-linked list with a random pointer.
+* struct RandomListNode {
+*     int label;
+*     RandomListNode *next, *random;
+*     RandomListNode(int x) : label(x), next(NULL), random(NULL) {}
+* };
+*/
 class Solution {
 public:
 	RandomListNode *copyRandomList(RandomListNode *head) {
 		if (head == NULL) {
 			return NULL;
 		}
+		unordered_map<RandomListNode*, RandomListNode*> mapping;
 		RandomListNode *newhead = new RandomListNode(head->label);
 		RandomListNode *cur = newhead;
-		unordered_map<RandomListNode*, RandomListNode*> mapping;
 		mapping[head] = newhead;
 		while (head != NULL) {
 			if (head->next != NULL) {
 				if (mapping.find(head->next) == mapping.end()) {
-					RandomListNode *next = new RandomListNode(head->next->label);
-					mapping[head->next] = next;
+					RandomListNode *node = new RandomListNode(head->next->label);
+					mapping[head->next] = node;
 				}
 				cur->next = mapping[head->next];
 			}
 			if (head->random != NULL) {
 				if (mapping.find(head->random) == mapping.end()) {
-					RandomListNode *random = new RandomListNode(head->random->label);
-					mapping[head->random] = random;
+					RandomListNode *node = new RandomListNode(head->random->label);
+					mapping[head->random] = node;
 				}
 				cur->random = mapping[head->random];
 			}
@@ -5621,21 +5610,31 @@ Some examples:
 class Solution {
 public:
 	int evalRPN(vector<string>& tokens) {
-		stack<int> s;
-		for (auto t : tokens) {
+		stack<int> sta;
+		for (string t : tokens) {
 			if (t == "+" || t == "-" || t == "*" || t == "/") {
-				int num2 = s.top();
-				s.pop();
-				int num1 = s.top();
-				s.pop();
-				if (t == "+") s.push(num1 + num2);
-				if (t == "-") s.push(num1 - num2);
-				if (t == "*") s.push(num1 * num2);
-				if (t == "/") s.push(num1 / num2);
+				int b = sta.top();
+				sta.pop();
+				int a = sta.top();
+				sta.pop();
+				if (t == "+") {
+					sta.push(a + b);
+				}
+				else if (t == "-") {
+					sta.push(a - b);
+				}
+				else if (t == "*") {
+					sta.push(a * b);
+				}
+				else {
+					sta.push(a / b);
+				}
 			}
-			else s.push(stoi(t));
+			else {
+				sta.push(stoi(t));
+			}
 		}
-		return s.top();
+		return sta.top();
 	}
 };
 /*
@@ -5716,14 +5715,14 @@ public:
 		if (nums.empty()) {
 			return 0;
 		}
-		int cur_max = nums[0], cur_min = nums[0], maxProduct = nums[0];
+		int cur_max = nums[0], cur_min = nums[0], glo_max = nums[0];
 		for (int i = 1; i < nums.size(); i++) {
-			int prev_min = cur_min, prev_max = cur_max;
-			cur_max = max(nums[i], max(prev_max * nums[i], prev_min * nums[i]));
-			cur_min = min(nums[i], min(prev_max * nums[i], prev_min * nums[i]));
-			maxProduct = max(cur_max, maxProduct);
+			int pre_max = cur_max, pre_min = cur_min;
+			cur_max = max(nums[i], max(pre_max * nums[i], pre_min * nums[i]));
+			cur_min = min(nums[i], min(pre_max * nums[i], pre_min * nums[i]));
+			glo_max = max(glo_max, cur_max);
 		}
-		return maxProduct;
+		return glo_max;
 	}
 };
 /*
@@ -5742,13 +5741,17 @@ You may assume no duplicate exists in the array.
 class Solution {
 public:
 	int findMin(vector<int>& nums) {
-		int left = 0, right = nums.size() - 1;
-		while (left < right) {
-			int mid = (left + right) / 2;
-			if (nums[mid] < nums[right]) right = mid;
-			else left = mid + 1;
+		int l = 0, r = nums.size() - 1;
+		while (l < r) {
+			int mid = l + (r - l) / 2;
+			if (nums[mid] > nums[r]) {
+				l = mid + 1;
+			}
+			else {
+				r = mid;
+			}
 		}
-		return nums[left];
+		return nums[l];
 	}
 };
 /*
@@ -6293,27 +6296,27 @@ Note: next() and hasNext() should run in average O(1) time and uses O(h) memory,
 
 */
 /**
- * Definition for binary tree
- * struct TreeNode {
- *     int val;
- *     TreeNode *left;
- *     TreeNode *right;
- *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
- * };
- */
+* Definition for binary tree
+* struct TreeNode {
+*     int val;
+*     TreeNode *left;
+*     TreeNode *right;
+*     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+* };
+*/
 class BSTIterator {
 private:
-	stack<int> s;
-	void traversal(TreeNode* root, stack<int>& s) {
-		if (root) {
-			traversal(root->right, s);
+	void postorder(TreeNode* root, stack<int>& s) {
+		if (root != NULL) {
+			postorder(root->right, s);
 			s.push(root->val);
-			traversal(root->left, s);
+			postorder(root->left, s);
 		}
 	}
 public:
+	stack<int> s;
 	BSTIterator(TreeNode *root) {
-		traversal(root, s);
+		postorder(root, s);
 	}
 
 	/** @return whether we have a next smallest number */
@@ -6323,35 +6326,34 @@ public:
 
 	/** @return the next smallest number */
 	int next() {
-		int num = s.top();
+		int temp = s.top();
 		s.pop();
-		return num;
+		return temp;
 	}
 };
-
 /**
- * Your BSTIterator will be called like this:
- * BSTIterator i = BSTIterator(root);
- * while (i.hasNext()) cout << i.next();
- */
- /*
+* Your BSTIterator will be called like this:
+* BSTIterator i = BSTIterator(root);
+* while (i.hasNext()) cout << i.next();
+*/
+/*
 
- 174. Dungeon Game (Hard)
+174. Dungeon Game (Hard)
 
- The demons had captured the princess (P) and imprisoned her in the bottom-right corner of a dungeon. The dungeon consists of M x N rooms laid out in a 2D grid. Our valiant knight (K) was initially positioned in the top-left room and must fight his way through the dungeon to rescue the princess.
+The demons had captured the princess (P) and imprisoned her in the bottom-right corner of a dungeon. The dungeon consists of M x N rooms laid out in a 2D grid. Our valiant knight (K) was initially positioned in the top-left room and must fight his way through the dungeon to rescue the princess.
 
- The knight has an initial health point represented by a positive integer. If at any point his health point drops to 0 or below, he dies immediately.
+The knight has an initial health point represented by a positive integer. If at any point his health point drops to 0 or below, he dies immediately.
 
- Some of the rooms are guarded by demons, so the knight loses health (negative integers) upon entering these rooms; other rooms are either empty (0's) or contain magic orbs that increase the knight's health (positive integers).
+Some of the rooms are guarded by demons, so the knight loses health (negative integers) upon entering these rooms; other rooms are either empty (0's) or contain magic orbs that increase the knight's health (positive integers).
 
- In order to reach the princess as quickly as possible, the knight decides to move only rightward or downward in each step.
+In order to reach the princess as quickly as possible, the knight decides to move only rightward or downward in each step.
 
 
- Write a function to determine the knight's minimum initial health so that he is able to rescue the princess.
+Write a function to determine the knight's minimum initial health so that he is able to rescue the princess.
 
- For example, given the dungeon below, the initial health of the knight must be at least 7 if he follows the optimal path RIGHT-> RIGHT -> DOWN -> DOWN.
+For example, given the dungeon below, the initial health of the knight must be at least 7 if he follows the optimal path RIGHT-> RIGHT -> DOWN -> DOWN.
 
- */
+*/
 class Solution {
 public:
 	int calculateMinimumHP(vector<vector<int>>& dungeon) {
@@ -6399,18 +6401,27 @@ For example, given [3, 30, 34, 5, 9], the largest formed number is 9534330.
 Note: The result may be very large, so you need to return a string instead of an integer.
 
 */
+class Comp {
+public:
+	bool operator()(int i, int j) {
+		return to_string(i) + to_string(j) > to_string(j) + to_string(i);
+	}
+}comp;
 class Solution {
 public:
 	string largestNumber(vector<int>& nums) {
-		string res;
+		if (nums.empty()) {
+			return "";
+		}
 		sort(nums.begin(), nums.end(), comp);
-		if (nums[0] == 0) return "0";
-		for (int num : nums)
+		if (nums[0] == 0) {
+			return "0";
+		}
+		string res;
+		for (int num : nums) {
 			res += to_string(num);
+		}
 		return res;
-	}
-	static bool comp(int i, int j) {
-		return to_string(i) + to_string(j) > to_string(j) + to_string(i);
 	}
 };
 /*
@@ -6645,6 +6656,74 @@ public:
 			}
 		}
 		return res;
+	}
+};
+/*
+
+200. Number of Islands (Medium)
+
+Given a 2d grid map of '1's (land) and '0's (water), count the number of islands. An island is surrounded by water and is formed by connecting adjacent lands horizontally or vertically. You may assume all four edges of the grid are all surrounded by water.
+
+Example 1:
+
+11110
+11010
+11000
+00000
+Answer: 1
+
+Example 2:
+
+11000
+11000
+00100
+00011
+Answer: 3
+
+*/
+class Solution {
+public:
+	int numIslands(vector<vector<char>>& grid) {
+		if (grid.empty()) {
+			return 0;
+		}
+		int res = 0;
+		for (int i = 0; i < grid.size(); i++) {
+			for (int j = 0; j < grid[0].size(); j++) {
+				if (grid[i][j] == '1') {
+					res++;
+					BFS(grid, i, j);
+				}
+			}
+		}
+		return res;
+	}
+private:
+	void BFS(vector<vector<char>>& grid, int i, int j) {
+		queue<pair<int, int>> q;
+		grid[i][j] = '0';
+		q.push(make_pair(i, j));
+		while (!q.empty()) {
+			i = q.front().first;
+			j = q.front().second;
+			q.pop();
+			if (i > 0 && grid[i - 1][j] == '1') {
+				grid[i - 1][j] = '0';
+				q.push(make_pair(i - 1, j));
+			}
+			if (i < grid.size() - 1 && grid[i + 1][j] == '1') {
+				grid[i + 1][j] = '0';
+				q.push(make_pair(i + 1, j));
+			}
+			if (j > 0 && grid[i][j - 1] == '1') {
+				grid[i][j - 1] = '0';
+				q.push(make_pair(i, j - 1));
+			}
+			if (j < grid[0].size() - 1 && grid[i][j + 1] == '1') {
+				grid[i][j + 1] = '0';
+				q.push(make_pair(i, j + 1));
+			}
+		}
 	}
 };
 /*
@@ -7152,14 +7231,10 @@ Assume that the total area is never beyond the maximum possible value of int.
 class Solution {
 public:
 	int computeArea(int A, int B, int C, int D, int E, int F, int G, int H) {
-		int are = (C - A) * (D - B) + (G - E) * (H - F);
-		if (E >= C || G <= A || F >= D || H <= B) {
-			return are;
+		if (C <= E || H <= B || G <= A || D <= F) {
+			return (C - A) * (D - B) + (G - E) * (H - F);
 		}
-		else {
-			are -= (min(C, G) - max(A, E)) * (min(D, H) - max(B, F));
-		}
-		return are;
+		return (C - A) * (D - B) + (G - E) * (H - F) - (min(C, G) - max(A, E)) * (min(D, H) - max(B, F));
 	}
 };
 /*
@@ -7510,31 +7585,31 @@ Given a singly linked list, determine if it is a palindrome.
 
 */
 /**
- * Definition for singly-linked list.
- * struct ListNode {
- *     int val;
- *     ListNode *next;
- *     ListNode(int x) : val(x), next(NULL) {}
- * };
- */
+* Definition for singly-linked list.
+* struct ListNode {
+*     int val;
+*     ListNode *next;
+*     ListNode(int x) : val(x), next(NULL) {}
+* };
+*/
 class Solution {
 public:
 	bool isPalindrome(ListNode* head) {
 		if (head == NULL || head->next == NULL) {
 			return true;
 		}
-		ListNode *mid = head, *last = head;
-		while (last->next && last->next->next) {
-			mid = mid->next;
-			last = last->next->next;
+		ListNode *s = head, *f = head;
+		while (f->next != NULL && f->next->next != NULL) {
+			s = s->next;
+			f = f->next->next;
 		}
-		mid->next = reverse(mid->next);
-		mid = mid->next;
-		while (mid != NULL) {
-			if (mid->val != head->val) {
+		s->next = reverse(s->next);
+		s = s->next;
+		while (s != NULL) {
+			if (s->val != head->val) {
 				return false;
 			}
-			mid = mid->next;
+			s = s->next;
 			head = head->next;
 		}
 		return true;
@@ -7544,7 +7619,7 @@ private:
 		if (head == NULL || head->next == NULL) {
 			return head;
 		}
-		ListNode *p = head, *prev = NULL;
+		ListNode *prev = NULL;
 		while (head != NULL) {
 			ListNode *post = head->next;
 			head->next = prev;
@@ -7573,25 +7648,25 @@ For example, the lowest common ancestor (LCA) of nodes 2 and 8 is 6. Another exa
 
 */
 /**
- * Definition for a binary tree node.
- * struct TreeNode {
- *     int val;
- *     TreeNode *left;
- *     TreeNode *right;
- *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
- * };
- */
+* Definition for a binary tree node.
+* struct TreeNode {
+*     int val;
+*     TreeNode *left;
+*     TreeNode *right;
+*     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+* };
+*/
 class Solution {
 public:
 	TreeNode* lowestCommonAncestor(TreeNode* root, TreeNode* p, TreeNode* q) {
-		if (min(p->val, q->val) < root->val && max(p->val, q->val) > root->val)
+		if (root == NULL || root == p || root == q) {
 			return root;
-		else if (root->val < min(p->val, q->val))
-			return lowestCommonAncestor(root->right, p, q);
-		else if (root->val > max(p->val, q->val))
-			return lowestCommonAncestor(root->left, p, q);
-		else
+		}
+		TreeNode *l = lowestCommonAncestor(root->left, p, q), *r = lowestCommonAncestor(root->right, p, q);
+		if (l != NULL && r != NULL) {
 			return root;
+		}
+		return l != NULL ? l : r;
 	}
 };
 /*
@@ -7809,43 +7884,18 @@ What if the inputs contain unicode characters? How would you adapt your solution
 class Solution {
 public:
 	bool isAnagram(string s, string t) {
-		if (s.empty() != t.empty() || s.length() != t.length()) {
+		if (s.size() != t.size()) {
 			return false;
 		}
-		if (s.empty() && t.empty()) {
-			return true;
+		int a[256] = { 0 };
+		for (char cha : s) {
+			a[cha]++;
 		}
-		unordered_map<char, int> mapping;
-		for (auto cha : s) {
-			mapping[cha] += 1;
-		}
-		for (auto cha : t) {
-			if (mapping[cha] == 0) {
+		for (char cha : t) {
+			if (a[cha] == 0) {
 				return false;
 			}
-			else {
-				mapping[cha]--;
-			}
-		}
-		return true;
-	}
-};
-class Solution {
-public:
-	bool isAnagram(string s, string t) {
-		if (s.empty() != t.empty() || s.length() != t.length()) {
-			return false;
-		}
-		if (s.empty() && t.empty()) {
-			return true;
-		}
-		vector<int> cnt(26, 0);
-		for (int i = 0; i < s.size(); i++) {
-			cnt[s[i] - 'a']++;
-		}
-		for (int i = 0; i < t.size(); i++) {
-			if (cnt[t[i] - 'a'] == 0) return false;
-			cnt[t[i] - 'a']--;
+			a[cha]--;
 		}
 		return true;
 	}
@@ -9805,6 +9855,71 @@ private:
 };
 /*
 
+335. Self Crossing (Hard)
+
+You are given an array x of n positive numbers. You start at point (0,0) and moves x[0] metres to the north, then x[1] metres to the west, x[2] metres to the south, x[3] metres to the east and so on. In other words, after each move your direction changes counter-clockwise.
+
+Write a one-pass algorithm with O(1) extra space to determine, if your path crosses itself, or not.
+
+Example 1:
+Given x =
+[2, 1, 1, 2]
+,
+┌───┐
+│   │
+└───┼──>
+│
+
+Return true (self crossing)
+Example 2:
+Given x =
+[1, 2, 3, 4]
+,
+┌──────┐
+│      │
+│
+│
+└────────────>
+
+Return false (not self crossing)
+Example 3:
+Given x =
+[1, 1, 1, 1]
+,
+┌───┐
+│   │
+└───┼>
+
+Return true (self crossing)
+
+*/
+class Solution {
+public:
+	bool isSelfCrossing(vector<int>& x) {
+		int l = x.size();
+		if (l < 4) {
+			return false;
+		}
+		for (int i = 3; i < l; i++) {
+			if (x[i] >= x[i - 2] && x[i - 1] <= x[i - 3]) {
+				return true;
+			}
+			if (i >= 4) {
+				if (x[i - 1] == x[i - 3] && x[i] + x[i - 4] >= x[i - 2]) {
+					return true;
+				}
+			}
+			if (i >= 5) {
+				if (x[i - 2] - x[i - 4] >= 0 && x[i] >= x[i - 2] - x[i - 4] && x[i - 1] >= x[i - 3] - x[i - 5] && x[i - 1] <= x[i - 3]) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+};
+/*
+
 337. House Robber III (Medium)
 
 The thief has found himself a new place for his thievery again. There is only one entrance to this area, called the "root." Besides the root, each house has one and only one parent house. After a tour, the smart thief realized that "all houses in this place forms a binary tree". It will automatically contact the police if two directly-linked houses were broken into on the same night.
@@ -10913,7 +11028,8 @@ public:
 
 383. Ransom Note (Easy)
 
- Given an arbitrary ransom note string and another string containing letters from all the magazines, write a function that will return true if the ransom note can be constructed from the magazines ; otherwise, it will return false.
+
+Given an arbitrary ransom note string and another string containing letters from all the magazines, write a function that will return true if the ransom note can be constructed from the magazines ; otherwise, it will return false.
 
 Each letter in the magazine string can only be used once in your ransom note.
 
@@ -10973,7 +11089,7 @@ public:
 	vector<int> shuffle() {
 		for (int i = 0; i < shuffled.size(); i++) {
 			int index = rand() % (shuffled.size() - i);
-			swap(shuffled[i], shuffled[index + i]);
+			swap(shuffled[i], shuffled[i + index]);
 		}
 		return shuffled;
 	}
@@ -11628,6 +11744,44 @@ public:
 			}
 		}
 		return t[sum];
+	}
+};
+/*
+
+419. Battleships in a Board (Medium)
+
+Given an 2D board, count how many different battleships are in it. The battleships are represented with 'X's, empty slots are represented with '.'s. You may assume the following rules:
+
+You receive a valid board, made of only battleships or empty slots.
+Battleships can only be placed horizontally or vertically. In other words, they can only be made of the shape 1xN (1 row, N columns) or Nx1 (N rows, 1 column), where N can be of any size.
+At least one horizontal or vertical cell separates between two battleships - there are no adjacent battleships.
+Example:
+X..X
+...X
+...X
+In the above board there are 2 battleships.
+Invalid Example:
+...X
+XXXX
+...X
+This is an invalid board that you will not receive - as battleships will always have a cell separating between them.
+Follow up:
+Could you do it in one-pass, using only O(1) extra memory and without modifying the value of the board?
+
+*/
+class Solution {
+public:
+	int countBattleships(vector<vector<char>>& board) {
+		if (board.empty()) {
+			return 0;
+		}
+		int row = board.size(), col = board[0].size(), cnt = 0;
+		for (int i = 0; i < row; i++) {
+			for (int j = 0; j < col; j++) {
+				cnt += board[i][j] == 'X' && (i == 0 || board[i - 1][j] != 'X') && (j == 0 || board[i][j - 1] != 'X');
+			}
+		}
+		return cnt;
 	}
 };
 /*

@@ -216,7 +216,7 @@ class Solution {
 public:
 	double myPow(double x, int n) {
 		if (n == 0) {
-			return 1;
+			return (double)1;
 		}
 		if (n < 0) {
 			if (n == INT_MIN) {
@@ -226,7 +226,7 @@ public:
 			n = -n;
 		}
 		double temp = myPow(x, n / 2);
-		return n % 2 ? x * temp * temp : temp * temp;
+		return n & 1 ? temp *temp * x : temp *temp;
 	}
 };
 /*
@@ -350,11 +350,11 @@ public:
 		int l = 0, r = nums.size() - 1;
 		while (l < r) {
 			int mid = l + (r - l) / 2;
-			if (nums[mid] < nums[r]) {
-				r = mid;
+			if (nums[mid] > nums[r]) {
+				l = mid + 1;
 			}
 			else {
-				l = mid + 1;
+				r = mid;
 			}
 		}
 		return nums[l];

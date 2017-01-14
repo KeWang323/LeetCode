@@ -408,21 +408,31 @@ Some examples:
 class Solution {
 public:
 	int evalRPN(vector<string>& tokens) {
-		stack<int> s;
-		for (auto t : tokens) {
+		stack<int> sta;
+		for (string t : tokens) {
 			if (t == "+" || t == "-" || t == "*" || t == "/") {
-				int num2 = s.top();
-				s.pop();
-				int num1 = s.top();
-				s.pop();
-				if (t == "+") s.push(num1 + num2);
-				if (t == "-") s.push(num1 - num2);
-				if (t == "*") s.push(num1 * num2);
-				if (t == "/") s.push(num1 / num2);
+				int b = sta.top();
+				sta.pop();
+				int a = sta.top();
+				sta.pop();
+				if (t == "+") {
+					sta.push(a + b);
+				}
+				else if (t == "-") {
+					sta.push(a - b);
+				}
+				else if (t == "*") {
+					sta.push(a * b);
+				}
+				else {
+					sta.push(a / b);
+				}
 			}
-			else s.push(stoi(t));
+			else {
+				sta.push(stoi(t));
+			}
 		}
-		return s.top();
+		return sta.top();
 	}
 };
 /*
@@ -498,27 +508,27 @@ Note: next() and hasNext() should run in average O(1) time and uses O(h) memory,
 
 */
 /**
- * Definition for binary tree
- * struct TreeNode {
- *     int val;
- *     TreeNode *left;
- *     TreeNode *right;
- *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
- * };
- */
+* Definition for binary tree
+* struct TreeNode {
+*     int val;
+*     TreeNode *left;
+*     TreeNode *right;
+*     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+* };
+*/
 class BSTIterator {
 private:
-	stack<int> s;
-	void traversal(TreeNode* root, stack<int>& s) {
-		if (root) {
-			traversal(root->right, s);
+	void postorder(TreeNode* root, stack<int>& s) {
+		if (root != NULL) {
+			postorder(root->right, s);
 			s.push(root->val);
-			traversal(root->left, s);
+			postorder(root->left, s);
 		}
 	}
 public:
+	stack<int> s;
 	BSTIterator(TreeNode *root) {
-		traversal(root, s);
+		postorder(root, s);
 	}
 
 	/** @return whether we have a next smallest number */
@@ -528,40 +538,39 @@ public:
 
 	/** @return the next smallest number */
 	int next() {
-		int num = s.top();
+		int temp = s.top();
 		s.pop();
-		return num;
+		return temp;
 	}
 };
-
 /**
- * Your BSTIterator will be called like this:
- * BSTIterator i = BSTIterator(root);
- * while (i.hasNext()) cout << i.next();
- */
- /*
+* Your BSTIterator will be called like this:
+* BSTIterator i = BSTIterator(root);
+* while (i.hasNext()) cout << i.next();
+*/
+/*
 
- 225. Implement Stack using Queues (Easy)
+225. Implement Stack using Queues (Easy)
 
- Implement the following operations of a stack using queues.
+Implement the following operations of a stack using queues.
 
- push(x) -- Push element x onto stack.
+push(x) -- Push element x onto stack.
 
- pop() -- Removes the element on top of the stack.
+pop() -- Removes the element on top of the stack.
 
- top() -- Get the top element.
+top() -- Get the top element.
 
- empty() -- Return whether the stack is empty.
+empty() -- Return whether the stack is empty.
 
- Notes:
+Notes:
 
- You must use only standard operations of a queue -- which means only push to back, peek/pop from front, size, and is empty operations are valid.
+You must use only standard operations of a queue -- which means only push to back, peek/pop from front, size, and is empty operations are valid.
 
- Depending on your language, queue may not be supported natively. You may simulate a queue by using a list or deque (double-ended queue), as long as you use only standard operations of a queue.
+Depending on your language, queue may not be supported natively. You may simulate a queue by using a list or deque (double-ended queue), as long as you use only standard operations of a queue.
 
- You may assume that all operations are valid (for example, no pop or top operations will be called on an empty stack).
+You may assume that all operations are valid (for example, no pop or top operations will be called on an empty stack).
 
- */
+*/
 class Stack {
 public:
 	queue<int> q1, q2;

@@ -203,22 +203,24 @@ Two binary trees are considered equal if they are structurally identical and the
 
 */
 /**
- * Definition for a binary tree node.
- * struct TreeNode {
- *     int val;
- *     TreeNode *left;
- *     TreeNode *right;
- *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
- * };
- */
+* Definition for a binary tree node.
+* struct TreeNode {
+*     int val;
+*     TreeNode *left;
+*     TreeNode *right;
+*     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+* };
+*/
 class Solution {
 public:
 	bool isSameTree(TreeNode* p, TreeNode* q) {
-		if (!p || !q) {
-			if (p || q) return false;
+		if (p == NULL && q == NULL) {
 			return true;
 		}
-		return p->val == q->val && isSameTree(p->left, q->left) && isSameTree(p->right, q->right);
+		else if (p == NULL || q == NULL || p->val != q->val) {
+			return false;
+		}
+		return isSameTree(p->left, q->left) && isSameTree(p->right, q->right);
 	}
 };
 /*
@@ -1201,27 +1203,27 @@ Note: next() and hasNext() should run in average O(1) time and uses O(h) memory,
 
 */
 /**
- * Definition for binary tree
- * struct TreeNode {
- *     int val;
- *     TreeNode *left;
- *     TreeNode *right;
- *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
- * };
- */
+* Definition for binary tree
+* struct TreeNode {
+*     int val;
+*     TreeNode *left;
+*     TreeNode *right;
+*     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+* };
+*/
 class BSTIterator {
 private:
-	stack<int> s;
-	void traversal(TreeNode* root, stack<int>& s) {
-		if (root) {
-			traversal(root->right, s);
+	void postorder(TreeNode* root, stack<int>& s) {
+		if (root != NULL) {
+			postorder(root->right, s);
 			s.push(root->val);
-			traversal(root->left, s);
+			postorder(root->left, s);
 		}
 	}
 public:
+	stack<int> s;
 	BSTIterator(TreeNode *root) {
-		traversal(root, s);
+		postorder(root, s);
 	}
 
 	/** @return whether we have a next smallest number */
@@ -1231,16 +1233,16 @@ public:
 
 	/** @return the next smallest number */
 	int next() {
-		int num = s.top();
+		int temp = s.top();
 		s.pop();
-		return num;
+		return temp;
 	}
 };
-///**
-// * Your BSTIterator will be called like this:
-// * BSTIterator i = BSTIterator(root);
-// * while (i.hasNext()) cout << i.next();
-// */
+/**
+* Your BSTIterator will be called like this:
+* BSTIterator i = BSTIterator(root);
+* while (i.hasNext()) cout << i.next();
+*/
 /*
 
 199. Binary Tree Right Side View (Medium)
@@ -1456,25 +1458,25 @@ For example, the lowest common ancestor (LCA) of nodes 2 and 8 is 6. Another exa
 
 */
 /**
- * Definition for a binary tree node.
- * struct TreeNode {
- *     int val;
- *     TreeNode *left;
- *     TreeNode *right;
- *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
- * };
- */
+* Definition for a binary tree node.
+* struct TreeNode {
+*     int val;
+*     TreeNode *left;
+*     TreeNode *right;
+*     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+* };
+*/
 class Solution {
 public:
 	TreeNode* lowestCommonAncestor(TreeNode* root, TreeNode* p, TreeNode* q) {
-		if (min(p->val, q->val) < root->val && max(p->val, q->val) > root->val)
+		if (root == NULL || root == p || root == q) {
 			return root;
-		else if (root->val < min(p->val, q->val))
-			return lowestCommonAncestor(root->right, p, q);
-		else if (root->val > max(p->val, q->val))
-			return lowestCommonAncestor(root->left, p, q);
-		else
+		}
+		TreeNode *l = lowestCommonAncestor(root->left, p, q), *r = lowestCommonAncestor(root->right, p, q);
+		if (l != NULL && r != NULL) {
 			return root;
+		}
+		return l != NULL ? l : r;
 	}
 };
 /*

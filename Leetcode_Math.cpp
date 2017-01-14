@@ -102,23 +102,27 @@ public:
 		if (str.empty()) {
 			return 0;
 		}
-		long long num = 0;
+		long res = 0;
 		int i = 0, sign = 1;
-		for (; str[i] == ' '; i++) {
+		while (i < str.size() && str[i] == ' ') {
+			i++;
 		}
-		if (str[i] == '-' || str[i] == '+') {
-			sign = 1 - 2 * (str[i++] == '-');
+		if (str[i] == '+' || str[i] == '-') {
+			sign = str[i++] == '+' ? 1 : -1;
 		}
-		for (; i < str.length(); i++) {
+		while (i < str.size()) {
 			if (isdigit(str[i])) {
-				num = num * 10 + (str[i] - '0');
-				if (num > INT_MAX) {
-					return sign > 0 ? INT_MAX : INT_MIN;
+				res = res * 10 + str[i] - '0';
+				if (res > INT_MAX) {
+					return sign == 1 ? INT_MAX : INT_MIN;
 				}
+				i++;
 			}
-			else break;
+			else {
+				break;
+			}
 		}
-		return (int)num * sign;
+		return (int)res * sign;
 	}
 };
 /*
@@ -311,7 +315,7 @@ class Solution {
 public:
 	double myPow(double x, int n) {
 		if (n == 0) {
-			return 1;
+			return (double)1;
 		}
 		if (n < 0) {
 			if (n == INT_MIN) {
@@ -321,7 +325,7 @@ public:
 			n = -n;
 		}
 		double temp = myPow(x, n / 2);
-		return n % 2 ? x * temp * temp : temp * temp;
+		return n & 1 ? temp *temp * x : temp *temp;
 	}
 };
 /*
@@ -411,15 +415,18 @@ Return "100".
 class Solution {
 public:
 	string addBinary(string a, string b) {
-		int i = a.size(), j = b.size(), carry = 0;
-		string res;
-		while (i > 0 || j > 0 || carry > 0) {
-			int num1 = i > 0 ? a[(i--) - 1] - '0' : 0, num2 = j > 0 ? b[(j--) - 1] - '0' : 0;
-			carry += num1 + num2;
-			res = char(carry % 2 + '0') + res;
-			carry /= 2;
+		string s = "";
+		int c = 0, i = 0, j = 0;
+		reverse(a.begin(), a.end());
+		reverse(b.begin(), b.end());
+		while (i < a.size() || j < b.size() || c == 1) {
+			c += i < a.size() ? a[i++] - '0' : 0;
+			c += j < b.size() ? b[j++] - '0' : 0;
+			s += c % 2 + '0';
+			c /= 2;
 		}
-		return res;
+		reverse(s.begin(), s.end());
+		return s;
 	}
 };
 /*
@@ -704,14 +711,10 @@ Assume that the total area is never beyond the maximum possible value of int.
 class Solution {
 public:
 	int computeArea(int A, int B, int C, int D, int E, int F, int G, int H) {
-		int are = (C - A) * (D - B) + (G - E) * (H - F);
-		if (E >= C || G <= A || F >= D || H <= B) {
-			return are;
+		if (C <= E || H <= B || G <= A || D <= F) {
+			return (C - A) * (D - B) + (G - E) * (H - F);
 		}
-		else {
-			are -= (min(C, G) - max(A, E)) * (min(D, H) - max(B, F));
-		}
-		return are;
+		return (C - A) * (D - B) + (G - E) * (H - F) - (min(C, G) - max(A, E)) * (min(D, H) - max(B, F));
 	}
 };
 /*
@@ -949,6 +952,71 @@ class Solution {
 public:
 	bool isPowerOfThree(int n) {
 		return n > 0 && 1162261467 % n == 0;
+	}
+};
+/*
+
+335. Self Crossing (Hard)
+
+You are given an array x of n positive numbers. You start at point (0,0) and moves x[0] metres to the north, then x[1] metres to the west, x[2] metres to the south, x[3] metres to the east and so on. In other words, after each move your direction changes counter-clockwise.
+
+Write a one-pass algorithm with O(1) extra space to determine, if your path crosses itself, or not.
+
+Example 1:
+Given x =
+[2, 1, 1, 2]
+,
+┌───┐
+│   │
+└───┼──>
+│
+
+Return true (self crossing)
+Example 2:
+Given x =
+[1, 2, 3, 4]
+,
+┌──────┐
+│      │
+│
+│
+└────────────>
+
+Return false (not self crossing)
+Example 3:
+Given x =
+[1, 1, 1, 1]
+,
+┌───┐
+│   │
+└───┼>
+
+Return true (self crossing)
+
+*/
+class Solution {
+public:
+	bool isSelfCrossing(vector<int>& x) {
+		int l = x.size();
+		if (l < 4) {
+			return false;
+		}
+		for (int i = 3; i < l; i++) {
+			if (x[i] >= x[i - 2] && x[i - 1] <= x[i - 3]) {
+				return true;
+			}
+			if (i >= 4) {
+				if (x[i - 1] == x[i - 3] && x[i] + x[i - 4] >= x[i - 2]) {
+					return true;
+				}
+			}
+			if (i >= 5) {
+				if (x[i - 2] - x[i - 4] >= 0 && x[i] >= x[i - 2] - x[i - 4] && x[i - 1] >= x[i - 3] - x[i - 5] && x[i - 1] <= x[i - 3]) {
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 };
 /*
