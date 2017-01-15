@@ -308,13 +308,13 @@ public:
 		if (nums.empty()) {
 			return 0;
 		}
-		int index = 0;
-		for (int i = 1; i < nums.size(); i++) {
-			if (nums[index] != nums[i]) {
-				nums[++index] = nums[i];
+		int index = 1;
+		for (int i = 0; i < nums.size(); i++) {
+			if (nums[index - 1] != nums[i]) {
+				nums[index++] = nums[i];
 			}
 		}
-		return index + 1;
+		return index;
 	}
 };
 /*
@@ -397,6 +397,7 @@ public:
 	}
 };
 /*
+
 33. Search in Rotated Sorted Array (Hard)
 
 Suppose a sorted array is rotated at some pivot unknown to you beforehand.
@@ -406,30 +407,34 @@ Suppose a sorted array is rotated at some pivot unknown to you beforehand.
 You are given a target value to search. If found in the array return its index, otherwise return -1.
 
 You may assume no duplicate exists in the array.
+
 */
 class Solution {
 public:
 	int search(vector<int>& nums, int target) {
+		if (nums.empty()) {
+			return -1;
+		}
 		int l = 0, r = nums.size() - 1;
 		while (l <= r) {
 			int mid = l + (r - l) / 2;
 			if (nums[mid] == target) {
 				return mid;
 			}
-			else if (nums[l] <= nums[mid]) {
-				if (nums[l] <= target && target < nums[mid]) {
-					r = mid - 1;
-				}
-				else {
-					l = mid + 1;
-				}
-			}
-			else {
+			else if (nums[mid] <= nums[r]) {
 				if (nums[mid] < target && target <= nums[r]) {
 					l = mid + 1;
 				}
 				else {
 					r = mid - 1;
+				}
+			}
+			else {
+				if (nums[l] <= target && target < nums[mid]) {
+					r = mid - 1;
+				}
+				else {
+					l = mid + 1;
 				}
 			}
 		}
@@ -681,7 +686,7 @@ class Solution {
 public:
 	void rotate(vector<vector<int>>& matrix) {
 		int n = matrix.size() - 1;
-		for (int i = 0; i < (n + 2) / 2; i++) {
+		for (int i = 0; i < (n + 1) / 2; i++) {
 			for (int j = i; j < n - i; j++) {
 				swap(matrix[i][j], matrix[j][n - i]);
 				swap(matrix[i][j], matrix[n - i][n - j]);
@@ -731,9 +736,9 @@ For example,
 Given the following matrix:
 
 [
- [ 1, 2, 3 ],
- [ 4, 5, 6 ],
- [ 7, 8, 9 ]
+[ 1, 2, 3 ],
+[ 4, 5, 6 ],
+[ 7, 8, 9 ]
 ]
 
 You should return [1,2,3,6,9,8,7,4,5].
@@ -742,38 +747,37 @@ You should return [1,2,3,6,9,8,7,4,5].
 class Solution {
 public:
 	vector<int> spiralOrder(vector<vector<int>>& matrix) {
-		vector<int> res;
 		if (matrix.empty()) {
-			return res;
+			return{};
 		}
-		int m = matrix.size() - 1, n = matrix[0].size() - 1, h = 0, l = 0;
-		while (true) {
-			for (int col = l; col <= n; col++) {
-				res.push_back(matrix[h][col]);
-			}
-			if (++h > m) {
-				break;
-			}
-			for (int row = h; row <= m; row++) {
-				res.push_back(matrix[row][n]);
-			}
-			if (--n < l) {
-				break;
-			}
-			for (int col = n; col >= l; col--) {
-				res.push_back(matrix[m][col]);
-			}
-			if (--m < h) {
-				break;
-			}
-			for (int row = m; row >= h; row--) {
-				res.push_back(matrix[row][l]);
-			}
-			if (++l > n) {
-				break;
-			}
-		}
+		vector<int> res;
+		spiralOrder(matrix, res, matrix.size(), matrix[0].size(), 0);
 		return res;
+	}
+private:
+	void spiralOrder(const vector<vector<int>>& matrix, vector<int>& res, int r, int l, int offset) {
+		if (l <= 0 || r <= 0) {
+			return;
+		}
+		for (int i = 0; i < l; i++) {
+			res.push_back(matrix[offset][i + offset]);
+		}
+		if (r - 1 == 0) {
+			return;
+		}
+		for (int i = 1; i < r; i++) {
+			res.push_back(matrix[i + offset][offset + l - 1]);
+		}
+		if (l - 1 == 0) {
+			return;
+		}
+		for (int i = l - 2; i >= 0; i--) {
+			res.push_back(matrix[offset + r - 1][i + offset]);
+		}
+		for (int i = r - 2; i >= 1; i--) {
+			res.push_back(matrix[offset + i][offset]);
+		}
+		spiralOrder(matrix, res, r - 2, l - 2, offset + 1);
 	}
 };
 /*
@@ -820,23 +824,28 @@ return [1,6],[8,10],[15,18].
 
 */
 /**
- * Definition for an interval.
- * struct Interval {
- *     int start;
- *     int end;
- *     Interval() : start(0), end(0) {}
- *     Interval(int s, int e) : start(s), end(e) {}
- * };
- */
+* Definition for an interval.
+* struct Interval {
+*     int start;
+*     int end;
+*     Interval() : start(0), end(0) {}
+*     Interval(int s, int e) : start(s), end(e) {}
+* };
+*/
+class Comp {
+public:
+	bool operator()(Interval in1, Interval in2) {
+		return in1.start < in2.start;
+	}
+}comp;
 class Solution {
 public:
 	vector<Interval> merge(vector<Interval>& intervals) {
 		if (intervals.empty()) {
 			return{};
 		}
-		sort(intervals.begin(), intervals.end(), [](Interval a, Interval b) {return a.start < b.start;});
-		vector<Interval> res;
-		res.push_back(intervals[0]);
+		sort(intervals.begin(), intervals.end(), comp);
+		vector<Interval> res = { intervals[0] };
 		int i = 0, j = 1;
 		while (j < intervals.size()) {
 			if (res[i].end >= intervals[j].start) {
@@ -1835,6 +1844,37 @@ public:
 };
 /*
 
+128. Longest Consecutive Sequence (Hard)
+
+Given an unsorted array of integers, find the length of the longest consecutive elements sequence.
+
+For example,
+Given [100, 4, 200, 1, 3, 2],
+The longest consecutive elements sequence is [1, 2, 3, 4]. Return its length: 4.
+
+Your algorithm should run in O(n) complexity.
+
+*/
+class Solution {
+public:
+	int longestConsecutive(vector<int>& nums) {
+		int res = 0;
+		unordered_map<int, int> mapping;
+		for (int num : nums) {
+			if (mapping.find(num) == mapping.end()) {
+				int left = mapping.count(num - 1) ? mapping[num - 1] : 0;
+				int right = mapping.count(num + 1) ? mapping[num + 1] : 0;
+				mapping[num] = left + right + 1;
+				res = max(res, mapping[num]);
+				mapping[num - left] = mapping[num];
+				mapping[num + right] = mapping[num];
+			}
+		}
+		return res;
+	}
+};
+/*
+
 152. Maximum Product Subarray (Medium)
 
 Find the contiguous subarray within an array (containing at least one number) which has the largest product.
@@ -2058,13 +2098,12 @@ Try to come up as many solutions as you can, there are at least 3 different ways
 class Solution {
 public:
 	void rotate(vector<int>& nums, int k) {
-		int n = nums.size();
-		if (n <= 1) {
+		if (nums.empty()) {
 			return;
 		}
-		k %= n;
-		reverse(nums.begin(), nums.begin() + (n - k));
-		reverse(nums.begin() + (n - k), nums.end());
+		k %= nums.size();
+		reverse(nums.end() - k, nums.end());
+		reverse(nums.begin(), nums.end() - k);
 		reverse(nums.begin(), nums.end());
 	}
 };
@@ -2165,6 +2204,7 @@ public:
 	}
 };
 /*
+
 219. Contains Duplicate II (Easy)
 
 Given an array of integers and an integer k, find out whether there are two distinct indices i and j in the array such that nums[i] = nums[j] and the difference between i and j is at most k.
@@ -2177,7 +2217,7 @@ public:
 			return false;
 		}
 		unordered_map<int, int> mapping;
-		for (int i = 0; i < nums.size(); ++i) {
+		for (int i = 0; i < nums.size(); i++) {
 			if (mapping.count(nums[i]) && i - mapping[nums[i]] <= k) {
 				return true;
 			}
@@ -2198,19 +2238,25 @@ For example, given [0,1,2,4,5,7], return ["0->2","4->5","7"].
 class Solution {
 public:
 	vector<string> summaryRanges(vector<int>& nums) {
+		if (nums.empty()) {
+			return{};
+		}
 		vector<string> res;
-		int lower = 0;
-		nums.push_back(INT_MAX);
-		for (int i = 1; i < nums.size(); i++) {
-			if (nums[i] > nums[i - 1] + 1) {
-				res.push_back(subrange(nums[lower], nums[i - 1]));
-				lower = i;
+		int i = 0;
+		while (i < nums.size()) {
+			int start = nums[i];
+			while (i < nums.size() - 1 && nums[i] + 1 == nums[i + 1]) {
+				i++;
 			}
+			if (start == nums[i]) {
+				res.push_back(to_string(start));
+			}
+			else {
+				res.push_back(to_string(start) + "->" + to_string(nums[i]));
+			}
+			i++;
 		}
 		return res;
-	}
-	string subrange(int lower, int higher) {
-		return lower == higher ? to_string(lower) : to_string(lower) + "->" + to_string(higher);
 	}
 };
 /*
@@ -2465,11 +2511,14 @@ Your algorithm should run in linear runtime complexity. Could you implement it u
 class Solution {
 public:
 	int missingNumber(vector<int>& nums) {
-		int _sum = nums.size() * (nums.size() + 1) / 2;
-		for (int i : nums) {
-			_sum -= i;
+		int res = 0;
+		for (int num : nums) {
+			res ^= num;
 		}
-		return _sum;
+		for (int i = 0; i <= nums.size(); i++) {
+			res ^= i;
+		}
+		return res;
 	}
 };
 /*

@@ -745,21 +745,20 @@ c) Replace a character
 class Solution {
 public:
 	int minDistance(string word1, string word2) {
-		int row = word1.size(), col = word2.size();
-		vector<vector<int>> t(row + 1, vector<int>(col + 1, 0));
-		for (int i = 0; i < row + 1; i++) {
-			for (int j = 0; j < col + 1; j++) {
+		vector<vector<int>> t(word1.size() + 1, vector<int>(word2.size() + 1, 0));
+		for (int i = 0; i < t.size(); i++) {
+			for (int j = 0; j < t[0].size(); j++) {
 				if (i == 0) {
-					t[i][j] = j;
+					t[0][j] = j;
 				}
 				else if (j == 0) {
-					t[i][j] = i;
+					t[i][0] = i;
 				}
 				else if (word1[i - 1] == word2[j - 1]) {
 					t[i][j] = t[i - 1][j - 1];
 				}
 				else {
-					t[i][j] = min(min(t[i - 1][j - 1], t[i][j - 1]), t[i - 1][j]) + 1;
+					t[i][j] = min(t[i - 1][j], min(t[i][j - 1], t[i - 1][j - 1])) + 1;
 				}
 			}
 		}
@@ -1167,16 +1166,19 @@ Given s = "leetcode", return "leotcede".
 class Solution {
 public:
 	string reverseVowels(string s) {
-		string vowels = "aeiouAEIOU";
-		int left = 0, right = s.length() - 1;
-		while (left < right) {
-			while (vowels.find(s[left]) == -1 && left < right) {
-				left++;
+		string v = "aeiouAEIOU";
+		int i = 0, j = s.size() - 1;
+		while (i < j) {
+			while (v.find(s[i]) == -1 && i < j) {
+				i++;
 			}
-			while (vowels.find(s[right]) == -1 && left < right) {
-				right--;
+			while (v.find(s[j]) == -1 && i < j) {
+				j--;
 			}
-			swap(s[right--], s[left++]);
+			if (i >= j) {
+				break;
+			}
+			swap(s[i++], s[j--]);
 		}
 		return s;
 	}

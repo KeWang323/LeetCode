@@ -10,23 +10,28 @@ return [1,6],[8,10],[15,18].
 
 */
 /**
- * Definition for an interval.
- * struct Interval {
- *     int start;
- *     int end;
- *     Interval() : start(0), end(0) {}
- *     Interval(int s, int e) : start(s), end(e) {}
- * };
- */
+* Definition for an interval.
+* struct Interval {
+*     int start;
+*     int end;
+*     Interval() : start(0), end(0) {}
+*     Interval(int s, int e) : start(s), end(e) {}
+* };
+*/
+class Comp {
+public:
+	bool operator()(Interval in1, Interval in2) {
+		return in1.start < in2.start;
+	}
+}comp;
 class Solution {
 public:
 	vector<Interval> merge(vector<Interval>& intervals) {
 		if (intervals.empty()) {
 			return{};
 		}
-		sort(intervals.begin(), intervals.end(), [](Interval a, Interval b) {return a.start < b.start;});
-		vector<Interval> res;
-		res.push_back(intervals[0]);
+		sort(intervals.begin(), intervals.end(), comp);
+		vector<Interval> res = { intervals[0] };
 		int i = 0, j = 1;
 		while (j < intervals.size()) {
 			if (res[i].end >= intervals[j].start) {
@@ -227,6 +232,53 @@ private:
 			p = p->next;
 		}
 		return head_new->next;
+	}
+};
+/*
+
+164. Maximum Gap (Hard)
+
+Given an unsorted array, find the maximum difference between the successive elements in its sorted form.
+
+Try to solve it in linear time/space.
+
+Return 0 if the array contains less than 2 elements.
+
+You may assume all elements in the array are non-negative integers and fit in the 32-bit signed integer range.
+
+*/
+class Solution {
+public:
+	int maximumGap(vector<int>& nums) {
+		if (nums.empty()) {
+			return 0;
+		}
+		int minnum = nums[0], maxnum = nums[0];
+		for (int i = 1; i < nums.size(); i++) {
+			minnum = min(minnum, nums[i]);
+			maxnum = max(maxnum, nums[i]);
+		}
+		int gap = (int)ceil((double)(maxnum - minnum) / (nums.size() - 1));
+		vector<int> bucketmin(nums.size() - 1, INT_MAX);
+		vector<int> bucketmax(nums.size() - 1, INT_MIN);
+		for (int num : nums) {
+			if (num == minnum || num == maxnum) {
+				continue;
+			}
+			int idx = (num - minnum) / gap;
+			bucketmin[idx] = min(num, bucketmin[idx]);
+			bucketmax[idx] = max(num, bucketmax[idx]);
+		}
+		int maxGap = INT_MIN, pre = minnum;
+		for (int i = 0; i < nums.size() - 1; i++) {
+			if (bucketmin[i] == INT_MAX && bucketmax[i] == INT_MIN) {
+				continue;
+			}
+			maxGap = max(maxGap, bucketmin[i] - pre);
+			pre = bucketmax[i];
+		}
+		maxGap = max(maxGap, maxnum - pre);
+		return maxGap;
 	}
 };
 /*

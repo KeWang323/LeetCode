@@ -129,11 +129,15 @@ Return:
 class Solution {
 public:
 	vector<string> findRepeatedDnaSequences(string s) {
-		unordered_map<int, int> mapping;
+		unordered_set<int> se;
 		vector<string> res;
 		for (int t = 0, i = 0; i < s.size(); i++) {
-			if (mapping[t = t << 3 & 0x3FFFFFFF | s[i] & 7]++ == 1) {
+			t = t << 3 & 0x3FFFFFFF | s[i] & 7;
+			if (se.find(t) != se.end()) {
 				res.push_back(s.substr(i - 9, 10));
+			}
+			else {
+				se.insert(t);
 			}
 		}
 		return res;
@@ -210,11 +214,14 @@ Your algorithm should run in linear runtime complexity. Could you implement it u
 class Solution {
 public:
 	int missingNumber(vector<int>& nums) {
-		int _sum = nums.size() * (nums.size() + 1) / 2;
-		for (int i : nums) {
-			_sum -= i;
+		int res = 0;
+		for (int num : nums) {
+			res ^= num;
 		}
-		return _sum;
+		for (int i = 0; i <= nums.size(); i++) {
+			res ^= i;
+		}
+		return res;
 	}
 };
 /*

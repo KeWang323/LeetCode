@@ -1,5 +1,36 @@
 /*
 
+128. Longest Consecutive Sequence (Hard)
+
+Given an unsorted array of integers, find the length of the longest consecutive elements sequence.
+
+For example,
+Given [100, 4, 200, 1, 3, 2],
+The longest consecutive elements sequence is [1, 2, 3, 4]. Return its length: 4.
+
+Your algorithm should run in O(n) complexity.
+
+*/
+class Solution {
+public:
+	int longestConsecutive(vector<int>& nums) {
+		int res = 0;
+		unordered_map<int, int> mapping;
+		for (int num : nums) {
+			if (mapping.find(num) == mapping.end()) {
+				int left = mapping.count(num - 1) ? mapping[num - 1] : 0;
+				int right = mapping.count(num + 1) ? mapping[num + 1] : 0;
+				mapping[num] = left + right + 1;
+				res = max(res, mapping[num]);
+				mapping[num - left] = mapping[num];
+				mapping[num + right] = mapping[num];
+			}
+		}
+		return res;
+	}
+};
+/*
+
 200. Number of Islands (Medium)
 
 Given a 2d grid map of '1's (land) and '0's (water), count the number of islands. An island is surrounded by water and is formed by connecting adjacent lands horizontally or vertically. You may assume all four edges of the grid are all surrounded by water.

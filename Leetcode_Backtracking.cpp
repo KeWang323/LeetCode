@@ -272,12 +272,12 @@ Given a collection of distinct numbers, return all possible permutations.
 For example,
 [1,2,3] have the following permutations:
 [
-[1,2,3],
-[1,3,2],
-[2,1,3],
-[2,3,1],
-[3,1,2],
-[3,2,1]
+  [1,2,3],
+  [1,3,2],
+  [2,1,3],
+  [2,3,1],
+  [3,1,2],
+  [3,2,1]
 ]
 
 */
@@ -285,19 +285,19 @@ class Solution {
 public:
 	vector<vector<int>> permute(vector<int>& nums) {
 		vector<vector<int>> res;
-		permute(res, nums, 0);
+		permute(nums, res, 0);
 		return res;
 	}
 private:
-	void permute(vector<vector<int>>& res, vector<int>& nums, int index) {
+	void permute(vector<int>& nums, vector<vector<int>>& res, int index) {
 		if (index == nums.size()) {
 			res.push_back(nums);
 			return;
 		}
 		for (int i = index; i < nums.size(); i++) {
-			swap(nums[i], nums[index]);
-			permute(res, nums, index + 1);
-			swap(nums[i], nums[index]);
+			swap(nums[index], nums[i]);
+			permute(nums, res, index + 1);
+			swap(nums[index], nums[i]);
 		}
 	}
 };

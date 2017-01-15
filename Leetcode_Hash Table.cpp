@@ -650,11 +650,15 @@ Return:
 class Solution {
 public:
 	vector<string> findRepeatedDnaSequences(string s) {
-		unordered_map<int, int> mapping;
+		unordered_set<int> se;
 		vector<string> res;
 		for (int t = 0, i = 0; i < s.size(); i++) {
-			if (mapping[t = t << 3 & 0x3FFFFFFF | s[i] & 7]++ == 1) {
+			t = t << 3 & 0x3FFFFFFF | s[i] & 7;
+			if (se.find(t) != se.end()) {
 				res.push_back(s.substr(i - 9, 10));
+			}
+			else {
+				se.insert(t);
 			}
 		}
 		return res;
@@ -810,6 +814,7 @@ public:
 	}
 };
 /*
+
 219. Contains Duplicate II (Easy)
 
 Given an array of integers and an integer k, find out whether there are two distinct indices i and j in the array such that nums[i] = nums[j] and the difference between i and j is at most k.
@@ -822,7 +827,7 @@ public:
 			return false;
 		}
 		unordered_map<int, int> mapping;
-		for (int i = 0; i < nums.size(); ++i) {
+		for (int i = 0; i < nums.size(); i++) {
 			if (mapping.count(nums[i]) && i - mapping[nums[i]] <= k) {
 				return true;
 			}

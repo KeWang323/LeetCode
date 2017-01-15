@@ -95,6 +95,35 @@ public:
 };
 /*
 
+96. Unique Binary Search Trees (Medium)
+
+Given n, how many structurally unique BST's (binary search trees) that store values 1...n?
+
+For example,
+Given n = 3, there are a total of 5 unique BST's.
+
+  1         3     3      2      1
+   \       /     /      / \      \
+	3     2     1      1   3      2
+   /     /       \                 \
+  2     1         2                 3
+
+*/
+class Solution {
+public:
+	int numTrees(int n) {
+		vector<int> t(n + 1, 0);
+		t[0] = 1;
+		for (int i = 1; i <= n; i++) {
+			for (int j = 1; j <= i; j++) {
+				t[i] += t[j - 1] * t[i - j];
+			}
+		}
+		return t[n];
+	}
+};
+/*
+
 98. Validate Binary Search Tree (Medium)
 
 Given a binary tree, determine if it is a valid binary search tree (BST).
@@ -582,27 +611,29 @@ For this problem, a height-balanced binary tree is defined as a binary tree in w
 
 */
 /**
- * Definition for a binary tree node.
- * struct TreeNode {
- *     int val;
- *     TreeNode *left;
- *     TreeNode *right;
- *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
- * };
- */
+* Definition for a binary tree node.
+* struct TreeNode {
+*     int val;
+*     TreeNode *left;
+*     TreeNode *right;
+*     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+* };
+*/
 class Solution {
 public:
 	bool isBalanced(TreeNode* root) {
-		if (!root) return true;
-		else if (abs(depth(root->left) - depth(root->right)) > 1) return false;
-		else return isBalanced(root->left) && isBalanced(root->right);
+		return isbalanced(root) != -1;
 	}
-	int depth(TreeNode* root) {
-		if (!root) return 0;
-		else if (!(root->left) && !(root->right)) return 1;
-		int depth_L = depth(root->left);
-		int depth_R = depth(root->right);
-		return depth_L > depth_R ? depth_L + 1 : depth_R + 1;
+private:
+	int isbalanced(TreeNode* root) {
+		if (root == NULL) {
+			return 0;
+		}
+		int l = isbalanced(root->left), r = isbalanced(root->right);
+		if (l == -1 || r == -1 || abs(l - r) > 1) {
+			return -1;
+		}
+		return max(l, r) + 1;
 	}
 };
 /*

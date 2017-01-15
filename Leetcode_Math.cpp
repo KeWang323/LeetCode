@@ -883,11 +883,14 @@ Your algorithm should run in linear runtime complexity. Could you implement it u
 class Solution {
 public:
 	int missingNumber(vector<int>& nums) {
-		int _sum = nums.size() * (nums.size() + 1) / 2;
-		for (int i : nums) {
-			_sum -= i;
+		int res = 0;
+		for (int num : nums) {
+			res ^= num;
 		}
-		return _sum;
+		for (int i = 0; i <= nums.size(); i++) {
+			res ^= i;
+		}
+		return res;
 	}
 };
 /*

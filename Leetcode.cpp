@@ -1014,13 +1014,13 @@ public:
 		if (nums.empty()) {
 			return 0;
 		}
-		int index = 0;
-		for (int i = 1; i < nums.size(); i++) {
-			if (nums[index] != nums[i]) {
-				nums[++index] = nums[i];
+		int index = 1;
+		for (int i = 0; i < nums.size(); i++) {
+			if (nums[index - 1] != nums[i]) {
+				nums[index++] = nums[i];
 			}
 		}
-		return index + 1;
+		return index;
 	}
 };
 /*
@@ -1259,6 +1259,7 @@ public:
 	}
 };
 /*
+
 33. Search in Rotated Sorted Array (Hard)
 
 Suppose a sorted array is rotated at some pivot unknown to you beforehand.
@@ -1268,30 +1269,34 @@ Suppose a sorted array is rotated at some pivot unknown to you beforehand.
 You are given a target value to search. If found in the array return its index, otherwise return -1.
 
 You may assume no duplicate exists in the array.
+
 */
 class Solution {
 public:
 	int search(vector<int>& nums, int target) {
+		if (nums.empty()) {
+			return -1;
+		}
 		int l = 0, r = nums.size() - 1;
 		while (l <= r) {
 			int mid = l + (r - l) / 2;
 			if (nums[mid] == target) {
 				return mid;
 			}
-			else if (nums[l] <= nums[mid]) {
-				if (nums[l] <= target && target < nums[mid]) {
-					r = mid - 1;
-				}
-				else {
-					l = mid + 1;
-				}
-			}
-			else {
+			else if (nums[mid] <= nums[r]) {
 				if (nums[mid] < target && target <= nums[r]) {
 					l = mid + 1;
 				}
 				else {
 					r = mid - 1;
+				}
+			}
+			else {
+				if (nums[l] <= target && target < nums[mid]) {
+					r = mid - 1;
+				}
+				else {
+					l = mid + 1;
 				}
 			}
 		}
@@ -1727,12 +1732,12 @@ Given a collection of distinct numbers, return all possible permutations.
 For example,
 [1,2,3] have the following permutations:
 [
-[1,2,3],
-[1,3,2],
-[2,1,3],
-[2,3,1],
-[3,1,2],
-[3,2,1]
+  [1,2,3],
+  [1,3,2],
+  [2,1,3],
+  [2,3,1],
+  [3,1,2],
+  [3,2,1]
 ]
 
 */
@@ -1740,19 +1745,19 @@ class Solution {
 public:
 	vector<vector<int>> permute(vector<int>& nums) {
 		vector<vector<int>> res;
-		permute(res, nums, 0);
+		permute(nums, res, 0);
 		return res;
 	}
 private:
-	void permute(vector<vector<int>>& res, vector<int>& nums, int index) {
+	void permute(vector<int>& nums, vector<vector<int>>& res, int index) {
 		if (index == nums.size()) {
 			res.push_back(nums);
 			return;
 		}
 		for (int i = index; i < nums.size(); i++) {
-			swap(nums[i], nums[index]);
-			permute(res, nums, index + 1);
-			swap(nums[i], nums[index]);
+			swap(nums[index], nums[i]);
+			permute(nums, res, index + 1);
+			swap(nums[index], nums[i]);
 		}
 	}
 };
@@ -1811,7 +1816,7 @@ class Solution {
 public:
 	void rotate(vector<vector<int>>& matrix) {
 		int n = matrix.size() - 1;
-		for (int i = 0; i < (n + 2) / 2; i++) {
+		for (int i = 0; i < (n + 1) / 2; i++) {
 			for (int j = i; j < n - i; j++) {
 				swap(matrix[i][j], matrix[j][n - i]);
 				swap(matrix[i][j], matrix[n - i][n - j]);
@@ -2057,38 +2062,37 @@ You should return [1,2,3,6,9,8,7,4,5].
 class Solution {
 public:
 	vector<int> spiralOrder(vector<vector<int>>& matrix) {
-		vector<int> res;
 		if (matrix.empty()) {
-			return res;
+			return{};
 		}
-		int m = matrix.size() - 1, n = matrix[0].size() - 1, h = 0, l = 0;
-		while (true) {
-			for (int col = l; col <= n; col++) {
-				res.push_back(matrix[h][col]);
-			}
-			if (++h > m) {
-				break;
-			}
-			for (int row = h; row <= m; row++) {
-				res.push_back(matrix[row][n]);
-			}
-			if (--n < l) {
-				break;
-			}
-			for (int col = n; col >= l; col--) {
-				res.push_back(matrix[m][col]);
-			}
-			if (--m < h) {
-				break;
-			}
-			for (int row = m; row >= h; row--) {
-				res.push_back(matrix[row][l]);
-			}
-			if (++l > n) {
-				break;
-			}
-		}
+		vector<int> res;
+		spiralOrder(matrix, res, matrix.size(), matrix[0].size(), 0);
 		return res;
+	}
+private:
+	void spiralOrder(const vector<vector<int>>& matrix, vector<int>& res, int r, int l, int offset) {
+		if (l <= 0 || r <= 0) {
+			return;
+		}
+		for (int i = 0; i < l; i++) {
+			res.push_back(matrix[offset][i + offset]);
+		}
+		if (r - 1 == 0) {
+			return;
+		}
+		for (int i = 1; i < r; i++) {
+			res.push_back(matrix[i + offset][offset + l - 1]);
+		}
+		if (l - 1 == 0) {
+			return;
+		}
+		for (int i = l - 2; i >= 0; i--) {
+			res.push_back(matrix[offset + r - 1][i + offset]);
+		}
+		for (int i = r - 2; i >= 1; i--) {
+			res.push_back(matrix[offset + i][offset]);
+		}
+		spiralOrder(matrix, res, r - 2, l - 2, offset + 1);
 	}
 };
 /*
@@ -2131,23 +2135,28 @@ return [1,6],[8,10],[15,18].
 
 */
 /**
- * Definition for an interval.
- * struct Interval {
- *     int start;
- *     int end;
- *     Interval() : start(0), end(0) {}
- *     Interval(int s, int e) : start(s), end(e) {}
- * };
- */
+* Definition for an interval.
+* struct Interval {
+*     int start;
+*     int end;
+*     Interval() : start(0), end(0) {}
+*     Interval(int s, int e) : start(s), end(e) {}
+* };
+*/
+class Comp {
+public:
+	bool operator()(Interval in1, Interval in2) {
+		return in1.start < in2.start;
+	}
+}comp;
 class Solution {
 public:
 	vector<Interval> merge(vector<Interval>& intervals) {
 		if (intervals.empty()) {
 			return{};
 		}
-		sort(intervals.begin(), intervals.end(), [](Interval a, Interval b) {return a.start < b.start;});
-		vector<Interval> res;
-		res.push_back(intervals[0]);
+		sort(intervals.begin(), intervals.end(), comp);
+		vector<Interval> res = { intervals[0] };
 		int i = 0, j = 1;
 		while (j < intervals.size()) {
 			if (res[i].end >= intervals[j].start) {
@@ -2673,21 +2682,20 @@ c) Replace a character
 class Solution {
 public:
 	int minDistance(string word1, string word2) {
-		int row = word1.size(), col = word2.size();
-		vector<vector<int>> t(row + 1, vector<int>(col + 1, 0));
-		for (int i = 0; i < row + 1; i++) {
-			for (int j = 0; j < col + 1; j++) {
+		vector<vector<int>> t(word1.size() + 1, vector<int>(word2.size() + 1, 0));
+		for (int i = 0; i < t.size(); i++) {
+			for (int j = 0; j < t[0].size(); j++) {
 				if (i == 0) {
-					t[i][j] = j;
+					t[0][j] = j;
 				}
 				else if (j == 0) {
-					t[i][j] = i;
+					t[i][0] = i;
 				}
 				else if (word1[i - 1] == word2[j - 1]) {
 					t[i][j] = t[i - 1][j - 1];
 				}
 				else {
-					t[i][j] = min(min(t[i - 1][j - 1], t[i][j - 1]), t[i - 1][j]) + 1;
+					t[i][j] = min(t[i - 1][j], min(t[i][j - 1], t[i - 1][j - 1])) + 1;
 				}
 			}
 		}
@@ -3594,13 +3602,14 @@ Given n = 3, there are a total of 5 unique BST's.
 class Solution {
 public:
 	int numTrees(int n) {
-		vector<int> table(n + 1, 0);
-		table[0] = 1;
+		vector<int> t(n + 1, 0);
+		t[0] = 1;
 		for (int i = 1; i <= n; i++) {
-			for (int j = 1; j <= i; j++)
-				table[i] += table[j - 1] * table[i - j];
+			for (int j = 1; j <= i; j++) {
+				t[i] += t[j - 1] * t[i - j];
+			}
 		}
-		return table[n];
+		return t[n];
 	}
 };
 /*
@@ -4153,16 +4162,18 @@ For this problem, a height-balanced binary tree is defined as a binary tree in w
 class Solution {
 public:
 	bool isBalanced(TreeNode* root) {
-		if (!root) return true;
-		else if (abs(depth(root->left) - depth(root->right)) > 1) return false;
-		else return isBalanced(root->left) && isBalanced(root->right);
+		return isbalanced(root) != -1;
 	}
-	int depth(TreeNode* root) {
-		if (!root) return 0;
-		else if (!(root->left) && !(root->right)) return 1;
-		int depth_L = depth(root->left);
-		int depth_R = depth(root->right);
-		return depth_L > depth_R ? depth_L + 1 : depth_R + 1;
+private:
+	int isbalanced(TreeNode* root) {
+		if (root == NULL) {
+			return 0;
+		}
+		int l = isbalanced(root->left), r = isbalanced(root->right);
+		if (l == -1 || r == -1 || abs(l - r) > 1) {
+			return -1;
+		}
+		return max(l, r) + 1;
 	}
 };
 /*
@@ -4756,6 +4767,37 @@ public:
 };
 /*
 
+128. Longest Consecutive Sequence (Hard)
+
+Given an unsorted array of integers, find the length of the longest consecutive elements sequence.
+
+For example,
+Given [100, 4, 200, 1, 3, 2],
+The longest consecutive elements sequence is [1, 2, 3, 4]. Return its length: 4.
+
+Your algorithm should run in O(n) complexity.
+
+*/
+class Solution {
+public:
+	int longestConsecutive(vector<int>& nums) {
+		int res = 0;
+		unordered_map<int, int> mapping;
+		for (int num : nums) {
+			if (mapping.find(num) == mapping.end()) {
+				int left = mapping.count(num - 1) ? mapping[num - 1] : 0;
+				int right = mapping.count(num + 1) ? mapping[num + 1] : 0;
+				mapping[num] = left + right + 1;
+				res = max(res, mapping[num]);
+				mapping[num - left] = mapping[num];
+				mapping[num + right] = mapping[num];
+			}
+		}
+		return res;
+	}
+};
+/*
+
 129. Sum Root to Leaf Numbers (Medium)
 
 Given a binary tree containing digits from 0-9 only, each root-to-leaf path could represent a number.
@@ -5207,9 +5249,13 @@ public:
 		while (f != NULL && f->next != NULL) {
 			s = s->next;
 			f = f->next->next;
-			if (s == f) break;
+			if (s == f) {
+				break;
+			}
 		}
-		if (s != f) return NULL;
+		if (s != f) {
+			return NULL;
+		}
 		while (head != s) {
 			head = head->next;
 			s = s->next;
@@ -6016,6 +6062,53 @@ private:
 };
 /*
 
+164. Maximum Gap (Hard)
+
+Given an unsorted array, find the maximum difference between the successive elements in its sorted form.
+
+Try to solve it in linear time/space.
+
+Return 0 if the array contains less than 2 elements.
+
+You may assume all elements in the array are non-negative integers and fit in the 32-bit signed integer range.
+
+*/
+class Solution {
+public:
+	int maximumGap(vector<int>& nums) {
+		if (nums.empty()) {
+			return 0;
+		}
+		int minnum = nums[0], maxnum = nums[0];
+		for (int i = 1; i < nums.size(); i++) {
+			minnum = min(minnum, nums[i]);
+			maxnum = max(maxnum, nums[i]);
+		}
+		int gap = (int)ceil((double)(maxnum - minnum) / (nums.size() - 1));
+		vector<int> bucketmin(nums.size() - 1, INT_MAX);
+		vector<int> bucketmax(nums.size() - 1, INT_MIN);
+		for (int num : nums) {
+			if (num == minnum || num == maxnum) {
+				continue;
+			}
+			int idx = (num - minnum) / gap;
+			bucketmin[idx] = min(num, bucketmin[idx]);
+			bucketmax[idx] = max(num, bucketmax[idx]);
+		}
+		int maxGap = INT_MIN, pre = minnum;
+		for (int i = 0; i < nums.size() - 1; i++) {
+			if (bucketmin[i] == INT_MAX && bucketmax[i] == INT_MIN) {
+				continue;
+			}
+			maxGap = max(maxGap, bucketmin[i] - pre);
+			pre = bucketmax[i];
+		}
+		maxGap = max(maxGap, maxnum - pre);
+		return maxGap;
+	}
+};
+/*
+
 165. Compare Version Numbers (Easy)
 
 Compare two version numbers version1 and version2.
@@ -6474,11 +6567,15 @@ Return:
 class Solution {
 public:
 	vector<string> findRepeatedDnaSequences(string s) {
-		unordered_map<int, int> mapping;
+		unordered_set<int> se;
 		vector<string> res;
 		for (int t = 0, i = 0; i < s.size(); i++) {
-			if (mapping[t = t << 3 & 0x3FFFFFFF | s[i] & 7]++ == 1) {
+			t = t << 3 & 0x3FFFFFFF | s[i] & 7;
+			if (se.find(t) != se.end()) {
 				res.push_back(s.substr(i - 9, 10));
+			}
+			else {
+				se.insert(t);
 			}
 		}
 		return res;
@@ -6539,13 +6636,12 @@ Try to come up as many solutions as you can, there are at least 3 different ways
 class Solution {
 public:
 	void rotate(vector<int>& nums, int k) {
-		int n = nums.size();
-		if (n <= 1) {
+		if (nums.empty()) {
 			return;
 		}
-		k %= n;
-		reverse(nums.begin(), nums.begin() + (n - k));
-		reverse(nums.begin() + (n - k), nums.end());
+		k %= nums.size();
+		reverse(nums.end() - k, nums.end());
+		reverse(nums.begin(), nums.end() - k);
 		reverse(nums.begin(), nums.end());
 	}
 };
@@ -7084,6 +7180,7 @@ public:
 	}
 };
 /*
+
 219. Contains Duplicate II (Easy)
 
 Given an array of integers and an integer k, find out whether there are two distinct indices i and j in the array such that nums[i] = nums[j] and the difference between i and j is at most k.
@@ -7096,7 +7193,7 @@ public:
 			return false;
 		}
 		unordered_map<int, int> mapping;
-		for (int i = 0; i < nums.size(); ++i) {
+		for (int i = 0; i < nums.size(); i++) {
 			if (mapping.count(nums[i]) && i - mapping[nums[i]] <= k) {
 				return true;
 			}
@@ -7359,19 +7456,25 @@ For example, given [0,1,2,4,5,7], return ["0->2","4->5","7"].
 class Solution {
 public:
 	vector<string> summaryRanges(vector<int>& nums) {
+		if (nums.empty()) {
+			return{};
+		}
 		vector<string> res;
-		int lower = 0;
-		nums.push_back(INT_MAX);
-		for (int i = 1; i < nums.size(); i++) {
-			if (nums[i] > nums[i - 1] + 1) {
-				res.push_back(subrange(nums[lower], nums[i - 1]));
-				lower = i;
+		int i = 0;
+		while (i < nums.size()) {
+			int start = nums[i];
+			while (i < nums.size() - 1 && nums[i] + 1 == nums[i + 1]) {
+				i++;
 			}
+			if (start == nums[i]) {
+				res.push_back(to_string(start));
+			}
+			else {
+				res.push_back(to_string(start) + "->" + to_string(nums[i]));
+			}
+			i++;
 		}
 		return res;
-	}
-	string subrange(int lower, int higher) {
-		return lower == higher ? to_string(lower) : to_string(lower) + "->" + to_string(higher);
 	}
 };
 /*
@@ -8454,11 +8557,14 @@ Your algorithm should run in linear runtime complexity. Could you implement it u
 class Solution {
 public:
 	int missingNumber(vector<int>& nums) {
-		int _sum = nums.size() * (nums.size() + 1) / 2;
-		for (int i : nums) {
-			_sum -= i;
+		int res = 0;
+		for (int num : nums) {
+			res ^= num;
 		}
-		return _sum;
+		for (int i = 0; i <= nums.size(); i++) {
+			res ^= i;
+		}
+		return res;
 	}
 };
 /*
@@ -10087,16 +10193,19 @@ Given s = "leetcode", return "leotcede".
 class Solution {
 public:
 	string reverseVowels(string s) {
-		string vowels = "aeiouAEIOU";
-		int left = 0, right = s.length() - 1;
-		while (left < right) {
-			while (vowels.find(s[left]) == -1 && left < right) {
-				left++;
+		string v = "aeiouAEIOU";
+		int i = 0, j = s.size() - 1;
+		while (i < j) {
+			while (v.find(s[i]) == -1 && i < j) {
+				i++;
 			}
-			while (vowels.find(s[right]) == -1 && left < right) {
-				right--;
+			while (v.find(s[j]) == -1 && i < j) {
+				j--;
 			}
-			swap(s[right--], s[left++]);
+			if (i >= j) {
+				break;
+			}
+			swap(s[i++], s[j--]);
 		}
 		return s;
 	}
@@ -11120,10 +11229,10 @@ class Solution {
 public:
 	int firstUniqChar(string s) {
 		int t[26] = { 0 };
-		for (int i = 0;i < s.size();i++) {
-			t[s[i] - 'a']++;
+		for (char cha : s) {
+			t[cha - 'a']++;
 		}
-		for (int i = 0;i < s.size();i++) {
+		for (int i = 0; i < s.size(); i++) {
 			if (t[s[i] - 'a'] == 1) {
 				return i;
 			}

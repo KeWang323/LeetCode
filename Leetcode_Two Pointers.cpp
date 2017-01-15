@@ -284,13 +284,13 @@ public:
 		if (nums.empty()) {
 			return 0;
 		}
-		int index = 0;
-		for (int i = 1; i < nums.size(); i++) {
-			if (nums[index] != nums[i]) {
-				nums[++index] = nums[i];
+		int index = 1;
+		for (int i = 0; i < nums.size(); i++) {
+			if (nums[index - 1] != nums[i]) {
+				nums[index++] = nums[i];
 			}
 		}
-		return index + 1;
+		return index;
 	}
 };
 /*
@@ -824,13 +824,13 @@ Can you solve it without using extra space?
 
 */
 /**
- * Definition for singly-linked list.
- * struct ListNode {
- *     int val;
- *     ListNode *next;
- *     ListNode(int x) : val(x), next(NULL) {}
- * };
- */
+* Definition for singly-linked list.
+* struct ListNode {
+*     int val;
+*     ListNode *next;
+*     ListNode(int x) : val(x), next(NULL) {}
+* };
+*/
 class Solution {
 public:
 	ListNode *detectCycle(ListNode *head) {
@@ -841,9 +841,13 @@ public:
 		while (f != NULL && f->next != NULL) {
 			s = s->next;
 			f = f->next->next;
-			if (s == f) break;
+			if (s == f) {
+				break;
+			}
 		}
-		if (s != f) return NULL;
+		if (s != f) {
+			return NULL;
+		}
 		while (head != s) {
 			head = head->next;
 			s = s->next;
@@ -1169,16 +1173,19 @@ Given s = "leetcode", return "leotcede".
 class Solution {
 public:
 	string reverseVowels(string s) {
-		string vowels = "aeiouAEIOU";
-		int left = 0, right = s.length() - 1;
-		while (left < right) {
-			while (vowels.find(s[left]) == -1 && left < right) {
-				left++;
+		string v = "aeiouAEIOU";
+		int i = 0, j = s.size() - 1;
+		while (i < j) {
+			while (v.find(s[i]) == -1 && i < j) {
+				i++;
 			}
-			while (vowels.find(s[right]) == -1 && left < right) {
-				right--;
+			while (v.find(s[j]) == -1 && i < j) {
+				j--;
 			}
-			swap(s[right--], s[left++]);
+			if (i >= j) {
+				break;
+			}
+			swap(s[i++], s[j--]);
 		}
 		return s;
 	}

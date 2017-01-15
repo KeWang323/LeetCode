@@ -628,13 +628,13 @@ Can you solve it without using extra space?
 
 */
 /**
- * Definition for singly-linked list.
- * struct ListNode {
- *     int val;
- *     ListNode *next;
- *     ListNode(int x) : val(x), next(NULL) {}
- * };
- */
+* Definition for singly-linked list.
+* struct ListNode {
+*     int val;
+*     ListNode *next;
+*     ListNode(int x) : val(x), next(NULL) {}
+* };
+*/
 class Solution {
 public:
 	ListNode *detectCycle(ListNode *head) {
@@ -645,9 +645,13 @@ public:
 		while (f != NULL && f->next != NULL) {
 			s = s->next;
 			f = f->next->next;
-			if (s == f) break;
+			if (s == f) {
+				break;
+			}
 		}
-		if (s != f) return NULL;
+		if (s != f) {
+			return NULL;
+		}
 		while (head != s) {
 			head = head->next;
 			s = s->next;

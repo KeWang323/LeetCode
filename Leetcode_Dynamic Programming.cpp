@@ -298,21 +298,20 @@ c) Replace a character
 class Solution {
 public:
 	int minDistance(string word1, string word2) {
-		int row = word1.size(), col = word2.size();
-		vector<vector<int>> t(row + 1, vector<int>(col + 1, 0));
-		for (int i = 0; i < row + 1; i++) {
-			for (int j = 0; j < col + 1; j++) {
+		vector<vector<int>> t(word1.size() + 1, vector<int>(word2.size() + 1, 0));
+		for (int i = 0; i < t.size(); i++) {
+			for (int j = 0; j < t[0].size(); j++) {
 				if (i == 0) {
-					t[i][j] = j;
+					t[0][j] = j;
 				}
 				else if (j == 0) {
-					t[i][j] = i;
+					t[i][0] = i;
 				}
 				else if (word1[i - 1] == word2[j - 1]) {
 					t[i][j] = t[i - 1][j - 1];
 				}
 				else {
-					t[i][j] = min(min(t[i - 1][j - 1], t[i][j - 1]), t[i - 1][j]) + 1;
+					t[i][j] = min(t[i - 1][j], min(t[i][j - 1], t[i - 1][j - 1])) + 1;
 				}
 			}
 		}
@@ -470,13 +469,14 @@ Given n = 3, there are a total of 5 unique BST's.
 class Solution {
 public:
 	int numTrees(int n) {
-		vector<int> table(n + 1, 0);
-		table[0] = 1;
+		vector<int> t(n + 1, 0);
+		t[0] = 1;
 		for (int i = 1; i <= n; i++) {
-			for (int j = 1; j <= i; j++)
-				table[i] += table[j - 1] * table[i - j];
+			for (int j = 1; j <= i; j++) {
+				t[i] += t[j - 1] * t[i - j];
+			}
 		}
-		return table[n];
+		return t[n];
 	}
 };
 /*
