@@ -1150,20 +1150,30 @@ You may assume k is always valid, 1 ≤ k ≤ number of unique elements.
 Your algorithm's time complexity must be better than O(n log n), where n is the array's size
 
 */
+class Comp {
+public:
+	bool operator()(pair<int, int> p1, pair<int, int> p2) {
+		return p1.second > p2.second;
+	}
+};
 class Solution {
 public:
 	vector<int> topKFrequent(vector<int>& nums, int k) {
-		vector<int> res;
 		unordered_map<int, int> mapping;
-		for (auto i : nums)
-			mapping[i]++;
-		priority_queue<pair<int, int>> q;
+		for (int num : nums) {
+			mapping[num]++;
+		}
+		priority_queue<pair<int, int>, vector<pair<int, int>>, Comp> pq;
 		for (auto i = mapping.begin(); i != mapping.end(); i++) {
-			q.push(make_pair(i->second, i->first));
-			if (q.size() > (int)mapp.size() - k) {
-				res.push_back(q.top().second);
-				q.pop();
+			pq.push(make_pair(i->first, i->second));
+			if (pq.size() > k) {
+				pq.pop();
 			}
+		}
+		vector<int> res(k, 0);
+		for (int i = k - 1; i >= 0; i--) {
+			res[i] = pq.top().first;
+			pq.pop();
 		}
 		return res;
 	}

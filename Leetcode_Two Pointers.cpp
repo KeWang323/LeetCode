@@ -339,11 +339,13 @@ Returns the index of the first occurrence of needle in haystack, or -1 if needle
 class Solution {
 public:
 	int strStr(string haystack, string needle) {
-		int haylen = haystack.length(), neelen = needle.length();
-		for (int i = 0, j; i <= haylen - neelen; i++) {
-			for (j = 0; j < neelen && haystack[i + j] == needle[j]; j++) {
+		if (haystack.size() < needle.size()) {
+			return -1;
+		}
+		for (int i = 0; i <= haystack.size() - needle.size(); i++) {
+			if (haystack.substr(i, needle.size()) == needle) {
+				return i;
 			}
-			if (j == neelen) return i;
 		}
 		return -1;
 	}
