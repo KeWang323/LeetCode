@@ -8,18 +8,22 @@ Given an array of integers, find out whether there are two distinct indices i an
 class Solution {
 public:
 	bool containsNearbyAlmostDuplicate(vector<int>& nums, int k, int t) {
-		if (nums.size() < 2) return false;
-		vector<pair<long, int>> withIndex;
-		for (int i = 0; i < nums.size(); i++)
-			withIndex.emplace_back(nums[i], i);
-		sort(withIndex.begin(), withIndex.end(), [](const pair<long, int>& a, const pair<long, int>&b) { return a.first < b.first; });
+		if (k < 1 || t < 0) {
+			return false;
+		}
+		unordered_map<long, long> mapping;
 		for (int i = 0; i < nums.size(); i++) {
-			int j = i + 1;
-			while (j < nums.size()) {
-				if (withIndex[j].first - withIndex[i].first > t) break;
-				if (abs(withIndex[j].second - withIndex[i].second) <= k) return true;
-				j++;
+			long remappedNum = (long)nums[i] - INT_MIN, bucket = remappedNum / ((long)t + 1);
+			if (mapping.count(bucket)
+				|| mapping.count(bucket - 1) && remappedNum - mapping[bucket - 1] <= t
+				|| mapping.count(bucket + 1) && mapping[bucket + 1] - remappedNum <= t) {
+				return true;
 			}
+			if (mapping.size() >= k) {
+				long lastBucket = ((long)nums[i - k] - INT_MIN) / ((long)t + 1);
+				mapping.erase(lastBucket);
+			}
+			mapping[bucket] = remappedNum;
 		}
 		return false;
 	}

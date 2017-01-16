@@ -187,6 +187,27 @@ public:
 };
 /*
 
+201. Bitwise AND of Numbers Range (Medium)
+
+Given a range [m, n] where 0 <= m <= n <= 2147483647, return the bitwise AND of all numbers in this range, inclusive.
+
+For example, given the range [5, 7], you should return 4.
+
+*/
+class Solution {
+public:
+	int rangeBitwiseAnd(int m, int n) {
+		int bit = 1;
+		while (m != n) {
+			m >>= 1;
+			n >>= 1;
+			bit <<= 1;
+		}
+		return m * bit;
+	}
+};
+/*
+
 231. Power of Two (Easy)
 
 Given an integer, write a function to determine if it is a power of two.
@@ -196,6 +217,39 @@ class Solution {
 public:
 	bool isPowerOfTwo(int n) {
 		return n > 0 && (n & (n - 1)) == 0;
+	}
+};
+/*
+
+260. Single Number III (Medium)
+
+Given an array of numbers nums, in which exactly two elements appear only once and all the other elements appear exactly twice. Find the two elements that appear only once.
+
+For example:
+
+Given nums = [1, 2, 1, 3, 2, 5], return [3, 5].
+
+Note:
+The order of the result is not important. So in the above example, [5, 3] is also correct.
+Your algorithm should run in linear runtime complexity. Could you implement it using only constant space complexity?
+
+
+*/
+class Solution {
+public:
+	vector<int> singleNumber(vector<int>& nums) {
+		int diff = accumulate(nums.begin(), nums.end(), 0, bit_xor<int>());
+		diff &= -diff;
+		vector<int> res(2, 0);
+		for (int& num : nums) {
+			if (diff & num) {
+				res[0] ^= num;
+			}
+			else {
+				res[1] ^= num;
+			}
+		}
+		return res;
 	}
 };
 /*

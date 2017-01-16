@@ -197,12 +197,20 @@ Given target = 20, return false.
 class Solution {
 public:
 	bool searchMatrix(vector<vector<int>>& matrix, int target) {
-		int r = matrix.size() - 1, c = matrix[0].size() - 1;
-		int i = 0, j = c;
-		while (i <= r && j >= 0) {
-			if (matrix[i][j] > target) j--;
-			else if (matrix[i][j] < target) i++;
-			else return true;
+		if (matrix.empty()) {
+			return false;
+		}
+		int i = 0, j = matrix[0].size() - 1;
+		while (i < matrix.size() && j >= 0) {
+			if (matrix[i][j] > target) {
+				j--;
+			}
+			else if (matrix[i][j] < target) {
+				i++;
+			}
+			else {
+				return true;
+			}
 		}
 		return false;
 	}

@@ -3334,6 +3334,38 @@ public:
 };
 /*
 
+89. Gray Code (Medium)
+
+The gray code is a binary numeral system where two successive values differ in only one bit.
+
+Given a non-negative integer n representing the total number of bits in the code, print the sequence of gray code. A gray code sequence must begin with 0.
+
+For example, given n = 2, return [0,1,3,2]. Its gray code sequence is:
+
+00 - 0
+01 - 1
+11 - 3
+10 - 2
+Note:
+For a given n, a gray code sequence is not uniquely defined.
+
+For example, [0,2,3,1] is also a valid gray code sequence according to the above definition.
+
+For now, the judge is able to judge based on one instance of gray code sequence. Sorry about that.
+
+*/
+class Solution {
+public:
+	vector<int> grayCode(int n) {
+		vector<int> res;
+		for (int i = 0; i < 1 << n; i++) {
+			res.push_back(i ^ i >> 1);
+		}
+		return res;
+	}
+};
+/*
+
 90. Subsets II (Medium)
 
 Given a collection of integers that might contain duplicates, nums, return all possible subsets.
@@ -6824,6 +6856,27 @@ private:
 };
 /*
 
+201. Bitwise AND of Numbers Range (Medium)
+
+Given a range [m, n] where 0 <= m <= n <= 2147483647, return the bitwise AND of all numbers in this range, inclusive.
+
+For example, given the range [5, 7], you should return 4.
+
+*/
+class Solution {
+public:
+	int rangeBitwiseAnd(int m, int n) {
+		int bit = 1;
+		while (m != n) {
+			m >>= 1;
+			n >>= 1;
+			bit <<= 1;
+		}
+		return m * bit;
+	}
+};
+/*
+
 202. Happy Number (Easy)
 
 Write an algorithm to determine if a number is "happy".
@@ -7212,18 +7265,22 @@ Given an array of integers, find out whether there are two distinct indices i an
 class Solution {
 public:
 	bool containsNearbyAlmostDuplicate(vector<int>& nums, int k, int t) {
-		if (nums.size() < 2) return false;
-		vector<pair<long, int>> withIndex;
-		for (int i = 0; i < nums.size(); i++)
-			withIndex.emplace_back(nums[i], i);
-		sort(withIndex.begin(), withIndex.end(), [](const pair<long, int>& a, const pair<long, int>&b) { return a.first < b.first; });
+		if (k < 1 || t < 0) {
+			return false;
+		}
+		unordered_map<long, long> mapping;
 		for (int i = 0; i < nums.size(); i++) {
-			int j = i + 1;
-			while (j < nums.size()) {
-				if (withIndex[j].first - withIndex[i].first > t) break;
-				if (abs(withIndex[j].second - withIndex[i].second) <= k) return true;
-				j++;
+			long remappedNum = (long)nums[i] - INT_MIN, bucket = remappedNum / ((long)t + 1);
+			if (mapping.count(bucket)
+				|| mapping.count(bucket - 1) && remappedNum - mapping[bucket - 1] <= t
+				|| mapping.count(bucket + 1) && mapping[bucket + 1] - remappedNum <= t) {
+				return true;
 			}
+			if (mapping.size() >= k) {
+				long lastBucket = ((long)nums[i - k] - INT_MIN) / ((long)t + 1);
+				mapping.erase(lastBucket);
+			}
+			mapping[bucket] = remappedNum;
 		}
 		return false;
 	}
@@ -7902,12 +7959,20 @@ Given target = 20, return false.
 class Solution {
 public:
 	bool searchMatrix(vector<vector<int>>& matrix, int target) {
-		int r = matrix.size() - 1, c = matrix[0].size() - 1;
-		int i = 0, j = c;
-		while (i <= r && j >= 0) {
-			if (matrix[i][j] > target) j--;
-			else if (matrix[i][j] < target) i++;
-			else return true;
+		if (matrix.empty()) {
+			return false;
+		}
+		int i = 0, j = matrix[0].size() - 1;
+		while (i < matrix.size() && j >= 0) {
+			if (matrix[i][j] > target) {
+				j--;
+			}
+			else if (matrix[i][j] < target) {
+				i++;
+			}
+			else {
+				return true;
+			}
 		}
 		return false;
 	}
@@ -8378,6 +8443,39 @@ public:
 };
 /*
 
+260. Single Number III (Medium)
+
+Given an array of numbers nums, in which exactly two elements appear only once and all the other elements appear exactly twice. Find the two elements that appear only once.
+
+For example:
+
+Given nums = [1, 2, 1, 3, 2, 5], return [3, 5].
+
+Note:
+The order of the result is not important. So in the above example, [5, 3] is also correct.
+Your algorithm should run in linear runtime complexity. Could you implement it using only constant space complexity?
+
+
+*/
+class Solution {
+public:
+	vector<int> singleNumber(vector<int>& nums) {
+		int diff = accumulate(nums.begin(), nums.end(), 0, bit_xor<int>());
+		diff &= -diff;
+		vector<int> res(2, 0);
+		for (int& num : nums) {
+			if (diff & num) {
+				res[0] ^= num;
+			}
+			else {
+				res[1] ^= num;
+			}
+		}
+		return res;
+	}
+};
+/*
+
 263. Ugly Number (Easy)
 
 Write a program to check whether a given number is an ugly number.
@@ -8717,6 +8815,68 @@ private:
 			cur = cur->right;
 		}
 		return res;
+	}
+};
+/*
+
+273. Integer to English Words (Hard)
+
+Convert a non-negative integer to its english words representation. Given input is guaranteed to be less than 231 - 1.
+
+For example,
+123 -> "One Hundred Twenty Three"
+12345 -> "Twelve Thousand Three Hundred Forty Five"
+1234567 -> "One Million Two Hundred Thirty Four Thousand Five Hundred Sixty Seven"
+Hint:
+
+Did you see a pattern in dividing the number into chunk of words? For example, 123 and 123000.
+Group the number by thousands (3 digits). You can write a helper function that takes a number less than 1000 and convert just that chunk to words.
+There are many edge cases. What are some good test cases? Does your code work with input such as 0? Or 1000010? (middle chunk is zero and should not be printed out)
+
+*/
+class Solution {
+public:
+	string numberToWords(int num) {
+		if (num == 0) {
+			return "Zero";
+		}
+		vector<string> unit = { "", "Thousand", "Million", "Billion" };
+		vector<string> less20 = { "", "One", "Two", "Three","Four","Five","Six","Seven","Eight","Nine", "Ten", "Eleven", "Twelve","Thirteen","Fourteen","Fifteen","Sixteen","Seventeen","Eighteen","Nineteen" };
+		vector<string> ten2 = { "", "Ten", "Twenty","Thirty","Forty","Fifty","Sixty","Seventy","Eighty","Ninety" };
+		string res;
+		int bit = 0;
+		while (num != 0) {
+			if (num % 1000 > 0) {
+				res = numberToWords2(num % 1000, less20, ten2) + " " + unit[bit] + " " + res;
+			}
+			num /= 1000;
+			bit++;
+		}
+		while (res.back() == ' ') {
+			res.pop_back();
+		}
+		return res;
+	}
+private:
+	string numberToWords2(int num, const vector<string>& less20, const vector<string>& ten2) {
+		if (num == 0) {
+			return "";
+		}
+		if (num < 20) {
+			return less20[num];
+		}
+		else if (num < 100) {
+			if (num % 10) {
+				return ten2[num / 10] + " " + less20[num % 10];
+			}
+			return ten2[num / 10];
+		}
+		else {
+			if (num % 100) {
+				return less20[num / 100] + " Hundred " + numberToWords2(num % 100, less20, ten2);
+			}
+			return less20[num / 100] + " Hundred";
+		}
 	}
 };
 /*
@@ -9672,6 +9832,44 @@ public:
 			}
 		}
 		return res;
+	}
+};
+/*
+
+316. Remove Duplicate Letters (Hard)
+
+Given a string which contains only lowercase letters, remove duplicate letters so that every letter appear once and only once. You must make sure your result is the smallest in lexicographical order among all possible results.
+
+Example:
+Given "bcabc"
+Return "abc"
+
+Given "cbacdcbc"
+Return "acdb"
+
+*/
+class Solution {
+public:
+	string removeDuplicateLetters(string s) {
+		int cnt[256] = { 0 };
+		bool visited[256] = { false };
+		string res = "0";
+		for (char cha : s) {
+			cnt[cha]++;
+		}
+		for (char cha : s) {
+			cnt[cha]--;
+			if (visited[cha] == true) {
+				continue;
+			}
+			while (cha < res.back() && cnt[res.back()] > 0) {
+				visited[res.back()] = false;
+				res.pop_back();
+			}
+			res += cha;
+			visited[cha] = true;
+		}
+		return res.substr(1);
 	}
 };
 /*
@@ -11153,10 +11351,14 @@ canConstruct("aa", "aab") -> true
 class Solution {
 public:
 	bool canConstruct(string ransomNote, string magazine) {
-		for (auto cha_r : ransomNote) {
-			auto cha_m = magazine.find(cha_r);
-			if (cha_m == string::npos) return false;
-			magazine.erase(cha_m, 1);
+		int t[256] = { 0 };
+		for (char cha : magazine) {
+			t[cha]++;
+		}
+		for (char cha : ransomNote) {
+			if (t[cha]-- == 0) {
+				return false;
+			}
 		}
 		return true;
 	}

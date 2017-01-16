@@ -165,6 +165,44 @@ public:
 };
 /*
 
+316. Remove Duplicate Letters (Hard)
+
+Given a string which contains only lowercase letters, remove duplicate letters so that every letter appear once and only once. You must make sure your result is the smallest in lexicographical order among all possible results.
+
+Example:
+Given "bcabc"
+Return "abc"
+
+Given "cbacdcbc"
+Return "acdb"
+
+*/
+class Solution {
+public:
+	string removeDuplicateLetters(string s) {
+		int cnt[256] = { 0 };
+		bool visited[256] = { false };
+		string res = "0";
+		for (char cha : s) {
+			cnt[cha]++;
+		}
+		for (char cha : s) {
+			cnt[cha]--;
+			if (visited[cha] == true) {
+				continue;
+			}
+			while (cha < res.back() && cnt[res.back()] > 0) {
+				visited[res.back()] = false;
+				res.pop_back();
+			}
+			res += cha;
+			visited[cha] = true;
+		}
+		return res.substr(1);
+	}
+};
+/*
+
 376. Wiggle Subsequence (Medium)
 
 A sequence of numbers is called a wiggle sequence if the differences between successive
