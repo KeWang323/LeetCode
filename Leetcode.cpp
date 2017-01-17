@@ -6690,11 +6690,11 @@ class Solution {
 public:
 	uint32_t reverseBits(uint32_t n) {
 		uint32_t res = 0;
-		int index = 31;
+		int bit = 31;
 		while (n > 0) {
-			res |= (n & 0x1) << index;
+			res |= (n & 0x1) << bit;
 			n >>= 1;
-			index--;
+			bit--;
 		}
 		return res;
 	}
@@ -7549,40 +7549,47 @@ Do you have a better hint? Suggest it!
 class Solution {
 public:
 	vector<int> majorityElement(vector<int>& nums) {
-		vector<int> res;
-		int res1, res2, num1 = 0, num2 = 0;
-		for (int i = 0; i < nums.size(); i++) {
-			if (res1 == nums[i]) {
-				num1++;
+		if (nums.empty()) {
+			return{};
+		}
+		int num1, num2, cnt1 = 0, cnt2 = 0;
+		for (int num : nums) {
+			if (num1 == num) {
+				cnt1++;
 			}
-			else if (res2 == nums[i]) {
-				num2++;
+			else if (num2 == num) {
+				cnt2++;
 			}
-			else if (num1 == 0) {
-				res1 = nums[i];
-				num1++;
+			else if (cnt1 == 0) {
+				num1 = num;
+				cnt1++;
 			}
-			else if (num2 == 0) {
-				res2 = nums[i];
-				num2++;
+			else if (cnt2 == 0) {
+				num2 = num;
+				cnt2++;
 			}
 			else {
-				num1--;
-				num2--;
+				cnt1--;
+				cnt2--;
 			}
 		}
-		num1 = 0;
-		num2 = 0;
-		for (int i = 0; i < nums.size(); i++) {
-			if (res1 == nums[i]) {
-				num1++;
+		cnt1 = 0;
+		cnt2 = 0;
+		for (int num : nums) {
+			if (num == num1) {
+				cnt1++;
 			}
-			else if (res2 == nums[i]) {
-				num2++;
+			else if (num == num2) {
+				cnt2++;
 			}
 		}
-		if (num1 > nums.size() / 3) res.push_back(res1);
-		if (num2 > nums.size() / 3) res.push_back(res2);
+		vector<int> res;
+		if (cnt1 > nums.size() / 3) {
+			res.push_back(num1);
+		}
+		if (cnt2 > nums.size() / 3) {
+			res.push_back(num2);
+		}
 		return res;
 	}
 };
@@ -9050,16 +9057,14 @@ For example, given n = 12, return 3 because 12 = 4 + 4 + 4; given n = 13, return
 class Solution {
 public:
 	int numSquares(int n) {
-		if (n <= 0) return 0;
-		static vector<int> table{ (0) };
-		while (table.size() <= n) {
-			int _size = table.size();
-			int temp = INT_MAX;
-			for (int i = 1; i * i <= _size; i++)
-				temp = min(temp, table[_size - i * i] + 1);
-			table.push_back(temp);
+		vector<int> t(n + 1, INT_MAX);
+		t[0] = 0;
+		for (int i = 1; i <= n; i++) {
+			for (int j = 1; j * j <= i; j++) {
+				t[i] = min(t[i], t[i - j * j] + 1);
+			}
 		}
-		return table[n];
+		return t.back();
 	}
 };
 /*
@@ -12506,6 +12511,43 @@ private:
 			root = root->left;
 		}
 		return root->val;
+	}
+};
+/*
+
+461. Hamming Distance (Easy)
+
+The Hamming distance between two integers is the number of positions at which the corresponding bits are different.
+
+Given two integers x and y, calculate the Hamming distance.
+
+Note:
+0 ≤ x, y < 231.
+
+Example:
+
+Input: x = 1, y = 4
+
+Output: 2
+
+Explanation:
+1   (0 0 0 1)
+4   (0 1 0 0)
+       ↑   ↑
+
+The above arrows point to positions where the corresponding bits are different.
+
+*/
+class Solution {
+public:
+	int hammingDistance(int x, int y) {
+		int res = 0;
+		x ^= y;
+		while (x != 0) {
+			res++;
+			x &= x - 1;
+		}
+		return res;
 	}
 };
 /*

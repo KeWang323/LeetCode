@@ -2274,40 +2274,47 @@ Do you have a better hint? Suggest it!
 class Solution {
 public:
 	vector<int> majorityElement(vector<int>& nums) {
-		vector<int> res;
-		int res1, res2, num1 = 0, num2 = 0;
-		for (int i = 0; i < nums.size(); i++) {
-			if (res1 == nums[i]) {
-				num1++;
+		if (nums.empty()) {
+			return{};
+		}
+		int num1, num2, cnt1 = 0, cnt2 = 0;
+		for (int num : nums) {
+			if (num1 == num) {
+				cnt1++;
 			}
-			else if (res2 == nums[i]) {
-				num2++;
+			else if (num2 == num) {
+				cnt2++;
 			}
-			else if (num1 == 0) {
-				res1 = nums[i];
-				num1++;
+			else if (cnt1 == 0) {
+				num1 = num;
+				cnt1++;
 			}
-			else if (num2 == 0) {
-				res2 = nums[i];
-				num2++;
+			else if (cnt2 == 0) {
+				num2 = num;
+				cnt2++;
 			}
 			else {
-				num1--;
-				num2--;
+				cnt1--;
+				cnt2--;
 			}
 		}
-		num1 = 0;
-		num2 = 0;
-		for (int i = 0; i < nums.size(); i++) {
-			if (res1 == nums[i]) {
-				num1++;
+		cnt1 = 0;
+		cnt2 = 0;
+		for (int num : nums) {
+			if (num == num1) {
+				cnt1++;
 			}
-			else if (res2 == nums[i]) {
-				num2++;
+			else if (num == num2) {
+				cnt2++;
 			}
 		}
-		if (num1 > nums.size() / 3) res.push_back(res1);
-		if (num2 > nums.size() / 3) res.push_back(res2);
+		vector<int> res;
+		if (cnt1 > nums.size() / 3) {
+			res.push_back(num1);
+		}
+		if (cnt2 > nums.size() / 3) {
+			res.push_back(num2);
+		}
 		return res;
 	}
 };

@@ -993,16 +993,14 @@ For example, given n = 12, return 3 because 12 = 4 + 4 + 4; given n = 13, return
 class Solution {
 public:
 	int numSquares(int n) {
-		if (n <= 0) return 0;
-		static vector<int> table{ (0) };
-		while (table.size() <= n) {
-			int _size = table.size();
-			int temp = INT_MAX;
-			for (int i = 1; i * i <= _size; i++)
-				temp = min(temp, table[_size - i * i] + 1);
-			table.push_back(temp);
+		vector<int> t(n + 1, INT_MAX);
+		t[0] = 0;
+		for (int i = 1; i <= n; i++) {
+			for (int j = 1; j * j <= i; j++) {
+				t[i] = min(t[i], t[i - j * j] + 1);
+			}
 		}
-		return table[n];
+		return t.back();
 	}
 };
 /*
