@@ -901,14 +901,17 @@ For the purpose of this problem, we define empty string as valid palindrome.
 class Solution {
 public:
 	bool isPalindrome(string s) {
-		int left = 0, right = s.length() - 1;
-		while (left < right) {
-			while (!isalnum(s[left]) && left < right)
-				left++;
-			while (!isalnum(s[right]) && left < right)
-				right--;
-			if (tolower(s[left++]) != tolower(s[right--]))
+		int i = 0, j = s.size() - 1;
+		while (i < j) {
+			while (i < j && !isalnum(s[i])) {
+				i++;
+			}
+			while (i < j && !isalnum(s[j])) {
+				j--;
+			}
+			if (tolower(s[i++]) != tolower(s[j--])) {
 				return false;
+			}
 		}
 		return true;
 	}

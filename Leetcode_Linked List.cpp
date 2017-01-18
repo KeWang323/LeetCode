@@ -41,42 +41,43 @@ Given a linked list, remove the nth node from the end of list and return its hea
 
 For example,
 
-   Given linked list: 1->2->3->4->5, and n = 2.
+Given linked list: 1->2->3->4->5, and n = 2.
 
-   After removing the second node from the end, the linked list becomes 1->2->3->5.
+After removing the second node from the end, the linked list becomes 1->2->3->5.
 Note:
 Given n will always be valid.
 Try to do this in one pass.
 
 */
 /**
- * Definition for singly-linked list.
- * struct ListNode {
- *     int val;
- *     ListNode *next;
- *     ListNode(int x) : val(x), next(NULL) {}
- * };
- */
+* Definition for singly-linked list.
+* struct ListNode {
+*     int val;
+*     ListNode *next;
+*     ListNode(int x) : val(x), next(NULL) {}
+* };
+*/
 class Solution {
 public:
 	ListNode* removeNthFromEnd(ListNode* head, int n) {
-		if (head == NULL) {
-			return head;
-		}
-		ListNode *p = head, *q = head, *q_prev = NULL;
-		for (int i = 0; i < n - 1; i++) {
+		int len = getLength(head);
+		ListNode *dummy = new ListNode(-1);
+		dummy->next = head;
+		ListNode *p = dummy;
+		for (int i = 0; i < len - n; i++) {
 			p = p->next;
 		}
-		while (p->next != NULL) {
-			p = p->next;
-			q_prev = q;
-			q = q->next;
+		p->next = p->next->next;
+		return dummy->next;
+	}
+private:
+	int getLength(ListNode* head) {
+		int res = 0;
+		while (head != NULL) {
+			res++;
+			head = head->next;
 		}
-		if (!q_prev) {
-			return head->next;
-		}
-		q_prev->next = q->next;
-		return head;
+		return res;
 	}
 };
 /*
@@ -167,23 +168,23 @@ Your algorithm should use only constant space. You may not modify the values in 
 
 */
 /**
- * Definition for singly-linked list.
- * struct ListNode {
- *     int val;
- *     ListNode *next;
- *     ListNode(int x) : val(x), next(NULL) {}
- * };
- */
+* Definition for singly-linked list.
+* struct ListNode {
+*     int val;
+*     ListNode *next;
+*     ListNode(int x) : val(x), next(NULL) {}
+* };
+*/
 class Solution {
 public:
 	ListNode* swapPairs(ListNode* head) {
 		if (head == NULL || head->next == NULL) {
 			return head;
 		}
-		ListNode* temp = head->next;
-		head->next = swapPairs(temp->next);
-		temp->next = head;
-		return temp;
+		ListNode *post = head->next;
+		head->next = swapPairs(post->next);
+		post->next = head;
+		return post;
 	}
 };
 /*
@@ -673,13 +674,13 @@ Given {1,2,3,4}, reorder it to {1,4,2,3}.
 
 */
 /**
- * Definition for singly-linked list.
- * struct ListNode {
- *     int val;
- *     ListNode *next;
- *     ListNode(int x) : val(x), next(NULL) {}
- * };
- */
+* Definition for singly-linked list.
+* struct ListNode {
+*     int val;
+*     ListNode *next;
+*     ListNode(int x) : val(x), next(NULL) {}
+* };
+*/
 class Solution {
 public:
 	void reorderList(ListNode* head) {
@@ -688,18 +689,18 @@ public:
 		}
 		ListNode *s = head, *f = head;
 		while (f->next != NULL && f->next->next != NULL) {
-			s = s->next;
 			f = f->next->next;
+			s = s->next;
 		}
 		ListNode *newhead = reverse(s->next);
 		s->next = NULL;
 		s = head;
 		while (newhead != NULL) {
-			ListNode *newheadpos = newhead->next;
+			ListNode *post = newhead->next;
 			newhead->next = s->next;
 			s->next = newhead;
 			s = s->next->next;
-			newhead = newheadpos;
+			newhead = post;
 		}
 	}
 private:
@@ -707,10 +708,14 @@ private:
 		if (head == NULL || head->next == NULL) {
 			return head;
 		}
-		ListNode *newhead = reverse(head->next);
-		head->next->next = head;
-		head->next = NULL;
-		return newhead;
+		ListNode *pre = NULL;
+		while (head != NULL) {
+			ListNode* post = head->next;
+			head->next = pre;
+			pre = head;
+			head = post;
+		}
+		return pre;
 	}
 };
 /*

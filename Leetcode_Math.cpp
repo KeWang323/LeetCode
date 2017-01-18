@@ -574,11 +574,12 @@ For example:
 class Solution {
 public:
 	string convertToTitle(int n) {
-		string res = "";
-		while (n) {
-			res = char((n - 1) % 26 + 'A') + res;
+		string res;
+		while (n > 0) {
+			res += (n - 1) % 26 + 'A';
 			n = (n - 1) / 26;
 		}
+		reverse(res.begin(), res.end());
 		return res;
 	}
 };
@@ -683,14 +684,16 @@ Count the number of prime numbers less than a non-negative number, n.
 class Solution {
 public:
 	int countPrimes(int n) {
-		if (n <= 1) return 0;
-		vector<int> prime(n, 0);
+		if (n < 2) {
+			return 0;
+		}
+		vector<bool> t(n, false);
 		int cnt = 0;
 		for (int i = 2; i < n; i++) {
-			if (prime[i] == 0) {
+			if (t[i] == false) {
 				cnt++;
-				for (int j = 2; i * j < n; j++) {
-					prime[i * j] = 1;
+				for (int j = 1; i * j < n; j++) {
+					t[i * j] = true;
 				}
 			}
 		}

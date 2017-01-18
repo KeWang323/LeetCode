@@ -716,14 +716,16 @@ Count the number of prime numbers less than a non-negative number, n.
 class Solution {
 public:
 	int countPrimes(int n) {
-		if (n <= 1) return 0;
-		vector<int> prime(n, 0);
+		if (n < 2) {
+			return 0;
+		}
+		vector<bool> t(n, false);
 		int cnt = 0;
 		for (int i = 2; i < n; i++) {
-			if (prime[i] == 0) {
+			if (t[i] == false) {
 				cnt++;
-				for (int j = 2; i * j < n; j++) {
-					prime[i * j] = 1;
+				for (int j = 1; i * j < n; j++) {
+					t[i * j] = true;
 				}
 			}
 		}
@@ -754,41 +756,13 @@ You may assume both s and t have the same length.
 class Solution {
 public:
 	bool isIsomorphic(string s, string t) {
-		if (s.length() == 0) {
-			return true;
-		}
-		unordered_map<char, char> mapping;
-		set<char> Set;
-		for (int i = 0; i < s.length(); i++) {
-			char s1 = s[i], t1 = t[i];
-			if (mapping.find(s1) != mapping.end()) {
-				if (mapping[s1] != t1) return false;
-			}
-			else {
-				if (Set.count(t1) == 1) {
-					return false;
-				}
-				else {
-					mapping[s1] = t1;
-					Set.insert(t1);
-				}
-			}
-		}
-		return true;
-	}
-};
-class Solution {
-public:
-	bool isIsomorphic(string s, string t) {
-		int cs[128] = { 0 }, ct[128] = { 0 };
+		char t1[256] = { 0 }, t2[256] = { 0 };
 		for (int i = 0; i < s.size(); i++) {
-			if (cs[s[i]] != ct[t[i]]) {
+			if (t1[s[i]] != t2[t[i]]) {
 				return false;
 			}
-			else if (!cs[s[i]]) {
-				cs[s[i]] = i + 1;
-				ct[t[i]] = i + 1;
-			}
+			t1[s[i]] = i + 1;
+			t2[t[i]] = i + 1;
 		}
 		return true;
 	}
@@ -1501,5 +1475,42 @@ public:
 			}
 		}
 		return res;
+	}
+};
+/*
+
+463. Island Perimeter (Easy)
+
+You are given a map in form of a two-dimensional integer grid where 1 represents land and 0 represents water. Grid cells are connected horizontally/vertically (not diagonally). The grid is completely surrounded by water, and there is exactly one island (i.e., one or more connected land cells). The island doesn't have "lakes" (water inside that isn't connected to the water around the island). One cell is a square with side length 1. The grid is rectangular, width and height don't exceed 100. Determine the perimeter of the island.
+
+Example:
+
+[[0,1,0,0],
+[1,1,1,0],
+[0,1,0,0],
+[1,1,0,0]]
+
+Answer: 16
+Explanation: The perimeter is the 16 yellow stripes in the image below:
+
+*/
+class Solution {
+public:
+	int islandPerimeter(vector<vector<int>>& grid) {
+		int lands = 0, neibor = 0;
+		for (int i = 0; i < grid.size(); i++) {
+			for (int j = 0; j < grid[0].size(); j++) {
+				if (grid[i][j] == 1) {
+					lands++;
+					if (i < grid.size() - 1 && grid[i + 1][j] == 1) {
+						neibor++;
+					}
+					if (j < grid[0].size() - 1 && grid[i][j + 1] == 1) {
+						neibor++;
+					}
+				}
+			}
+		}
+		return lands * 4 - neibor * 2;
 	}
 };

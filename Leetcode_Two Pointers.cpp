@@ -125,9 +125,6 @@ The sum that is closest to the target is 2. (-1 + 2 + 1 = 2).
 class Solution {
 public:
 	int threeSumClosest(vector<int>& nums, int target) {
-		if (nums.size() < 3) {
-			return 0;
-		}
 		sort(nums.begin(), nums.end());
 		int res = nums[0] + nums[1] + nums[2];
 		for (int i = 0; i < nums.size() - 2; i++) {
@@ -135,16 +132,16 @@ public:
 			while (j < k) {
 				int _sum = nums[i] + nums[j] + nums[k];
 				if (_sum == target) {
-					return _sum;
+					return target;
 				}
 				else if (abs(_sum - target) < abs(res - target)) {
 					res = _sum;
 				}
-				else if (_sum > target) {
-					k--;
+				if (_sum < target) {
+					j++;
 				}
 				else {
-					j++;
+					k--;;
 				}
 			}
 		}
@@ -226,42 +223,43 @@ Given a linked list, remove the nth node from the end of list and return its hea
 
 For example,
 
-   Given linked list: 1->2->3->4->5, and n = 2.
+Given linked list: 1->2->3->4->5, and n = 2.
 
-   After removing the second node from the end, the linked list becomes 1->2->3->5.
+After removing the second node from the end, the linked list becomes 1->2->3->5.
 Note:
 Given n will always be valid.
 Try to do this in one pass.
 
 */
 /**
- * Definition for singly-linked list.
- * struct ListNode {
- *     int val;
- *     ListNode *next;
- *     ListNode(int x) : val(x), next(NULL) {}
- * };
- */
+* Definition for singly-linked list.
+* struct ListNode {
+*     int val;
+*     ListNode *next;
+*     ListNode(int x) : val(x), next(NULL) {}
+* };
+*/
 class Solution {
 public:
 	ListNode* removeNthFromEnd(ListNode* head, int n) {
-		if (head == NULL) {
-			return head;
-		}
-		ListNode *p = head, *q = head, *q_prev = NULL;
-		for (int i = 0; i < n - 1; i++) {
+		int len = getLength(head);
+		ListNode *dummy = new ListNode(-1);
+		dummy->next = head;
+		ListNode *p = dummy;
+		for (int i = 0; i < len - n; i++) {
 			p = p->next;
 		}
-		while (p->next != NULL) {
-			p = p->next;
-			q_prev = q;
-			q = q->next;
+		p->next = p->next->next;
+		return dummy->next;
+	}
+private:
+	int getLength(ListNode* head) {
+		int res = 0;
+		while (head != NULL) {
+			res++;
+			head = head->next;
 		}
-		if (!q_prev) {
-			return head->next;
-		}
-		q_prev->next = q->next;
-		return head;
+		return res;
 	}
 };
 /*
@@ -766,14 +764,17 @@ For the purpose of this problem, we define empty string as valid palindrome.
 class Solution {
 public:
 	bool isPalindrome(string s) {
-		int left = 0, right = s.length() - 1;
-		while (left < right) {
-			while (!isalnum(s[left]) && left < right)
-				left++;
-			while (!isalnum(s[right]) && left < right)
-				right--;
-			if (tolower(s[left++]) != tolower(s[right--]))
+		int i = 0, j = s.size() - 1;
+		while (i < j) {
+			while (i < j && !isalnum(s[i])) {
+				i++;
+			}
+			while (i < j && !isalnum(s[j])) {
+				j--;
+			}
+			if (tolower(s[i++]) != tolower(s[j--])) {
 				return false;
+			}
 		}
 		return true;
 	}

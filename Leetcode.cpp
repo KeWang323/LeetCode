@@ -583,9 +583,6 @@ The sum that is closest to the target is 2. (-1 + 2 + 1 = 2).
 class Solution {
 public:
 	int threeSumClosest(vector<int>& nums, int target) {
-		if (nums.size() < 3) {
-			return 0;
-		}
 		sort(nums.begin(), nums.end());
 		int res = nums[0] + nums[1] + nums[2];
 		for (int i = 0; i < nums.size() - 2; i++) {
@@ -593,16 +590,16 @@ public:
 			while (j < k) {
 				int _sum = nums[i] + nums[j] + nums[k];
 				if (_sum == target) {
-					return _sum;
+					return target;
 				}
 				else if (abs(_sum - target) < abs(res - target)) {
 					res = _sum;
 				}
-				else if (_sum > target) {
-					k--;
+				if (_sum < target) {
+					j++;
 				}
 				else {
-					j++;
+					k--;;
 				}
 			}
 		}
@@ -732,33 +729,34 @@ Try to do this in one pass.
 
 */
 /**
- * Definition for singly-linked list.
- * struct ListNode {
- *     int val;
- *     ListNode *next;
- *     ListNode(int x) : val(x), next(NULL) {}
- * };
- */
+* Definition for singly-linked list.
+* struct ListNode {
+*     int val;
+*     ListNode *next;
+*     ListNode(int x) : val(x), next(NULL) {}
+* };
+*/
 class Solution {
 public:
 	ListNode* removeNthFromEnd(ListNode* head, int n) {
-		if (head == NULL) {
-			return head;
-		}
-		ListNode *p = head, *q = head, *q_prev = NULL;
-		for (int i = 0; i < n - 1; i++) {
+		int len = getLength(head);
+		ListNode *dummy = new ListNode(-1);
+		dummy->next = head;
+		ListNode *p = dummy;
+		for (int i = 0; i < len - n; i++) {
 			p = p->next;
 		}
-		while (p->next != NULL) {
-			p = p->next;
-			q_prev = q;
-			q = q->next;
+		p->next = p->next->next;
+		return dummy->next;
+	}
+private:
+	int getLength(ListNode* head) {
+		int res = 0;
+		while (head != NULL) {
+			res++;
+			head = head->next;
 		}
-		if (!q_prev) {
-			return head->next;
-		}
-		q_prev->next = q->next;
-		return head;
+		return res;
 	}
 };
 /*
@@ -932,10 +930,10 @@ public:
 		if (head == NULL || head->next == NULL) {
 			return head;
 		}
-		ListNode* temp = head->next;
-		head->next = swapPairs(temp->next);
-		temp->next = head;
-		return temp;
+		ListNode *post = head->next;
+		head->next = swapPairs(post->next);
+		post->next = head;
+		return post;
 	}
 };
 /*
@@ -2737,7 +2735,7 @@ public:
 		}
 		for (int i = 1; i < matrix.size(); i++) {
 			for (int j = 1; j < matrix[0].size(); j++) {
-				if (matrix[i][0] == 0 || matrix[0][j] == 0) {
+				if (matrix[0][j] == 0 || matrix[i][0] == 0) {
 					matrix[i][j] = 0;
 				}
 			}
@@ -4112,7 +4110,7 @@ public:
 		return sortedArrayToBST(nums, 0, nums.size() - 1);
 	}
 private:
-	TreeNode* sortedArrayToBST(vector<int>& nums, int l, int r) {
+	TreeNode* sortedArrayToBST(const vector<int>& nums, int l, int r) {
 		if (l > r) {
 			return NULL;
 		}
@@ -4405,11 +4403,11 @@ public:
 
 Given a binary tree
 
-struct TreeLinkNode {
-TreeLinkNode *left;
-TreeLinkNode *right;
-TreeLinkNode *next;
-}
+	struct TreeLinkNode {
+	  TreeLinkNode *left;
+	  TreeLinkNode *right;
+	  TreeLinkNode *next;
+	}
 Populate each next pointer to point to its next right node. If there is no next right node, the next pointer should be set to NULL.
 
 Initially, all next pointers are set to NULL.
@@ -4420,17 +4418,17 @@ You may only use constant extra space.
 You may assume that it is a perfect binary tree (ie, all leaves are at the same level, and every parent has two children).
 For example,
 Given the following perfect binary tree,
-1
-/  \
-2    3
-/ \  / \
-4  5  6  7
+		 1
+	   /  \
+	  2    3
+	 / \  / \
+	4  5  6  7
 After calling your function, the tree should look like:
-1 -> NULL
-/  \
-2 -> 3 -> NULL
-/ \  / \
-4->5->6->7 -> NULL
+		 1 -> NULL
+	   /  \
+	  2 -> 3 -> NULL
+	 / \  / \
+	4->5->6->7 -> NULL
 
 */
 /**
@@ -4447,26 +4445,16 @@ public:
 		if (root == NULL) {
 			return;
 		}
-		queue<TreeLinkNode*> q;
-		q.push(root);
-		while (!q.empty()) {
-			int _size = q.size();
-			for (int i = 0; i < _size; i++) {
-				TreeLinkNode* node = q.front();
-				q.pop();
-				if (i < _size - 1) {
-					node->next = q.front();
+		while (root->left != NULL) {
+			TreeLinkNode *p = root;
+			while (p != NULL) {
+				p->left->next = p->right;
+				if (p->next != NULL) {
+					p->right->next = p->next->left;
 				}
-				else {
-					node->next = NULL;
-				}
-				if (node->left != NULL) {
-					q.push(node->left);
-				}
-				if (node->right != NULL) {
-					q.push(node->right);
-				}
+				p = p->next;
 			}
+			root = root->left;
 		}
 	}
 };
@@ -4620,13 +4608,12 @@ Bonus point if you are able to do this using only O(n) extra space, where n is t
 class Solution {
 public:
 	int minimumTotal(vector<vector<int>>& triangle) {
-		vector<int> res = triangle.back();
 		for (int i = triangle.size() - 2; i >= 0; i--) {
 			for (int j = 0; j < triangle[i].size(); j++) {
-				res[j] = min(res[j], res[j + 1]) + triangle[i][j];
+				triangle[i][j] += min(triangle[i + 1][j], triangle[i + 1][j + 1]);
 			}
 		}
-		return res[0];
+		return triangle[0][0];
 	}
 };
 /*
@@ -4755,15 +4742,15 @@ public:
 		return res;
 	}
 private:
-	int maxPathSum(TreeNode* root, int& max) {
+	int maxPathSum(TreeNode* root, int& res) {
 		if (root == NULL) {
 			return 0;
 		}
-		int l = maxPathSum(root->left, max), r = maxPathSum(root->right, max);
-		l = l < 0 ? 0 : l;
-		r = r < 0 ? 0 : r;
-		max = max > l + r + root->val ? max : l + r + root->val;
-		return l > r ? l + root->val : r + root->val;
+		int l = maxPathSum(root->left, res), r = maxPathSum(root->right, res);
+		l = l > 0 ? l : 0;
+		r = r > 0 ? r : 0;
+		res = max(res, l + r + root->val);
+		return max(l, r) + root->val;
 	}
 };
 /*
@@ -4785,14 +4772,17 @@ For the purpose of this problem, we define empty string as valid palindrome.
 class Solution {
 public:
 	bool isPalindrome(string s) {
-		int left = 0, right = s.length() - 1;
-		while (left < right) {
-			while (!isalnum(s[left]) && left < right)
-				left++;
-			while (!isalnum(s[right]) && left < right)
-				right--;
-			if (tolower(s[left++]) != tolower(s[right--]))
+		int i = 0, j = s.size() - 1;
+		while (i < j) {
+			while (i < j && !isalnum(s[i])) {
+				i++;
+			}
+			while (i < j && !isalnum(s[j])) {
+				j--;
+			}
+			if (tolower(s[i++]) != tolower(s[j--])) {
 				return false;
+			}
 		}
 		return true;
 	}
@@ -5309,13 +5299,13 @@ Given {1,2,3,4}, reorder it to {1,4,2,3}.
 
 */
 /**
- * Definition for singly-linked list.
- * struct ListNode {
- *     int val;
- *     ListNode *next;
- *     ListNode(int x) : val(x), next(NULL) {}
- * };
- */
+* Definition for singly-linked list.
+* struct ListNode {
+*     int val;
+*     ListNode *next;
+*     ListNode(int x) : val(x), next(NULL) {}
+* };
+*/
 class Solution {
 public:
 	void reorderList(ListNode* head) {
@@ -5324,18 +5314,18 @@ public:
 		}
 		ListNode *s = head, *f = head;
 		while (f->next != NULL && f->next->next != NULL) {
-			s = s->next;
 			f = f->next->next;
+			s = s->next;
 		}
 		ListNode *newhead = reverse(s->next);
 		s->next = NULL;
 		s = head;
 		while (newhead != NULL) {
-			ListNode *newheadpos = newhead->next;
+			ListNode *post = newhead->next;
 			newhead->next = s->next;
 			s->next = newhead;
 			s = s->next->next;
-			newhead = newheadpos;
+			newhead = post;
 		}
 	}
 private:
@@ -5343,10 +5333,14 @@ private:
 		if (head == NULL || head->next == NULL) {
 			return head;
 		}
-		ListNode *newhead = reverse(head->next);
-		head->next->next = head;
-		head->next = NULL;
-		return newhead;
+		ListNode *pre = NULL;
+		while (head != NULL) {
+			ListNode* post = head->next;
+			head->next = pre;
+			pre = head;
+			head = post;
+		}
+		return pre;
 	}
 };
 /*
@@ -6312,23 +6306,24 @@ Given a positive integer, return its corresponding column title as appear in an 
 
 For example:
 
-1 -> A
-2 -> B
-3 -> C
-...
-26 -> Z
-27 -> AA
-28 -> AB
+	1 -> A
+	2 -> B
+	3 -> C
+	...
+	26 -> Z
+	27 -> AA
+	28 -> AB
 
 */
 class Solution {
 public:
 	string convertToTitle(int n) {
-		string res = "";
-		while (n) {
-			res = char((n - 1) % 26 + 'A') + res;
+		string res;
+		while (n > 0) {
+			res += (n - 1) % 26 + 'A';
 			n = (n - 1) / 26;
 		}
+		reverse(res.begin(), res.end());
 		return res;
 	}
 };
@@ -6962,14 +6957,16 @@ Count the number of prime numbers less than a non-negative number, n.
 class Solution {
 public:
 	int countPrimes(int n) {
-		if (n <= 1) return 0;
-		vector<int> prime(n, 0);
+		if (n < 2) {
+			return 0;
+		}
+		vector<bool> t(n, false);
 		int cnt = 0;
 		for (int i = 2; i < n; i++) {
-			if (prime[i] == 0) {
+			if (t[i] == false) {
 				cnt++;
-				for (int j = 2; i * j < n; j++) {
-					prime[i * j] = 1;
+				for (int j = 1; i * j < n; j++) {
+					t[i * j] = true;
 				}
 			}
 		}
@@ -7000,41 +6997,13 @@ You may assume both s and t have the same length.
 class Solution {
 public:
 	bool isIsomorphic(string s, string t) {
-		if (s.length() == 0) {
-			return true;
-		}
-		unordered_map<char, char> mapping;
-		set<char> Set;
-		for (int i = 0; i < s.length(); i++) {
-			char s1 = s[i], t1 = t[i];
-			if (mapping.find(s1) != mapping.end()) {
-				if (mapping[s1] != t1) return false;
-			}
-			else {
-				if (Set.count(t1) == 1) {
-					return false;
-				}
-				else {
-					mapping[s1] = t1;
-					Set.insert(t1);
-				}
-			}
-		}
-		return true;
-	}
-};
-class Solution {
-public:
-	bool isIsomorphic(string s, string t) {
-		int cs[128] = { 0 }, ct[128] = { 0 };
+		char t1[256] = { 0 }, t2[256] = { 0 };
 		for (int i = 0; i < s.size(); i++) {
-			if (cs[s[i]] != ct[t[i]]) {
+			if (t1[s[i]] != t2[t[i]]) {
 				return false;
 			}
-			else if (!cs[s[i]]) {
-				cs[s[i]] = i + 1;
-				ct[t[i]] = i + 1;
-			}
+			t1[s[i]] = i + 1;
+			t2[t[i]] = i + 1;
 		}
 		return true;
 	}
@@ -7873,13 +7842,7 @@ public:
 		if (l != NULL && r != NULL) {
 			return root;
 		}
-		else if (l != NULL) {
-			return l;
-		}
-		else if (r != NULL) {
-			return r;
-		}
-		return NULL;
+		return l != NULL ? l : r;
 	}
 };
 /*
@@ -9030,19 +8993,20 @@ You are given an API bool isBadVersion(version) which will return whether versio
 */
 // Forward declaration of isBadVersion API.
 bool isBadVersion(int version);
-
 class Solution {
 public:
 	int firstBadVersion(int n) {
-		int left = 1, right = n;
-		while (left != right) {
-			int mid = left / 2 + right / 2;
-			if (isBadVersion(mid))
-				right = mid;
-			else
-				left = mid + 1;
+		int l = 1, r = n;
+		while (l < r) {
+			int mid = l + (r - l) / 2;
+			if (isBadVersion(mid)) {
+				r = mid;
+			}
+			else {
+				l = mid + 1;
+			}
 		}
-		return left;
+		return l;
 	}
 };
 /*
@@ -12533,7 +12497,7 @@ Output: 2
 Explanation:
 1   (0 0 0 1)
 4   (0 1 0 0)
-       ↑   ↑
+	   ↑   ↑
 
 The above arrows point to positions where the corresponding bits are different.
 
@@ -12548,6 +12512,43 @@ public:
 			x &= x - 1;
 		}
 		return res;
+	}
+};
+/*
+
+463. Island Perimeter (Easy)
+
+You are given a map in form of a two-dimensional integer grid where 1 represents land and 0 represents water. Grid cells are connected horizontally/vertically (not diagonally). The grid is completely surrounded by water, and there is exactly one island (i.e., one or more connected land cells). The island doesn't have "lakes" (water inside that isn't connected to the water around the island). One cell is a square with side length 1. The grid is rectangular, width and height don't exceed 100. Determine the perimeter of the island.
+
+Example:
+
+[[0,1,0,0],
+ [1,1,1,0],
+ [0,1,0,0],
+ [1,1,0,0]]
+
+Answer: 16
+Explanation: The perimeter is the 16 yellow stripes in the image below:
+
+*/
+class Solution {
+public:
+	int islandPerimeter(vector<vector<int>>& grid) {
+		int lands = 0, neibor = 0;
+		for (int i = 0; i < grid.size(); i++) {
+			for (int j = 0; j < grid[0].size(); j++) {
+				if (grid[i][j] == 1) {
+					lands++;
+					if (i < grid.size() - 1 && grid[i + 1][j] == 1) {
+						neibor++;
+					}
+					if (j < grid[0].size() - 1 && grid[i][j + 1] == 1) {
+						neibor++;
+					}
+				}
+			}
+		}
+		return lands * 4 - neibor * 2;
 	}
 };
 /*

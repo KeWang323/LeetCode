@@ -306,7 +306,7 @@ public:
 		return sortedArrayToBST(nums, 0, nums.size() - 1);
 	}
 private:
-	TreeNode* sortedArrayToBST(vector<int>& nums, int l, int r) {
+	TreeNode* sortedArrayToBST(const vector<int>& nums, int l, int r) {
 		if (l > r) {
 			return NULL;
 		}
@@ -599,11 +599,11 @@ public:
 
 Given a binary tree
 
-struct TreeLinkNode {
-TreeLinkNode *left;
-TreeLinkNode *right;
-TreeLinkNode *next;
-}
+	struct TreeLinkNode {
+	  TreeLinkNode *left;
+	  TreeLinkNode *right;
+	  TreeLinkNode *next;
+	}
 Populate each next pointer to point to its next right node. If there is no next right node, the next pointer should be set to NULL.
 
 Initially, all next pointers are set to NULL.
@@ -614,17 +614,17 @@ You may only use constant extra space.
 You may assume that it is a perfect binary tree (ie, all leaves are at the same level, and every parent has two children).
 For example,
 Given the following perfect binary tree,
-1
-/  \
-2    3
-/ \  / \
-4  5  6  7
+		 1
+	   /  \
+	  2    3
+	 / \  / \
+	4  5  6  7
 After calling your function, the tree should look like:
-1 -> NULL
-/  \
-2 -> 3 -> NULL
-/ \  / \
-4->5->6->7 -> NULL
+		 1 -> NULL
+	   /  \
+	  2 -> 3 -> NULL
+	 / \  / \
+	4->5->6->7 -> NULL
 
 */
 /**
@@ -641,26 +641,16 @@ public:
 		if (root == NULL) {
 			return;
 		}
-		queue<TreeLinkNode*> q;
-		q.push(root);
-		while (!q.empty()) {
-			int _size = q.size();
-			for (int i = 0; i < _size; i++) {
-				TreeLinkNode* node = q.front();
-				q.pop();
-				if (i < _size - 1) {
-					node->next = q.front();
+		while (root->left != NULL) {
+			TreeLinkNode *p = root;
+			while (p != NULL) {
+				p->left->next = p->right;
+				if (p->next != NULL) {
+					p->right->next = p->next->left;
 				}
-				else {
-					node->next = NULL;
-				}
-				if (node->left != NULL) {
-					q.push(node->left);
-				}
-				if (node->right != NULL) {
-					q.push(node->right);
-				}
+				p = p->next;
 			}
+			root = root->left;
 		}
 	}
 };
@@ -761,15 +751,15 @@ public:
 		return res;
 	}
 private:
-	int maxPathSum(TreeNode* root, int& max) {
+	int maxPathSum(TreeNode* root, int& res) {
 		if (root == NULL) {
 			return 0;
 		}
-		int l = maxPathSum(root->left, max), r = maxPathSum(root->right, max);
-		l = l < 0 ? 0 : l;
-		r = r < 0 ? 0 : r;
-		max = max > l + r + root->val ? max : l + r + root->val;
-		return l > r ? l + root->val : r + root->val;
+		int l = maxPathSum(root->left, res), r = maxPathSum(root->right, res);
+		l = l > 0 ? l : 0;
+		r = r > 0 ? r : 0;
+		res = max(res, l + r + root->val);
+		return max(l, r) + root->val;
 	}
 };
 /*

@@ -195,9 +195,6 @@ The sum that is closest to the target is 2. (-1 + 2 + 1 = 2).
 class Solution {
 public:
 	int threeSumClosest(vector<int>& nums, int target) {
-		if (nums.size() < 3) {
-			return 0;
-		}
 		sort(nums.begin(), nums.end());
 		int res = nums[0] + nums[1] + nums[2];
 		for (int i = 0; i < nums.size() - 2; i++) {
@@ -205,16 +202,16 @@ public:
 			while (j < k) {
 				int _sum = nums[i] + nums[j] + nums[k];
 				if (_sum == target) {
-					return _sum;
+					return target;
 				}
 				else if (abs(_sum - target) < abs(res - target)) {
 					res = _sum;
 				}
-				else if (_sum > target) {
-					k--;
+				if (_sum < target) {
+					j++;
 				}
 				else {
-					j++;
+					k--;;
 				}
 			}
 		}
@@ -1134,7 +1131,7 @@ public:
 		}
 		for (int i = 1; i < matrix.size(); i++) {
 			for (int j = 1; j < matrix[0].size(); j++) {
-				if (matrix[i][0] == 0 || matrix[0][j] == 0) {
+				if (matrix[0][j] == 0 || matrix[i][0] == 0) {
 					matrix[i][j] = 0;
 				}
 			}
@@ -1741,13 +1738,12 @@ Bonus point if you are able to do this using only O(n) extra space, where n is t
 class Solution {
 public:
 	int minimumTotal(vector<vector<int>>& triangle) {
-		vector<int> res = triangle.back();
 		for (int i = triangle.size() - 2; i >= 0; i--) {
 			for (int j = 0; j < triangle[i].size(); j++) {
-				res[j] = min(res[j], res[j + 1]) + triangle[i][j];
+				triangle[i][j] += min(triangle[i + 1][j], triangle[i + 1][j + 1]);
 			}
 		}
-		return res[0];
+		return triangle[0][0];
 	}
 };
 /*
