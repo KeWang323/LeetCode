@@ -1246,17 +1246,20 @@ What if elements of nums2 are stored on disk, and the memory is limited such tha
 class Solution {
 public:
 	vector<int> intersect(vector<int>& nums1, vector<int>& nums2) {
-		vector<int> result;
-		if (nums1.empty() || nums2.empty()) return result;
-		unordered_map<int, int> mapping;
-		for (auto val : nums1) {
-			mapping[val]++;
+		if (nums1.empty() || nums2.empty()) {
+			return{};
 		}
-		for (auto val : nums2) {
-			if (mapping[val]-- > 0) {
-				result.push_back(val);
+		vector<int> res;
+		unordered_map<int, int> mapping;
+		for (int num : nums1) {
+			mapping[num]++;
+		}
+		for (int num : nums2) {
+			if (mapping[num] > 0) {
+				mapping[num]--;
+				res.push_back(num);
 			}
 		}
-		return result;
+		return res;
 	}
 };

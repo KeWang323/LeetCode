@@ -636,8 +636,7 @@ You may assume that all operations are valid (for example, no pop or peek operat
 */
 class Queue {
 public:
-	stack<int> s1;
-	stack<int> s2;
+	stack<int> s1, s2;
 	// Push element x to the back of queue.
 	void push(int x) {
 		s1.push(x);
@@ -645,39 +644,39 @@ public:
 
 	// Removes the element from in front of queue.
 	void pop(void) {
-		if (!s2.empty())
+		if (!s2.empty()) {
 			s2.pop();
-		else if (s1.empty())
-			return;
-		else {
-			while (!s1.empty()) {
-				int temp = s1.top();
-				s1.pop();
-				s2.push(temp);
-			}
+		}
+		else if (!s1.empty()) {
+			transfer(s1, s2);
 			s2.pop();
 		}
 	}
 
 	// Get the front element.
 	int peek(void) {
-		if (!s2.empty())
+		if (!s2.empty()) {
 			return s2.top();
-		else if (s1.empty())
-			return -1;
-		else {
-			while (!s1.empty()) {
-				int temp = s1.top();
-				s1.pop();
-				s2.push(temp);
-			}
 		}
-		return s2.top();
+		else if (!s1.empty()) {
+			transfer(s1, s2);
+			return s2.top();
+		}
+		else {
+			return -1;
+		}
 	}
 
 	// Return whether the queue is empty.
 	bool empty(void) {
-		return  s1.empty() && s2.empty();
+		return s1.empty() && s2.empty();
+	}
+private:
+	void transfer(stack<int>& s1, stack<int>& s2) {
+		while (!s1.empty()) {
+			s2.push(s1.top());
+			s1.pop();
+		}
 	}
 };
 /*

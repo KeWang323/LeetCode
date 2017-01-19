@@ -6152,32 +6152,38 @@ Here is an example of version numbers ordering:
 class Solution {
 public:
 	int compareVersion(string version1, string version2) {
-		vector<int> ver1 = split(version1, '.');
-		vector<int> ver2 = split(version2, '.');
-		int size_min = min(ver1.size(), ver2.size()), index = 0;
-		for (index; index < size_min; index++) {
-			if (ver1[index] > ver2[index])
+		vector<int> ver1 = split(version1, '.'), ver2 = split(version2, '.');
+		int index = 0;
+		for (; index < min(ver1.size(), ver2.size()); index++) {
+			if (ver1[index] > ver2[index]) {
 				return 1;
-			if (ver1[index] < ver2[index])
+			}
+			else if (ver1[index] < ver2[index]) {
 				return -1;
+			}
 		}
 		if (ver1.size() > ver2.size()) {
-			while (!ver1[index] && index < ver1.size())
+			while (index < ver1.size() && ver1[index] == 0) {
 				index++;
-			if (index < ver1.size())
+			}
+			if (index < ver1.size()) {
 				return 1;
+			}
 		}
 		if (ver1.size() < ver2.size()) {
-			while (!ver2[index] && index < ver2.size())
+			while (index < ver2.size() && ver2[index] == 0) {
 				index++;
-			if (index < ver2.size())
+			}
+			if (index < ver2.size()) {
 				return -1;
+			}
 		}
 		return 0;
 	}
-	vector<int> split(string s, char sign) {
+private:
+	vector<int> split(const string& version, char sign) {
 		vector<int> res;
-		stringstream str(s);
+		stringstream str(version);
 		string item;
 		while (getline(str, item, sign)) {
 			res.push_back(atoi(item.c_str()));
@@ -6932,10 +6938,11 @@ Return: 1 --> 2 --> 3 --> 4 --> 5
 class Solution {
 public:
 	ListNode* removeElements(ListNode* head, int val) {
-		ListNode *dummy = new ListNode(-1), *p = dummy;
+		ListNode* dummy = new ListNode(-1);
 		dummy->next = head;
-		while (p != NULL) {
-			if (p->next != NULL && p->next->val == val) {
+		ListNode *p = dummy;
+		while (p->next != NULL) {
+			if (p->next->val == val) {
 				p->next = p->next->next;
 			}
 			else {
@@ -7130,11 +7137,23 @@ Note:
 You may assume k is always valid, 1 ≤ k ≤ array's length.
 
 */
+class Comp {
+public:
+	bool operator()(int num1, int num2) {
+		return num1 > num2;
+	}
+};
 class Solution {
 public:
 	int findKthLargest(vector<int>& nums, int k) {
-		sort(nums.begin(), nums.end(), greater<int>());
-		return nums[k - 1];
+		priority_queue<int, vector<int>, Comp> pq;
+		for (int num : nums) {
+			pq.push(num);
+			if (pq.size() > k) {
+				pq.pop();
+			}
+		}
+		return pq.top();
 	}
 };
 /*
@@ -7662,30 +7681,44 @@ public:
 	stack<int> s1, s2;
 	// Push element x to the back of queue.
 	void push(int x) {
-		while (!s2.empty()) {
-			s1.push(s2.top());
-			s2.pop();
-		}
 		s1.push(x);
-		while (!s1.empty()) {
-			s2.push(s1.top());
-			s1.pop();
-		}
 	}
 
 	// Removes the element from in front of queue.
 	void pop(void) {
-		s2.pop();
+		if (!s2.empty()) {
+			s2.pop();
+		}
+		else if (!s1.empty()) {
+			transfer(s1, s2);
+			s2.pop();
+		}
 	}
 
 	// Get the front element.
 	int peek(void) {
-		return s2.top();
+		if (!s2.empty()) {
+			return s2.top();
+		}
+		else if (!s1.empty()) {
+			transfer(s1, s2);
+			return s2.top();
+		}
+		else {
+			return -1;
+		}
 	}
 
 	// Return whether the queue is empty.
 	bool empty(void) {
-		return s2.empty();
+		return s1.empty() && s2.empty();
+	}
+private:
+	void transfer(stack<int>& s1, stack<int>& s2) {
+		while (!s1.empty()) {
+			s2.push(s1.top());
+			s1.pop();
+		}
 	}
 };
 /*
@@ -9656,22 +9689,23 @@ There are many calls to sumRange function.
 */
 class NumArray {
 public:
-	vector<int> table;
+	vector<int> t;
 	NumArray(vector<int> &nums) {
-		int sum = 0;
-		for (int i : nums) {
-			sum += i;
-			table.push_back(sum);
+		t = nums;
+		for (int i = 1; i < nums.size(); i++) {
+			t[i] += t[i - 1];
 		}
 	}
 
 	int sumRange(int i, int j) {
-		if (!i) return table[j];
-		return table[j] - table[i - 1];
+		if (i == 0) {
+			return t[j];
+		}
+		else {
+			return t[j] - t[i - 1];
+		}
 	}
 };
-
-
 // Your NumArray object will be instantiated and called as such:
 // NumArray numArray(nums);
 // numArray.sumRange(0, 1);
@@ -10501,18 +10535,21 @@ What if elements of nums2 are stored on disk, and the memory is limited such tha
 class Solution {
 public:
 	vector<int> intersect(vector<int>& nums1, vector<int>& nums2) {
-		vector<int> result;
-		if (nums1.empty() || nums2.empty()) return result;
-		unordered_map<int, int> mapping;
-		for (auto val : nums1) {
-			mapping[val]++;
+		if (nums1.empty() || nums2.empty()) {
+			return{};
 		}
-		for (auto val : nums2) {
-			if (mapping[val]-- > 0) {
-				result.push_back(val);
+		vector<int> res;
+		unordered_map<int, int> mapping;
+		for (int num : nums1) {
+			mapping[num]++;
+		}
+		for (int num : nums2) {
+			if (mapping[num] > 0) {
+				mapping[num]--;
+				res.push_back(num);
 			}
 		}
-		return result;
+		return res;
 	}
 };
 /*

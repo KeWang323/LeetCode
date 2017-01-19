@@ -1063,22 +1063,23 @@ There are many calls to sumRange function.
 */
 class NumArray {
 public:
-	vector<int> table;
+	vector<int> t;
 	NumArray(vector<int> &nums) {
-		int sum = 0;
-		for (int i : nums) {
-			sum += i;
-			table.push_back(sum);
+		t = nums;
+		for (int i = 1; i < nums.size(); i++) {
+			t[i] += t[i - 1];
 		}
 	}
 
 	int sumRange(int i, int j) {
-		if (!i) return table[j];
-		return table[j] - table[i - 1];
+		if (i == 0) {
+			return t[j];
+		}
+		else {
+			return t[j] - t[i - 1];
+		}
 	}
 };
-
-
 // Your NumArray object will be instantiated and called as such:
 // NumArray numArray(nums);
 // numArray.sumRange(0, 1);

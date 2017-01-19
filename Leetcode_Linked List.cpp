@@ -880,20 +880,21 @@ Return: 1 --> 2 --> 3 --> 4 --> 5
 
 */
 /**
- * Definition for singly-linked list.
- * struct ListNode {
- *     int val;
- *     ListNode *next;
- *     ListNode(int x) : val(x), next(NULL) {}
- * };
- */
+* Definition for singly-linked list.
+* struct ListNode {
+*     int val;
+*     ListNode *next;
+*     ListNode(int x) : val(x), next(NULL) {}
+* };
+*/
 class Solution {
 public:
 	ListNode* removeElements(ListNode* head, int val) {
-		ListNode *dummy = new ListNode(-1), *p = dummy;
+		ListNode* dummy = new ListNode(-1);
 		dummy->next = head;
-		while (p != NULL) {
-			if (p->next != NULL && p->next->val == val) {
+		ListNode *p = dummy;
+		while (p->next != NULL) {
+			if (p->next->val == val) {
 				p->next = p->next->next;
 			}
 			else {

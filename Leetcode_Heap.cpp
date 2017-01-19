@@ -54,11 +54,23 @@ Note:
 You may assume k is always valid, 1 ≤ k ≤ array's length.
 
 */
+class Comp {
+public:
+	bool operator()(int num1, int num2) {
+		return num1 > num2;
+	}
+};
 class Solution {
 public:
 	int findKthLargest(vector<int>& nums, int k) {
-		sort(nums.begin(), nums.end(), greater<int>());
-		return nums[k - 1];
+		priority_queue<int, vector<int>, Comp> pq;
+		for (int num : nums) {
+			pq.push(num);
+			if (pq.size() > k) {
+				pq.pop();
+			}
+		}
+		return pq.top();
 	}
 };
 /*

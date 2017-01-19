@@ -1031,32 +1031,38 @@ Here is an example of version numbers ordering:
 class Solution {
 public:
 	int compareVersion(string version1, string version2) {
-		vector<int> ver1 = split(version1, '.');
-		vector<int> ver2 = split(version2, '.');
-		int size_min = min(ver1.size(), ver2.size()), index = 0;
-		for (index; index < size_min; index++) {
-			if (ver1[index] > ver2[index])
+		vector<int> ver1 = split(version1, '.'), ver2 = split(version2, '.');
+		int index = 0;
+		for (; index < min(ver1.size(), ver2.size()); index++) {
+			if (ver1[index] > ver2[index]) {
 				return 1;
-			if (ver1[index] < ver2[index])
+			}
+			else if (ver1[index] < ver2[index]) {
 				return -1;
+			}
 		}
 		if (ver1.size() > ver2.size()) {
-			while (!ver1[index] && index < ver1.size())
+			while (index < ver1.size() && ver1[index] == 0) {
 				index++;
-			if (index < ver1.size())
+			}
+			if (index < ver1.size()) {
 				return 1;
+			}
 		}
 		if (ver1.size() < ver2.size()) {
-			while (!ver2[index] && index < ver2.size())
+			while (index < ver2.size() && ver2[index] == 0) {
 				index++;
-			if (index < ver2.size())
+			}
+			if (index < ver2.size()) {
 				return -1;
+			}
 		}
 		return 0;
 	}
-	vector<int> split(string s, char sign) {
+private:
+	vector<int> split(const string& version, char sign) {
 		vector<int> res;
-		stringstream str(s);
+		stringstream str(version);
 		string item;
 		while (getline(str, item, sign)) {
 			res.push_back(atoi(item.c_str()));

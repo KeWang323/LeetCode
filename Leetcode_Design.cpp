@@ -344,30 +344,44 @@ public:
 	stack<int> s1, s2;
 	// Push element x to the back of queue.
 	void push(int x) {
-		while (!s2.empty()) {
-			s1.push(s2.top());
-			s2.pop();
-		}
 		s1.push(x);
-		while (!s1.empty()) {
-			s2.push(s1.top());
-			s1.pop();
-		}
 	}
 
 	// Removes the element from in front of queue.
 	void pop(void) {
-		s2.pop();
+		if (!s2.empty()) {
+			s2.pop();
+		}
+		else if (!s1.empty()) {
+			transfer(s1, s2);
+			s2.pop();
+		}
 	}
 
 	// Get the front element.
 	int peek(void) {
-		return s2.top();
+		if (!s2.empty()) {
+			return s2.top();
+		}
+		else if (!s1.empty()) {
+			transfer(s1, s2);
+			return s2.top();
+		}
+		else {
+			return -1;
+		}
 	}
 
 	// Return whether the queue is empty.
 	bool empty(void) {
-		return s2.empty();
+		return s1.empty() && s2.empty();
+	}
+private:
+	void transfer(stack<int>& s1, stack<int>& s2) {
+		while (!s1.empty()) {
+			s2.push(s1.top());
+			s1.pop();
+		}
 	}
 };
 /*
