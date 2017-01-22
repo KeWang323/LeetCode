@@ -573,6 +573,28 @@ and all nodes in the last level are as far left as possible. It can have between
 class Solution {
 public:
 	int countNodes(TreeNode* root) {
+		if (root == NULL) {
+			return 0;
+		}
+		int lh = 0, rh = 0;
+		TreeNode *l = root, *r = root;
+		while (l != NULL) {
+			lh++;
+			l = l->left;
+		}
+		while (r != NULL) {
+			rh++;
+			r = r->right;
+		}
+		if (lh == rh) {
+			return (1 << lh) - 1;
+		}
+		return 1 + countNodes(root->left) + countNodes(root->right);
+	}
+};
+class Solution {
+public:
+	int countNodes(TreeNode* root) {
 		if (!root) return 0;
 		int h = 0, sum = 0;
 		TreeNode *t = root, *t0 = NULL;

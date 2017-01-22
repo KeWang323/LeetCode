@@ -6,13 +6,13 @@ Given a binary tree, check whether it is a mirror of itself (ie, symmetric aroun
 
 For example, this binary tree [1,2,2,3,4,4,3] is symmetric:
 
-	1
+    1
    / \
   2   2
  / \ / \
 3  4 4  3
 But the following [1,2,2,null,3,null,3] is not:
-	1
+    1
    / \
   2   2
    \   \
@@ -33,15 +33,20 @@ Bonus points if you could solve it both recursively and iteratively.
 class Solution {
 public:
 	bool isSymmetric(TreeNode* root) {
-		if (!root) return true;
-		return check(root->left, root->right);
-	}
-	bool check(TreeNode* L, TreeNode* R) {
-		if (!L || !R) {
-			if (L || R) return false;
+		if (root == NULL) {
 			return true;
 		}
-		return L->val == R->val && check(L->left, R->right) && check(L->right, R->left);
+		return isSymmetric(root->left, root->right);
+	}
+private:
+	bool isSymmetric(TreeNode* r1, TreeNode* r2) {
+		if (r1 == NULL && r2 == NULL) {
+			return true;
+		}
+		else if (r1 == NULL || r2 == NULL || r1->val != r2->val) {
+			return false;
+		}
+		return isSymmetric(r1->left, r2->right) && isSymmetric(r1->right, r2->left);
 	}
 };
 /*
@@ -52,10 +57,10 @@ Given a binary tree, return the level order traversal of its nodes' values. (ie,
 
 For example:
 Given binary tree [3,9,20,null,null,15,7],
-	3
+    3
    / \
   9  20
-	/  \
+    /  \
    15   7
 return its level order traversal as:
 [
@@ -77,21 +82,26 @@ return its level order traversal as:
 class Solution {
 public:
 	vector<vector<int>> levelOrder(TreeNode* root) {
-		vector<vector<int>> res;
-		if (!root) return res;
+		if (root == NULL) {
+			return{};
+		}
 		queue<TreeNode*> q;
 		q.push(root);
+		vector<vector<int>> res;
 		while (!q.empty()) {
-			vector<int> lev;
 			int _size = q.size();
+			vector<int> res_sub;
 			for (int i = 0; i < _size; i++) {
-				TreeNode *temp = q.front();
+				res_sub.push_back(q.front()->val);
+				if (q.front()->left != NULL) {
+					q.push(q.front()->left);
+				}
+				if (q.front()->right != NULL) {
+					q.push(q.front()->right);
+				}
 				q.pop();
-				lev.push_back(temp->val);
-				if (temp->left) q.push(temp->left);
-				if (temp->right) q.push(temp->right);
 			}
-			res.push_back(lev);
+			res.push_back(res_sub);
 		}
 		return res;
 	}

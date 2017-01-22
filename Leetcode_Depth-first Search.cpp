@@ -136,17 +136,17 @@ Given a binary tree, check whether it is a mirror of itself (ie, symmetric aroun
 
 For example, this binary tree [1,2,2,3,4,4,3] is symmetric:
 
-		1
-	 / \
-	2   2
+    1
+   / \
+  2   2
  / \ / \
 3  4 4  3
 But the following [1,2,2,null,3,null,3] is not:
-		1
-	 / \
-	2   2
-	 \   \
-	 3    3
+    1
+   / \
+  2   2
+   \   \
+   3    3
 Note:
 Bonus points if you could solve it both recursively and iteratively.
 
@@ -163,15 +163,20 @@ Bonus points if you could solve it both recursively and iteratively.
 class Solution {
 public:
 	bool isSymmetric(TreeNode* root) {
-		if (!root) return true;
-		return check(root->left, root->right);
-	}
-	bool check(TreeNode* L, TreeNode* R) {
-		if (!L || !R) {
-			if (L || R) return false;
+		if (root == NULL) {
 			return true;
 		}
-		return L->val == R->val && check(L->left, R->right) && check(L->right, R->left);
+		return isSymmetric(root->left, root->right);
+	}
+private:
+	bool isSymmetric(TreeNode* r1, TreeNode* r2) {
+		if (r1 == NULL && r2 == NULL) {
+			return true;
+		}
+		else if (r1 == NULL || r2 == NULL || r1->val != r2->val) {
+			return false;
+		}
+		return isSymmetric(r1->left, r2->right) && isSymmetric(r1->right, r2->left);
 	}
 };
 /*

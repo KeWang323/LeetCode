@@ -148,25 +148,26 @@ A solution set is:
 class Solution {
 public:
 	vector<vector<int>> combinationSum(vector<int>& candidates, int target) {
+		if (candidates.empty()) {
+			return{};
+		}
 		vector<vector<int>> res;
 		vector<int> res_sub;
-		sort(candidates.begin(), candidates.end());
-		combinationSum(candidates, target, 0, res_sub, res);
+		combinationSum(res, res_sub, candidates, target, 0);
 		return res;
 	}
 private:
-	void combinationSum(vector<int>& candidates, int target, int start, vector<int>& res_sub, vector<vector<int>>& res) {
-		if (target < 0 || start > candidates.size()) {
-			return;
-		}
-		else if (target == 0) {
+	void    combinationSum(vector<vector<int>>& res, vector<int>&res_sub, const vector<int>& candidates, int target, int index) {
+		if (target == 0) {
 			res.push_back(res_sub);
 			return;
 		}
-		for (int i = start; i < candidates.size() && candidates[i] <= target; i++) {
-			res_sub.push_back(candidates[i]);
-			combinationSum(candidates, target - candidates[i], i, res_sub, res);
-			res_sub.pop_back();
+		for (int i = index; i < candidates.size(); i++) {
+			if (candidates[i] <= target) {
+				res_sub.push_back(candidates[i]);
+				combinationSum(res, res_sub, candidates, target - candidates[i], i);
+				res_sub.pop_back();
+			}
 		}
 	}
 };
@@ -567,22 +568,24 @@ If nums = [1,2,3], a solution is:
 class Solution {
 public:
 	vector<vector<int>> subsets(vector<int>& nums) {
+		if (nums.empty()) {
+			return{};
+		}
 		vector<vector<int>> res;
 		vector<int> res_sub;
-		res.push_back(res_sub);
-		generate(nums, 0, res, res_sub);
+		subsets(res, res_sub, nums, 0);
 		return res;
 	}
-	void generate(vector<int>& nums, int start, vector<vector<int>>& res, vector<int>& res_sub) {
-		if (start >= nums.size()) {
+private:
+	void subsets(vector<vector<int>>& res, vector<int>& res_sub, const vector<int>& nums, int index) {
+		if (index == nums.size()) {
+			res.push_back(res_sub);
 			return;
 		}
-		for (int i = start; i < nums.size(); i++) {
-			res_sub.push_back(nums[i]);
-			res.push_back(res_sub);
-			generate(nums, i + 1, res, res_sub);
-			res_sub.pop_back();
-		}
+		res_sub.push_back(nums[index]);
+		subsets(res, res_sub, nums, index + 1);
+		res_sub.pop_back();
+		subsets(res, res_sub, nums, index + 1);
 	}
 };
 /*

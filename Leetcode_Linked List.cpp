@@ -367,7 +367,7 @@ Given 1->1->2->3->3, return 1->2->3.
 
 */
 /**
- * Definition for singly-linked list.`
+ * Definition for singly-linked list.
  * struct ListNode {
  *     int val;
  *     ListNode *next;
@@ -377,11 +377,11 @@ Given 1->1->2->3->3, return 1->2->3.
 class Solution {
 public:
 	ListNode* deleteDuplicates(ListNode* head) {
-		if (head != NULL || head->next != NULL) {
+		if (head == NULL || head->next == NULL) {
 			return head;
 		}
 		ListNode *p = head;
-		while (p != NULL && p->next != NULL) {
+		while (p->next != NULL) {
 			if (p->val == p->next->val) {
 				p->next = p->next->next;
 			}

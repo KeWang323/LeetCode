@@ -526,30 +526,31 @@ Be wary of edge cases! List out as many test cases as you can think of and test 
 class Solution {
 public:
 	string fractionToDecimal(int numerator, int denominator) {
-		if (!numerator) {
+		if (numerator == 0) {
 			return "0";
 		}
 		string res;
 		if (numerator < 0 ^ denominator < 0) {
 			res += "-";
 		}
-		long n_l_abs = labs(long(numerator)), d_l_abs = labs(long(denominator));
-		res += to_string(n_l_abs / d_l_abs);
-		if (!(n_l_abs %= d_l_abs)) {
+		long na = labs((long)numerator), da = labs((long)denominator);
+		res += to_string(na / da);
+		if ((na %= da) == 0) {
 			return res;
 		}
 		res += ".";
 		unordered_map<int, int> mapping;
 		int i = res.size() - 1;
-		while (n_l_abs) {
-			if (mapping.count(n_l_abs)) {
-				res.insert(mapping[n_l_abs], "(");
+		while (na != 0) {
+			if (mapping.find(na) != mapping.end()) {
+				res.insert(mapping[na], "(");
 				res += ")";
 				return res;
 			}
-			mapping[n_l_abs] = ++i;
-			res += to_string((n_l_abs *= 10) / d_l_abs);
-			n_l_abs %= d_l_abs;
+			mapping[na] = ++i;
+			na *= 10;
+			res += to_string(na / da);
+			na %= da;
 		}
 		return res;
 	}

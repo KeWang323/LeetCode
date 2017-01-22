@@ -1191,24 +1191,20 @@ Here are some examples. Inputs are in the left-hand column and its corresponding
 class Solution {
 public:
 	void nextPermutation(vector<int>& nums) {
-		int i = nums.size() - 1, j = i;
-		for (; i > 0; i--) {
-			if (nums[i] > nums[i - 1]) {
-				break;
-			}
+		int j = nums.size() - 1, k = nums.size() - 1;
+		while (j > 0 && nums[j] <= nums[j - 1]) {
+			j--;
 		}
-		if (i == 0) {
-			sort(nums.begin(), nums.end());
+		if (j == 0) {
+			reverse(nums.begin(), nums.end());
 			return;
 		}
-		for (; j > i; j--) {
-			if (nums[j] > nums[i - 1]) {
-				break;
-			}
-
+		while (k > j && nums[k] <= nums[j - 1]) {
+			k--;
 		}
-		swap(nums[i - 1], nums[j]);
-		sort(nums.begin() + i, nums.end());
+		swap(nums[j - 1], nums[k]);
+		sort(nums.begin() + j, nums.end());
+		return;
 	}
 };
 class Solution {
@@ -1505,25 +1501,26 @@ A solution set is:
 class Solution {
 public:
 	vector<vector<int>> combinationSum(vector<int>& candidates, int target) {
+		if (candidates.empty()) {
+			return{};
+		}
 		vector<vector<int>> res;
 		vector<int> res_sub;
-		sort(candidates.begin(), candidates.end());
-		combinationSum(candidates, target, 0, res_sub, res);
+		combinationSum(res, res_sub, candidates, target, 0);
 		return res;
 	}
 private:
-	void combinationSum(vector<int>& candidates, int target, int start, vector<int>& res_sub, vector<vector<int>>& res) {
-		if (target < 0 || start > candidates.size()) {
-			return;
-		}
-		else if (target == 0) {
+	void    combinationSum(vector<vector<int>>& res, vector<int>&res_sub, const vector<int>& candidates, int target, int index) {
+		if (target == 0) {
 			res.push_back(res_sub);
 			return;
 		}
-		for (int i = start; i < candidates.size() && candidates[i] <= target; i++) {
-			res_sub.push_back(candidates[i]);
-			combinationSum(candidates, target - candidates[i], i, res_sub, res);
-			res_sub.pop_back();
+		for (int i = index; i < candidates.size(); i++) {
+			if (candidates[i] <= target) {
+				res_sub.push_back(candidates[i]);
+				combinationSum(res, res_sub, candidates, target - candidates[i], i);
+				res_sub.pop_back();
+			}
 		}
 	}
 };
@@ -2112,13 +2109,19 @@ A = [3,2,1,0,4], return false.
 class Solution {
 public:
 	bool canJump(vector<int>& nums) {
-		int steps = 0, _size = nums.size();
+		int step = 0, _size = nums.size();
 		for (int i = 0; i < _size; i++) {
-			if (steps <= nums[i]) steps = nums[i];
-			if (steps >= _size - 1 - i) return true;
-			if (--steps < 0) return false;
+			if (step < nums[i]) {
+				step = nums[i];
+			}
+			if (step >= _size - 1 - i) {
+				return true;
+			}
+			if (--step < 0) {
+				return false;
+			}
 		}
-		return false;
+		return true;
 	}
 };
 /*
@@ -2273,38 +2276,29 @@ You should return the following matrix:
 class Solution {
 public:
 	vector<vector<int>> generateMatrix(int n) {
-		if (n < 1) {
-			return{};
-		}
 		vector<vector<int>> res(n, vector<int>(n));
-		int i = n - 1, j = n - 1, k = 1, h = 0, l = 0;
-		while (k <= n * n) {
-			for (int col = l; col <= j; col++) {
-				res[h][col] = k++;
-			}
-			if (++h > i) {
-				break;
-			}
-			for (int row = h; row <= i; row++) {
-				res[row][j] = k++;
-			}
-			if (--j < l) {
-				break;
-			}
-			for (int col = j; col >= l; col--) {
-				res[i][col] = k++;
-			}
-			if (--i < h) {
-				break;
-			}
-			for (int row = i; row >= h; row--) {
-				res[row][l] = k++;
-			}
-			if (++l > j) {
-				break;
-			}
-		}
+		int cnt = 1;
+		generateMatrix(res, n, 0, cnt);
 		return res;
+	}
+private:
+	void generateMatrix(vector<vector<int>>& res, int size, int offset, int cnt) {
+		if (size < 1) {
+			return;
+		}
+		for (int i = 0; i < size; i++) {
+			res[offset][i + offset] = cnt++;
+		}
+		for (int i = 1; i < size; i++) {
+			res[i + offset][offset + size - 1] = cnt++;
+		}
+		for (int i = size - 2; i >= 0; i--) {
+			res[offset + size - 1][i + offset] = cnt++;
+		}
+		for (int i = size - 2; i >= 1; i--) {
+			res[i + offset][offset] = cnt++;
+		}
+		generateMatrix(res, size - 2, offset + 1, cnt);
 	}
 };
 /*
@@ -2502,16 +2496,15 @@ public:
 		if (grid.empty()) {
 			return 0;
 		}
-		int _size = grid[0].size();
-		vector<int> res(_size, INT_MAX);
-		res[0] = 0;
+		vector<int> t(grid[0].size(), INT_MAX);
+		t[0] = 0;
 		for (int i = 0; i < grid.size(); i++) {
-			res[0] += grid[i][0];
-			for (int j = 1; j < _size; j++) {
-				res[j] = min(res[j - 1], res[j]) + grid[i][j];
+			t[0] += grid[i][0];
+			for (int j = 1; j < grid[0].size(); j++) {
+				t[j] = min(t[j], t[j - 1]) + grid[i][j];
 			}
 		}
-		return res[_size - 1];
+		return t.back();
 	}
 };
 /*
@@ -2942,22 +2935,24 @@ If nums = [1,2,3], a solution is:
 class Solution {
 public:
 	vector<vector<int>> subsets(vector<int>& nums) {
+		if (nums.empty()) {
+			return{};
+		}
 		vector<vector<int>> res;
 		vector<int> res_sub;
-		res.push_back(res_sub);
-		generate(nums, 0, res, res_sub);
+		subsets(res, res_sub, nums, 0);
 		return res;
 	}
-	void generate(vector<int>& nums, int start, vector<vector<int>>& res, vector<int>& res_sub) {
-		if (start >= nums.size()) {
+private:
+	void subsets(vector<vector<int>>& res, vector<int>& res_sub, const vector<int>& nums, int index) {
+		if (index == nums.size()) {
+			res.push_back(res_sub);
 			return;
 		}
-		for (int i = start; i < nums.size(); i++) {
-			res_sub.push_back(nums[i]);
-			res.push_back(res_sub);
-			generate(nums, i + 1, res, res_sub);
-			res_sub.pop_back();
-		}
+		res_sub.push_back(nums[index]);
+		subsets(res, res_sub, nums, index + 1);
+		res_sub.pop_back();
+		subsets(res, res_sub, nums, index + 1);
 	}
 };
 /*
@@ -3157,7 +3152,7 @@ Given 1->1->2->3->3, return 1->2->3.
 
 */
 /**
- * Definition for singly-linked list.`
+ * Definition for singly-linked list.
  * struct ListNode {
  *     int val;
  *     ListNode *next;
@@ -3167,11 +3162,11 @@ Given 1->1->2->3->3, return 1->2->3.
 class Solution {
 public:
 	ListNode* deleteDuplicates(ListNode* head) {
-		if (head != NULL || head->next != NULL) {
+		if (head == NULL || head->next == NULL) {
 			return head;
 		}
 		ListNode *p = head;
-		while (p != NULL && p->next != NULL) {
+		while (p->next != NULL) {
 			if (p->val == p->next->val) {
 				p->next = p->next->next;
 			}
@@ -3807,15 +3802,20 @@ Bonus points if you could solve it both recursively and iteratively.
 class Solution {
 public:
 	bool isSymmetric(TreeNode* root) {
-		if (!root) return true;
-		return check(root->left, root->right);
-	}
-	bool check(TreeNode* L, TreeNode* R) {
-		if (!L || !R) {
-			if (L || R) return false;
+		if (root == NULL) {
 			return true;
 		}
-		return L->val == R->val && check(L->left, R->right) && check(L->right, R->left);
+		return isSymmetric(root->left, root->right);
+	}
+private:
+	bool isSymmetric(TreeNode* r1, TreeNode* r2) {
+		if (r1 == NULL && r2 == NULL) {
+			return true;
+		}
+		else if (r1 == NULL || r2 == NULL || r1->val != r2->val) {
+			return false;
+		}
+		return isSymmetric(r1->left, r2->right) && isSymmetric(r1->right, r2->left);
 	}
 };
 /*
@@ -3851,21 +3851,26 @@ return its level order traversal as:
 class Solution {
 public:
 	vector<vector<int>> levelOrder(TreeNode* root) {
-		vector<vector<int>> res;
-		if (!root) return res;
+		if (root == NULL) {
+			return{};
+		}
 		queue<TreeNode*> q;
 		q.push(root);
+		vector<vector<int>> res;
 		while (!q.empty()) {
-			vector<int> lev;
 			int _size = q.size();
+			vector<int> res_sub;
 			for (int i = 0; i < _size; i++) {
-				TreeNode *temp = q.front();
+				res_sub.push_back(q.front()->val);
+				if (q.front()->left != NULL) {
+					q.push(q.front()->left);
+				}
+				if (q.front()->right != NULL) {
+					q.push(q.front()->right);
+				}
 				q.pop();
-				lev.push_back(temp->val);
-				if (temp->left) q.push(temp->left);
-				if (temp->right) q.push(temp->right);
 			}
-			res.push_back(lev);
+			res.push_back(res_sub);
 		}
 		return res;
 	}
@@ -6214,30 +6219,31 @@ Be wary of edge cases! List out as many test cases as you can think of and test 
 class Solution {
 public:
 	string fractionToDecimal(int numerator, int denominator) {
-		if (!numerator) {
+		if (numerator == 0) {
 			return "0";
 		}
 		string res;
 		if (numerator < 0 ^ denominator < 0) {
 			res += "-";
 		}
-		long n_l_abs = labs(long(numerator)), d_l_abs = labs(long(denominator));
-		res += to_string(n_l_abs / d_l_abs);
-		if (!(n_l_abs %= d_l_abs)) {
+		long na = labs((long)numerator), da = labs((long)denominator);
+		res += to_string(na / da);
+		if ((na %= da) == 0) {
 			return res;
 		}
 		res += ".";
 		unordered_map<int, int> mapping;
 		int i = res.size() - 1;
-		while (n_l_abs) {
-			if (mapping.count(n_l_abs)) {
-				res.insert(mapping[n_l_abs], "(");
+		while (na != 0) {
+			if (mapping.find(na) != mapping.end()) {
+				res.insert(mapping[na], "(");
 				res += ")";
 				return res;
 			}
-			mapping[n_l_abs] = ++i;
-			res += to_string((n_l_abs *= 10) / d_l_abs);
-			n_l_abs %= d_l_abs;
+			mapping[na] = ++i;
+			na *= 10;
+			res += to_string(na / da);
+			na %= da;
 		}
 		return res;
 	}
@@ -7332,6 +7338,28 @@ and all nodes in the last level are as far left as possible. It can have between
  *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
  * };
  */
+class Solution {
+public:
+	int countNodes(TreeNode* root) {
+		if (root == NULL) {
+			return 0;
+		}
+		int lh = 0, rh = 0;
+		TreeNode *l = root, *r = root;
+		while (l != NULL) {
+			lh++;
+			l = l->left;
+		}
+		while (r != NULL) {
+			rh++;
+			r = r->right;
+		}
+		if (lh == rh) {
+			return (1 << lh) - 1;
+		}
+		return 1 + countNodes(root->left) + countNodes(root->right);
+	}
+};
 class Solution {
 public:
 	int countNodes(TreeNode* root) {
@@ -9877,6 +9905,53 @@ public:
 };
 /*
 
+318. Maximum Product of Word Lengths (Medium)
+
+Given a string array words, find the maximum value of length(word[i]) * length(word[j]) where the two words do not share common letters. You may assume that each word will contain only lower case letters. If no such two words exist, return 0.
+
+Example 1:
+Given ["abcw", "baz", "foo", "bar", "xtfn", "abcdef"]
+Return 16
+The two words can be "abcw", "xtfn".
+
+Example 2:
+Given ["a", "ab", "abc", "d", "cd", "bcd", "abcd"]
+Return 4
+The two words can be "ab", "cd".
+
+Example 3:
+Given ["a", "aa", "aaa", "aaaa"]
+Return 0
+No such pair of words.
+
+*/
+class Solution {
+public:
+	int maxProduct(vector<string>& words) {
+		if (words.size() < 2) {
+			return 0;
+		}
+		vector<int> t(words.size());
+		for (int i = 0; i < words.size(); i++) {
+			int mask = 0;
+			for (char cha : words[i]) {
+				mask |= (1 << cha);
+			}
+			t[i] = mask;
+		}
+		int res = 0;
+		for (int i = 0; i < words.size() - 1; i++) {
+			for (int j = i + 1; j < words.size(); j++) {
+				if ((t[i] & t[j]) == 0 && words[i].size() * words[j].size() > res) {
+					res = words[i].size() * words[j].size();
+				}
+			}
+		}
+		return res;
+	}
+};
+/*
+
 319. Bulb Switcher (Medium)
 
 There are n bulbs that are initially off. You first turn on all the bulbs. Then, you turn off every second bulb. On the third round, you toggle every third bulb (turning on if it's off or turning off if it's on). For the ith round, you toggle every i bulb. For the nth round, you only toggle the last bulb. Find how many bulbs are on after n rounds.
@@ -9920,14 +9995,16 @@ You may assume that you have an infinite number of each kind of coin.
 class Solution {
 public:
 	int coinChange(vector<int>& coins, int amount) {
-		vector<int> table(amount + 1, INT_MAX - 1);
-		table[0] = 0;
-		for (int i = 0; i < coins.size(); i++) {
-			for (int j = coins[i]; j <= amount; j++) {
-				table[j] = min(table[j], table[j - coins[i]] + 1);
+		vector<int> t(amount + 1, amount + 1);
+		t[0] = 0;
+		for (int i = 1; i <= amount; i++) {
+			for (int j = 0; j < coins.size(); j++) {
+				if (i >= coins[j]) {
+					t[i] = min(t[i], t[i - coins[j]] + 1);
+				}
 			}
 		}
-		return (table[amount] == INT_MAX - 1 ? -1 : table[amount]);
+		return t.back() == amount + 1 ? -1 : t.back();
 	}
 };
 class Solution {
@@ -9936,14 +10013,25 @@ public:
 		sort(coins.begin(), coins.end());
 		return coinChange(coins, amount, coins.size() - 1, 0, *(new int(INT_MAX)));
 	}
-	int coinChange(vector<int>&coins, int amount, int idx, int cur, int &cand) {
-		if (!amount) return cand = cur;
-		if (idx < 0)return -1;
-		int flag = 0, n = amount / coins[idx];
-		if (n + cur >= cand) return -1;
-		for (int i = n; i >= 0; i--)
-			if (coinChange(coins, amount - i*coins[idx], idx - 1, cur + i, cand) != -1) flag = 1;
-		if (flag) return cand;
+	int coinChange(const vector<int>& coins, int amount, int index, int cur, int &cand) {
+		if (amount == 0) {
+			return cand = cur;
+		}
+		if (index < 0) {
+			return -1;
+		}
+		int flag = 0, n = amount / coins[index];
+		if (n + cur >= cand) {
+			return -1;
+		}
+		for (int i = n; i >= 0; i--) {
+			if (coinChange(coins, amount - i*coins[index], index - 1, cur + i, cand) != -1) {
+				flag = 1;
+			}
+		}
+		if (flag) {
+			return cand;
+		}
 		return -1;
 	}
 };
@@ -11419,6 +11507,40 @@ public:
 */
 /*
 
+386. Lexicographical Numbers (medium)
+
+Given an integer n, return 1 - n in lexicographical order.
+
+For example, given 13, return: [1,10,11,12,13,2,3,4,5,6,7,8,9].
+
+Please optimize your algorithm to use less time and space. The input size may be as large as 5,000,000.
+
+*/
+class Solution {
+public:
+	vector<int> lexicalOrder(int n) {
+		vector<int> res;
+		int cur = 1;
+		for (int i = 1; i <= n; i++) {
+			res.push_back(cur);
+			if (cur * 10 <= n) {
+				cur *= 10;
+			}
+			else if (cur % 10 != 9 && cur + 1 <= n) {
+				cur++;
+			}
+			else {
+				while ((cur / 10) % 10 == 9) {
+					cur /= 10;
+				}
+				cur = cur / 10 + 1;
+			}
+		}
+		return res;
+	}
+};
+/*
+
 387. First Unique Character in a String (Easy)
 
 Given a string, find the first non-repeating character in it and return it's index. If it doesn't exist, return -1.
@@ -12368,6 +12490,43 @@ private:
 		l1->val %= 10;
 		tmp->next = l1;
 		return tmp;
+	}
+};
+/*
+
+448. Find All Numbers Disappeared in an Array (Easy)
+
+Given an array of integers where 1 ≤ a[i] ≤ n (n = size of array), some elements appear twice and others appear once.
+
+Find all the elements of [1, n] inclusive that do not appear in this array.
+
+Could you do it without extra space and in O(n) runtime? You may assume the returned list does not count as extra space.
+
+Example:
+
+Input:
+[4,3,2,7,8,2,3,1]
+
+Output:
+[5,6]
+
+*/
+class Solution {
+public:
+	vector<int> findDisappearedNumbers(vector<int>& nums) {
+		vector<int> res;
+		for (int i = 0; i < nums.size(); i++) {
+			int index = abs(nums[i]) - 1;
+			if (nums[index] > 0) {
+				nums[index] = -nums[index];
+			}
+		}
+		for (int i = 0; i < nums.size(); i++) {
+			if (nums[i] > 0) {
+				res.push_back(i + 1);
+			}
+		}
+		return res;
 	}
 };
 /*

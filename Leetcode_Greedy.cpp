@@ -101,17 +101,19 @@ A = [3,2,1,0,4], return false.
 class Solution {
 public:
 	bool canJump(vector<int>& nums) {
-		int steps = 0, _size = nums.size();
+		int step = 0, _size = nums.size();
 		for (int i = 0; i < _size; i++) {
-			steps = steps > nums[i] ? steps : nums[i];
-			if (steps >= _size - 1 - i) {
+			if (step < nums[i]) {
+				step = nums[i];
+			}
+			if (step >= _size - 1 - i) {
 				return true;
 			}
-			else if (--steps < 0) {
+			if (--step < 0) {
 				return false;
 			}
 		}
-		return false;
+		return true;
 	}
 };
 /*

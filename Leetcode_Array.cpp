@@ -367,24 +367,20 @@ Here are some examples. Inputs are in the left-hand column and its corresponding
 class Solution {
 public:
 	void nextPermutation(vector<int>& nums) {
-		int i = nums.size() - 1, j = i;
-		for (; i > 0; i--) {
-			if (nums[i] > nums[i - 1]) {
-				break;
-			}
+		int j = nums.size() - 1, k = nums.size() - 1;
+		while (j > 0 && nums[j] <= nums[j - 1]) {
+			j--;
 		}
-		if (i == 0) {
-			sort(nums.begin(), nums.end());
+		if (j == 0) {
+			reverse(nums.begin(), nums.end());
 			return;
 		}
-		for (; j > i; j--) {
-			if (nums[j] > nums[i - 1]) {
-				break;
-			}
-
+		while (k > j && nums[k] <= nums[j - 1]) {
+			k--;
 		}
-		swap(nums[i - 1], nums[j]);
-		sort(nums.begin() + i, nums.end());
+		swap(nums[j - 1], nums[k]);
+		sort(nums.begin() + j, nums.end());
+		return;
 	}
 };
 class Solution {
@@ -535,25 +531,26 @@ A solution set is:
 class Solution {
 public:
 	vector<vector<int>> combinationSum(vector<int>& candidates, int target) {
+		if (candidates.empty()) {
+			return{};
+		}
 		vector<vector<int>> res;
 		vector<int> res_sub;
-		sort(candidates.begin(), candidates.end());
-		combinationSum(candidates, target, 0, res_sub, res);
+		combinationSum(res, res_sub, candidates, target, 0);
 		return res;
 	}
 private:
-	void combinationSum(vector<int>& candidates, int target, int start, vector<int>& res_sub, vector<vector<int>>& res) {
-		if (target < 0 || start > candidates.size()) {
-			return;
-		}
-		else if (target == 0) {
+	void    combinationSum(vector<vector<int>>& res, vector<int>&res_sub, const vector<int>& candidates, int target, int index) {
+		if (target == 0) {
 			res.push_back(res_sub);
 			return;
 		}
-		for (int i = start; i < candidates.size() && candidates[i] <= target; i++) {
-			res_sub.push_back(candidates[i]);
-			combinationSum(candidates, target - candidates[i], i, res_sub, res);
-			res_sub.pop_back();
+		for (int i = index; i < candidates.size(); i++) {
+			if (candidates[i] <= target) {
+				res_sub.push_back(candidates[i]);
+				combinationSum(res, res_sub, candidates, target - candidates[i], i);
+				res_sub.pop_back();
+			}
 		}
 	}
 };
@@ -796,17 +793,19 @@ A = [3,2,1,0,4], return false.
 class Solution {
 public:
 	bool canJump(vector<int>& nums) {
-		int steps = 0, _size = nums.size();
+		int step = 0, _size = nums.size();
 		for (int i = 0; i < _size; i++) {
-			steps = steps > nums[i] ? steps : nums[i];
-			if (steps >= _size - 1 - i) {
+			if (step < nums[i]) {
+				step = nums[i];
+			}
+			if (step >= _size - 1 - i) {
 				return true;
 			}
-			else if (--steps < 0) {
+			if (--step < 0) {
 				return false;
 			}
 		}
-		return false;
+		return true;
 	}
 };
 /*
@@ -934,38 +933,29 @@ You should return the following matrix:
 class Solution {
 public:
 	vector<vector<int>> generateMatrix(int n) {
-		if (n < 1) {
-			return{};
-		}
 		vector<vector<int>> res(n, vector<int>(n));
-		int i = n - 1, j = n - 1, k = 1, h = 0, l = 0;
-		while (k <= n * n) {
-			for (int col = l; col <= j; col++) {
-				res[h][col] = k++;
-			}
-			if (++h > i) {
-				break;
-			}
-			for (int row = h; row <= i; row++) {
-				res[row][j] = k++;
-			}
-			if (--j < l) {
-				break;
-			}
-			for (int col = j; col >= l; col--) {
-				res[i][col] = k++;
-			}
-			if (--i < h) {
-				break;
-			}
-			for (int row = i; row >= h; row--) {
-				res[row][l] = k++;
-			}
-			if (++l > j) {
-				break;
-			}
-		}
+		int cnt = 1;
+		generateMatrix(res, n, 0, cnt);
 		return res;
+	}
+private:
+	void generateMatrix(vector<vector<int>>& res, int size, int offset, int cnt) {
+		if (size < 1) {
+			return;
+		}
+		for (int i = 0; i < size; i++) {
+			res[offset][i + offset] = cnt++;
+		}
+		for (int i = 1; i < size; i++) {
+			res[i + offset][offset + size - 1] = cnt++;
+		}
+		for (int i = size - 2; i >= 0; i--) {
+			res[offset + size - 1][i + offset] = cnt++;
+		}
+		for (int i = size - 2; i >= 1; i--) {
+			res[i + offset][offset] = cnt++;
+		}
+		generateMatrix(res, size - 2, offset + 1, cnt);
 	}
 };
 /*
@@ -1054,16 +1044,15 @@ public:
 		if (grid.empty()) {
 			return 0;
 		}
-		int _size = grid[0].size();
-		vector<int> res(_size, INT_MAX);
-		res[0] = 0;
+		vector<int> t(grid[0].size(), INT_MAX);
+		t[0] = 0;
 		for (int i = 0; i < grid.size(); i++) {
-			res[0] += grid[i][0];
-			for (int j = 1; j < _size; j++) {
-				res[j] = min(res[j - 1], res[j]) + grid[i][j];
+			t[0] += grid[i][0];
+			for (int j = 1; j < grid[0].size(); j++) {
+				t[j] = min(t[j], t[j - 1]) + grid[i][j];
 			}
 		}
-		return res[_size - 1];
+		return t.back();
 	}
 };
 /*
@@ -1252,22 +1241,24 @@ If nums = [1,2,3], a solution is:
 class Solution {
 public:
 	vector<vector<int>> subsets(vector<int>& nums) {
+		if (nums.empty()) {
+			return{};
+		}
 		vector<vector<int>> res;
 		vector<int> res_sub;
-		res.push_back(res_sub);
-		generate(nums, 0, res, res_sub);
+		subsets(res, res_sub, nums, 0);
 		return res;
 	}
-	void generate(vector<int>& nums, int start, vector<vector<int>>& res, vector<int>& res_sub) {
-		if (start >= nums.size()) {
+private:
+	void subsets(vector<vector<int>>& res, vector<int>& res_sub, const vector<int>& nums, int index) {
+		if (index == nums.size()) {
+			res.push_back(res_sub);
 			return;
 		}
-		for (int i = start; i < nums.size(); i++) {
-			res_sub.push_back(nums[i]);
-			res.push_back(res_sub);
-			generate(nums, i + 1, res, res_sub);
-			res_sub.pop_back();
-		}
+		res_sub.push_back(nums[index]);
+		subsets(res, res_sub, nums, index + 1);
+		res_sub.pop_back();
+		subsets(res, res_sub, nums, index + 1);
 	}
 };
 /*
@@ -2870,5 +2861,42 @@ public:
 			return *(--s.end());
 		}
 		return *s.begin();
+	}
+};
+/*
+
+448. Find All Numbers Disappeared in an Array (Easy)
+
+Given an array of integers where 1 ≤ a[i] ≤ n (n = size of array), some elements appear twice and others appear once.
+
+Find all the elements of [1, n] inclusive that do not appear in this array.
+
+Could you do it without extra space and in O(n) runtime? You may assume the returned list does not count as extra space.
+
+Example:
+
+Input:
+[4,3,2,7,8,2,3,1]
+
+Output:
+[5,6]
+
+*/
+class Solution {
+public:
+	vector<int> findDisappearedNumbers(vector<int>& nums) {
+		vector<int> res;
+		for (int i = 0; i < nums.size(); i++) {
+			int index = abs(nums[i]) - 1;
+			if (nums[index] > 0) {
+				nums[index] = -nums[index];
+			}
+		}
+		for (int i = 0; i < nums.size(); i++) {
+			if (nums[i] > 0) {
+				res.push_back(i + 1);
+			}
+		}
+		return res;
 	}
 };

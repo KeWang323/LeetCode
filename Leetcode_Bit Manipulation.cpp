@@ -24,19 +24,24 @@ If nums = [1,2,3], a solution is:
 class Solution {
 public:
 	vector<vector<int>> subsets(vector<int>& nums) {
+		if (nums.empty()) {
+			return{};
+		}
 		vector<vector<int>> res;
 		vector<int> res_sub;
-		res.push_back(res_sub);
-		generate(nums, 0, res, res_sub);
+		subsets(res, res_sub, nums, 0);
 		return res;
 	}
-	void generate(vector<int>& nums, int start, vector<vector<int>>& res, vector<int>& res_sub) {
-		for (int i = start; i < nums.size(); i++) {
-			res_sub.push_back(nums[i]);
+private:
+	void subsets(vector<vector<int>>& res, vector<int>& res_sub, const vector<int>& nums, int index) {
+		if (index == nums.size()) {
 			res.push_back(res_sub);
-			generate(nums, i + 1, res, res_sub);
-			res_sub.pop_back();
+			return;
 		}
+		res_sub.push_back(nums[index]);
+		subsets(res, res_sub, nums, index + 1);
+		res_sub.pop_back();
+		subsets(res, res_sub, nums, index + 1);
 	}
 };
 /*
@@ -280,6 +285,53 @@ public:
 };
 /*
 
+318. Maximum Product of Word Lengths (Medium)
+
+Given a string array words, find the maximum value of length(word[i]) * length(word[j]) where the two words do not share common letters. You may assume that each word will contain only lower case letters. If no such two words exist, return 0.
+
+Example 1:
+Given ["abcw", "baz", "foo", "bar", "xtfn", "abcdef"]
+Return 16
+The two words can be "abcw", "xtfn".
+
+Example 2:
+Given ["a", "ab", "abc", "d", "cd", "bcd", "abcd"]
+Return 4
+The two words can be "ab", "cd".
+
+Example 3:
+Given ["a", "aa", "aaa", "aaaa"]
+Return 0
+No such pair of words.
+
+*/
+class Solution {
+public:
+	int maxProduct(vector<string>& words) {
+		if (words.size() < 2) {
+			return 0;
+		}
+		vector<int> t(words.size());
+		for (int i = 0; i < words.size(); i++) {
+			int mask = 0;
+			for (char cha : words[i]) {
+				mask |= (1 << cha);
+			}
+			t[i] = mask;
+		}
+		int res = 0;
+		for (int i = 0; i < words.size() - 1; i++) {
+			for (int j = i + 1; j < words.size(); j++) {
+				if ((t[i] & t[j]) == 0 && words[i].size() * words[j].size() > res) {
+					res = words[i].size() * words[j].size();
+				}
+			}
+		}
+		return res;
+	}
+};
+/*
+
 338. Counting Bits (Medium)
 
 Given a non negative integer number num. For every numbers i in the range 0 ≤ i ≤ num calculate the number of 1's in their binary representation and return them as an array.
@@ -472,7 +524,7 @@ Output: 2
 Explanation:
 1   (0 0 0 1)
 4   (0 1 0 0)
-       ↑   ↑
+	   ↑   ↑
 
 The above arrows point to positions where the corresponding bits are different.
 

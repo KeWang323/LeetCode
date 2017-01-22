@@ -246,16 +246,15 @@ public:
 		if (grid.empty()) {
 			return 0;
 		}
-		int _size = grid[0].size();
-		vector<int> res(_size, INT_MAX);
-		res[0] = 0;
+		vector<int> t(grid[0].size(), INT_MAX);
+		t[0] = 0;
 		for (int i = 0; i < grid.size(); i++) {
-			res[0] += grid[i][0];
-			for (int j = 1; j < _size; j++) {
-				res[j] = min(res[j - 1], res[j]) + grid[i][j];
+			t[0] += grid[i][0];
+			for (int j = 1; j < grid[0].size(); j++) {
+				t[j] = min(t[j], t[j - 1]) + grid[i][j];
 			}
 		}
-		return res[_size - 1];
+		return t.back();
 	}
 };
 /*
@@ -1188,14 +1187,16 @@ You may assume that you have an infinite number of each kind of coin.
 class Solution {
 public:
 	int coinChange(vector<int>& coins, int amount) {
-		vector<int> table(amount + 1, INT_MAX - 1);
-		table[0] = 0;
-		for (int i = 0; i < coins.size(); i++) {
-			for (int j = coins[i]; j <= amount; j++) {
-				table[j] = min(table[j], table[j - coins[i]] + 1);
+		vector<int> t(amount + 1, amount + 1);
+		t[0] = 0;
+		for (int i = 1; i <= amount; i++) {
+			for (int j = 0; j < coins.size(); j++) {
+				if (i >= coins[j]) {
+					t[i] = min(t[i], t[i - coins[j]] + 1);
+				}
 			}
 		}
-		return (table[amount] == INT_MAX - 1 ? -1 : table[amount]);
+		return t.back() == amount + 1 ? -1 : t.back();
 	}
 };
 class Solution {
@@ -1204,14 +1205,25 @@ public:
 		sort(coins.begin(), coins.end());
 		return coinChange(coins, amount, coins.size() - 1, 0, *(new int(INT_MAX)));
 	}
-	int coinChange(vector<int>&coins, int amount, int idx, int cur, int &cand) {
-		if (!amount) return cand = cur;
-		if (idx < 0)return -1;
-		int flag = 0, n = amount / coins[idx];
-		if (n + cur >= cand) return -1;
-		for (int i = n; i >= 0; i--)
-			if (coinChange(coins, amount - i*coins[idx], idx - 1, cur + i, cand) != -1) flag = 1;
-		if (flag) return cand;
+	int coinChange(const vector<int>& coins, int amount, int index, int cur, int &cand) {
+		if (amount == 0) {
+			return cand = cur;
+		}
+		if (index < 0) {
+			return -1;
+		}
+		int flag = 0, n = amount / coins[index];
+		if (n + cur >= cand) {
+			return -1;
+		}
+		for (int i = n; i >= 0; i--) {
+			if (coinChange(coins, amount - i*coins[index], index - 1, cur + i, cand) != -1) {
+				flag = 1;
+			}
+		}
+		if (flag) {
+			return cand;
+		}
 		return -1;
 	}
 };
