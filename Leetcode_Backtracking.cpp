@@ -355,15 +355,15 @@ For example,
 There exist two distinct solutions to the 4-queens puzzle:
 
 [
-[".Q..",  // Solution 1
-"...Q",
-"Q...",
-"..Q."],
+ [".Q..",  // Solution 1
+  "...Q",
+  "Q...",
+  "..Q."],
 
-["..Q.",  // Solution 2
-"Q...",
-"...Q",
-".Q.."]
+ ["..Q.",  // Solution 2
+  "Q...",
+  "...Q",
+  ".Q.."]
 ]
 
 */
@@ -528,18 +528,23 @@ class Solution {
 public:
 	vector<vector<int>> combine(int n, int k) {
 		vector<vector<int>> res;
-		int i = 0;
-		vector<int> p(k, 0);
-		while (i >= 0) {
-			p[i]++;
-			if (p[i] > n) --i;
-			else if (i == k - 1) res.push_back(p);
-			else {
-				i++;
-				p[i] = p[i - 1];
-			}
-		}
+		vector<int> res_sub;
+		combine(res, res_sub, n, k, 1);
 		return res;
+	}
+private:
+	void combine(vector<vector<int>>& res, vector<int>& res_sub, const int& n, const int& k, int index) {
+		if (res_sub.size() == k) {
+			res.push_back(res_sub);
+			return;
+		}
+		if (index > n) {
+			return;
+		}
+		res_sub.push_back(index);
+		combine(res, res_sub, n, k, index + 1);
+		res_sub.pop_back();
+		combine(res, res_sub, n, k, index + 1);
 	}
 };
 /*

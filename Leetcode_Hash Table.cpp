@@ -1039,20 +1039,20 @@ You may assume that A's column number is equal to B's row number.
 Example:
 
 A = [
-[ 1, 0, 0],
-[-1, 0, 3]
+  [ 1, 0, 0],
+  [-1, 0, 3]
 ]
 
 B = [
-[ 7, 0, 0 ],
-[ 0, 0, 0 ],
-[ 0, 0, 1 ]
+  [ 7, 0, 0 ],
+  [ 0, 0, 0 ],
+  [ 0, 0, 1 ]
 ]
 
 
-	|  1 0 0 |   | 7 0 0 |   |  7 0 0 |
+	 |  1 0 0 |   | 7 0 0 |   |  7 0 0 |
 AB = | -1 0 3 | x | 0 0 0 | = | -7 0 3 |
-	| 0 0 1 |
+				  | 0 0 1 |
 
 */
 class Solution {
@@ -1318,7 +1318,6 @@ public:
 		if (followerId != followeeId) following[followerId].erase(followeeId);
 	}
 };
-
 /**
  * Your Twitter object will be instantiated and called as such:
  * Twitter obj = new Twitter();
@@ -1361,22 +1360,6 @@ public:
 			result ^= c;
 		}
 		return result;
-	}
-};
-class Solution {
-public:
-	char findTheDifference(string s, string t) {
-		unordered_map<char, int> mapping;
-		for (char c : s) {
-			mapping[c] += 1;
-		}
-		for (char c : t) {
-			mapping[c] -= 1;
-			if (mapping[c] == -1) {
-				return c;
-			}
-		}
-		return ' ';
 	}
 };
 /*

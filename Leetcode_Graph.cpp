@@ -18,22 +18,22 @@ Second node is labeled as 1. Connect node 1 to node 2.
 Third node is labeled as 2. Connect node 2 to node 2 (itself), thus forming a self-cycle.
 Visually, the graph looks like the following:
 
-1
-/ \
-/   \
-0 --- 2
-/ \
-\_/
+	   1
+	  / \
+	 /   \
+	0 --- 2
+		 / \
+		 \_/
 
 */
 /**
-* Definition for undirected graph.
-* struct UndirectedGraphNode {
-*     int label;
-*     vector<UndirectedGraphNode *> neighbors;
-*     UndirectedGraphNode(int x) : label(x) {};
-* };
-*/
+ * Definition for undirected graph.
+ * struct UndirectedGraphNode {
+ *     int label;
+ *     vector<UndirectedGraphNode *> neighbors;
+ *     UndirectedGraphNode(int x) : label(x) {};
+ * };
+ */
 class Solution {
 public:
 	UndirectedGraphNode *cloneGraph(UndirectedGraphNode *node) {
@@ -41,20 +41,19 @@ public:
 			return NULL;
 		}
 		unordered_map<int, UndirectedGraphNode*> mapping;
-		UndirectedGraphNode *newhead = new UndirectedGraphNode(node->label);
+		UndirectedGraphNode* newhead = new UndirectedGraphNode(node->label);
 		mapping[node->label] = newhead;
 		queue<UndirectedGraphNode*> q;
 		q.push(node);
 		while (!q.empty()) {
-			UndirectedGraphNode *node1 = q.front();
-			q.pop();
-			for (UndirectedGraphNode* nei : node1->neighbors) {
+			for (UndirectedGraphNode *nei : q.front()->neighbors) {
 				if (mapping.find(nei->label) == mapping.end()) {
 					mapping[nei->label] = new UndirectedGraphNode(nei->label);
 					q.push(nei);
 				}
-				mapping[node1->label]->neighbors.push_back(mapping[nei->label]);
+				mapping[q.front()->label]->neighbors.push_back(mapping[nei->label]);
 			}
+			q.pop();
 		}
 		return newhead;
 	}

@@ -132,7 +132,7 @@ public:
 				swap(nums[i++], nums[k++]);
 			}
 			else if (nums[k] == 2) {
-				swap(nums[k], nums[j--]);
+				swap(nums[j--], nums[k]);
 			}
 			else {
 				k++;
@@ -451,7 +451,7 @@ public:
 		}
 		sort(nums.begin(), nums.end());
 		swap(nums.back(), nums[nums.size() / 2]);
-		if (nums.size() % 2) {
+		if (nums.size() & 1) {
 			wiggleSort(nums, 0, nums.size() - 2);
 		}
 		else {
@@ -460,14 +460,62 @@ public:
 	}
 private:
 	void wiggleSort(vector<int>& nums, int l, int r) {
-		if (l < r - 1) {
-			int _size = r - l + 1, i = l + _size / 4, mid = l + _size / 2, j = l + 3 * _size / 4;
-			reverse(nums.begin() + i, nums.begin() + mid);
-			reverse(nums.begin() + mid, nums.begin() + j);
-			reverse(nums.begin() + i, nums.begin() + j);
-			wiggleSort(nums, l, l + 2 * (i - l) - 1);
-			wiggleSort(nums, l + 2 * (i - l), r);
+		if (l >= r - 1) {
+			return;
 		}
+		int _size = r - l + 1;
+		int i = l + _size / 4, j = l + _size * 3 / 4, mid = l + _size / 2;
+		reverse(nums.begin() + i, nums.begin() + mid);
+		reverse(nums.begin() + mid, nums.begin() + j);
+		reverse(nums.begin() + i, nums.begin() + j);
+		wiggleSort(nums, l, l + 2 * (i - l) - 1);
+		wiggleSort(nums, l + 2 * (i - l), r);
+	}
+};
+/*
+
+324. Wiggle Sort II (Medium)
+
+Given an unsorted array nums, reorder it such that nums[0] < nums[1] > nums[2] < nums[3]....
+
+Example:
+(1) Given nums = [1, 5, 1, 1, 6, 4], one possible answer is [1, 4, 1, 5, 1, 6].
+(2) Given nums = [1, 3, 2, 2, 3, 1], one possible answer is [2, 3, 1, 3, 1, 2].
+
+Note:
+You may assume all input has valid answer.
+
+Follow Up:
+Can you do it in O(n) time and/or in-place with O(1) extra space?
+
+*/
+class Solution {
+public:
+	vector<int> wiggleSort(vector<int>& nums) {
+		int n = nums.size();
+		auto midptr = nums.begin() + n / 2;
+		nth_element(nums.begin(), midptr, nums.end());
+		int mid = *midptr;
+		show(nums);
+		cout << endl;
+#define A(i) nums[(1+2*(i)) % (n|1)]
+		int i = 0, j = 0, k = n - 1;
+		while (j <= k) {
+			if (A(j) > mid) {
+				swap(A(i++), A(j++));
+				show(nums);
+				cout << endl;
+			}
+			else if (A(j) < mid) {
+				swap(A(j), A(k--));
+				show(nums);
+				cout << endl;
+			}
+			else {
+				j++;
+			}
+		}
+		return nums;
 	}
 };
 /*

@@ -136,13 +136,13 @@ Given a binary tree, check whether it is a mirror of itself (ie, symmetric aroun
 
 For example, this binary tree [1,2,2,3,4,4,3] is symmetric:
 
-    1
+	1
    / \
   2   2
  / \ / \
 3  4 4  3
 But the following [1,2,2,null,3,null,3] is not:
-    1
+	1
    / \
   2   2
    \   \
@@ -229,22 +229,20 @@ You may assume that duplicates do not exist in the tree.
 class Solution {
 public:
 	TreeNode* buildTree(vector<int>& preorder, vector<int>& inorder) {
-		return BT(preorder, 0, preorder.size() - 1, inorder, 0, inorder.size() - 1);
+		return buildTree(preorder, 0, preorder.size() - 1, inorder, 0, inorder.size() - 1);
 	}
-	TreeNode* BT(vector<int>& preorder, int pl, int pr, vector<int>& inorder, int il, int ir) {
-		if (il > ir) {
+private:
+	TreeNode* buildTree(const vector<int>& preorder, int pl, int pr, const vector<int>& inorder, int il, int ir) {
+		if (pl > pr) {
 			return NULL;
 		}
-		int val = preorder[pl];
-		TreeNode *root = new TreeNode(val);
-		int i = il;
-		for (; i < ir; i++) {
-			if (val == inorder[i]) {
-				break;
-			}
+		TreeNode *root = new TreeNode(preorder[pl]);
+		int index = ir;
+		while (inorder[index] != preorder[pl]) {
+			index--;
 		}
-		root->left = BT(preorder, pl + 1, pl + i - il, inorder, il, i - 1);
-		root->right = BT(preorder, pl + i - il + 1, pr, inorder, i + 1, ir);
+		root->left = buildTree(preorder, pl + 1, pl + index - il, inorder, il, index - 1);
+		root->right = buildTree(preorder, pl + index - il + 1, pr, inorder, index + 1, ir);
 		return root;
 	}
 };
@@ -850,22 +848,22 @@ Second node is labeled as 1. Connect node 1 to node 2.
 Third node is labeled as 2. Connect node 2 to node 2 (itself), thus forming a self-cycle.
 Visually, the graph looks like the following:
 
-1
-/ \
-/   \
-0 --- 2
-/ \
-\_/
+	   1
+	  / \
+	 /   \
+	0 --- 2
+		 / \
+		 \_/
 
 */
 /**
-* Definition for undirected graph.
-* struct UndirectedGraphNode {
-*     int label;
-*     vector<UndirectedGraphNode *> neighbors;
-*     UndirectedGraphNode(int x) : label(x) {};
-* };
-*/
+ * Definition for undirected graph.
+ * struct UndirectedGraphNode {
+ *     int label;
+ *     vector<UndirectedGraphNode *> neighbors;
+ *     UndirectedGraphNode(int x) : label(x) {};
+ * };
+ */
 class Solution {
 public:
 	UndirectedGraphNode *cloneGraph(UndirectedGraphNode *node) {
@@ -873,20 +871,19 @@ public:
 			return NULL;
 		}
 		unordered_map<int, UndirectedGraphNode*> mapping;
-		UndirectedGraphNode *newhead = new UndirectedGraphNode(node->label);
+		UndirectedGraphNode* newhead = new UndirectedGraphNode(node->label);
 		mapping[node->label] = newhead;
 		queue<UndirectedGraphNode*> q;
 		q.push(node);
 		while (!q.empty()) {
-			UndirectedGraphNode *node1 = q.front();
-			q.pop();
-			for (UndirectedGraphNode* nei : node1->neighbors) {
+			for (UndirectedGraphNode *nei : q.front()->neighbors) {
 				if (mapping.find(nei->label) == mapping.end()) {
 					mapping[nei->label] = new UndirectedGraphNode(nei->label);
 					q.push(nei);
 				}
-				mapping[node1->label]->neighbors.push_back(mapping[nei->label]);
+				mapping[q.front()->label]->neighbors.push_back(mapping[nei->label]);
 			}
+			q.pop();
 		}
 		return newhead;
 	}
@@ -899,40 +896,40 @@ Given a binary tree, imagine yourself standing on the right side of it, return t
 
 For example:
 Given the following binary tree,
-1            <---
-/   \
+   1            <---
+ /   \
 2     3         <---
-\     \
-5     4       <---
+ \     \
+  5     4       <---
 You should return [1, 3, 4].
 
 */
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
 class Solution {
 public:
-	vector<int> rightSideView(TreeNode* root) {
-		if (root == NULL) {
-			return{};
-		}
+	vector<int> rightSideView(TreeNode *root) {
 		vector<int> res;
-		queue<TreeNode*> q;
-		q.push(root);
-		while (!q.empty()) {
-			int _size = q.size();
-			for (int i = 0; i < _size; i++) {
-				TreeNode* node = q.front();
-				q.pop();
-				if (node->left != NULL) {
-					q.push(node->left);
-				}
-				if (node->right != NULL) {
-					q.push(node->right);
-				}
-				if (i == _size - 1) {
-					res.push_back(node->val);
-				}
-			}
-		}
+		recursion(root, 1, res);
 		return res;
+	}
+private:
+	void recursion(TreeNode *root, int level, vector<int> &res) {
+		if (root == NULL) {
+			return;
+		}
+		if (res.size() < level) {
+			res.push_back(root->val);
+		}
+		recursion(root->right, level + 1, res);
+		recursion(root->left, level + 1, res);
 	}
 };
 /*

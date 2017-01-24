@@ -260,13 +260,13 @@ Given a binary tree, check whether it is a mirror of itself (ie, symmetric aroun
 
 For example, this binary tree [1,2,2,3,4,4,3] is symmetric:
 
-    1
+	1
    / \
   2   2
  / \ / \
 3  4 4  3
 But the following [1,2,2,null,3,null,3] is not:
-    1
+	1
    / \
   2   2
    \   \
@@ -311,10 +311,10 @@ Given a binary tree, return the level order traversal of its nodes' values. (ie,
 
 For example:
 Given binary tree [3,9,20,null,null,15,7],
-    3
+	3
    / \
   9  20
-    /  \
+	/  \
    15   7
 return its level order traversal as:
 [
@@ -465,22 +465,20 @@ You may assume that duplicates do not exist in the tree.
 class Solution {
 public:
 	TreeNode* buildTree(vector<int>& preorder, vector<int>& inorder) {
-		return BT(preorder, 0, preorder.size() - 1, inorder, 0, inorder.size() - 1);
+		return buildTree(preorder, 0, preorder.size() - 1, inorder, 0, inorder.size() - 1);
 	}
-	TreeNode* BT(vector<int>& preorder, int pl, int pr, vector<int>& inorder, int il, int ir) {
-		if (il > ir) {
+private:
+	TreeNode* buildTree(const vector<int>& preorder, int pl, int pr, const vector<int>& inorder, int il, int ir) {
+		if (pl > pr) {
 			return NULL;
 		}
-		int val = preorder[pl];
-		TreeNode *root = new TreeNode(val);
-		int i = il;
-		for (; i < ir; i++) {
-			if (val == inorder[i]) {
-				break;
-			}
+		TreeNode *root = new TreeNode(preorder[pl]);
+		int index = ir;
+		while (inorder[index] != preorder[pl]) {
+			index--;
 		}
-		root->left = BT(preorder, pl + 1, pl + i - il, inorder, il, i - 1);
-		root->right = BT(preorder, pl + i - il + 1, pr, inorder, i + 1, ir);
+		root->left = buildTree(preorder, pl + 1, pl + index - il, inorder, il, index - 1);
+		root->right = buildTree(preorder, pl + index - il + 1, pr, inorder, index + 1, ir);
 		return root;
 	}
 };
@@ -841,11 +839,11 @@ public:
 
 Given a binary tree
 
-    struct TreeLinkNode {
-      TreeLinkNode *left;
-      TreeLinkNode *right;
-      TreeLinkNode *next;
-    }
+	struct TreeLinkNode {
+	  TreeLinkNode *left;
+	  TreeLinkNode *right;
+	  TreeLinkNode *next;
+	}
 Populate each next pointer to point to its next right node. If there is no next right node, the next pointer should be set to NULL.
 
 Initially, all next pointers are set to NULL.
@@ -856,17 +854,17 @@ You may only use constant extra space.
 You may assume that it is a perfect binary tree (ie, all leaves are at the same level, and every parent has two children).
 For example,
 Given the following perfect binary tree,
-         1
-       /  \
-      2    3
-     / \  / \
-    4  5  6  7
+		 1
+	   /  \
+	  2    3
+	 / \  / \
+	4  5  6  7
 After calling your function, the tree should look like:
-         1 -> NULL
-       /  \
-      2 -> 3 -> NULL
-     / \  / \
-    4->5->6->7 -> NULL
+		 1 -> NULL
+	   /  \
+	  2 -> 3 -> NULL
+	 / \  / \
+	4->5->6->7 -> NULL
 
 */
 /**
@@ -970,9 +968,9 @@ For this problem, a path is defined as any sequence of nodes from some starting 
 For example:
 Given the below binary tree,
 
-       1
-      / \
-     2   3
+	   1
+	  / \
+	 2   3
 Return 6.
 
 */
@@ -1282,40 +1280,40 @@ Given a binary tree, imagine yourself standing on the right side of it, return t
 
 For example:
 Given the following binary tree,
-1            <---
-/   \
+   1            <---
+ /   \
 2     3         <---
-\     \
-5     4       <---
+ \     \
+  5     4       <---
 You should return [1, 3, 4].
 
 */
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
 class Solution {
 public:
-	vector<int> rightSideView(TreeNode* root) {
-		if (root == NULL) {
-			return{};
-		}
+	vector<int> rightSideView(TreeNode *root) {
 		vector<int> res;
-		queue<TreeNode*> q;
-		q.push(root);
-		while (!q.empty()) {
-			int _size = q.size();
-			for (int i = 0; i < _size; i++) {
-				TreeNode* node = q.front();
-				q.pop();
-				if (node->left != NULL) {
-					q.push(node->left);
-				}
-				if (node->right != NULL) {
-					q.push(node->right);
-				}
-				if (i == _size - 1) {
-					res.push_back(node->val);
-				}
-			}
-		}
+		recursion(root, 1, res);
 		return res;
+	}
+private:
+	void recursion(TreeNode *root, int level, vector<int> &res) {
+		if (root == NULL) {
+			return;
+		}
+		if (res.size() < level) {
+			res.push_back(root->val);
+		}
+		recursion(root->right, level + 1, res);
+		recursion(root->left, level + 1, res);
 	}
 };
 /*

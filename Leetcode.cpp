@@ -1897,15 +1897,15 @@ For example,
 There exist two distinct solutions to the 4-queens puzzle:
 
 [
-[".Q..",  // Solution 1
-"...Q",
-"Q...",
-"..Q."],
+ [".Q..",  // Solution 1
+  "...Q",
+  "Q...",
+  "..Q."],
 
-["..Q.",  // Solution 2
-"Q...",
-"...Q",
-".Q.."]
+ ["..Q.",  // Solution 2
+  "Q...",
+  "...Q",
+  ".Q.."]
 ]
 
 */
@@ -2247,13 +2247,15 @@ return 5.
 class Solution {
 public:
 	int lengthOfLastWord(string s) {
-		int len = s.length() - 1, res = 0;
-		while (len > -1) {
-			if (s[len] != ' ') res++;
-			else if (res) return res;
-			len--;
+		int r = s.size() - 1;
+		while (r >= 0 && !isalpha(s[r])) {
+			r--;
 		}
-		return res;
+		int l = r;
+		while (l >= 0 && isalpha(s[l])) {
+			l--;
+		}
+		return r - l;
 	}
 };
 /*
@@ -2815,7 +2817,7 @@ public:
 				swap(nums[i++], nums[k++]);
 			}
 			else if (nums[k] == 2) {
-				swap(nums[k], nums[j--]);
+				swap(nums[j--], nums[k]);
 			}
 			else {
 				k++;
@@ -2895,18 +2897,23 @@ class Solution {
 public:
 	vector<vector<int>> combine(int n, int k) {
 		vector<vector<int>> res;
-		int i = 0;
-		vector<int> p(k, 0);
-		while (i >= 0) {
-			p[i]++;
-			if (p[i] > n) --i;
-			else if (i == k - 1) res.push_back(p);
-			else {
-				i++;
-				p[i] = p[i - 1];
-			}
-		}
+		vector<int> res_sub;
+		combine(res, res_sub, n, k, 1);
 		return res;
+	}
+private:
+	void combine(vector<vector<int>>& res, vector<int>& res_sub, const int& n, const int& k, int index) {
+		if (res_sub.size() == k) {
+			res.push_back(res_sub);
+			return;
+		}
+		if (index > n) {
+			return;
+		}
+		res_sub.push_back(index);
+		combine(res, res_sub, n, k, index + 1);
+		res_sub.pop_back();
+		combine(res, res_sub, n, k, index + 1);
 	}
 };
 /*
@@ -3422,10 +3429,11 @@ The number of ways decoding "12" is 2.
 class Solution {
 public:
 	int numDecodings(string s) {
-		if (s.empty() || s[0] == '0') return 0;
-		int _size = s.length();
+		if (s.empty() || s[0] == '0') {
+			return 0;
+		}
 		int t1 = 1, t2 = 1;
-		for (int i = 2; i <= _size; i++) {
+		for (int i = 2; i <= s.size(); i++) {
 			int temp = (int)(s[i - 1] != '0') * t2 + (int)(s[i - 2] == '1' || s[i - 2] == '2' && s[i - 1] < '7') * t1;
 			t1 = t2;
 			t2 = temp;
@@ -3980,22 +3988,20 @@ You may assume that duplicates do not exist in the tree.
 class Solution {
 public:
 	TreeNode* buildTree(vector<int>& preorder, vector<int>& inorder) {
-		return BT(preorder, 0, preorder.size() - 1, inorder, 0, inorder.size() - 1);
+		return buildTree(preorder, 0, preorder.size() - 1, inorder, 0, inorder.size() - 1);
 	}
-	TreeNode* BT(vector<int>& preorder, int pl, int pr, vector<int>& inorder, int il, int ir) {
-		if (il > ir) {
+private:
+	TreeNode* buildTree(const vector<int>& preorder, int pl, int pr, const vector<int>& inorder, int il, int ir) {
+		if (pl > pr) {
 			return NULL;
 		}
-		int val = preorder[pl];
-		TreeNode *root = new TreeNode(val);
-		int i = il;
-		for (; i < ir; i++) {
-			if (val == inorder[i]) {
-				break;
-			}
+		TreeNode *root = new TreeNode(preorder[pl]);
+		int index = ir;
+		while (inorder[index] != preorder[pl]) {
+			index--;
 		}
-		root->left = BT(preorder, pl + 1, pl + i - il, inorder, il, i - 1);
-		root->right = BT(preorder, pl + i - il + 1, pr, inorder, i + 1, ir);
+		root->left = buildTree(preorder, pl + 1, pl + index - il, inorder, il, index - 1);
+		root->right = buildTree(preorder, pl + index - il + 1, pr, inorder, index + 1, ir);
 		return root;
 	}
 };
@@ -5014,22 +5020,22 @@ Second node is labeled as 1. Connect node 1 to node 2.
 Third node is labeled as 2. Connect node 2 to node 2 (itself), thus forming a self-cycle.
 Visually, the graph looks like the following:
 
-1
-/ \
-/   \
-0 --- 2
-/ \
-\_/
+	   1
+	  / \
+	 /   \
+	0 --- 2
+		 / \
+		 \_/
 
 */
 /**
-* Definition for undirected graph.
-* struct UndirectedGraphNode {
-*     int label;
-*     vector<UndirectedGraphNode *> neighbors;
-*     UndirectedGraphNode(int x) : label(x) {};
-* };
-*/
+ * Definition for undirected graph.
+ * struct UndirectedGraphNode {
+ *     int label;
+ *     vector<UndirectedGraphNode *> neighbors;
+ *     UndirectedGraphNode(int x) : label(x) {};
+ * };
+ */
 class Solution {
 public:
 	UndirectedGraphNode *cloneGraph(UndirectedGraphNode *node) {
@@ -5037,20 +5043,19 @@ public:
 			return NULL;
 		}
 		unordered_map<int, UndirectedGraphNode*> mapping;
-		UndirectedGraphNode *newhead = new UndirectedGraphNode(node->label);
+		UndirectedGraphNode* newhead = new UndirectedGraphNode(node->label);
 		mapping[node->label] = newhead;
 		queue<UndirectedGraphNode*> q;
 		q.push(node);
 		while (!q.empty()) {
-			UndirectedGraphNode *node1 = q.front();
-			q.pop();
-			for (UndirectedGraphNode* nei : node1->neighbors) {
+			for (UndirectedGraphNode *nei : q.front()->neighbors) {
 				if (mapping.find(nei->label) == mapping.end()) {
 					mapping[nei->label] = new UndirectedGraphNode(nei->label);
 					q.push(nei);
 				}
-				mapping[node1->label]->neighbors.push_back(mapping[nei->label]);
+				mapping[q.front()->label]->neighbors.push_back(mapping[nei->label]);
 			}
+			q.pop();
 		}
 		return newhead;
 	}
@@ -6265,49 +6270,19 @@ Output: index1=1, index2=2
 class Solution {
 public:
 	vector<int> twoSum(vector<int>& numbers, int target) {
-		if (numbers.size() < 2) {
-			return{ -1, -1 };
-		}
-		for (int i = 0; i < numbers.size() - 1; i++) {
-			if (numbers[i] + numbers[i + 1] > target) {
-				break;
+		int i = 0, j = numbers.size() - 1;
+		while (i < j) {
+			if (numbers[i] + numbers[j] > target) {
+				j--;
 			}
-			int l = i + 1, r = numbers.size() - 1;
-			while (l <= r) {
-				int mid = l + (r - l) / 2;
-				if (numbers[mid] > target - numbers[i]) {
-					r = mid - 1;
-				}
-				else if (numbers[mid] < target - numbers[i]) {
-					l = mid + 1;
-				}
-				else {
-					return{ i + 1, mid + 1 };
-				}
-			}
-		}
-		return{ -1, -1 };
-	}
-};
-class Solution {
-public:
-	vector<int> twoSum(vector<int>& numbers, int target) {
-		if (numbers.size() < 2) {
-			return{ -1, -1 };
-		}
-		int l = 0, r = numbers.size() - 1;
-		while (l < r) {
-			if (numbers[l] + numbers[r] > target) {
-				r--;
-			}
-			else if (numbers[l] + numbers[r] < target) {
-				l++;
+			else if (numbers[i] + numbers[j] < target) {
+				i++;
 			}
 			else {
-				return{ ++l, ++r };
+				return{ i + 1, j + 1 };
 			}
 		}
-		return{ -1, -1 };
+		return{};
 	}
 };
 /*
@@ -6757,40 +6732,40 @@ Given a binary tree, imagine yourself standing on the right side of it, return t
 
 For example:
 Given the following binary tree,
-1            <---
-/   \
+   1            <---
+ /   \
 2     3         <---
-\     \
-5     4       <---
+ \     \
+  5     4       <---
 You should return [1, 3, 4].
 
 */
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
 class Solution {
 public:
-	vector<int> rightSideView(TreeNode* root) {
-		if (root == NULL) {
-			return{};
-		}
+	vector<int> rightSideView(TreeNode *root) {
 		vector<int> res;
-		queue<TreeNode*> q;
-		q.push(root);
-		while (!q.empty()) {
-			int _size = q.size();
-			for (int i = 0; i < _size; i++) {
-				TreeNode* node = q.front();
-				q.pop();
-				if (node->left != NULL) {
-					q.push(node->left);
-				}
-				if (node->right != NULL) {
-					q.push(node->right);
-				}
-				if (i == _size - 1) {
-					res.push_back(node->val);
-				}
-			}
-		}
+		recursion(root, 1, res);
 		return res;
+	}
+private:
+	void recursion(TreeNode *root, int level, vector<int> &res) {
+		if (root == NULL) {
+			return;
+		}
+		if (res.size() < level) {
+			res.push_back(root->val);
+		}
+		recursion(root->right, level + 1, res);
+		recursion(root->left, level + 1, res);
 	}
 };
 /*
@@ -9119,7 +9094,7 @@ public:
 		}
 		sort(nums.begin(), nums.end());
 		swap(nums.back(), nums[nums.size() / 2]);
-		if (nums.size() % 2) {
+		if (nums.size() & 1) {
 			wiggleSort(nums, 0, nums.size() - 2);
 		}
 		else {
@@ -9128,14 +9103,16 @@ public:
 	}
 private:
 	void wiggleSort(vector<int>& nums, int l, int r) {
-		if (l < r - 1) {
-			int _size = r - l + 1, i = l + _size / 4, mid = l + _size / 2, j = l + 3 * _size / 4;
-			reverse(nums.begin() + i, nums.begin() + mid);
-			reverse(nums.begin() + mid, nums.begin() + j);
-			reverse(nums.begin() + i, nums.begin() + j);
-			wiggleSort(nums, l, l + 2 * (i - l) - 1);
-			wiggleSort(nums, l + 2 * (i - l), r);
+		if (l >= r - 1) {
+			return;
 		}
+		int _size = r - l + 1;
+		int i = l + _size / 4, j = l + _size * 3 / 4, mid = l + _size / 2;
+		reverse(nums.begin() + i, nums.begin() + mid);
+		reverse(nums.begin() + mid, nums.begin() + j);
+		reverse(nums.begin() + i, nums.begin() + j);
+		wiggleSort(nums, l, l + 2 * (i - l) - 1);
+		wiggleSort(nums, l + 2 * (i - l), r);
 	}
 };
 /*
@@ -9832,20 +9809,20 @@ You may assume that A's column number is equal to B's row number.
 Example:
 
 A = [
-[ 1, 0, 0],
-[-1, 0, 3]
+  [ 1, 0, 0],
+  [-1, 0, 3]
 ]
 
 B = [
-[ 7, 0, 0 ],
-[ 0, 0, 0 ],
-[ 0, 0, 1 ]
+  [ 7, 0, 0 ],
+  [ 0, 0, 0 ],
+  [ 0, 0, 1 ]
 ]
 
 
-|  1 0 0 |   | 7 0 0 |   |  7 0 0 |
+	 |  1 0 0 |   | 7 0 0 |   |  7 0 0 |
 AB = | -1 0 3 | x | 0 0 0 | = | -7 0 3 |
-| 0 0 1 |
+				  | 0 0 1 |
 
 */
 class Solution {
@@ -10033,6 +10010,52 @@ public:
 			return cand;
 		}
 		return -1;
+	}
+};
+/*
+
+324. Wiggle Sort II (Medium)
+
+Given an unsorted array nums, reorder it such that nums[0] < nums[1] > nums[2] < nums[3]....
+
+Example:
+(1) Given nums = [1, 5, 1, 1, 6, 4], one possible answer is [1, 4, 1, 5, 1, 6].
+(2) Given nums = [1, 3, 2, 2, 3, 1], one possible answer is [2, 3, 1, 3, 1, 2].
+
+Note:
+You may assume all input has valid answer.
+
+Follow Up:
+Can you do it in O(n) time and/or in-place with O(1) extra space?
+
+*/
+class Solution {
+public:
+	vector<int> wiggleSort(vector<int>& nums) {
+		int n = nums.size();
+		auto midptr = nums.begin() + n / 2;
+		nth_element(nums.begin(), midptr, nums.end());
+		int mid = *midptr;
+		show(nums);
+		cout << endl;
+#define A(i) nums[(1+2*(i)) % (n|1)]
+		int i = 0, j = 0, k = n - 1;
+		while (j <= k) {
+			if (A(j) > mid) {
+				swap(A(i++), A(j++));
+				show(nums);
+				cout << endl;
+			}
+			else if (A(j) < mid) {
+				swap(A(j), A(k--));
+				show(nums);
+				cout << endl;
+			}
+			else {
+				j++;
+			}
+		}
+		return nums;
 	}
 };
 /*
@@ -11671,22 +11694,6 @@ public:
 		return result;
 	}
 };
-class Solution {
-public:
-	char findTheDifference(string s, string t) {
-		unordered_map<char, int> mapping;
-		for (char c : s) {
-			mapping[c] += 1;
-		}
-		for (char c : t) {
-			mapping[c] -= 1;
-			if (mapping[c] == -1) {
-				return c;
-			}
-		}
-		return ' ';
-	}
-};
 /*
 
 392. Is Subsequence (Medium)
@@ -12420,6 +12427,37 @@ public:
 			}
 		}
 		return r;
+	}
+};
+/*
+
+442. Find All Duplicates in an Array (Medium)
+
+Given an array of integers, 1 ≤ a[i] ≤ n (n = size of array), some elements appear twice and others appear once.
+
+Find all the elements that appear twice in this array.
+
+Could you do it without extra space and in O(n) runtime?
+
+Example:
+Input:
+[4,3,2,7,8,2,3,1]
+
+Output:
+[2,3]
+
+*/
+class Solution {
+public:
+	vector<int> findDuplicates(vector<int>& nums) {
+		vector<int> res;
+		for (int i = 0; i < nums.size(); i++) {
+			if (nums[abs(nums[i]) - 1] < 0) {
+				res.push_back(abs(nums[i]));
+			}
+			nums[abs(nums[i]) - 1] *= -1;
+		}
+		return res;
 	}
 };
 /*

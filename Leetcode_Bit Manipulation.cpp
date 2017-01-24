@@ -437,22 +437,6 @@ public:
 		return result;
 	}
 };
-class Solution {
-public:
-	char findTheDifference(string s, string t) {
-		unordered_map<char, int> mapping;
-		for (char c : s) {
-			mapping[c] += 1;
-		}
-		for (char c : t) {
-			mapping[c] -= 1;
-			if (mapping[c] == -1) {
-				return c;
-			}
-		}
-		return ' ';
-	}
-};
 /*
 
 405. Convert a Number to Hexadecimal (Easy)

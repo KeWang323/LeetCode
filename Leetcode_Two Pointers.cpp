@@ -562,7 +562,7 @@ public:
 				swap(nums[i++], nums[k++]);
 			}
 			else if (nums[k] == 2) {
-				swap(nums[k], nums[j--]);
+				swap(nums[j--], nums[k]);
 			}
 			else {
 				k++;
@@ -909,49 +909,19 @@ Output: index1=1, index2=2
 class Solution {
 public:
 	vector<int> twoSum(vector<int>& numbers, int target) {
-		if (numbers.size() < 2) {
-			return{ -1, -1 };
-		}
-		for (int i = 0; i < numbers.size() - 1; i++) {
-			if (numbers[i] + numbers[i + 1] > target) {
-				break;
+		int i = 0, j = numbers.size() - 1;
+		while (i < j) {
+			if (numbers[i] + numbers[j] > target) {
+				j--;
 			}
-			int l = i + 1, r = numbers.size() - 1;
-			while (l <= r) {
-				int mid = l + (r - l) / 2;
-				if (numbers[mid] > target - numbers[i]) {
-					r = mid - 1;
-				}
-				else if (numbers[mid] < target - numbers[i]) {
-					l = mid + 1;
-				}
-				else {
-					return{ i + 1, mid + 1 };
-				}
-			}
-		}
-		return{ -1, -1 };
-	}
-};
-class Solution {
-public:
-	vector<int> twoSum(vector<int>& numbers, int target) {
-		if (numbers.size() < 2) {
-			return{ -1, -1 };
-		}
-		int l = 0, r = numbers.size() - 1;
-		while (l < r) {
-			if (numbers[l] + numbers[r] > target) {
-				r--;
-			}
-			else if (numbers[l] + numbers[r] < target) {
-				l++;
+			else if (numbers[i] + numbers[j] < target) {
+				i++;
 			}
 			else {
-				return{ ++l, ++r };
+				return{ i + 1, j + 1 };
 			}
 		}
-		return{ -1, -1 };
+		return{};
 	}
 };
 /*

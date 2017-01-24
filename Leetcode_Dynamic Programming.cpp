@@ -386,10 +386,11 @@ The number of ways decoding "12" is 2.
 class Solution {
 public:
 	int numDecodings(string s) {
-		if (s.empty() || s[0] == '0') return 0;
-		int _size = s.length();
+		if (s.empty() || s[0] == '0') {
+			return 0;
+		}
 		int t1 = 1, t2 = 1;
-		for (int i = 2; i <= _size; i++) {
+		for (int i = 2; i <= s.size(); i++) {
 			int temp = (int)(s[i - 1] != '0') * t2 + (int)(s[i - 2] == '1' || s[i - 2] == '2' && s[i - 1] < '7') * t1;
 			t1 = t2;
 			t2 = temp;
