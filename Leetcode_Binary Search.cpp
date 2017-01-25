@@ -154,28 +154,27 @@ class Solution {
 public:
 	vector<int> searchRange(vector<int>& nums, int target) {
 		int l = 0, r = nums.size() - 1;
-		vector<int> res(2, -1);
 		while (l <= r) {
 			int mid = l + (r - l) / 2;
 			if (nums[mid] < target) {
 				l = mid + 1;
 			}
-			else if (target < nums[mid]) {
+			else if (nums[mid] > target) {
 				r = mid - 1;
 			}
 			else {
-				while (nums[l] != target) {
-					l++;
+				r = mid;
+				l = mid;
+				while (l > 0 && nums[l - 1] == target) {
+					l--;
 				}
-				while (nums[r] != target) {
-					r--;
+				while (r < nums.size() - 1 && nums[r + 1] == target) {
+					r++;
 				}
-				res[0] = l;
-				res[1] = r;
-				return res;
+				return{ l, r };
 			}
 		}
-		return res;
+		return{ -1, -1 };
 	}
 };
 /*
@@ -308,12 +307,16 @@ public:
 81. Search in Rotated Sorted Array II (Medium)
 
 Follow up for "Search in Rotated Sorted Array":
-
 What if duplicates are allowed?
 
 Would this affect the run-time complexity? How and why?
+Suppose an array sorted in ascending order is rotated at some pivot unknown to you beforehand.
+
+(i.e., 0 1 2 4 5 6 7 might become 4 5 6 7 0 1 2).
 
 Write a function to determine if a given target is in the array.
+
+The array may contain duplicates.
 
 */
 class Solution {
@@ -322,16 +325,28 @@ public:
 		int l = 0, r = nums.size() - 1;
 		while (l <= r) {
 			int mid = l + (r - l) / 2;
-			if (nums[mid] == target) return true;
+			if (nums[mid] == target) {
+				return true;
+			}
 			else if (nums[l] < nums[mid]) {
-				if (nums[l] <= target && target < nums[mid]) r = mid - 1;
-				else l = mid + 1;
+				if (nums[l] <= target && target < nums[mid]) {
+					r = mid - 1;
+				}
+				else {
+					l = mid + 1;
+				}
 			}
 			else if (nums[l] > nums[mid]) {
-				if (nums[mid] < target && target <= nums[r]) l = mid + 1;
-				else r = mid - 1;
+				if (nums[mid] < target && target <= nums[r]) {
+					l = mid + 1;
+				}
+				else {
+					r = mid - 1;
+				}
 			}
-			else l++;
+			else {
+				l++;
+			}
 		}
 		return false;
 	}

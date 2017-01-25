@@ -702,25 +702,22 @@ return 1->2->2->4->3->5.
 class Solution {
 public:
 	ListNode* partition(ListNode* head, int x) {
-		if (head == NULL || head->next == NULL) {
-			return head;
-		}
-		ListNode *s = new ListNode(-1), *g = new ListNode(-1);
-		ListNode *p = s, *q = g;
+		ListNode *sh = new ListNode(-1), *lh = new ListNode(-1);
+		ListNode *s = sh, *l = lh;
 		while (head != NULL) {
 			if (head->val < x) {
-				p->next = head;
-				p = p->next;
+				s->next = head;
+				s = s->next;
 			}
 			else {
-				q->next = head;
-				q = q->next;
+				l->next = head;
+				l = l->next;
 			}
 			head = head->next;
 		}
-		p->next = g->next;
-		q->next = NULL;
-		return s->next;
+		l->next = NULL;
+		s->next = lh->next;
+		return sh->next;
 	}
 };
 /*
