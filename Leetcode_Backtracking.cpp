@@ -731,22 +731,33 @@ return ["255.255.11.135", "255.255.111.35"]. (Order does not matter)
 class Solution {
 public:
 	vector<string> restoreIpAddresses(string s) {
+		if (s.size() < 4 || s.size() > 12) {
+			return{};
+		}
 		vector<string> res;
-		if (s.length() < 4 || s.length() > 12) return res;
-		generate(s, 0, 4, res, "");
+		restoreIpAddresses(s, res, "", 0, 0);
 		return res;
 	}
-	void generate(string s, int start, int cnt, vector<string>& res, string res_sub) {
-		if (start == s.length() && cnt == 0) {
+private:
+	void restoreIpAddresses(const string& s, vector<string>& res, string res_sub, int index, int n) {
+		if (index == s.size() && n == 4) {
 			res_sub.pop_back();
 			res.push_back(res_sub);
 			return;
 		}
-		if (s.length() - start > 3 * cnt) return;
-		for (int i = 0; i + start < s.length() && i < 3; i++) {
-			if (i == 0) generate(s, start + 1, cnt - 1, res, res_sub + s.substr(start, 1) + ".");
-			if (i == 1 && s[start] != '0') generate(s, start + 2, cnt - 1, res, res_sub + s.substr(start, 2) + ".");
-			if (i == 2 && stoi(s.substr(start, 3)) > 99 && stoi(s.substr(start, 3)) < 256) generate(s, start + 3, cnt - 1, res, res_sub + s.substr(start, 3) + ".");
+		if (s.size() - index > 3 * (4 - n)) {
+			return;
+		}
+		for (int i = 0; i < 3 && i + index < s.size(); i++) {
+			if (i == 0) {
+				restoreIpAddresses(s, res, res_sub + s.substr(index, 1) + ".", index + 1, n + 1);
+			}
+			if (i == 1 && s[index] != '0') {
+				restoreIpAddresses(s, res, res_sub + s.substr(index, 2) + ".", index + 2, n + 1);
+			}
+			if (i == 2 && stoi(s.substr(index, 3)) > 99 && stoi(s.substr(index, 3)) < 256) {
+				restoreIpAddresses(s, res, res_sub + s.substr(index, 3) + ".", index + 3, n + 1);
+			}
 		}
 	}
 };

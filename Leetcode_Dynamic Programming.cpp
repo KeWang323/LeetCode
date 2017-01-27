@@ -60,7 +60,7 @@ public:
 	int longestValidParentheses(string s) {
 		vector<bool> t(s.size(), false);
 		stack<int> sta;
-		for (int i = 0; i < s.length(); ++i) {
+		for (int i = 0; i < s.size(); i++) {
 			if (s[i] == '(') {
 				sta.push(i);
 			}
@@ -70,17 +70,17 @@ public:
 				sta.pop();
 			}
 		}
-		int max_len = 0, cur_len = 0;
+		int glo = 0, cur = 0;
 		for (int i = 0; i < s.size(); i++) {
 			if (t[i] == true) {
-				cur_len++;
+				cur++;
 			}
 			else {
-				cur_len = 0;
+				cur = 0;
 			}
-			max_len = max(max_len, cur_len);
+			glo = max(glo, cur);
 		}
-		return max_len;
+		return glo;
 	}
 };
 /*
@@ -860,21 +860,20 @@ public:
 		if (matrix.empty()) {
 			return 0;
 		}
-		int row = matrix.size(), col = matrix[0].size();
-		vector<vector<int>> t(row, vector<int>(col, 0));
-		int cur = 0;
-		for (int i = 0; i < matrix.size(); i++) {
-			for (int j = 0; j < matrix[0].size(); j++) {
+		int res = 0;
+		vector<vector<int>> t(matrix.size(), vector<int>(matrix[0].size(), 0));
+		for (int i = 0; i < t.size(); i++) {
+			for (int j = 0; j < t[0].size(); j++) {
 				if (i == 0 || j == 0) {
 					t[i][j] = matrix[i][j] - '0';
 				}
 				else if (matrix[i][j] == '1') {
-					t[i][j] = min(min(t[i - 1][j - 1], t[i][j - 1]), t[i - 1][j]) + 1;
+					t[i][j] = min(t[i - 1][j - 1], min(t[i - 1][j], t[i][j - 1])) + 1;
 				}
-				cur = max(cur, t[i][j]);
+				res = max(res, t[i][j]);
 			}
 		}
-		return cur * cur;
+		return res * res;
 	}
 };
 /*
@@ -1041,13 +1040,34 @@ public:
 class Solution {
 public:
 	int lengthOfLIS(vector<int>& nums) {
-		vector<int> res;
-		for (int i : nums) {
-			auto it = lower_bound(res.begin(), res.end(), i);
-			if (it == res.end()) res.push_back(i);
-			else *it = i;
+		if (nums.empty()) {
+			return 0;
 		}
-		return res.size();
+		vector<int> tail = { nums[0] };
+		for (auto n : nums) {
+			if (n <= tail[0]) {
+				tail[0] = n;
+			}
+			else if (n > tail.back()) {
+				tail.push_back(n);
+			}
+			else {
+				int left = 0, right = tail.size() - 1;
+				int res = left;
+				while (left <= right) {
+					int mid = left + (right - left) / 2;
+					if (tail[mid] >= n) {
+						res = mid;
+						right = mid - 1;
+					}
+					else {
+						left = mid + 1;
+					}
+				}
+				tail[res] = n;
+			}
+		}
+		return tail.size();
 	}
 };
 /*

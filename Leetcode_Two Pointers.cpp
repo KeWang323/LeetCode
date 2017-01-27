@@ -487,51 +487,25 @@ return 4->5->1->2->3->NULL.
  */
 class Solution {
 public:
-	ListNode* rotateRight(ListNode* head, int k) {
-		if (head == NULL || head->next == NULL) {
-			return head;
-		}
-		int len = 1;
-		ListNode *p = head, *q = head;
-		while (p->next != NULL) {
-			p = p->next;
-			len++;
-		}
-		k %= len;
-		p = head;
-		for (int i = 0; i < k; i++) {
-			p = p->next;
-		}
-		while (p->next != NULL) {
-			p = p->next;
-			q = q->next;
-		}
-		p->next = head;
-		ListNode *newh = q->next;
-		q->next = NULL;
-		return newh;
-	}
-};
-class Solution {
-public:
-	ListNode* rotateRight(ListNode* head, int k) {
-		if (!head) {
-			return head;
-		}
-		int len = 1;
-		ListNode *p = head;
-		while (p->next != NULL) {
-			len++;
-			p = p->next;
-		}
-		p->next = head;
-		k %= len;
-		for (int i = 0; i < len - k; i++, p = p->next) {
-		}
-		ListNode *head_new = p->next;
-		p->next = NULL;
-		return head_new;
-	}
+    ListNode* rotateRight(ListNode* head, int k) {
+        if (head == NULL || head->next == NULL) {
+            return head;
+        }
+        ListNode *p = head;
+        int len = 1;
+        while (p->next != NULL) {
+            len++;
+            p = p->next;
+        }
+        k %= len;
+        p->next = head;
+        for (int i = 0; i < len - k;i++) {
+            p = p->next;
+        }
+        head = p->next;
+        p->next = NULL;
+        return head;
+    }
 };
 /*
 

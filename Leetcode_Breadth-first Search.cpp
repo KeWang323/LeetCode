@@ -235,16 +235,16 @@ The minimum depth is the number of nodes along the shortest path from the root n
 class Solution {
 public:
 	int minDepth(TreeNode* root) {
-		if (!root) return 0;
-		else if (!root->left && !root->right) return 1;
-		else {
-			int depth_L, depth_R;
-			if (root->left) depth_L = minDepth(root->left);
-			else depth_L = INT_MAX;
-			if (root->right) depth_R = minDepth(root->right);
-			else depth_R = INT_MAX;
-			return min(depth_L, depth_R) + 1;
+		if (root == NULL) {
+			return 0;
 		}
+		else if (root->left == NULL && root->right == NULL) {
+			return 1;
+		}
+		int l = minDepth(root->left), r = minDepth(root->right);
+		l = l == 0 ? INT_MAX : l;
+		r = r == 0 ? INT_MAX : r;
+		return min(l, r) + 1;
 	}
 };
 /*

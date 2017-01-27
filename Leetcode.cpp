@@ -957,13 +957,13 @@ For k = 3, you should return: 3->2->1->4->5
 
 */
 /**
-* Definition for singly-linked list.
-* struct ListNode {
-*     int val;
-*     ListNode *next;
-*     ListNode(int x) : val(x), next(NULL) {}
-* };
-*/
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode(int x) : val(x), next(NULL) {}
+ * };
+ */
 class Solution {
 public:
 	ListNode* reverseKGroup(ListNode* head, int k) {
@@ -972,22 +972,20 @@ public:
 		}
 		ListNode *node = head;
 		int index = 1;
-		while (index < k) {
+		while (index++ < k) {
 			node = node->next;
 			if (node == NULL) {
 				return head;
 			}
-			index++;
 		}
-		ListNode *next = head->next;
+		ListNode *post = head->next;
 		head->next = reverseKGroup(node->next, k);
 		index = 1;
-		while (index < k) {
-			ListNode *post = next->next;
-			next->next = head;
-			head = next;
-			next = post;
-			index++;
+		while (index++ < k) {
+			ListNode *next = post->next;
+			post->next = head;
+			head = post;
+			post = next;
 		}
 		return node;
 	}
@@ -1229,7 +1227,7 @@ public:
 	int longestValidParentheses(string s) {
 		vector<bool> t(s.size(), false);
 		stack<int> sta;
-		for (int i = 0; i < s.length(); ++i) {
+		for (int i = 0; i < s.size(); i++) {
 			if (s[i] == '(') {
 				sta.push(i);
 			}
@@ -1239,17 +1237,17 @@ public:
 				sta.pop();
 			}
 		}
-		int max_len = 0, cur_len = 0;
+		int glo = 0, cur = 0;
 		for (int i = 0; i < s.size(); i++) {
 			if (t[i] == true) {
-				cur_len++;
+				cur++;
 			}
 			else {
-				cur_len = 0;
+				cur = 0;
 			}
-			max_len = max(max_len, cur_len);
+			glo = max(glo, cur);
 		}
-		return max_len;
+		return glo;
 	}
 };
 /*
@@ -1369,6 +1367,19 @@ public:
 			}
 		}
 		return l;
+	}
+};
+class Solution {
+public:
+	int searchInsert(vector<int>& nums, int target) {
+		int i = 0;
+		while (i < nums.size()) {
+			if (nums[i] >= target) {
+				return i;
+			}
+			i++;
+		}
+		return i;
 	}
 };
 /*
@@ -2369,46 +2380,20 @@ public:
 		if (head == NULL || head->next == NULL) {
 			return head;
 		}
-		int len = 1;
-		ListNode *p = head, *q = head;
-		while (p->next != NULL) {
-			p = p->next;
-			len++;
-		}
-		k %= len;
-		p = head;
-		for (int i = 0; i < k; i++) {
-			p = p->next;
-		}
-		while (p->next != NULL) {
-			p = p->next;
-			q = q->next;
-		}
-		p->next = head;
-		ListNode *newh = q->next;
-		q->next = NULL;
-		return newh;
-	}
-};
-class Solution {
-public:
-	ListNode* rotateRight(ListNode* head, int k) {
-		if (!head) {
-			return head;
-		}
-		int len = 1;
 		ListNode *p = head;
+		int len = 1;
 		while (p->next != NULL) {
 			len++;
 			p = p->next;
 		}
-		p->next = head;
 		k %= len;
-		for (int i = 0; i < len - k; i++, p = p->next) {
+		p->next = head;
+		for (int i = 0; i < len - k;i++) {
+			p = p->next;
 		}
-		ListNode *head_new = p->next;
+		head = p->next;
 		p->next = NULL;
-		return head_new;
+		return head;
 	}
 };
 /*
@@ -3514,22 +3499,33 @@ return ["255.255.11.135", "255.255.111.35"]. (Order does not matter)
 class Solution {
 public:
 	vector<string> restoreIpAddresses(string s) {
+		if (s.size() < 4 || s.size() > 12) {
+			return{};
+		}
 		vector<string> res;
-		if (s.length() < 4 || s.length() > 12) return res;
-		generate(s, 0, 4, res, "");
+		restoreIpAddresses(s, res, "", 0, 0);
 		return res;
 	}
-	void generate(string s, int start, int cnt, vector<string>& res, string res_sub) {
-		if (start == s.length() && cnt == 0) {
+private:
+	void restoreIpAddresses(const string& s, vector<string>& res, string res_sub, int index, int n) {
+		if (index == s.size() && n == 4) {
 			res_sub.pop_back();
 			res.push_back(res_sub);
 			return;
 		}
-		if (s.length() - start > 3 * cnt) return;
-		for (int i = 0; i + start < s.length() && i < 3; i++) {
-			if (i == 0) generate(s, start + 1, cnt - 1, res, res_sub + s.substr(start, 1) + ".");
-			if (i == 1 && s[start] != '0') generate(s, start + 2, cnt - 1, res, res_sub + s.substr(start, 2) + ".");
-			if (i == 2 && stoi(s.substr(start, 3)) > 99 && stoi(s.substr(start, 3)) < 256) generate(s, start + 3, cnt - 1, res, res_sub + s.substr(start, 3) + ".");
+		if (s.size() - index > 3 * (4 - n)) {
+			return;
+		}
+		for (int i = 0; i < 3 && i + index < s.size(); i++) {
+			if (i == 0) {
+				restoreIpAddresses(s, res, res_sub + s.substr(index, 1) + ".", index + 1, n + 1);
+			}
+			if (i == 1 && s[index] != '0') {
+				restoreIpAddresses(s, res, res_sub + s.substr(index, 2) + ".", index + 2, n + 1);
+			}
+			if (i == 2 && stoi(s.substr(index, 3)) > 99 && stoi(s.substr(index, 3)) < 256) {
+				restoreIpAddresses(s, res, res_sub + s.substr(index, 3) + ".", index + 3, n + 1);
+			}
 		}
 	}
 };
@@ -3574,6 +3570,29 @@ private:
 			res.push_back(root->val);
 			inorderTraversal(root->right, res);
 		}
+	}
+};
+class Solution {
+public:
+	vector<int> inorderTraversal(TreeNode* root) {
+		if (root == NULL) {
+			return{};
+		}
+		stack<TreeNode*> sta;
+		vector<int> res;
+		while (root != NULL || !sta.empty()) {
+			if (root != NULL) {
+				sta.push(root);
+				root = root->left;
+			}
+			else {
+				root = sta.top();
+				sta.pop();
+				res.push_back(root->val);
+				root = root->right;
+			}
+		}
+		return res;
 	}
 };
 /*
@@ -4250,16 +4269,16 @@ The minimum depth is the number of nodes along the shortest path from the root n
 class Solution {
 public:
 	int minDepth(TreeNode* root) {
-		if (!root) return 0;
-		else if (!root->left && !root->right) return 1;
-		else {
-			int depth_L, depth_R;
-			if (root->left) depth_L = minDepth(root->left);
-			else depth_L = INT_MAX;
-			if (root->right) depth_R = minDepth(root->right);
-			else depth_R = INT_MAX;
-			return min(depth_L, depth_R) + 1;
+		if (root == NULL) {
+			return 0;
 		}
+		else if (root->left == NULL && root->right == NULL) {
+			return 1;
+		}
+		int l = minDepth(root->left), r = minDepth(root->right);
+		l = l == 0 ? INT_MAX : l;
+		r = r == 0 ? INT_MAX : r;
+		return min(l, r) + 1;
 	}
 };
 /*
@@ -5399,6 +5418,29 @@ public:
 			traversal(root->left, res);
 			traversal(root->right, res);
 		}
+	}
+};
+class Solution {
+public:
+	vector<int> preorderTraversal(TreeNode* root) {
+		if (root == NULL) {
+			return{};
+		}
+		vector<int> res;
+		stack<TreeNode*> sta;
+		sta.push(root);
+		while (!sta.empty()) {
+			TreeNode *node = sta.top();
+			sta.pop();
+			res.push_back(node->val);
+			if (node->right != NULL) {
+				sta.push(node->right);
+			}
+			if (node->left != NULL) {
+				sta.push(node->left);
+			}
+		}
+		return res;
 	}
 };
 /*
@@ -7281,21 +7323,20 @@ public:
 		if (matrix.empty()) {
 			return 0;
 		}
-		int row = matrix.size(), col = matrix[0].size();
-		vector<vector<int>> t(row, vector<int>(col, 0));
-		int cur = 0;
-		for (int i = 0; i < matrix.size(); i++) {
-			for (int j = 0; j < matrix[0].size(); j++) {
+		int res = 0;
+		vector<vector<int>> t(matrix.size(), vector<int>(matrix[0].size(), 0));
+		for (int i = 0; i < t.size(); i++) {
+			for (int j = 0; j < t[0].size(); j++) {
 				if (i == 0 || j == 0) {
 					t[i][j] = matrix[i][j] - '0';
 				}
 				else if (matrix[i][j] == '1') {
-					t[i][j] = min(min(t[i - 1][j - 1], t[i][j - 1]), t[i - 1][j]) + 1;
+					t[i][j] = min(t[i - 1][j - 1], min(t[i - 1][j], t[i][j - 1])) + 1;
 				}
-				cur = max(cur, t[i][j]);
+				res = max(res, t[i][j]);
 			}
 		}
-		return cur * cur;
+		return res * res;
 	}
 };
 /*
@@ -8231,58 +8272,86 @@ A Uni-value subtree means all nodes of the subtree have the same value.
 
 For example:
 Given binary tree,
-5
-/ \
-1   5
-/ \   \
-5   5   5
+			  5
+			 / \
+			1   5
+		   / \   \
+		  5   5   5
 return 4.
 
 */
 /**
-* Definition for a binary tree node.
-* struct TreeNode {
-*     int val;
-*     TreeNode *left;
-*     TreeNode *right;
-*     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
-* };
-*/
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
 class Solution {
 public:
 	int countUnivalSubtrees(TreeNode* root) {
 		int res = 0;
-		cout(root, res);
+		countUnivalSubtrees(root, res);
 		return res;
 	}
 private:
-	int cout(TreeNode* root, int& res) {
+	bool countUnivalSubtrees(TreeNode* root, int& res) {
 		if (root == NULL) {
-			return 0;
+			return true;
 		}
 		else if (root->left == NULL && root->right == NULL) {
 			res++;
-			return 1;
+			return true;
 		}
-		int l = cout(root->left, res), r = cout(root->right, res);
-		if (l == 1 && r == 1) {
-			if (root->val == root->left->val && root->val == root->right->val) {
-				res += 1;
-				return 1;
+		bool l = countUnivalSubtrees(root->left, res), r = countUnivalSubtrees(root->right, res);
+		if (l && r && (root->left == NULL || root->val == root->left->val) && (root->right == NULL || root->val == root->right->val)) {
+			res++;
+			return true;
+		}
+		return false;
+	}
+};
+/*
+
+252. Meeting Rooms (Easy)
+
+Given an array of meeting time intervals consisting of start and end times [[s1,e1],[s2,e2],...] (si < ei), determine if a person could attend all meetings.
+
+For example,
+Given [[0, 30],[5, 10],[15, 20]],
+return false.
+
+*/
+/**
+* Definition for an interval.
+* struct Interval {
+*     int start;
+*     int end;
+*     Interval() : start(0), end(0) {}
+*     Interval(int s, int e) : start(s), end(e) {}
+* };
+*/
+class Comp {
+public:
+	bool operator()(Interval i1, Interval i2) {
+		return i1.end < i2.end;
+	}
+} comp;
+class Solution {
+public:
+	bool canAttendMeetings(vector<Interval>& intervals) {
+		if (intervals.empty()) {
+			return true;
+		}
+		sort(intervals.begin(), intervals.end(), comp);
+		for (int i = 0; i < intervals.size() - 1; i++) {
+			if (intervals[i].end > intervals[i + 1].start) {
+				return false;
 			}
 		}
-		else if (l == -1 || r == -1) {
-			return -1;
-		}
-		else if (l != 0 && root->val == root->left->val) {
-			res += 1;
-			return 1;
-		}
-		else if (r != 0 && root->val == root->right->val) {
-			res += 1;
-			return 1;
-		}
-		return -1;
+		return true;
 	}
 };
 /*
@@ -9401,7 +9470,7 @@ public:
 
 Median is the middle value in an ordered integer list. If the size of the list is even, there is no middle value. So the median is the mean of the two middle value.
 
-Examples: 
+Examples:
 [2,3,4] , the median is 3
 
 [2,3], the median is (2 + 3) / 2 = 2.5
@@ -9415,7 +9484,7 @@ For example:
 addNum(1)
 addNum(2)
 findMedian() -> 1.5
-addNum(3) 
+addNum(3)
 findMedian() -> 2
 
 */
@@ -9678,13 +9747,34 @@ public:
 class Solution {
 public:
 	int lengthOfLIS(vector<int>& nums) {
-		vector<int> res;
-		for (int i : nums) {
-			auto it = lower_bound(res.begin(), res.end(), i);
-			if (it == res.end()) res.push_back(i);
-			else *it = i;
+		if (nums.empty()) {
+			return 0;
 		}
-		return res.size();
+		vector<int> tail = { nums[0] };
+		for (auto n : nums) {
+			if (n <= tail[0]) {
+				tail[0] = n;
+			}
+			else if (n > tail.back()) {
+				tail.push_back(n);
+			}
+			else {
+				int left = 0, right = tail.size() - 1;
+				int res = left;
+				while (left <= right) {
+					int mid = left + (right - left) / 2;
+					if (tail[mid] >= n) {
+						res = mid;
+						right = mid - 1;
+					}
+					else {
+						left = mid + 1;
+					}
+				}
+				tail[res] = n;
+			}
+		}
+		return tail.size();
 	}
 };
 /*
@@ -10358,18 +10448,18 @@ The thief has found himself a new place for his thievery again. There is only on
 Determine the maximum amount of money the thief can rob tonight without alerting the police.
 
 Example 1:
-3
-/ \
-2   3
-\   \
-3   1
+	 3
+	/ \
+   2   3
+	\   \
+	 3   1
 Maximum amount of money the thief can rob = 3 + 3 + 1 = 7.
 Example 2:
-3
-/ \
-4   5
-/ \   \
-1   3   1
+	 3
+	/ \
+   4   5
+  / \   \
+ 1   3   1
 Maximum amount of money the thief can rob = 4 + 5 = 9.
 
 */
@@ -10432,20 +10522,91 @@ public:
 };
 /*
 
-342. Power of Four (Easy)
+341. Flatten Nested List Iterator (Medium)
 
-Given an integer (signed 32 bits), write a function to check whether it is a power of 4.
+Given a nested list of integers, implement an iterator to flatten it.
 
-Example:
-Given num = 16, return true. Given num = 5, return false.
+Each element is either an integer, or a list -- whose elements may also be integers or other lists.
 
-Follow up: Could you solve it without loops/recursion?
+Example 1:
+Given the list [[1,1],2,[1,1]],
+
+By calling next repeatedly until hasNext returns false, the order of elements returned by next should be: [1,1,2,1,1].
+
+Example 2:
+Given the list [1,[4,[6]]],
+
+By calling next repeatedly until hasNext returns false, the order of elements returned by next should be: [1,4,6].
 
 */
+/**
+ * // This is the interface that allows for creating nested lists.
+ * // You should not implement it, or speculate about its implementation
+ * class NestedInteger {
+ *   public:
+ *     // Return true if this NestedInteger holds a single integer, rather than a nested list.
+ *     bool isInteger() const;
+ *
+ *     // Return the single integer that this NestedInteger holds, if it holds a single integer
+ *     // The result is undefined if this NestedInteger holds a nested list
+ *     int getInteger() const;
+ *
+ *     // Return the nested list that this NestedInteger holds, if it holds a nested list
+ *     // The result is undefined if this NestedInteger holds a single integer
+ *     const vector<NestedInteger> &getList() const;
+ * };
+ */
+class NestedIterator {
+public:
+	stack<NestedInteger> sta;
+	NestedIterator(vector<NestedInteger> &nestedList) {
+		for (int i = nestedList.size() - 1; i >= 0; i--) {
+			sta.push(nestedList[i]);
+		}
+	}
+
+	int next() {
+		int result = sta.top().getInteger();
+		sta.pop();
+		return result;
+	}
+
+	bool hasNext() {
+		while (!sta.empty()) {
+			if (sta.top().isInteger() == true) {
+				return true;
+			}
+			NestedInteger curr = sta.top();
+			sta.pop();
+			vector<NestedInteger>& adjs = curr.getList();
+			for (int i = adjs.size() - 1; i >= 0; i--) {
+				sta.push(adjs[i]);
+			}
+		}
+		return false;
+	}
+};
+/**
+ * Your NestedIterator object will be instantiated and called as such:
+ * NestedIterator i(nestedList);
+ * while (i.hasNext()) cout << i.next();
+ */
+ /*
+
+ 342. Power of Four (Easy)
+
+ Given an integer (signed 32 bits), write a function to check whether it is a power of 4.
+
+ Example:
+ Given num = 16, return true. Given num = 5, return false.
+
+ Follow up: Could you solve it without loops/recursion?
+
+ */
 class Solution {
 public:
 	bool isPowerOfFour(int num) {
-		return num > 0 && !(num & (num - 1)) && (num & 0x55555555) == num;
+		return num > 0 && (num & (num - 1)) == 0 && (num & 0x55555555) != 0;
 	}
 };
 /*
@@ -11448,17 +11609,41 @@ Note:
 You may assume k is always valid, 1 ≤ k ≤ n2.
 
 */
+class Comp {
+public:
+	bool operator()(pair<int, pair<int, int>> p1, pair<int, pair<int, int>> p2) {
+		return p1.first > p2.first;
+	}
+};
 class Solution {
 public:
 	int kthSmallest(vector<vector<int>>& matrix, int k) {
-		int r = matrix.size() - 1, min = matrix[0][0], max = matrix[r][r];
-		while (min < max) {
-			int cnt = 0, mid = (min + max) / 2;
-			for (int i = 0; i <= r && matrix[i][0] <= mid; i++)
-				cnt += upper_bound(matrix[i].begin(), matrix[i].end(), mid) - matrix[i].begin();
-			k <= cnt ? max = mid : min = mid + 1;
+		priority_queue<pair<int, pair<int, int>>, vector<pair<int, pair<int, int>>>, Comp> pq;
+		vector<vector<bool>> t(matrix.size(), vector<bool>(matrix[0].size(), false));
+		pq.push(make_pair(matrix[0][0], make_pair(0, 0)));
+		t[0][0] = true;
+		while (1) {
+			pair<int, pair<int, int>> p = pq.top();
+			pq.pop();
+			if (k == 1) {
+				return p.first;
+			}
+			k--;
+			// k--;
+			// if (k == 0) {
+			// return p.first;
+			// }
+			int row = p.second.first, col = p.second.second;
+			if (row < matrix.size() - 1 && t[row + 1][col] == false) {
+				t[row + 1][col] = true;
+				pq.push(make_pair(matrix[row + 1][col], make_pair(row + 1, col)));
+			}
+			if (col < matrix[0].size() - 1 && t[row][col + 1] == false) {
+				t[row][col + 1] = true;
+				pq.push(make_pair(matrix[row][col + 1], make_pair(row, col + 1)));
+			}
 		}
-		return min;
+		return 0;
 	}
 };
 /*

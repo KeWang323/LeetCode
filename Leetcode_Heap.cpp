@@ -121,7 +121,7 @@ public:
 
 Median is the middle value in an ordered integer list. If the size of the list is even, there is no middle value. So the median is the mean of the two middle value.
 
-Examples: 
+Examples:
 [2,3,4] , the median is 3
 
 [2,3], the median is (2 + 3) / 2 = 2.5
@@ -135,7 +135,7 @@ For example:
 addNum(1)
 addNum(2)
 findMedian() -> 1.5
-addNum(3) 
+addNum(3)
 findMedian() -> 2
 
 */
@@ -356,16 +356,40 @@ public:
  You may assume k is always valid, 1 ≤ k ≤ n2.
 
  */
+class Comp {
+public:
+	bool operator()(pair<int, pair<int, int>> p1, pair<int, pair<int, int>> p2) {
+		return p1.first > p2.first;
+	}
+};
 class Solution {
 public:
 	int kthSmallest(vector<vector<int>>& matrix, int k) {
-		int r = matrix.size() - 1, min = matrix[0][0], max = matrix[r][r];
-		while (min < max) {
-			int cnt = 0, mid = (min + max) / 2;
-			for (int i = 0; i <= r && matrix[i][0] <= mid; i++)
-				cnt += upper_bound(matrix[i].begin(), matrix[i].end(), mid) - matrix[i].begin();
-			k <= cnt ? max = mid : min = mid + 1;
+		priority_queue<pair<int, pair<int, int>>, vector<pair<int, pair<int, int>>>, Comp> pq;
+		vector<vector<bool>> t(matrix.size(), vector<bool>(matrix[0].size(), false));
+		pq.push(make_pair(matrix[0][0], make_pair(0, 0)));
+		t[0][0] = true;
+		while (1) {
+			pair<int, pair<int, int>> p = pq.top();
+			pq.pop();
+			if (k == 1) {
+				return p.first;
+			}
+			k--;
+			// k--;
+			// if (k == 0) {
+			// return p.first;
+			// }
+			int row = p.second.first, col = p.second.second;
+			if (row < matrix.size() - 1 && t[row + 1][col] == false) {
+				t[row + 1][col] = true;
+				pq.push(make_pair(matrix[row + 1][col], make_pair(row + 1, col)));
+			}
+			if (col < matrix[0].size() - 1 && t[row][col + 1] == false) {
+				t[row][col + 1] = true;
+				pq.push(make_pair(matrix[row][col + 1], make_pair(row, col + 1)));
+			}
 		}
-		return min;
+		return 0;
 	}
 };

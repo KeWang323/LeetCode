@@ -209,6 +209,19 @@ public:
 		return l;
 	}
 };
+class Solution {
+public:
+	int searchInsert(vector<int>& nums, int target) {
+		int i = 0;
+		while (i < nums.size()) {
+			if (nums[i] >= target) {
+				return i;
+			}
+			i++;
+		}
+		return i;
+	}
+};
 /*
 
 50. Pow(x, n) (Medium)
@@ -872,13 +885,34 @@ public:
 class Solution {
 public:
 	int lengthOfLIS(vector<int>& nums) {
-		vector<int> res;
-		for (int i : nums) {
-			auto it = lower_bound(res.begin(), res.end(), i);
-			if (it == res.end()) res.push_back(i);
-			else *it = i;
+		if (nums.empty()) {
+			return 0;
 		}
-		return res.size();
+		vector<int> tail = { nums[0] };
+		for (auto n : nums) {
+			if (n <= tail[0]) {
+				tail[0] = n;
+			}
+			else if (n > tail.back()) {
+				tail.push_back(n);
+			}
+			else {
+				int left = 0, right = tail.size() - 1;
+				int res = left;
+				while (left <= right) {
+					int mid = left + (right - left) / 2;
+					if (tail[mid] >= n) {
+						res = mid;
+						right = mid - 1;
+					}
+					else {
+						left = mid + 1;
+					}
+				}
+				tail[res] = n;
+			}
+		}
+		return tail.size();
 	}
 };
 /*
@@ -1046,21 +1080,45 @@ matrix = [
 k = 8,
 
 return 13.
-Note:
+Note: 
 You may assume k is always valid, 1 ≤ k ≤ n2.
 
 */
+class Comp {
+public:
+	bool operator()(pair<int, pair<int, int>> p1, pair<int, pair<int, int>> p2) {
+		return p1.first > p2.first;
+	}
+};
 class Solution {
 public:
 	int kthSmallest(vector<vector<int>>& matrix, int k) {
-		int r = matrix.size() - 1, min = matrix[0][0], max = matrix[r][r];
-		while (min < max) {
-			int cnt = 0, mid = (min + max) / 2;
-			for (int i = 0; i <= r && matrix[i][0] <= mid; i++)
-				cnt += upper_bound(matrix[i].begin(), matrix[i].end(), mid) - matrix[i].begin();
-			k <= cnt ? max = mid : min = mid + 1;
+		priority_queue<pair<int, pair<int, int>>, vector<pair<int, pair<int, int>>>, Comp> pq;
+		vector<vector<bool>> t(matrix.size(), vector<bool>(matrix[0].size(), false));
+		pq.push(make_pair(matrix[0][0], make_pair(0, 0)));
+		t[0][0] = true;
+		while (1) {
+			pair<int, pair<int, int>> p = pq.top();
+			pq.pop();
+			if (k == 1) {
+				return p.first;
+			}
+			k--;
+			// k--;
+			// if (k == 0) {
+			// return p.first;
+			// }
+			int row = p.second.first, col = p.second.second;
+			if (row < matrix.size() - 1 && t[row + 1][col] == false) {
+				t[row + 1][col] = true;
+				pq.push(make_pair(matrix[row + 1][col], make_pair(row + 1, col)));
+			}
+			if (col < matrix[0].size() - 1 && t[row][col + 1] == false) {
+				t[row][col + 1] = true;
+				pq.push(make_pair(matrix[row][col + 1], make_pair(row, col + 1)));
+			}
 		}
-		return min;
+		return 0;
 	}
 };
 /*

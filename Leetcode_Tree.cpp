@@ -665,16 +665,16 @@ The minimum depth is the number of nodes along the shortest path from the root n
 class Solution {
 public:
 	int minDepth(TreeNode* root) {
-		if (!root) return 0;
-		else if (!root->left && !root->right) return 1;
-		else {
-			int depth_L, depth_R;
-			if (root->left) depth_L = minDepth(root->left);
-			else depth_L = INT_MAX;
-			if (root->right) depth_R = minDepth(root->right);
-			else depth_R = INT_MAX;
-			return min(depth_L, depth_R) + 1;
+		if (root == NULL) {
+			return 0;
 		}
+		else if (root->left == NULL && root->right == NULL) {
+			return 1;
+		}
+		int l = minDepth(root->left), r = minDepth(root->right);
+		l = l == 0 ? INT_MAX : l;
+		r = r == 0 ? INT_MAX : r;
+		return min(l, r) + 1;
 	}
 };
 /*
@@ -786,23 +786,23 @@ Given a binary tree, flatten it to a linked list in-place.
 For example,
 Given
 
-         1
-        / \
-       2   5
-      / \   \
-     3   4   6
+		 1
+		/ \
+	   2   5
+	  / \   \
+	 3   4   6
 The flattened tree should look like:
    1
-    \
-     2
-      \
-       3
-        \
-         4
-          \
-           5
-            \
-             6
+	\
+	 2
+	  \
+	   3
+		\
+		 4
+		  \
+		   5
+			\
+			 6
 
 */
 /**
@@ -816,22 +816,22 @@ The flattened tree should look like:
  */
 class Solution {
 public:
-    void flatten(TreeNode* root) {
-        while (root != NULL) {
-            if (root->left != NULL && root->right != NULL) {
-                TreeNode *temp = root->left;
-                while (temp->right != NULL) {
-                    temp = temp->right;
-                }
-                temp->right = root->right;
-            }
-            if (root->left != NULL) {
-                root->right = root->left;
-            }
-            root->left = NULL;
-            root = root->right;
-        }
-    }
+	void flatten(TreeNode* root) {
+		while (root != NULL) {
+			if (root->left != NULL && root->right != NULL) {
+				TreeNode *temp = root->left;
+				while (temp->right != NULL) {
+					temp = temp->right;
+				}
+				temp->right = root->right;
+			}
+			if (root->left != NULL) {
+				root->right = root->left;
+			}
+			root->left = NULL;
+			root = root->right;
+		}
+	}
 };
 /*
 
@@ -1105,6 +1105,29 @@ public:
 			traversal(root->left, res);
 			traversal(root->right, res);
 		}
+	}
+};
+class Solution {
+public:
+	vector<int> preorderTraversal(TreeNode* root) {
+		if (root == NULL) {
+			return{};
+		}
+		vector<int> res;
+		stack<TreeNode*> sta;
+		sta.push(root);
+		while (!sta.empty()) {
+			TreeNode *node = sta.top();
+			sta.pop();
+			res.push_back(node->val);
+			if (node->right != NULL) {
+				sta.push(node->right);
+			}
+			if (node->left != NULL) {
+				sta.push(node->left);
+			}
+		}
+		return res;
 	}
 };
 /*
@@ -1580,58 +1603,45 @@ A Uni-value subtree means all nodes of the subtree have the same value.
 
 For example:
 Given binary tree,
-5
-/ \
-1   5
-/ \   \
-5   5   5
+			  5
+			 / \
+			1   5
+		   / \   \
+		  5   5   5
 return 4.
 
 */
 /**
-* Definition for a binary tree node.
-* struct TreeNode {
-*     int val;
-*     TreeNode *left;
-*     TreeNode *right;
-*     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
-* };
-*/
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
 class Solution {
 public:
 	int countUnivalSubtrees(TreeNode* root) {
 		int res = 0;
-		cout(root, res);
+		countUnivalSubtrees(root, res);
 		return res;
 	}
 private:
-	int cout(TreeNode* root, int& res) {
+	bool countUnivalSubtrees(TreeNode* root, int& res) {
 		if (root == NULL) {
-			return 0;
+			return true;
 		}
 		else if (root->left == NULL && root->right == NULL) {
 			res++;
-			return 1;
+			return true;
 		}
-		int l = cout(root->left, res), r = cout(root->right, res);
-		if (l == 1 && r == 1) {
-			if (root->val == root->left->val && root->val == root->right->val) {
-				res += 1;
-				return 1;
-			}
+		bool l = countUnivalSubtrees(root->left, res), r = countUnivalSubtrees(root->right, res);
+		if (l && r && (root->left == NULL || root->val == root->left->val) && (root->right == NULL || root->val == root->right->val)) {
+			res++;
+			return true;
 		}
-		else if (l == -1 || r == -1) {
-			return -1;
-		}
-		else if (l != 0 && root->val == root->left->val) {
-			res += 1;
-			return 1;
-		}
-		else if (r != 0 && root->val == root->right->val) {
-			res += 1;
-			return 1;
-		}
-		return -1;
+		return false;
 	}
 };
 /*
@@ -2112,18 +2122,18 @@ The thief has found himself a new place for his thievery again. There is only on
 Determine the maximum amount of money the thief can rob tonight without alerting the police.
 
 Example 1:
-3
-/ \
-2   3
-\   \
-3   1
+	 3
+	/ \
+   2   3
+	\   \
+	 3   1
 Maximum amount of money the thief can rob = 3 + 3 + 1 = 7.
 Example 2:
-3
-/ \
-4   5
-/ \   \
-1   3   1
+	 3
+	/ \
+   4   5
+  / \   \
+ 1   3   1
 Maximum amount of money the thief can rob = 4 + 5 = 9.
 
 */

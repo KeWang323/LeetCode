@@ -433,6 +433,29 @@ private:
 		}
 	}
 };
+class Solution {
+public:
+	vector<int> inorderTraversal(TreeNode* root) {
+		if (root == NULL) {
+			return{};
+		}
+		stack<TreeNode*> sta;
+		vector<int> res;
+		while (root != NULL || !sta.empty()) {
+			if (root != NULL) {
+				sta.push(root);
+				root = root->left;
+			}
+			else {
+				root = sta.top();
+				sta.pop();
+				res.push_back(root->val);
+				root = root->right;
+			}
+		}
+		return res;
+	}
+};
 /*
 
 136. Single Number (Medium)

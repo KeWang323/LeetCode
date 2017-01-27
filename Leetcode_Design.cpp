@@ -390,7 +390,7 @@ private:
 
 Median is the middle value in an ordered integer list. If the size of the list is even, there is no middle value. So the median is the mean of the two middle value.
 
-Examples: 
+Examples:
 [2,3,4] , the median is 3
 
 [2,3], the median is (2 + 3) / 2 = 2.5
@@ -404,7 +404,7 @@ For example:
 addNum(1)
 addNum(2)
 findMedian() -> 1.5
-addNum(3) 
+addNum(3)
 findMedian() -> 2
 
 */
@@ -527,18 +527,89 @@ private:
 // codec.deserialize(codec.serialize(root));
 /*
 
-346. Moving Average from Data Stream (Easy)
+341. Flatten Nested List Iterator (Medium)
 
-Given a stream of integers and a window size, calculate the moving average of all integers in the sliding window.
+Given a nested list of integers, implement an iterator to flatten it.
 
-For example,
-MovingAverage m = new MovingAverage(3);
-m.next(1) = 1
-m.next(10) = (1 + 10) / 2
-m.next(3) = (1 + 10 + 3) / 3
-m.next(5) = (10 + 3 + 5) / 3
+Each element is either an integer, or a list -- whose elements may also be integers or other lists.
+
+Example 1:
+Given the list [[1,1],2,[1,1]],
+
+By calling next repeatedly until hasNext returns false, the order of elements returned by next should be: [1,1,2,1,1].
+
+Example 2:
+Given the list [1,[4,[6]]],
+
+By calling next repeatedly until hasNext returns false, the order of elements returned by next should be: [1,4,6].
 
 */
+/**
+ * // This is the interface that allows for creating nested lists.
+ * // You should not implement it, or speculate about its implementation
+ * class NestedInteger {
+ *   public:
+ *     // Return true if this NestedInteger holds a single integer, rather than a nested list.
+ *     bool isInteger() const;
+ *
+ *     // Return the single integer that this NestedInteger holds, if it holds a single integer
+ *     // The result is undefined if this NestedInteger holds a nested list
+ *     int getInteger() const;
+ *
+ *     // Return the nested list that this NestedInteger holds, if it holds a nested list
+ *     // The result is undefined if this NestedInteger holds a single integer
+ *     const vector<NestedInteger> &getList() const;
+ * };
+ */
+class NestedIterator {
+public:
+	stack<NestedInteger> sta;
+	NestedIterator(vector<NestedInteger> &nestedList) {
+		for (int i = nestedList.size() - 1; i >= 0; i--) {
+			sta.push(nestedList[i]);
+		}
+	}
+
+	int next() {
+		int result = sta.top().getInteger();
+		sta.pop();
+		return result;
+	}
+
+	bool hasNext() {
+		while (!sta.empty()) {
+			if (sta.top().isInteger() == true) {
+				return true;
+			}
+			NestedInteger curr = sta.top();
+			sta.pop();
+			vector<NestedInteger>& adjs = curr.getList();
+			for (int i = adjs.size() - 1; i >= 0; i--) {
+				sta.push(adjs[i]);
+			}
+		}
+		return false;
+	}
+};
+/**
+ * Your NestedIterator object will be instantiated and called as such:
+ * NestedIterator i(nestedList);
+ * while (i.hasNext()) cout << i.next();
+ */
+ /*
+
+ 346. Moving Average from Data Stream (Easy)
+
+ Given a stream of integers and a window size, calculate the moving average of all integers in the sliding window.
+
+ For example,
+ MovingAverage m = new MovingAverage(3);
+ m.next(1) = 1
+ m.next(10) = (1 + 10) / 2
+ m.next(3) = (1 + 10 + 3) / 3
+ m.next(5) = (10 + 3 + 5) / 3
+
+ */
 class MovingAverage {
 public:
 	/** Initialize your data structure here. */
