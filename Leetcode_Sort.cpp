@@ -363,20 +363,20 @@ return false.
 
 */
 /**
-* Definition for an interval.
-* struct Interval {
-*     int start;
-*     int end;
-*     Interval() : start(0), end(0) {}
-*     Interval(int s, int e) : start(s), end(e) {}
-* };
-*/
+ * Definition for an interval.
+ * struct Interval {
+ *     int start;
+ *     int end;
+ *     Interval() : start(0), end(0) {}
+ *     Interval(int s, int e) : start(s), end(e) {}
+ * };
+ */
 class Comp {
 public:
 	bool operator()(Interval i1, Interval i2) {
-		return i1.end < i2.end;
+		return i1.start < i2.start;
 	}
-} comp;
+}comp;
 class Solution {
 public:
 	bool canAttendMeetings(vector<Interval>& intervals) {

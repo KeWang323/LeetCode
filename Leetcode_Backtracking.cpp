@@ -486,21 +486,22 @@ Note: Given n will be between 1 and 9 inclusive.
 class Solution {
 public:
 	string getPermutation(int n, int k) {
-		int i, j, f = 1;
+		int f = 1;
 		string s(n, '0');
-		for (i = 1;i <= n;i++) {
+		for (int i = 1; i <= n; i++) {
 			f *= i;
-			s[i - 1] += i;
+			s[i - 1] = i + '0';
 		}
-		for (i = 0, k--; i < n; i++) {
+		k--;
+		for (int i = 0; i < n; i++) {
 			f /= n - i;
-			j = i + k / f;
+			int j = i + k / f;
 			char c = s[j];
-			for (;j > i;j--) {
+			for (; j > i;j--) {
 				s[j] = s[j - 1];
 			}
-			k %= f;
 			s[i] = c;
+			k %= f;
 		}
 		return s;
 	}

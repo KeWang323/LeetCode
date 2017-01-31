@@ -914,17 +914,18 @@ If you have figured out the O(n) solution, try coding another solution of which 
 class Solution {
 public:
 	int minSubArrayLen(int s, vector<int>& nums) {
-		int l = 0, r = 0, _sum = 0, _size = nums.size(), len_min = _size + 1;
-		while (r < _size) {
-			while (r < _size && _sum < s) {
-				_sum += nums[r++];
+		int res = nums.size() + 1, sum = 0;
+		int i = 0, j = 0;
+		while (j < nums.size()) {
+			while (j < nums.size() && sum < s) {
+				sum += nums[j++];
 			}
-			while (_sum >= s) {
-				_sum -= nums[l++];
+			while (i < nums.size() && sum >= s) {
+				sum -= nums[i++];
 			}
-			len_min = min(len_min, r - l + 1);
+			res = min(res, j - i + 1);
 		}
-		return len_min > _size ? 0 : len_min;
+		return res == nums.size() + 1 ? 0 : res;
 	}
 };
 /*

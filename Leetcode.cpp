@@ -2336,21 +2336,22 @@ Note: Given n will be between 1 and 9 inclusive.
 class Solution {
 public:
 	string getPermutation(int n, int k) {
-		int i, j, f = 1;
+		int f = 1;
 		string s(n, '0');
-		for (i = 1;i <= n;i++) {
+		for (int i = 1; i <= n; i++) {
 			f *= i;
-			s[i - 1] += i;
+			s[i - 1] = i + '0';
 		}
-		for (i = 0, k--; i < n; i++) {
+		k--;
+		for (int i = 0; i < n; i++) {
 			f /= n - i;
-			j = i + k / f;
+			int j = i + k / f;
 			char c = s[j];
-			for (;j > i;j--) {
+			for (; j > i;j--) {
 				s[j] = s[j - 1];
 			}
-			k %= f;
 			s[i] = c;
+			k %= f;
 		}
 		return s;
 	}
@@ -3711,22 +3712,22 @@ Binary tree [1,2,3], return false.
 class Solution {
 public:
 	bool isValidBST(TreeNode* root) {
-		TreeNode* prev = NULL;
-		return validate(root, prev);
+		TreeNode *prev = NULL;
+		return isValidBST(root, prev);
 	}
 private:
-	bool validate(TreeNode* root, TreeNode* &prev) {
+	bool isValidBST(TreeNode* root, TreeNode*& prev) {
 		if (root == NULL) {
 			return true;
 		}
-		else if (!validate(root->left, prev)) {
+		if (!isValidBST(root->left, prev)) {
 			return false;
 		}
-		else if (prev != NULL && prev->val >= root->val) {
+		if (prev != NULL && prev->val >= root->val) {
 			return false;
 		}
 		prev = root;
-		return validate(root->right, prev);
+		return isValidBST(root->right, prev);
 	}
 };
 /*
@@ -7112,17 +7113,18 @@ If you have figured out the O(n) solution, try coding another solution of which 
 class Solution {
 public:
 	int minSubArrayLen(int s, vector<int>& nums) {
-		int l = 0, r = 0, _sum = 0, _size = nums.size(), len_min = _size + 1;
-		while (r < _size) {
-			while (r < _size && _sum < s) {
-				_sum += nums[r++];
+		int res = nums.size() + 1, sum = 0;
+		int i = 0, j = 0;
+		while (j < nums.size()) {
+			while (j < nums.size() && sum < s) {
+				sum += nums[j++];
 			}
-			while (_sum >= s) {
-				_sum -= nums[l++];
+			while (i < nums.size() && sum >= s) {
+				sum -= nums[i++];
 			}
-			len_min = min(len_min, r - l + 1);
+			res = min(res, j - i + 1);
 		}
-		return len_min > _size ? 0 : len_min;
+		return res == nums.size() + 1 ? 0 : res;
 	}
 };
 /*
@@ -8325,20 +8327,20 @@ return false.
 
 */
 /**
-* Definition for an interval.
-* struct Interval {
-*     int start;
-*     int end;
-*     Interval() : start(0), end(0) {}
-*     Interval(int s, int e) : start(s), end(e) {}
-* };
-*/
+ * Definition for an interval.
+ * struct Interval {
+ *     int start;
+ *     int end;
+ *     Interval() : start(0), end(0) {}
+ *     Interval(int s, int e) : start(s), end(e) {}
+ * };
+ */
 class Comp {
 public:
 	bool operator()(Interval i1, Interval i2) {
-		return i1.end < i2.end;
+		return i1.start < i2.start;
 	}
-} comp;
+}comp;
 class Solution {
 public:
 	bool canAttendMeetings(vector<Interval>& intervals) {
@@ -9199,17 +9201,76 @@ private:
 };
 /*
 
-283. Move Zeroes (Easy)
+281. Zigzag Iterator (Medium)
 
-Given an array nums, write a function to move all 0's to the end of it while maintaining the relative order of the non-zero elements.
+Given two 1d vectors, implement an iterator to return their elements alternately.
 
-For example, given nums = [0, 1, 0, 3, 12], after calling your function, nums should be [1, 3, 12, 0, 0].
+For example, given two 1d vectors:
 
-Note:
-You must do this in-place without making a copy of the array.
-Minimize the total number of operations.
+v1 = [1, 2]
+v2 = [3, 4, 5, 6]
+By calling next repeatedly until hasNext returns false, the order of elements returned by next should be: [1, 3, 2, 4, 5, 6].
+
+Follow up: What if you are given k 1d vectors? How well can your code be extended to such cases?
+
+Clarification for the follow up question - Update (2015-09-18):
+The "Zigzag" order is not clearly defined and is ambiguous for k > 2 cases. If "Zigzag" does not look right to you, replace "Zigzag" with "Cyclic". For example, given the following input:
+
+[1,2,3]
+[4,5,6,7]
+[8,9]
+It should return [1,4,8,2,5,9,3,6,7].
 
 */
+class ZigzagIterator {
+public:
+	ZigzagIterator(vector<int>& v1, vector<int>& v2) {
+		b[0] = v1.begin();
+		b[1] = v2.begin();
+		e[0] = v1.end();
+		e[1] = v2.end();
+	}
+
+	int next() {
+		int elem;
+		if (b[0] == e[0]) {
+			elem = *b[1]++;
+		}
+		else if (b[1] == e[1]) {
+			elem = *b[0]++;
+		}
+		else {
+			elem = *b[cnt % 2]++;
+			cnt++;
+		}
+		return elem;
+	}
+
+	bool hasNext() {
+		return b[0] != e[0] || b[1] != e[1];
+	}
+private:
+	vector<int>::iterator b[2], e[2];
+	int cnt = 0;
+};
+/**
+ * Your ZigzagIterator object will be instantiated and called as such:
+ * ZigzagIterator i(v1, v2);
+ * while (i.hasNext()) cout << i.next();
+ */
+ /*
+
+ 283. Move Zeroes (Easy)
+
+ Given an array nums, write a function to move all 0's to the end of it while maintaining the relative order of the non-zero elements.
+
+ For example, given nums = [0, 1, 0, 3, 12], after calling your function, nums should be [1, 3, 12, 0, 0].
+
+ Note:
+ You must do this in-place without making a copy of the array.
+ Minimize the total number of operations.
+
+ */
 class Solution {
 public:
 	void moveZeroes(vector<int>& nums) {
@@ -12676,13 +12737,13 @@ Output: 7 -> 8 -> 0 -> 7
 
 */
 /**
-* Definition for singly-linked list.
-* struct ListNode {
-*     int val;
-*     ListNode *next;
-*     ListNode(int x) : val(x), next(NULL) {}
-* };
-*/
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode(int x) : val(x), next(NULL) {}
+ * };
+ */
 class Solution {
 public:
 	ListNode* addTwoNumbers(ListNode* l1, ListNode* l2) {
@@ -12726,6 +12787,42 @@ private:
 		l1->val %= 10;
 		tmp->next = l1;
 		return tmp;
+	}
+};
+class Solution {
+public:
+	ListNode* addTwoNumbers(ListNode* l1, ListNode* l2) {
+		if (l1 == NULL || l2 == NULL) {
+			return l1 == NULL ? l2 : l1;
+		}
+		stack<int> s1, s2;
+		while (l1 != NULL) {
+			s1.push(l1->val);
+			l1 = l1->next;
+		}
+		while (l2 != NULL) {
+			s2.push(l2->val);
+			l2 = l2->next;
+		}
+		ListNode *newhead = new ListNode(-1);
+		int sum = 0;
+		while (!s1.empty() || !s2.empty() || sum > 0) {
+			int num1 = 0, num2 = 0;
+			if (!s1.empty()) {
+				num1 = s1.top();
+				s1.pop();
+			}
+			if (!s2.empty()) {
+				num2 = s2.top();
+				s2.pop();
+			}
+			sum += num1 + num2;
+			ListNode *node = new ListNode(sum % 10);
+			node->next = newhead->next;
+			newhead->next = node;
+			sum /= 10;
+		}
+		return newhead->next;
 	}
 };
 /*
@@ -12907,6 +13004,69 @@ private:
 			root = root->left;
 		}
 		return root->val;
+	}
+};
+/*
+
+451. Sort Characters By Frequency (Medium)
+
+Given a string, sort it in decreasing order based on the frequency of characters.
+
+Example 1:
+
+Input:
+"tree"
+
+Output:
+"eert"
+
+Explanation:
+'e' appears twice while 'r' and 't' both appear once.
+So 'e' must appear before both 'r' and 't'. Therefore "eetr" is also a valid answer.
+Example 2:
+
+Input:
+"cccaaa"
+
+Output:
+"cccaaa"
+
+Explanation:
+Both 'c' and 'a' appear three times, so "aaaccc" is also a valid answer.
+Note that "cacaca" is incorrect, as the same characters must be together.
+Example 3:
+
+Input:
+"Aabb"
+
+Output:
+"bbAa"
+
+Explanation:
+"bbaA" is also a valid answer, but "Aabb" is incorrect.
+Note that 'A' and 'a' are treated as two different characters.
+
+*/
+class Solution {
+public:
+	string frequencySort(string s) {
+		string res;
+		int t[256] = { 0 };
+		vector<string> bucket(s.size() + 1);
+		for (char cha : s) {
+			t[cha]++;
+		}
+		for (int i = 0; i < 256; i++) {
+			if (t[i] > 0) {
+				bucket[t[i]].append(t[i], (char)i);
+			}
+		}
+		for (int i = bucket.size() - 1; i >= 0; i--) {
+			if (!bucket[i].empty()) {
+				res += bucket[i];
+			}
+		}
+		return res;
 	}
 };
 /*

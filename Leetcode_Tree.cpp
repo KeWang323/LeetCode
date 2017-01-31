@@ -157,22 +157,22 @@ Binary tree [1,2,3], return false.
 class Solution {
 public:
 	bool isValidBST(TreeNode* root) {
-		TreeNode* prev = NULL;
-		return validate(root, prev);
+		TreeNode *prev = NULL;
+		return isValidBST(root, prev);
 	}
 private:
-	bool validate(TreeNode* root, TreeNode* &prev) {
+	bool isValidBST(TreeNode* root, TreeNode*& prev) {
 		if (root == NULL) {
 			return true;
 		}
-		else if (!validate(root->left, prev)) {
+		if (!isValidBST(root->left, prev)) {
 			return false;
 		}
-		else if (prev != NULL && prev->val >= root->val) {
+		if (prev != NULL && prev->val >= root->val) {
 			return false;
 		}
 		prev = root;
-		return validate(root->right, prev);
+		return isValidBST(root->right, prev);
 	}
 };
 /*
