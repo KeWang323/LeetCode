@@ -239,11 +239,11 @@ A solution set is:
 class Solution {
 public:
 	vector<vector<int>> fourSum(vector<int>& nums, int target) {
+		if (nums.size() < 4) {
+			return{};
+		}
 		vector<vector<int>> res;
 		int _size = nums.size();
-		if (_size < 4) {
-			return res;
-		}
 		sort(nums.begin(), nums.end());
 		for (int i = 0; i < _size - 3; i++) {
 			if (i > 0 && nums[i] == nums[i - 1] || nums[i] + nums[_size - 3] + nums[_size - 2] + nums[_size - 1] < target) {
@@ -263,7 +263,7 @@ public:
 				while (k < l) {
 					int _sum = nums[i] + nums[j] + nums[k] + nums[l];
 					if (_sum == target) {
-						res.push_back(vector<int>{nums[i], nums[j], nums[k], nums[l]});
+						res.push_back({ nums[i], nums[j], nums[k], nums[l] });
 						k++;
 						l--;
 						while (nums[k] == nums[k - 1] && k < l) {
@@ -593,22 +593,21 @@ public:
 		vector<vector<int>> res;
 		vector<int> res_sub;
 		sort(candidates.begin(), candidates.end());
-		combinationSum2(candidates, target, 0, res_sub, res);
+		combinationSum2(res, res_sub, candidates, target, 0);
 		return res;
 	}
 private:
-	void combinationSum2(vector<int>& candidates, int target, int start, vector<int>& res_sub, vector<vector<int>>& res) {
-		if (target < 0 || start > candidates.size()) {
-			return;
-		}
-		else if (target == 0) {
+	void combinationSum2(vector<vector<int>>& res, vector<int>& res_sub, const vector<int>& candidates, int target, int index) {
+		if (target == 0) {
 			res.push_back(res_sub);
 			return;
 		}
-		for (int i = start; i < candidates.size() && candidates[i] <= target; i++) {
-			if (i > start && candidates[i] == candidates[i - 1]) continue;
+		for (int i = index; i < candidates.size() && candidates[i] <= target; i++) {
 			res_sub.push_back(candidates[i]);
-			combinationSum2(candidates, target - candidates[i], i + 1, res_sub, res);
+			combinationSum2(res, res_sub, candidates, target - candidates[i], i + 1);
+			while (i < candidates.size() - 1 && candidates[i] == candidates[i + 1]) {
+				i++;
+			}
 			res_sub.pop_back();
 		}
 	}
@@ -899,27 +898,27 @@ class Solution {
 public:
 	vector<Interval> insert(vector<Interval>& intervals, Interval newInterval) {
 		vector<Interval> res;
-		bool flag = false;
+		bool inserted = false;
 		for (Interval inter : intervals) {
-			if (flag) {
+			if (inserted == true) {
 				res.push_back(inter);
 			}
 			else {
 				if (newInterval.end < inter.start) {
 					res.push_back(newInterval);
-					flag = true;
 					res.push_back(inter);
+					inserted = true;
 				}
 				else if (inter.end < newInterval.start) {
 					res.push_back(inter);
 				}
 				else {
-					newInterval.start = min(newInterval.start, inter.start);
-					newInterval.end = max(newInterval.end, inter.end);
+					newInterval.start = min(inter.start, newInterval.start);
+					newInterval.end = max(inter.end, newInterval.end);
 				}
 			}
 		}
-		if (!flag) {
+		if (inserted == false) {
 			res.push_back(newInterval);
 		}
 		return res;
@@ -984,16 +983,13 @@ How many possible unique paths are there?
 class Solution {
 public:
 	int uniquePaths(int m, int n) {
-		if (m == 0 || n == 0) {
-			return 0;
-		}
-		vector<int> res(n, 1);
+		vector<int> t(n, 1);
 		for (int i = 1; i < m; i++) {
 			for (int j = 1; j < n; j++) {
-				res[j] = res[j - 1] + res[j];
+				t[j] += t[j - 1];
 			}
 		}
-		return res[n - 1];
+		return t.back();
 	}
 };
 /*
@@ -1022,23 +1018,19 @@ Note: m and n will be at most 100.
 class Solution {
 public:
 	int uniquePathsWithObstacles(vector<vector<int>>& obstacleGrid) {
-		if (obstacleGrid.empty()) {
-			return 0;
-		}
-		int _size = obstacleGrid[0].size();
-		vector<int> res(_size, 0);
-		res[0] = 1;
+		vector<int> t(obstacleGrid[0].size(), 0);
+		t[0] = 1;
 		for (int i = 0; i < obstacleGrid.size(); i++) {
-			for (int j = 0; j < _size; j++) {
+			for (int j = 0; j < obstacleGrid[0].size(); j++) {
 				if (obstacleGrid[i][j] == 1) {
-					res[j] = 0;
+					t[j] = 0;
 				}
 				else if (j > 0) {
-					res[j] = res[j - 1] + res[j];
+					t[j] += t[j - 1];
 				}
 			}
 		}
-		return res[_size - 1];
+		return t.back();
 	}
 };
 /*
@@ -1556,22 +1548,25 @@ If nums = [1,2,2], a solution is:
 class Solution {
 public:
 	vector<vector<int>> subsetsWithDup(vector<int>& nums) {
+		sort(nums.begin(), nums.end());
 		vector<vector<int>> res;
 		vector<int> res_sub;
 		res.push_back(res_sub);
-		sort(nums.begin(), nums.end());
-		generate(nums, 0, res, res_sub);
+		subsetsWithDup(nums, res, res_sub, 0);
 		return res;
 	}
-	void generate(vector<int>& nums, int start, vector<vector<int>>& res, vector<int>& res_sub) {
-		if (start >= nums.size()) {
+private:
+	void subsetsWithDup(const vector<int>& nums, vector<vector<int>>& res, vector<int>& res_sub, int index) {
+		if (index == nums.size()) {
 			return;
 		}
-		for (int i = start; i < nums.size(); i++) {
-			if (i - start > 0 && nums[i] == nums[i - 1]) continue;
+		for (int i = index; i < nums.size(); i++) {
+			if (i > index && nums[i] == nums[i - 1]) {
+				continue;
+			}
 			res_sub.push_back(nums[i]);
 			res.push_back(res_sub);
-			generate(nums, i + 1, res, res_sub);
+			subsetsWithDup(nums, res, res_sub, i + 1);
 			res_sub.pop_back();
 		}
 	}
@@ -1643,16 +1638,13 @@ public:
 		if (il > ir) {
 			return NULL;
 		}
-		int val = postorder[pr];
-		TreeNode *root = new TreeNode(val);
+		TreeNode *root = new TreeNode(postorder[pr]);
 		int i = il;
-		for (; i < ir; i++) {
-			if (val == inorder[i]) {
-				break;
-			}
+		while (postorder[pr] != inorder[i]) {
+			i++;
 		}
-		root->left = BT(inorder, il, i - 1, postorder, pl, pl - il + i - 1);
-		root->right = BT(inorder, i + 1, ir, postorder, pl - il + i, pr - 1);
+		root->left = BT(inorder, il, i - 1, postorder, pl, pl + i - il - 1);
+		root->right = BT(inorder, i + 1, ir, postorder, pl + i - il, pr - 1);
 		return root;
 	}
 };
@@ -2907,6 +2899,39 @@ public:
 		for (int i = 0; i < nums.size(); i++) {
 			if (nums[i] > 0) {
 				res.push_back(i + 1);
+			}
+		}
+		return res;
+	}
+};
+/*
+
+485. Max Consecutive Ones (Easy)
+
+Given a binary array, find the maximum number of consecutive 1s in this array.
+
+Example 1:
+Input: [1,1,0,1,1,1]
+Output: 3
+Explanation: The first two digits or the last three digits are consecutive 1s.
+	The maximum number of consecutive 1s is 3.
+Note:
+
+The input array will only contain 0 and 1.
+The length of input array is a positive integer and will not exceed 10,000
+
+*/
+class Solution {
+public:
+	int findMaxConsecutiveOnes(vector<int>& nums) {
+		int res = 0, cur = 0;
+		for (int i = 0; i < nums.size(); i++) {
+			if (nums[i] == 1) {
+				cur++;
+				res = max(res, cur);
+			}
+			else {
+				cur = 0;
 			}
 		}
 		return res;

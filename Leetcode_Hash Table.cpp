@@ -82,11 +82,11 @@ A solution set is:
 class Solution {
 public:
 	vector<vector<int>> fourSum(vector<int>& nums, int target) {
+		if (nums.size() < 4) {
+			return{};
+		}
 		vector<vector<int>> res;
 		int _size = nums.size();
-		if (_size < 4) {
-			return res;
-		}
 		sort(nums.begin(), nums.end());
 		for (int i = 0; i < _size - 3; i++) {
 			if (i > 0 && nums[i] == nums[i - 1] || nums[i] + nums[_size - 3] + nums[_size - 2] + nums[_size - 1] < target) {
@@ -106,7 +106,7 @@ public:
 				while (k < l) {
 					int _sum = nums[i] + nums[j] + nums[k] + nums[l];
 					if (_sum == target) {
-						res.push_back(vector<int>{nums[i], nums[j], nums[k], nums[l]});
+						res.push_back({ nums[i], nums[j], nums[k], nums[l] });
 						k++;
 						l--;
 						while (nums[k] == nums[k - 1] && k < l) {
@@ -956,11 +956,38 @@ A faster approach is to use extra space.
 class Solution {
 public:
 	int hIndex(vector<int>& citations) {
+		if (citations.empty()) {
+			return 0;
+		}
+		int t[citations.size() + 1] = { 0 };
+		for (int num : citations) {
+			if (num > citations.size()) {
+				t[citations.size()]++;
+			}
+			else {
+				t[num]++;
+			}
+		}
+		int sum = 0;
+		for (int i = citations.size(); i >= 0; i--) {
+			sum += t[i];
+			if (sum >= i) {
+				return i;
+			}
+		}
+		return 0;
+	}
+};
+class Solution {
+public:
+	int hIndex(vector<int>& citations) {
+		if (citations.empty()) {
+			return 0;
+		}
 		sort(citations.begin(), citations.end());
-		int _size = citations.size();
-		for (int i = 0; i < _size; i++) {
-			if (citations[i] >= _size - i) {
-				return _size - i;
+		for (int i = 0; i < citations.size(); i++) {
+			if (citations[i] >= citations.size() - i) {
+				return citations.size() - i;
 			}
 		}
 		return 0;
@@ -1587,3 +1614,61 @@ public:
 		return lands * 4 - neibor * 2;
 	}
 };
+/*
+
+359. Logger Rate Limiter (Easy)
+
+Design a logger system that receive stream of messages along with its timestamps, each message should be printed if and only if it is not printed in the last 10 seconds.
+
+Given a message and a timestamp (in seconds granularity), return true if the message should be printed in the given timestamp, otherwise returns false.
+
+It is possible that several messages arrive roughly at the same time.
+
+Example:
+
+Logger logger = new Logger();
+
+// logging string "foo" at timestamp 1
+logger.shouldPrintMessage(1, "foo"); returns true;
+
+// logging string "bar" at timestamp 2
+logger.shouldPrintMessage(2,"bar"); returns true;
+
+// logging string "foo" at timestamp 3
+logger.shouldPrintMessage(3,"foo"); returns false;
+
+// logging string "bar" at timestamp 8
+logger.shouldPrintMessage(8,"bar"); returns false;
+
+// logging string "foo" at timestamp 10
+logger.shouldPrintMessage(10,"foo"); returns false;
+
+// logging string "foo" at timestamp 11
+logger.shouldPrintMessage(11,"foo"); returns true;
+
+*/
+class Logger {
+public:
+	/** Initialize your data structure here. */
+	Logger() {
+
+	}
+
+	/** Returns true if the message should be printed in the given timestamp, otherwise returns false.
+	If this method returns false, the message will not be printed.
+	The timestamp is in seconds granularity. */
+	bool shouldPrintMessage(int timestamp, string message) {
+		if (timestamp < mapping[message]) {
+			return false;
+		}
+		mapping[message] = timestamp + 10;
+		return true;
+	}
+private:
+	unordered_map<string, int> mapping;
+};
+/**
+* Your Logger object will be instantiated and called as such:
+* Logger obj = new Logger();
+* bool param_1 = obj.shouldPrintMessage(timestamp,message);
+*/

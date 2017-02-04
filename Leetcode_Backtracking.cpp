@@ -198,22 +198,21 @@ public:
 		vector<vector<int>> res;
 		vector<int> res_sub;
 		sort(candidates.begin(), candidates.end());
-		combinationSum2(candidates, target, 0, res_sub, res);
+		combinationSum2(res, res_sub, candidates, target, 0);
 		return res;
 	}
 private:
-	void combinationSum2(vector<int>& candidates, int target, int start, vector<int>& res_sub, vector<vector<int>>& res) {
-		if (target < 0 || start > candidates.size()) {
-			return;
-		}
-		else if (target == 0) {
+	void combinationSum2(vector<vector<int>>& res, vector<int>& res_sub, const vector<int>& candidates, int target, int index) {
+		if (target == 0) {
 			res.push_back(res_sub);
 			return;
 		}
-		for (int i = start; i < candidates.size() && candidates[i] <= target; i++) {
-			if (i > start && candidates[i] == candidates[i - 1]) continue;
+		for (int i = index; i < candidates.size() && candidates[i] <= target; i++) {
 			res_sub.push_back(candidates[i]);
-			combinationSum2(candidates, target - candidates[i], i + 1, res_sub, res);
+			combinationSum2(res, res_sub, candidates, target - candidates[i], i + 1);
+			while (i < candidates.size() - 1 && candidates[i] == candidates[i + 1]) {
+				i++;
+			}
 			res_sub.pop_back();
 		}
 	}
@@ -311,15 +310,18 @@ Given a collection of numbers that might contain duplicates, return all possible
 For example,
 [1,1,2] have the following unique permutations:
 [
-[1,1,2],
-[1,2,1],
-[2,1,1]
+  [1,1,2],
+  [1,2,1],
+  [2,1,1]
 ]
 
 */
 class Solution {
 public:
 	vector<vector<int>> permuteUnique(vector<int>& nums) {
+		if (nums.empty()) {
+			return{};
+		}
 		vector<vector<int>> res;
 		permuteUnique(res, nums, 0);
 		return res;
@@ -333,10 +335,10 @@ private:
 		unordered_set<int> s;
 		for (int i = index; i < nums.size(); i++) {
 			if (s.find(nums[i]) == s.end()) {
+				s.insert(nums[i]);
 				swap(nums[i], nums[index]);
 				permuteUnique(res, nums, index + 1);
 				swap(nums[i], nums[index]);
-				s.insert(nums[i]);
 			}
 		}
 	}
@@ -697,22 +699,25 @@ If nums = [1,2,2], a solution is:
 class Solution {
 public:
 	vector<vector<int>> subsetsWithDup(vector<int>& nums) {
+		sort(nums.begin(), nums.end());
 		vector<vector<int>> res;
 		vector<int> res_sub;
 		res.push_back(res_sub);
-		sort(nums.begin(), nums.end());
-		generate(nums, 0, res, res_sub);
+		subsetsWithDup(nums, res, res_sub, 0);
 		return res;
 	}
-	void generate(vector<int>& nums, int start, vector<vector<int>>& res, vector<int>& res_sub) {
-		if (start >= nums.size()) {
+private:
+	void subsetsWithDup(const vector<int>& nums, vector<vector<int>>& res, vector<int>& res_sub, int index) {
+		if (index == nums.size()) {
 			return;
 		}
-		for (int i = start; i < nums.size(); i++) {
-			if (i - start > 0 && nums[i] == nums[i - 1]) continue;
+		for (int i = index; i < nums.size(); i++) {
+			if (i > index && nums[i] == nums[i - 1]) {
+				continue;
+			}
 			res_sub.push_back(nums[i]);
 			res.push_back(res_sub);
-			generate(nums, i + 1, res, res_sub);
+			subsetsWithDup(nums, res, res_sub, i + 1);
 			res_sub.pop_back();
 		}
 	}
@@ -938,33 +943,31 @@ private:
 Given a non-negative integer n, count all numbers with unique digits, x, where 0 ≤ x < 10n.
 
 Example:
-Given n = 2, return 91. (The answer should be the total numbers in the range of 0 ≤ x < 100,
-excluding [11,22,33,44,55,66,77,88,99])
+Given n = 2, return 91. (The answer should be the total numbers in the range of 0 ≤ x < 100, excluding [11,22,33,44,55,66,77,88,99])
 
 Hint:
 
 A direct way is to use the backtracking approach.
-Backtracking should contains three states which are (the current number, number of steps to
-get that number and a bitmask which represent which number is marked as visited so far in the
-current number). Start with state (0,0,0) and count all valid number till we reach number of
-steps equals to 10n.
-
-This problem can also be solved using a dynamic programming approach and some knowledge of
-combinatorics.
+Backtracking should contains three states which are (the current number, number of steps to get that number and a bitmask which represent which number is marked as visited so far in the current number). Start with state (0,0,0) and count all valid number till we reach number of steps equals to 10n.
+This problem can also be solved using a dynamic programming approach and some knowledge of combinatorics.
 Let f(k) = count of numbers with unique digits with length equals k.
-f(1) = 10, ..., f(k) = 9 * 9 * 8 * ... (9 - k + 2) [The first factor is 9 because a number
-cannot start with 0].
+f(1) = 10, ..., f(k) = 9 * 9 * 8 * ... (9 - k + 2) [The first factor is 9 because a number cannot start with 0].
 
 */
 class Solution {
 public:
 	int countNumbersWithUniqueDigits(int n) {
-		if (n < 1) return 1;
-		int pre = 9, sum = 10;
+		if (n == 0) {
+			return 1;
+		}
+		else if (n > 10) {
+			return 0;
+		}
+		int res = 10, pre = 9;
 		for (int i = 1; i < n; i++) {
 			pre *= (10 - i);
-			sum += pre;
+			res += pre;
 		}
-		return sum;
+		return res;
 	}
 };

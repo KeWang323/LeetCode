@@ -270,12 +270,14 @@ public:
 
 43. Multiply Strings (Medium)
 
-Given two numbers represented as strings, return multiplication of the numbers as a string.
+Given two non-negative integers num1 and num2 represented as strings, return the product of num1 and num2.
 
 Note:
-The numbers can be arbitrarily large and are non-negative.
-Converting the input string to integer is NOT allowed.
-You should NOT use internal library such as BigInteger.
+
+The length of both num1 and num2 is < 110.
+Both num1 and num2 contains only digits 0-9.
+Both num1 and num2 does not contain any leading zero.
+You must not use any built-in BigInteger library or convert the inputs to integer directly.
 
 */
 class Solution {
@@ -287,20 +289,17 @@ public:
 		int s1 = num1.size() - 1, s2 = num2.size() - 1;
 		int i = s1 + s2, j = 0, carry = 0;
 		string res;
-		while (j <= i) {
+		while (j <= i || carry > 0) {
 			for (int k = 0; k <= j; k++) {
-				if (s1 >= k && s2 >= (j - k)) {
+				if (k <= s1 && j - k <= s2) {
 					carry += (num1[s1 - k] - '0') * (num2[s2 - (j - k)] - '0');
 				}
 			}
-			res = char(carry % 10 + '0') + res;
+			res += carry % 10 + '0';
 			carry /= 10;
 			j++;
 		}
-		while (carry) {
-			res = char(carry % 10 + '0') + res;
-			carry /= 10;
-		}
+		reverse(res.begin(), res.end());
 		return res;
 	}
 };
@@ -1137,34 +1136,32 @@ public:
 Given a non-negative integer n, count all numbers with unique digits, x, where 0 ≤ x < 10n.
 
 Example:
-Given n = 2, return 91. (The answer should be the total numbers in the range of 0 ≤ x < 100,
-excluding [11,22,33,44,55,66,77,88,99])
+Given n = 2, return 91. (The answer should be the total numbers in the range of 0 ≤ x < 100, excluding [11,22,33,44,55,66,77,88,99])
 
 Hint:
 
 A direct way is to use the backtracking approach.
-Backtracking should contains three states which are (the current number, number of steps to
-get that number and a bitmask which represent which number is marked as visited so far in the
-current number). Start with state (0,0,0) and count all valid number till we reach number of
-steps equals to 10n.
-
-This problem can also be solved using a dynamic programming approach and some knowledge of
-combinatorics.
+Backtracking should contains three states which are (the current number, number of steps to get that number and a bitmask which represent which number is marked as visited so far in the current number). Start with state (0,0,0) and count all valid number till we reach number of steps equals to 10n.
+This problem can also be solved using a dynamic programming approach and some knowledge of combinatorics.
 Let f(k) = count of numbers with unique digits with length equals k.
-f(1) = 10, ..., f(k) = 9 * 9 * 8 * ... (9 - k + 2) [The first factor is 9 because a number
-cannot start with 0].
+f(1) = 10, ..., f(k) = 9 * 9 * 8 * ... (9 - k + 2) [The first factor is 9 because a number cannot start with 0].
 
 */
 class Solution {
 public:
 	int countNumbersWithUniqueDigits(int n) {
-		if (n < 1) return 1;
-		int pre = 9, sum = 10;
+		if (n == 0) {
+			return 1;
+		}
+		else if (n > 10) {
+			return 0;
+		}
+		int res = 10, pre = 9;
 		for (int i = 1; i < n; i++) {
 			pre *= (10 - i);
-			sum += pre;
+			res += pre;
 		}
-		return sum;
+		return res;
 	}
 };
 /*

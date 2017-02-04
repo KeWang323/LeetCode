@@ -77,27 +77,27 @@ class Solution {
 public:
 	vector<Interval> insert(vector<Interval>& intervals, Interval newInterval) {
 		vector<Interval> res;
-		bool flag = false;
+		bool inserted = false;
 		for (Interval inter : intervals) {
-			if (flag) {
+			if (inserted == true) {
 				res.push_back(inter);
 			}
 			else {
 				if (newInterval.end < inter.start) {
 					res.push_back(newInterval);
-					flag = true;
 					res.push_back(inter);
+					inserted = true;
 				}
 				else if (inter.end < newInterval.start) {
 					res.push_back(inter);
 				}
 				else {
-					newInterval.start = min(newInterval.start, inter.start);
-					newInterval.end = max(newInterval.end, inter.end);
+					newInterval.start = min(inter.start, newInterval.start);
+					newInterval.end = max(inter.end, newInterval.end);
 				}
 			}
 		}
-		if (!flag) {
+		if (inserted == false) {
 			res.push_back(newInterval);
 		}
 		return res;
@@ -414,11 +414,38 @@ A faster approach is to use extra space.
 class Solution {
 public:
 	int hIndex(vector<int>& citations) {
+		if (citations.empty()) {
+			return 0;
+		}
+		int t[citations.size() + 1] = { 0 };
+		for (int num : citations) {
+			if (num > citations.size()) {
+				t[citations.size()]++;
+			}
+			else {
+				t[num]++;
+			}
+		}
+		int sum = 0;
+		for (int i = citations.size(); i >= 0; i--) {
+			sum += t[i];
+			if (sum >= i) {
+				return i;
+			}
+		}
+		return 0;
+	}
+};
+class Solution {
+public:
+	int hIndex(vector<int>& citations) {
+		if (citations.empty()) {
+			return 0;
+		}
 		sort(citations.begin(), citations.end());
-		int _size = citations.size();
-		for (int i = 0; i < _size; i++) {
-			if (citations[i] >= _size - i) {
-				return _size - i;
+		for (int i = 0; i < citations.size(); i++) {
+			if (citations[i] >= citations.size() - i) {
+				return citations.size() - i;
 			}
 		}
 		return 0;

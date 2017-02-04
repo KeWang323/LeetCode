@@ -185,6 +185,62 @@ public:
 */
 /*
 
+251. Flatten 2D Vector (Medium)
+
+Implement an iterator to flatten a 2d vector.
+
+For example,
+Given 2d vector =
+
+[
+  [1,2],
+  [3],
+  [4,5,6]
+]
+By calling next repeatedly until hasNext returns false, the order of elements returned by next should be: [1,2,3,4,5,6].
+
+Hint:
+
+How many variables do you need to keep track?
+Two variables is all you need. Try with x and y.
+Beware of empty rows. It could be the first few rows.
+To write correct code, think about the invariant to maintain. What is it?
+The invariant is x and y must always point to a valid point in the 2d vector. Should you maintain your invariant ahead of time or right when you need it?
+Not sure? Think about how you would implement hasNext(). Which is more complex?
+Common logic in two different places should be refactored into a common method.
+Follow up:
+As an added challenge, try to code it using only iterators in C++ or iterators in Java.
+
+*/
+class Vector2D {
+public:
+	Vector2D(vector<vector<int>>& vec2d) {
+		b = vec2d.begin();
+		e = vec2d.end();
+	}
+
+	int next() {
+		hasNext();
+		return (*b)[j++];
+	}
+
+	bool hasNext() {
+		while (b != e && j == (*b).size()) {
+			b++, j = 0;
+		}
+		return b != e;
+	}
+private:
+	vector<vector<int>>::iterator b, e;
+	int j = 0;
+};
+/**
+* Your Vector2D object will be instantiated and called as such:
+* Vector2D i(vec2d);
+* while (i.hasNext()) cout << i.next();
+*/
+/*
+
 281. Zigzag Iterator (Medium)
 
 Given two 1d vectors, implement an iterator to return their elements alternately.
@@ -797,3 +853,61 @@ public:
  * obj.follow(followerId,followeeId);
  * obj.unfollow(followerId,followeeId);
  */
+ /*
+
+ 359. Logger Rate Limiter (Easy)
+
+ Design a logger system that receive stream of messages along with its timestamps, each message should be printed if and only if it is not printed in the last 10 seconds.
+
+ Given a message and a timestamp (in seconds granularity), return true if the message should be printed in the given timestamp, otherwise returns false.
+
+ It is possible that several messages arrive roughly at the same time.
+
+ Example:
+
+ Logger logger = new Logger();
+
+ // logging string "foo" at timestamp 1
+ logger.shouldPrintMessage(1, "foo"); returns true;
+
+ // logging string "bar" at timestamp 2
+ logger.shouldPrintMessage(2,"bar"); returns true;
+
+ // logging string "foo" at timestamp 3
+ logger.shouldPrintMessage(3,"foo"); returns false;
+
+ // logging string "bar" at timestamp 8
+ logger.shouldPrintMessage(8,"bar"); returns false;
+
+ // logging string "foo" at timestamp 10
+ logger.shouldPrintMessage(10,"foo"); returns false;
+
+ // logging string "foo" at timestamp 11
+ logger.shouldPrintMessage(11,"foo"); returns true;
+
+ */
+class Logger {
+public:
+	/** Initialize your data structure here. */
+	Logger() {
+
+	}
+
+	/** Returns true if the message should be printed in the given timestamp, otherwise returns false.
+	If this method returns false, the message will not be printed.
+	The timestamp is in seconds granularity. */
+	bool shouldPrintMessage(int timestamp, string message) {
+		if (timestamp < mapping[message]) {
+			return false;
+		}
+		mapping[message] = timestamp + 10;
+		return true;
+	}
+private:
+	unordered_map<string, int> mapping;
+};
+/**
+* Your Logger object will be instantiated and called as such:
+* Logger obj = new Logger();
+* bool param_1 = obj.shouldPrintMessage(timestamp,message);
+*/

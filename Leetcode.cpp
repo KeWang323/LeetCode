@@ -666,11 +666,11 @@ A solution set is:
 class Solution {
 public:
 	vector<vector<int>> fourSum(vector<int>& nums, int target) {
+		if (nums.size() < 4) {
+			return{};
+		}
 		vector<vector<int>> res;
 		int _size = nums.size();
-		if (_size < 4) {
-			return res;
-		}
 		sort(nums.begin(), nums.end());
 		for (int i = 0; i < _size - 3; i++) {
 			if (i > 0 && nums[i] == nums[i - 1] || nums[i] + nums[_size - 3] + nums[_size - 2] + nums[_size - 1] < target) {
@@ -690,7 +690,7 @@ public:
 				while (k < l) {
 					int _sum = nums[i] + nums[j] + nums[k] + nums[l];
 					if (_sum == target) {
-						res.push_back(vector<int>{nums[i], nums[j], nums[k], nums[l]});
+						res.push_back({ nums[i], nums[j], nums[k], nums[l] });
 						k++;
 						l--;
 						while (nums[k] == nums[k - 1] && k < l) {
@@ -1561,22 +1561,21 @@ public:
 		vector<vector<int>> res;
 		vector<int> res_sub;
 		sort(candidates.begin(), candidates.end());
-		combinationSum2(candidates, target, 0, res_sub, res);
+		combinationSum2(res, res_sub, candidates, target, 0);
 		return res;
 	}
 private:
-	void combinationSum2(vector<int>& candidates, int target, int start, vector<int>& res_sub, vector<vector<int>>& res) {
-		if (target < 0 || start > candidates.size()) {
-			return;
-		}
-		else if (target == 0) {
+	void combinationSum2(vector<vector<int>>& res, vector<int>& res_sub, const vector<int>& candidates, int target, int index) {
+		if (target == 0) {
 			res.push_back(res_sub);
 			return;
 		}
-		for (int i = start; i < candidates.size() && candidates[i] <= target; i++) {
-			if (i > start && candidates[i] == candidates[i - 1]) continue;
+		for (int i = index; i < candidates.size() && candidates[i] <= target; i++) {
 			res_sub.push_back(candidates[i]);
-			combinationSum2(candidates, target - candidates[i], i + 1, res_sub, res);
+			combinationSum2(res, res_sub, candidates, target - candidates[i], i + 1);
+			while (i < candidates.size() - 1 && candidates[i] == candidates[i + 1]) {
+				i++;
+			}
 			res_sub.pop_back();
 		}
 	}
@@ -1610,12 +1609,14 @@ public:
 
 43. Multiply Strings (Medium)
 
-Given two numbers represented as strings, return multiplication of the numbers as a string.
+Given two non-negative integers num1 and num2 represented as strings, return the product of num1 and num2.
 
 Note:
-The numbers can be arbitrarily large and are non-negative.
-Converting the input string to integer is NOT allowed.
-You should NOT use internal library such as BigInteger.
+
+The length of both num1 and num2 is < 110.
+Both num1 and num2 contains only digits 0-9.
+Both num1 and num2 does not contain any leading zero.
+You must not use any built-in BigInteger library or convert the inputs to integer directly.
 
 */
 class Solution {
@@ -1627,20 +1628,17 @@ public:
 		int s1 = num1.size() - 1, s2 = num2.size() - 1;
 		int i = s1 + s2, j = 0, carry = 0;
 		string res;
-		while (j <= i) {
+		while (j <= i || carry > 0) {
 			for (int k = 0; k <= j; k++) {
-				if (s1 >= k && s2 >= (j - k)) {
+				if (k <= s1 && j - k <= s2) {
 					carry += (num1[s1 - k] - '0') * (num2[s2 - (j - k)] - '0');
 				}
 			}
-			res = char(carry % 10 + '0') + res;
+			res += carry % 10 + '0';
 			carry /= 10;
 			j++;
 		}
-		while (carry) {
-			res = char(carry % 10 + '0') + res;
-			carry /= 10;
-		}
+		reverse(res.begin(), res.end());
 		return res;
 	}
 };
@@ -1775,15 +1773,18 @@ Given a collection of numbers that might contain duplicates, return all possible
 For example,
 [1,1,2] have the following unique permutations:
 [
-[1,1,2],
-[1,2,1],
-[2,1,1]
+  [1,1,2],
+  [1,2,1],
+  [2,1,1]
 ]
 
 */
 class Solution {
 public:
 	vector<vector<int>> permuteUnique(vector<int>& nums) {
+		if (nums.empty()) {
+			return{};
+		}
 		vector<vector<int>> res;
 		permuteUnique(res, nums, 0);
 		return res;
@@ -1797,10 +1798,10 @@ private:
 		unordered_set<int> s;
 		for (int i = index; i < nums.size(); i++) {
 			if (s.find(nums[i]) == s.end()) {
+				s.insert(nums[i]);
 				swap(nums[i], nums[index]);
 				permuteUnique(res, nums, index + 1);
 				swap(nums[i], nums[index]);
-				s.insert(nums[i]);
 			}
 		}
 	}
@@ -2213,27 +2214,27 @@ class Solution {
 public:
 	vector<Interval> insert(vector<Interval>& intervals, Interval newInterval) {
 		vector<Interval> res;
-		bool flag = false;
+		bool inserted = false;
 		for (Interval inter : intervals) {
-			if (flag) {
+			if (inserted == true) {
 				res.push_back(inter);
 			}
 			else {
 				if (newInterval.end < inter.start) {
 					res.push_back(newInterval);
-					flag = true;
 					res.push_back(inter);
+					inserted = true;
 				}
 				else if (inter.end < newInterval.start) {
 					res.push_back(inter);
 				}
 				else {
-					newInterval.start = min(newInterval.start, inter.start);
-					newInterval.end = max(newInterval.end, inter.end);
+					newInterval.start = min(inter.start, newInterval.start);
+					newInterval.end = max(inter.end, newInterval.end);
 				}
 			}
 		}
-		if (!flag) {
+		if (inserted == false) {
 			res.push_back(newInterval);
 		}
 		return res;
@@ -2411,16 +2412,13 @@ How many possible unique paths are there?
 class Solution {
 public:
 	int uniquePaths(int m, int n) {
-		if (m == 0 || n == 0) {
-			return 0;
-		}
-		vector<int> res(n, 1);
+		vector<int> t(n, 1);
 		for (int i = 1; i < m; i++) {
 			for (int j = 1; j < n; j++) {
-				res[j] = res[j - 1] + res[j];
+				t[j] += t[j - 1];
 			}
 		}
-		return res[n - 1];
+		return t.back();
 	}
 };
 /*
@@ -2449,23 +2447,19 @@ Note: m and n will be at most 100.
 class Solution {
 public:
 	int uniquePathsWithObstacles(vector<vector<int>>& obstacleGrid) {
-		if (obstacleGrid.empty()) {
-			return 0;
-		}
-		int _size = obstacleGrid[0].size();
-		vector<int> res(_size, 0);
-		res[0] = 1;
+		vector<int> t(obstacleGrid[0].size(), 0);
+		t[0] = 1;
 		for (int i = 0; i < obstacleGrid.size(); i++) {
-			for (int j = 0; j < _size; j++) {
+			for (int j = 0; j < obstacleGrid[0].size(); j++) {
 				if (obstacleGrid[i][j] == 1) {
-					res[j] = 0;
+					t[j] = 0;
 				}
 				else if (j > 0) {
-					res[j] = res[j - 1] + res[j];
+					t[j] += t[j - 1];
 				}
 			}
 		}
-		return res[_size - 1];
+		return t.back();
 	}
 };
 /*
@@ -3128,20 +3122,19 @@ public:
 		if (head == NULL || head->next == NULL) {
 			return head;
 		}
-		ListNode *dummy = new ListNode(-1);
+		ListNode *dummy = new ListNode(-1), *p = dummy;
 		dummy->next = head;
-		ListNode *p = dummy;
 		while (head != NULL) {
-			ListNode *post = head->next;
-			if (post != NULL && post->val == head->val) {
-				while (post != NULL && post->val == head->val) {
-					post = post->next;
+			if (head->next != NULL && head->val == head->next->val) {
+				int temp = head->val;
+				while (head != NULL && head->val == temp) {
+					head = head->next;
 				}
-				head = post;
 				p->next = head;
 			}
 			else {
-				p = head;
+				p->next = head;
+				p = p->next;
 				head = head->next;
 			}
 		}
@@ -3386,22 +3379,25 @@ If nums = [1,2,2], a solution is:
 class Solution {
 public:
 	vector<vector<int>> subsetsWithDup(vector<int>& nums) {
+		sort(nums.begin(), nums.end());
 		vector<vector<int>> res;
 		vector<int> res_sub;
 		res.push_back(res_sub);
-		sort(nums.begin(), nums.end());
-		generate(nums, 0, res, res_sub);
+		subsetsWithDup(nums, res, res_sub, 0);
 		return res;
 	}
-	void generate(vector<int>& nums, int start, vector<vector<int>>& res, vector<int>& res_sub) {
-		if (start >= nums.size()) {
+private:
+	void subsetsWithDup(const vector<int>& nums, vector<vector<int>>& res, vector<int>& res_sub, int index) {
+		if (index == nums.size()) {
 			return;
 		}
-		for (int i = start; i < nums.size(); i++) {
-			if (i - start > 0 && nums[i] == nums[i - 1]) continue;
+		for (int i = index; i < nums.size(); i++) {
+			if (i > index && nums[i] == nums[i - 1]) {
+				continue;
+			}
 			res_sub.push_back(nums[i]);
 			res.push_back(res_sub);
-			generate(nums, i + 1, res, res_sub);
+			subsetsWithDup(nums, res, res_sub, i + 1);
 			res_sub.pop_back();
 		}
 	}
@@ -3948,24 +3944,42 @@ return its zigzag level order traversal as:
 class Solution {
 public:
 	vector<vector<int>> zigzagLevelOrder(TreeNode* root) {
+		if (root == NULL) {
+			return{};
+		}
 		vector<vector<int>> res;
-		if (!root) return res;
-		queue<TreeNode*> q;
-		q.push(root);
-		int level = 0;
-		while (!q.empty()) {
-			vector<int> lev;
-			int _size = q.size();
-			for (int i = 0; i < _size; i++) {
-				TreeNode *temp = q.front();
-				q.pop();
-				lev.push_back(temp->val);
-				if (temp->left) q.push(temp->left);
-				if (temp->right) q.push(temp->right);
+		deque<TreeNode*> dq;
+		dq.push_back(root);
+		bool odd = true;
+		while (!dq.empty()) {
+			int _size = dq.size();
+			vector<int> res_sub;
+			if (odd == true) {
+				for (int i = 0; i < _size; i++) {
+					res_sub.push_back(dq.front()->val);
+					if (dq.front()->left != NULL) {
+						dq.push_back(dq.front()->left);
+					}
+					if (dq.front()->right != NULL) {
+						dq.push_back(dq.front()->right);
+					}
+					dq.pop_front();
+				}
 			}
-			if (level % 2) reverse(lev.begin(), lev.end());
-			res.push_back(lev);
-			level++;
+			else {
+				for (int i = 0; i < _size; i++) {
+					res_sub.push_back(dq.back()->val);
+					if (dq.back()->right != NULL) {
+						dq.push_front(dq.back()->right);
+					}
+					if (dq.back()->left != NULL) {
+						dq.push_front(dq.back()->left);
+					}
+					dq.pop_back();
+				}
+			}
+			odd = !odd;
+			res.push_back(res_sub);
 		}
 		return res;
 	}
@@ -4065,16 +4079,13 @@ public:
 		if (il > ir) {
 			return NULL;
 		}
-		int val = postorder[pr];
-		TreeNode *root = new TreeNode(val);
+		TreeNode *root = new TreeNode(postorder[pr]);
 		int i = il;
-		for (; i < ir; i++) {
-			if (val == inorder[i]) {
-				break;
-			}
+		while (postorder[pr] != inorder[i]) {
+			i++;
 		}
-		root->left = BT(inorder, il, i - 1, postorder, pl, pl - il + i - 1);
-		root->right = BT(inorder, i + 1, ir, postorder, pl - il + i, pr - 1);
+		root->left = BT(inorder, il, i - 1, postorder, pl, pl + i - il - 1);
+		root->right = BT(inorder, i + 1, ir, postorder, pl + i - il, pr - 1);
 		return root;
 	}
 };
@@ -4111,19 +4122,24 @@ return its bottom-up level order traversal as:
 class Solution {
 public:
 	vector<vector<int>> levelOrderBottom(TreeNode* root) {
+		if (root == NULL) {
+			return{};
+		}
 		vector<vector<int>> res;
-		if (!root) return res;
 		queue<TreeNode*> q;
 		q.push(root);
 		while (!q.empty()) {
 			vector<int> lev;
 			int _size = q.size();
 			for (int i = 0; i < _size; i++) {
-				TreeNode *temp = q.front();
+				lev.push_back(q.front()->val);
+				if (q.front()->left != NULL) {
+					q.push(q.front()->left);
+				}
+				if (q.front()->right != NULL) {
+					q.push(q.front()->right);
+				}
 				q.pop();
-				lev.push_back(temp->val);
-				if (temp->left) q.push(temp->left);
-				if (temp->right) q.push(temp->right);
 			}
 			res.push_back(lev);
 		}
@@ -5478,35 +5494,35 @@ public:
 			return{};
 		}
 		vector<int> res;
-		stack<TreeNode*> s;
+		stack<TreeNode*> sta;
 		TreeNode *pre = NULL;
-		s.push(root);
-		while (!s.empty()) {
-			TreeNode *cur = s.top();
+		sta.push(root);
+		while (!sta.empty()) {
+			TreeNode *cur = sta.top();
 			if (pre == NULL || pre->left == cur || pre->right == cur) {
 				if (cur->left != NULL) {
-					s.push(cur->left);
+					sta.push(cur->left);
 				}
 				else if (cur->right != NULL) {
-					s.push(cur->right);
+					sta.push(cur->right);
 				}
 				else {
 					res.push_back(cur->val);
-					s.pop();
+					sta.pop();
 				}
 			}
-			else if (pre == cur->left) {
+			else if (cur->left == pre) {
 				if (cur->right != NULL) {
-					s.push(cur->right);
+					sta.push(cur->right);
 				}
 				else {
 					res.push_back(cur->val);
-					s.pop();
+					sta.pop();
 				}
 			}
 			else {
 				res.push_back(cur->val);
-				s.pop();
+				sta.pop();
 			}
 			pre = cur;
 		}
@@ -8317,6 +8333,62 @@ private:
 };
 /*
 
+251. Flatten 2D Vector (Medium)
+
+Implement an iterator to flatten a 2d vector.
+
+For example,
+Given 2d vector =
+
+[
+  [1,2],
+  [3],
+  [4,5,6]
+]
+By calling next repeatedly until hasNext returns false, the order of elements returned by next should be: [1,2,3,4,5,6].
+
+Hint:
+
+How many variables do you need to keep track?
+Two variables is all you need. Try with x and y.
+Beware of empty rows. It could be the first few rows.
+To write correct code, think about the invariant to maintain. What is it?
+The invariant is x and y must always point to a valid point in the 2d vector. Should you maintain your invariant ahead of time or right when you need it?
+Not sure? Think about how you would implement hasNext(). Which is more complex?
+Common logic in two different places should be refactored into a common method.
+Follow up:
+As an added challenge, try to code it using only iterators in C++ or iterators in Java.
+
+*/
+class Vector2D {
+public:
+	Vector2D(vector<vector<int>>& vec2d) {
+		b = vec2d.begin();
+		e = vec2d.end();
+	}
+
+	int next() {
+		hasNext();
+		return (*b)[j++];
+	}
+
+	bool hasNext() {
+		while (b != e && j == (*b).size()) {
+			b++, j = 0;
+		}
+		return b != e;
+	}
+private:
+	vector<vector<int>>::iterator b, e;
+	int j = 0;
+};
+/**
+* Your Vector2D object will be instantiated and called as such:
+* Vector2D i(vec2d);
+* while (i.hasNext()) cout << i.next();
+*/
+/*
+
 252. Meeting Rooms (Easy)
 
 Given an array of meeting time intervals consisting of start and end times [[s1,e1],[s2,e2],...] (si < ei), determine if a person could attend all meetings.
@@ -8991,11 +9063,38 @@ A faster approach is to use extra space.
 class Solution {
 public:
 	int hIndex(vector<int>& citations) {
+		if (citations.empty()) {
+			return 0;
+		}
+		int t[citations.size() + 1] = { 0 };
+		for (int num : citations) {
+			if (num > citations.size()) {
+				t[citations.size()]++;
+			}
+			else {
+				t[num]++;
+			}
+		}
+		int sum = 0;
+		for (int i = citations.size(); i >= 0; i--) {
+			sum += t[i];
+			if (sum >= i) {
+				return i;
+			}
+		}
+		return 0;
+	}
+};
+class Solution {
+public:
+	int hIndex(vector<int>& citations) {
+		if (citations.empty()) {
+			return 0;
+		}
 		sort(citations.begin(), citations.end());
-		int _size = citations.size();
-		for (int i = 0; i < _size; i++) {
-			if (citations[i] >= _size - i) {
-				return _size - i;
+		for (int i = 0; i < citations.size(); i++) {
+			if (citations[i] >= citations.size() - i) {
+				return citations.size() - i;
 			}
 		}
 		return 0;
@@ -10583,6 +10682,57 @@ public:
 };
 /*
 
+339. Nested List Weight Sum (Easy)
+
+Given a nested list of integers, return the sum of all integers in the list weighted by their depth.
+
+Each element is either an integer, or a list -- whose elements may also be integers or other lists.
+
+Example 1:
+Given the list [[1,1],2,[1,1]], return 10. (four 1's at depth 2, one 2 at depth 1)
+
+Example 2:
+Given the list [1,[4,[6]]], return 27. (one 1 at depth 1, one 4 at depth 2, and one 6 at depth 3; 1 + 4*2 + 6*3 = 27)
+
+*/
+/**
+ * // This is the interface that allows for creating nested lists.
+ * // You should not implement it, or speculate about its implementation
+ * class NestedInteger {
+ *   public:
+ *     // Return true if this NestedInteger holds a single integer, rather than a nested list.
+ *     bool isInteger() const;
+ *
+ *     // Return the single integer that this NestedInteger holds, if it holds a single integer
+ *     // The result is undefined if this NestedInteger holds a nested list
+ *     int getInteger() const;
+ *
+ *     // Return the nested list that this NestedInteger holds, if it holds a nested list
+ *     // The result is undefined if this NestedInteger holds a single integer
+ *     const vector<NestedInteger> &getList() const;
+ * };
+ */
+class Solution {
+public:
+	int depthSum(vector<NestedInteger>& nestedList) {
+		return depthSum(nestedList, 1);
+	}
+private:
+	int depthSum(const vector<NestedInteger>& nestedList, int deepth) {
+		int res = 0;
+		for (auto element : nestedList) {
+			if (element.isInteger() == true) {
+				res += deepth * element.getInteger();
+			}
+			else {
+				res += depthSum(element.getList(), deepth + 1);
+			}
+		}
+		return res;
+	}
+};
+/*
+
 341. Flatten Nested List Iterator (Medium)
 
 Given a nested list of integers, implement an iterator to flatten it.
@@ -10993,70 +11143,125 @@ public:
 		if (followerId != followeeId) following[followerId].erase(followeeId);
 	}
 };
-
 /**
- * Your Twitter object will be instantiated and called as such:
- * Twitter obj = new Twitter();
- * obj.postTweet(userId,tweetId);
- * vector<int> param_2 = obj.getNewsFeed(userId);
- * obj.follow(followerId,followeeId);
- * obj.unfollow(followerId,followeeId);
- */
- /*
+* Your Twitter object will be instantiated and called as such:
+* Twitter obj = new Twitter();
+* obj.postTweet(userId,tweetId);
+* vector<int> param_2 = obj.getNewsFeed(userId);
+* obj.follow(followerId,followeeId);
+* obj.unfollow(followerId,followeeId);
+*/
+/*
 
- 357. Count Numbers with Unique Digits (Medium)
+357. Count Numbers with Unique Digits (Medium)
 
- Given a non-negative integer n, count all numbers with unique digits, x, where 0 ≤ x < 10n.
+Given a non-negative integer n, count all numbers with unique digits, x, where 0 ≤ x < 10n.
 
- Example:
- Given n = 2, return 91. (The answer should be the total numbers in the range of 0 ≤ x < 100,
- excluding [11,22,33,44,55,66,77,88,99])
+Example:
+Given n = 2, return 91. (The answer should be the total numbers in the range of 0 ≤ x < 100, excluding [11,22,33,44,55,66,77,88,99])
 
- Hint:
+Hint:
 
- A direct way is to use the backtracking approach.
- Backtracking should contains three states which are (the current number, number of steps to
- get that number and a bitmask which represent which number is marked as visited so far in the
- current number). Start with state (0,0,0) and count all valid number till we reach number of
- steps equals to 10n.
-
- This problem can also be solved using a dynamic programming approach and some knowledge of
- combinatorics.
- Let f(k) = count of numbers with unique digits with length equals k.
- f(1) = 10, ..., f(k) = 9 * 9 * 8 * ... (9 - k + 2) [The first factor is 9 because a number
- cannot start with 0].
+A direct way is to use the backtracking approach.
+Backtracking should contains three states which are (the current number, number of steps to get that number and a bitmask which represent which number is marked as visited so far in the current number). Start with state (0,0,0) and count all valid number till we reach number of steps equals to 10n.
+This problem can also be solved using a dynamic programming approach and some knowledge of combinatorics.
+Let f(k) = count of numbers with unique digits with length equals k.
+f(1) = 10, ..., f(k) = 9 * 9 * 8 * ... (9 - k + 2) [The first factor is 9 because a number cannot start with 0].
 
  */
 class Solution {
 public:
 	int countNumbersWithUniqueDigits(int n) {
-		if (n < 1) return 1;
-		int pre = 9, sum = 10;
+		if (n == 0) {
+			return 1;
+		}
+		else if (n > 10) {
+			return 0;
+		}
+		int res = 10, pre = 9;
 		for (int i = 1; i < n; i++) {
 			pre *= (10 - i);
-			sum += pre;
+			res += pre;
 		}
-		return sum;
+		return res;
 	}
 };
 /*
 
-361. Bomb Enemy (Medium)
+359. Logger Rate Limiter (Easy)
 
-Given a 2D grid, each cell is either a wall 'W', an enemy 'E' or empty '0' (the number zero), return the maximum enemies you can kill using one bomb.
-The bomb kills all the enemies in the same row and column from the planted point until it hits the wall since the wall is too strong to be destroyed.
-Note that you can only put the bomb at an empty cell.
+Design a logger system that receive stream of messages along with its timestamps, each message should be printed if and only if it is not printed in the last 10 seconds.
+
+Given a message and a timestamp (in seconds granularity), return true if the message should be printed in the given timestamp, otherwise returns false.
+
+It is possible that several messages arrive roughly at the same time.
 
 Example:
-For the given grid
 
-0 E 0 0
-E 0 W E
-0 E 0 0
+Logger logger = new Logger();
 
-return 3. (Placing a bomb at (1,1) kills 3 enemies)
+// logging string "foo" at timestamp 1
+logger.shouldPrintMessage(1, "foo"); returns true;
+
+// logging string "bar" at timestamp 2
+logger.shouldPrintMessage(2,"bar"); returns true;
+
+// logging string "foo" at timestamp 3
+logger.shouldPrintMessage(3,"foo"); returns false;
+
+// logging string "bar" at timestamp 8
+logger.shouldPrintMessage(8,"bar"); returns false;
+
+// logging string "foo" at timestamp 10
+logger.shouldPrintMessage(10,"foo"); returns false;
+
+// logging string "foo" at timestamp 11
+logger.shouldPrintMessage(11,"foo"); returns true;
 
 */
+class Logger {
+public:
+	/** Initialize your data structure here. */
+	Logger() {
+
+	}
+
+	/** Returns true if the message should be printed in the given timestamp, otherwise returns false.
+		If this method returns false, the message will not be printed.
+		The timestamp is in seconds granularity. */
+	bool shouldPrintMessage(int timestamp, string message) {
+		if (timestamp < mapping[message]) {
+			return false;
+		}
+		mapping[message] = timestamp + 10;
+		return true;
+	}
+private:
+	unordered_map<string, int> mapping;
+};
+/**
+* Your Logger object will be instantiated and called as such:
+* Logger obj = new Logger();
+* bool param_1 = obj.shouldPrintMessage(timestamp,message);
+*/
+/*
+
+ 361. Bomb Enemy (Medium)
+
+ Given a 2D grid, each cell is either a wall 'W', an enemy 'E' or empty '0' (the number zero), return the maximum enemies you can kill using one bomb.
+ The bomb kills all the enemies in the same row and column from the planted point until it hits the wall since the wall is too strong to be destroyed.
+ Note that you can only put the bomb at an empty cell.
+
+ Example:
+ For the given grid
+
+ 0 E 0 0
+ E 0 W E
+ 0 E 0 0
+
+ return 3. (Placing a bomb at (1,1) kills 3 enemies)
+
+ */
 class Solution {
 public:
 	int maxKilledEnemies(vector<vector<char>>& grid) {
@@ -12236,6 +12441,62 @@ public:
 };
 /*
 
+408. Valid Word Abbreviation (Easy)
+
+Given a non-empty string s and an abbreviation abbr, return whether the string matches with the given abbreviation.
+
+A string such as "word" contains only the following valid abbreviations:
+
+["word", "1ord", "w1rd", "wo1d", "wor1", "2rd", "w2d", "wo2", "1o1d", "1or1", "w1r1", "1o2", "2r1", "3d", "w3", "4"]
+Notice that only the above abbreviations are valid abbreviations of the string "word". Any other string is not a valid abbreviation of "word".
+
+Note:
+Assume s contains only lowercase letters and abbr contains only lowercase letters and digits.
+
+Example 1:
+Given s = "internationalization", abbr = "i12iz4n":
+
+Return true.
+Example 2:
+Given s = "apple", abbr = "a2e":
+
+Return false.
+
+*/
+class Solution {
+public:
+	bool validWordAbbreviation(string word, string abbr) {
+		return validWordAbbreviation(word, 0, abbr, 0);
+	}
+private:
+	bool validWordAbbreviation(const string& word, int i, const string& abbr, int j) {
+		if (i == word.size() && j == abbr.size()) {
+			return true;
+		}
+		else if (i >= word.size() || j >= abbr.size()) {
+			return false;
+		}
+		if (isdigit(abbr[j]) == true) {
+			if (abbr[j] == '0') {
+				return false;
+			}
+			int step = 0;
+			while (j < abbr.size() && isdigit(abbr[j])) {
+				step = 10 * step + abbr[j++] - '0';
+			}
+			return validWordAbbreviation(word, i + step, abbr, j);
+		}
+		else {
+			if (word[i] == abbr[j]) {
+				return validWordAbbreviation(word, i + 1, abbr, j + 1);
+			}
+			return false;
+		}
+		return true;
+	}
+};
+/*
+
 409. Longest Palindrome (Easy)
 
 Given a string which consists of lowercase or uppercase letters, find the length of the longest palindromes that can be built with those letters.
@@ -12487,6 +12748,90 @@ public:
 			}
 		}
 		return cnt;
+	}
+};
+/*
+
+422. Valid Word Square (Easy)
+
+Given a sequence of words, check whether it forms a valid word square.
+
+A sequence of words forms a valid word square if the kth row and column read the exact same string, where 0 ≤ k < max(numRows, numColumns).
+
+Note:
+The number of words given is at least 1 and does not exceed 500.
+Word length will be at least 1 and does not exceed 500.
+Each word contains only lowercase English alphabet a-z.
+Example 1:
+
+Input:
+[
+  "abcd",
+  "bnrt",
+  "crmy",
+  "dtye"
+]
+
+Output:
+true
+
+Explanation:
+The first row and first column both read "abcd".
+The second row and second column both read "bnrt".
+The third row and third column both read "crmy".
+The fourth row and fourth column both read "dtye".
+
+Therefore, it is a valid word square.
+Example 2:
+
+Input:
+[
+  "abcd",
+  "bnrt",
+  "crm",
+  "dt"
+]
+
+Output:
+true
+
+Explanation:
+The first row and first column both read "abcd".
+The second row and second column both read "bnrt".
+The third row and third column both read "crm".
+The fourth row and fourth column both read "dt".
+
+Therefore, it is a valid word square.
+Example 3:
+
+Input:
+[
+  "ball",
+  "area",
+  "read",
+  "lady"
+]
+
+Output:
+false
+
+Explanation:
+The third row reads "read" while the third column reads "lead".
+
+Therefore, it is NOT a valid word square.
+
+*/
+class Solution {
+public:
+	bool validWordSquare(vector<string>& words) {
+		for (int i = 0; i < words.size(); i++) {
+			for (int j = 0; j < words[i].size(); j++) {
+				if (j >= words.size() || i >= words[j].size() || words[i][j] != words[j][i]) {
+					return false;
+				}
+			}
+		}
+		return true;
 	}
 };
 /*
@@ -13071,6 +13416,52 @@ public:
 };
 /*
 
+455. Assign Cookies (Easy)
+
+Assume you are an awesome parent and want to give your children some cookies. But, you should give each child at most one cookie. Each child i has a greed factor gi, which is the minimum size of a cookie that the child will be content with; and each cookie j has a size sj. If sj >= gi, we can assign the cookie j to the child i, and the child i will be content. Your goal is to maximize the number of your content children and output the maximum number.
+
+Note:
+You may assume the greed factor is always positive.
+You cannot assign more than one cookie to one child.
+
+Example 1:
+Input: [1,2,3], [1,1]
+
+Output: 1
+
+Explanation: You have 3 children and 2 cookies. The greed factors of 3 children are 1, 2, 3.
+And even though you have 2 cookies, since their size is both 1, you could only make the child whose greed factor is 1 content.
+You need to output 1.
+Example 2:
+Input: [1,2], [1,2,3]
+
+Output: 2
+
+Explanation: You have 2 children and 3 cookies. The greed factors of 2 children are 1, 2.
+You have 3 cookies and their sizes are big enough to gratify all of the children,
+You need to output 2.
+
+*/
+class Solution {
+public:
+	int findContentChildren(vector<int>& g, vector<int>& s) {
+		sort(g.begin(), g.end());
+		sort(s.begin(), s.end());
+		int i = 0, j = 0;
+		while (i < g.size() && j < s.size()) {
+			if (g[i] > s[j]) {
+				j++;
+			}
+			else {
+				i++;
+				j++;
+			}
+		}
+		return i;
+	}
+};
+/*
+
 461. Hamming Distance (Easy)
 
 The Hamming distance between two integers is the number of positions at which the corresponding bits are different.
@@ -13190,5 +13581,99 @@ public:
 			}
 		}
 		return memo[m][n];
+	}
+};
+/*
+
+476. Number Complement (Easy)
+
+Given a positive integer, output its complement number. The complement strategy is to flip the bits of its binary representation.
+
+Note:
+The given integer is guaranteed to fit within the range of a 32-bit signed integer.
+You could assume no leading zero bit in the integer’s binary representation.
+Example 1:
+Input: 5
+Output: 2
+Explanation: The binary representation of 5 is 101 (no leading zero bits), and its complement is 010. So you need to output 2.
+Example 2:
+Input: 1
+Output: 0
+Explanation: The binary representation of 1 is 1 (no leading zero bits), and its complement is 0. So you need to output 0.
+
+*/
+class Solution {
+public:
+	int findComplement(int num) {
+		unsigned int mask = ~0;
+		while (mask & num) {
+			mask <<= 1;
+		}
+		return ~mask & ~num;
+	}
+};
+/*
+
+485. Max Consecutive Ones (Easy)
+
+Given a binary array, find the maximum number of consecutive 1s in this array.
+
+Example 1:
+Input: [1,1,0,1,1,1]
+Output: 3
+Explanation: The first two digits or the last three digits are consecutive 1s.
+	The maximum number of consecutive 1s is 3.
+Note:
+
+The input array will only contain 0 and 1.
+The length of input array is a positive integer and will not exceed 10,000
+
+*/
+class Solution {
+public:
+	int findMaxConsecutiveOnes(vector<int>& nums) {
+		int res = 0, cur = 0;
+		for (int i = 0; i < nums.size(); i++) {
+			if (nums[i] == 1) {
+				cur++;
+				res = max(res, cur);
+			}
+			else {
+				cur = 0;
+			}
+		}
+		return res;
+	}
+};
+/*
+
+492. Construct the Rectangle (Easy)
+
+For a web developer, it is very important to know how to design a web page's size. So, given a specific rectangular web page’s area, your job by now is to design a rectangular web page, whose length L and width W satisfy the following requirements:
+
+1. The area of the rectangular web page you designed must equal to the given target area.
+
+2. The width W should not be larger than the length L, which means L >= W.
+
+3. The difference between length L and width W should be as small as possible.
+You need to output the length L and the width W of the web page you designed in sequence.
+Example:
+Input: 4
+Output: [2, 2]
+Explanation: The target area is 4, and all the possible ways to construct it are [1,4], [2,2], [4,1].
+But according to requirement 2, [1,4] is illegal; according to requirement 3,  [4,1] is not optimal compared to [2,2]. So the length L is 2, and the width W is 2.
+Note:
+The given area won't exceed 10,000,000 and is a positive integer
+The web page's width and length you designed must be positive integers.
+
+*/
+class Solution {
+public:
+	vector<int> constructRectangle(int area) {
+		int w = sqrt(area);
+		while (area % w != 0) {
+			w--;
+		}
+		return{ area / w, w };
 	}
 };

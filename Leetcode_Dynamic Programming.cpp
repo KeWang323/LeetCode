@@ -174,16 +174,13 @@ How many possible unique paths are there?
 class Solution {
 public:
 	int uniquePaths(int m, int n) {
-		if (m == 0 || n == 0) {
-			return 0;
-		}
-		vector<int> res(n, 1);
+		vector<int> t(n, 1);
 		for (int i = 1; i < m; i++) {
 			for (int j = 1; j < n; j++) {
-				res[j] = res[j - 1] + res[j];
+				t[j] += t[j - 1];
 			}
 		}
-		return res[n - 1];
+		return t.back();
 	}
 };
 /*
@@ -212,23 +209,19 @@ Note: m and n will be at most 100.
 class Solution {
 public:
 	int uniquePathsWithObstacles(vector<vector<int>>& obstacleGrid) {
-		if (obstacleGrid.empty()) {
-			return 0;
-		}
-		int _size = obstacleGrid[0].size();
-		vector<int> res(_size, 0);
-		res[0] = 1;
+		vector<int> t(obstacleGrid[0].size(), 0);
+		t[0] = 1;
 		for (int i = 0; i < obstacleGrid.size(); i++) {
-			for (int j = 0; j < _size; j++) {
+			for (int j = 0; j < obstacleGrid[0].size(); j++) {
 				if (obstacleGrid[i][j] == 1) {
-					res[j] = 0;
+					t[j] = 0;
 				}
 				else if (j > 0) {
-					res[j] = res[j - 1] + res[j];
+					t[j] += t[j - 1];
 				}
 			}
 		}
-		return res[_size - 1];
+		return t.back();
 	}
 };
 /*
@@ -1324,34 +1317,32 @@ public:
 Given a non-negative integer n, count all numbers with unique digits, x, where 0 ≤ x < 10n.
 
 Example:
-Given n = 2, return 91. (The answer should be the total numbers in the range of 0 ≤ x < 100,
-excluding [11,22,33,44,55,66,77,88,99])
+Given n = 2, return 91. (The answer should be the total numbers in the range of 0 ≤ x < 100, excluding [11,22,33,44,55,66,77,88,99])
 
 Hint:
 
 A direct way is to use the backtracking approach.
-Backtracking should contains three states which are (the current number, number of steps to
-get that number and a bitmask which represent which number is marked as visited so far in the
-current number). Start with state (0,0,0) and count all valid number till we reach number of
-steps equals to 10n.
-
-This problem can also be solved using a dynamic programming approach and some knowledge of
-combinatorics.
+Backtracking should contains three states which are (the current number, number of steps to get that number and a bitmask which represent which number is marked as visited so far in the current number). Start with state (0,0,0) and count all valid number till we reach number of steps equals to 10n.
+This problem can also be solved using a dynamic programming approach and some knowledge of combinatorics.
 Let f(k) = count of numbers with unique digits with length equals k.
-f(1) = 10, ..., f(k) = 9 * 9 * 8 * ... (9 - k + 2) [The first factor is 9 because a number
-cannot start with 0].
+f(1) = 10, ..., f(k) = 9 * 9 * 8 * ... (9 - k + 2) [The first factor is 9 because a number cannot start with 0].
 
 */
 class Solution {
 public:
 	int countNumbersWithUniqueDigits(int n) {
-		if (n < 1) return 1;
-		int pre = 9, sum = 10;
+		if (n == 0) {
+			return 1;
+		}
+		else if (n > 10) {
+			return 0;
+		}
+		int res = 10, pre = 9;
 		for (int i = 1; i < n; i++) {
 			pre *= (10 - i);
-			sum += pre;
+			res += pre;
 		}
-		return sum;
+		return res;
 	}
 };
 /*

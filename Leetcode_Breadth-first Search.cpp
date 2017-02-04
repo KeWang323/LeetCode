@@ -114,10 +114,10 @@ Given a binary tree, return the zigzag level order traversal of its nodes' value
 
 For example:
 Given binary tree [3,9,20,null,null,15,7],
-	3
+    3
    / \
   9  20
-	/  \
+    /  \
    15   7
 return its zigzag level order traversal as:
 [
@@ -139,24 +139,42 @@ return its zigzag level order traversal as:
 class Solution {
 public:
 	vector<vector<int>> zigzagLevelOrder(TreeNode* root) {
+		if (root == NULL) {
+			return{};
+		}
 		vector<vector<int>> res;
-		if (!root) return res;
-		queue<TreeNode*> q;
-		q.push(root);
-		int level = 0;
-		while (!q.empty()) {
-			vector<int> lev;
-			int _size = q.size();
-			for (int i = 0; i < _size; i++) {
-				TreeNode *temp = q.front();
-				q.pop();
-				lev.push_back(temp->val);
-				if (temp->left) q.push(temp->left);
-				if (temp->right) q.push(temp->right);
+		deque<TreeNode*> dq;
+		dq.push_back(root);
+		bool odd = true;
+		while (!dq.empty()) {
+			int _size = dq.size();
+			vector<int> res_sub;
+			if (odd == true) {
+				for (int i = 0; i < _size; i++) {
+					res_sub.push_back(dq.front()->val);
+					if (dq.front()->left != NULL) {
+						dq.push_back(dq.front()->left);
+					}
+					if (dq.front()->right != NULL) {
+						dq.push_back(dq.front()->right);
+					}
+					dq.pop_front();
+				}
 			}
-			if (level % 2) reverse(lev.begin(), lev.end());
-			res.push_back(lev);
-			level++;
+			else {
+				for (int i = 0; i < _size; i++) {
+					res_sub.push_back(dq.back()->val);
+					if (dq.back()->right != NULL) {
+						dq.push_front(dq.back()->right);
+					}
+					if (dq.back()->left != NULL) {
+						dq.push_front(dq.back()->left);
+					}
+					dq.pop_back();
+				}
+			}
+			odd = !odd;
+			res.push_back(res_sub);
 		}
 		return res;
 	}
@@ -169,10 +187,10 @@ Given a binary tree, return the bottom-up level order traversal of its nodes' va
 
 For example:
 Given binary tree [3,9,20,null,null,15,7],
-	3
+    3
    / \
   9  20
-	/  \
+    /  \
    15   7
 return its bottom-up level order traversal as:
 [
@@ -194,19 +212,24 @@ return its bottom-up level order traversal as:
 class Solution {
 public:
 	vector<vector<int>> levelOrderBottom(TreeNode* root) {
+		if (root == NULL) {
+			return{};
+		}
 		vector<vector<int>> res;
-		if (!root) return res;
 		queue<TreeNode*> q;
 		q.push(root);
 		while (!q.empty()) {
 			vector<int> lev;
 			int _size = q.size();
 			for (int i = 0; i < _size; i++) {
-				TreeNode *temp = q.front();
+				lev.push_back(q.front()->val);
+				if (q.front()->left != NULL) {
+					q.push(q.front()->left);
+				}
+				if (q.front()->right != NULL) {
+					q.push(q.front()->right);
+				}
 				q.pop();
-				lev.push_back(temp->val);
-				if (temp->left) q.push(temp->left);
-				if (temp->right) q.push(temp->right);
 			}
 			res.push_back(lev);
 		}

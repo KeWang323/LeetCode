@@ -169,11 +169,11 @@ A solution set is:
 class Solution {
 public:
 	vector<vector<int>> fourSum(vector<int>& nums, int target) {
+		if (nums.size() < 4) {
+			return{};
+		}
 		vector<vector<int>> res;
 		int _size = nums.size();
-		if (_size < 4) {
-			return res;
-		}
 		sort(nums.begin(), nums.end());
 		for (int i = 0; i < _size - 3; i++) {
 			if (i > 0 && nums[i] == nums[i - 1] || nums[i] + nums[_size - 3] + nums[_size - 2] + nums[_size - 1] < target) {
@@ -193,7 +193,7 @@ public:
 				while (k < l) {
 					int _sum = nums[i] + nums[j] + nums[k] + nums[l];
 					if (_sum == target) {
-						res.push_back(vector<int>{nums[i], nums[j], nums[k], nums[l]});
+						res.push_back({ nums[i], nums[j], nums[k], nums[l] });
 						k++;
 						l--;
 						while (nums[k] == nums[k - 1] && k < l) {

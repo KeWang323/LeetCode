@@ -217,29 +217,29 @@ For k = 3, you should return: 3->2->1->4->5
  */
 class Solution {
 public:
-    ListNode* reverseKGroup(ListNode* head, int k) {
-        if (head == NULL || head->next == NULL) {
-            return head;
-        }
-        ListNode *node = head;
-        int index = 1;
-        while (index++ < k) {
-            node = node->next;
-            if (node == NULL) {
-                return head;
-            }
-        }
-        ListNode *post = head->next;
-        head->next = reverseKGroup(node->next, k);
-        index = 1;
-        while (index++ < k) {
-            ListNode *next = post->next;
-            post->next = head;
-            head = post;
-            post = next;
-        }
-        return node;
-    }
+	ListNode* reverseKGroup(ListNode* head, int k) {
+		if (head == NULL || head->next == NULL) {
+			return head;
+		}
+		ListNode *node = head;
+		int index = 1;
+		while (index++ < k) {
+			node = node->next;
+			if (node == NULL) {
+				return head;
+			}
+		}
+		ListNode *post = head->next;
+		head->next = reverseKGroup(node->next, k);
+		index = 1;
+		while (index++ < k) {
+			ListNode *next = post->next;
+			post->next = head;
+			head = post;
+			post = next;
+		}
+		return node;
+	}
 };
 /*
 
@@ -262,25 +262,25 @@ return 4->5->1->2->3->NULL.
  */
 class Solution {
 public:
-    ListNode* rotateRight(ListNode* head, int k) {
-        if (head == NULL || head->next == NULL) {
-            return head;
-        }
-        ListNode *p = head;
-        int len = 1;
-        while (p->next != NULL) {
-            len++;
-            p = p->next;
-        }
-        k %= len;
-        p->next = head;
-        for (int i = 0; i < len - k;i++) {
-            p = p->next;
-        }
-        head = p->next;
-        p->next = NULL;
-        return head;
-    }
+	ListNode* rotateRight(ListNode* head, int k) {
+		if (head == NULL || head->next == NULL) {
+			return head;
+		}
+		ListNode *p = head;
+		int len = 1;
+		while (p->next != NULL) {
+			len++;
+			p = p->next;
+		}
+		k %= len;
+		p->next = head;
+		for (int i = 0; i < len - k;i++) {
+			p = p->next;
+		}
+		head = p->next;
+		p->next = NULL;
+		return head;
+	}
 };
 /*
 
@@ -307,20 +307,19 @@ public:
 		if (head == NULL || head->next == NULL) {
 			return head;
 		}
-		ListNode *dummy = new ListNode(-1);
+		ListNode *dummy = new ListNode(-1), *p = dummy;
 		dummy->next = head;
-		ListNode *p = dummy;
 		while (head != NULL) {
-			ListNode *post = head->next;
-			if (post != NULL && post->val == head->val) {
-				while (post != NULL && post->val == head->val) {
-					post = post->next;
+			if (head->next != NULL && head->val == head->next->val) {
+				int temp = head->val;
+				while (head != NULL && head->val == temp) {
+					head = head->next;
 				}
-				head = post;
 				p->next = head;
 			}
 			else {
-				p = head;
+				p->next = head;
+				p = p->next;
 				head = head->next;
 			}
 		}

@@ -282,24 +282,42 @@ return its zigzag level order traversal as:
 class Solution {
 public:
 	vector<vector<int>> zigzagLevelOrder(TreeNode* root) {
+		if (root == NULL) {
+			return{};
+		}
 		vector<vector<int>> res;
-		if (!root) return res;
-		queue<TreeNode*> q;
-		q.push(root);
-		int level = 0;
-		while (!q.empty()) {
-			vector<int> lev;
-			int _size = q.size();
-			for (int i = 0; i < _size; i++) {
-				TreeNode *temp = q.front();
-				q.pop();
-				lev.push_back(temp->val);
-				if (temp->left) q.push(temp->left);
-				if (temp->right) q.push(temp->right);
+		deque<TreeNode*> dq;
+		dq.push_back(root);
+		bool odd = true;
+		while (!dq.empty()) {
+			int _size = dq.size();
+			vector<int> res_sub;
+			if (odd == true) {
+				for (int i = 0; i < _size; i++) {
+					res_sub.push_back(dq.front()->val);
+					if (dq.front()->left != NULL) {
+						dq.push_back(dq.front()->left);
+					}
+					if (dq.front()->right != NULL) {
+						dq.push_back(dq.front()->right);
+					}
+					dq.pop_front();
+				}
 			}
-			if (level % 2) reverse(lev.begin(), lev.end());
-			res.push_back(lev);
-			level++;
+			else {
+				for (int i = 0; i < _size; i++) {
+					res_sub.push_back(dq.back()->val);
+					if (dq.back()->right != NULL) {
+						dq.push_front(dq.back()->right);
+					}
+					if (dq.back()->left != NULL) {
+						dq.push_front(dq.back()->left);
+					}
+					dq.pop_back();
+				}
+			}
+			odd = !odd;
+			res.push_back(res_sub);
 		}
 		return res;
 	}
@@ -403,35 +421,35 @@ public:
 			return{};
 		}
 		vector<int> res;
-		stack<TreeNode*> s;
+		stack<TreeNode*> sta;
 		TreeNode *pre = NULL;
-		s.push(root);
-		while (!s.empty()) {
-			TreeNode *cur = s.top();
+		sta.push(root);
+		while (!sta.empty()) {
+			TreeNode *cur = sta.top();
 			if (pre == NULL || pre->left == cur || pre->right == cur) {
 				if (cur->left != NULL) {
-					s.push(cur->left);
+					sta.push(cur->left);
 				}
 				else if (cur->right != NULL) {
-					s.push(cur->right);
+					sta.push(cur->right);
 				}
 				else {
 					res.push_back(cur->val);
-					s.pop();
+					sta.pop();
 				}
 			}
-			else if (pre == cur->left) {
+			else if (cur->left == pre) {
 				if (cur->right != NULL) {
-					s.push(cur->right);
+					sta.push(cur->right);
 				}
 				else {
 					res.push_back(cur->val);
-					s.pop();
+					sta.pop();
 				}
 			}
 			else {
 				res.push_back(cur->val);
-				s.pop();
+				sta.pop();
 			}
 			pre = cur;
 		}

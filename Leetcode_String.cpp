@@ -556,12 +556,14 @@ public:
 
 43. Multiply Strings (Medium)
 
-Given two numbers represented as strings, return multiplication of the numbers as a string.
+Given two non-negative integers num1 and num2 represented as strings, return the product of num1 and num2.
 
 Note:
-The numbers can be arbitrarily large and are non-negative.
-Converting the input string to integer is NOT allowed.
-You should NOT use internal library such as BigInteger.
+
+The length of both num1 and num2 is < 110.
+Both num1 and num2 contains only digits 0-9.
+Both num1 and num2 does not contain any leading zero.
+You must not use any built-in BigInteger library or convert the inputs to integer directly.
 
 */
 class Solution {
@@ -573,20 +575,17 @@ public:
 		int s1 = num1.size() - 1, s2 = num2.size() - 1;
 		int i = s1 + s2, j = 0, carry = 0;
 		string res;
-		while (j <= i) {
+		while (j <= i || carry > 0) {
 			for (int k = 0; k <= j; k++) {
-				if (s1 >= k && s2 >= (j - k)) {
+				if (k <= s1 && j - k <= s2) {
 					carry += (num1[s1 - k] - '0') * (num2[s2 - (j - k)] - '0');
 				}
 			}
-			res = char(carry % 10 + '0') + res;
+			res += carry % 10 + '0';
 			carry /= 10;
 			j++;
 		}
-		while (carry) {
-			res = char(carry % 10 + '0') + res;
-			carry /= 10;
-		}
+		reverse(res.begin(), res.end());
 		return res;
 	}
 };
@@ -1337,6 +1336,62 @@ public:
 			if (t[cha]-- == 0) {
 				return false;
 			}
+		}
+		return true;
+	}
+};
+/*
+
+408. Valid Word Abbreviation (Easy)
+
+Given a non-empty string s and an abbreviation abbr, return whether the string matches with the given abbreviation.
+
+A string such as "word" contains only the following valid abbreviations:
+
+["word", "1ord", "w1rd", "wo1d", "wor1", "2rd", "w2d", "wo2", "1o1d", "1or1", "w1r1", "1o2", "2r1", "3d", "w3", "4"]
+Notice that only the above abbreviations are valid abbreviations of the string "word". Any other string is not a valid abbreviation of "word".
+
+Note:
+Assume s contains only lowercase letters and abbr contains only lowercase letters and digits.
+
+Example 1:
+Given s = "internationalization", abbr = "i12iz4n":
+
+Return true.
+Example 2:
+Given s = "apple", abbr = "a2e":
+
+Return false.
+
+*/
+class Solution {
+public:
+	bool validWordAbbreviation(string word, string abbr) {
+		return validWordAbbreviation(word, 0, abbr, 0);
+	}
+private:
+	bool validWordAbbreviation(const string& word, int i, const string& abbr, int j) {
+		if (i == word.size() && j == abbr.size()) {
+			return true;
+		}
+		else if (i >= word.size() || j >= abbr.size()) {
+			return false;
+		}
+		if (isdigit(abbr[j]) == true) {
+			if (abbr[j] == '0') {
+				return false;
+			}
+			int step = 0;
+			while (j < abbr.size() && isdigit(abbr[j])) {
+				step = 10 * step + abbr[j++] - '0';
+			}
+			return validWordAbbreviation(word, i + step, abbr, j);
+		}
+		else {
+			if (word[i] == abbr[j]) {
+				return validWordAbbreviation(word, i + 1, abbr, j + 1);
+			}
+			return false;
 		}
 		return true;
 	}
