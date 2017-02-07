@@ -1617,10 +1617,13 @@ by one to see if T has its subsequence. In this scenario, how would you change y
 class Solution {
 public:
 	bool isSubsequence(string s, string t) {
-		int s_i = 0;
-		for (int t_i = 0; t_i < t.length() && s_i < s.length(); t_i++)
-			if (t[t_i] == s[s_i]) s_i++;
-		return s_i == s.length();
+		int i = 0;
+		for (int j = 0; j < t.size(); j++) {
+			if (s[i] == t[j]) {
+				i++;
+			}
+		}
+		return i == s.size();
 	}
 };
 /*
@@ -1660,10 +1663,10 @@ public:
 		t[0] = true;
 		for (int i = 0; i < nums.size(); i++) {
 			for (int j = sum; j >= nums[i]; j--) {
-				if (t[j]) {
+				if (t[j] == true) {
 					break;
 				}
-				t[j] = t[j] || t[j - nums[i]];
+				t[j] |= t[j - nums[i]];
 			}
 		}
 		return t[sum];
@@ -1697,24 +1700,23 @@ Explanation: You could form "10", but then you'd have nothing left. Better form 
 class Solution {
 public:
 	int findMaxForm(vector<string>& strs, int m, int n) {
-		vector<vector<int>> memo(m + 1, vector<int>(n + 1, 0));
-		int numZeroes, numOnes;
-		for (auto &s : strs) {
-			numZeroes = numOnes = 0;
-			for (auto c : s) {
-				if (c == '0') {
-					numZeroes++;
+		vector<vector<int>> t(m + 1, vector<int>(n + 1, 0));
+		for (string& s : strs) {
+			int nz = 0, no = 0;
+			for (char& cha : s) {
+				if (cha == '0') {
+					nz++;
 				}
-				else if (c == '1') {
-					numOnes++;
+				else {
+					no++;
 				}
 			}
-			for (int i = m; i >= numZeroes; i--) {
-				for (int j = n; j >= numOnes; j--) {
-					memo[i][j] = max(memo[i][j], memo[i - numZeroes][j - numOnes] + 1);
+			for (int i = m; i >= nz; i--) {
+				for (int j = n; j >= no; j--) {
+					t[i][j] = max(t[i][j], t[i - nz][j - no] + 1);
 				}
 			}
 		}
-		return memo[m][n];
+		return t.back().back();
 	}
 };

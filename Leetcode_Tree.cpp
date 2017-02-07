@@ -780,21 +780,15 @@ private:
 		if (root == NULL) {
 			return;
 		}
-		else if (root->left == NULL && root->right == NULL && sum == root->val) {
-			res_sub.push_back(root->val);
+		res_sub.push_back(root->val);
+		if (root->left == NULL && root->right == NULL && root->val == sum) {
 			res.push_back(res_sub);
 			res_sub.pop_back();
 			return;
 		}
-		res_sub.push_back(root->val);
-		if (root->left != NULL) {
-			pathSum(root->left, res, res_sub, sum - root->val);
-		}
-		if (root->right != NULL) {
-			pathSum(root->right, res, res_sub, sum - root->val);
-		}
+		pathSum(root->left, res, res_sub, sum - root->val);
+		pathSum(root->right, res, res_sub, sum - root->val);
 		res_sub.pop_back();
-
 	}
 };
 /*
@@ -2306,49 +2300,35 @@ Find the sum of all left leaves in a given binary tree.
 
 Example:
 
-3
-/ \
-9  20
-/  \
-15   7
+    3
+   / \
+  9  20
+    /  \
+   15   7
 
 There are two left leaves in the binary tree, with values 9 and 15 respectively. Return 24.
 
 */
 /**
-* Definition for a binary tree node.
-* struct TreeNode {
-*     int val;
-*     TreeNode *left;
-*     TreeNode *right;
-*     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
-* };
-*/
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
 class Solution {
 public:
 	int sumOfLeftLeaves(TreeNode* root) {
-		int res = 0;
-		sumOfLeftLeaves(root, NULL, res);
-		return res;
-	}
-private:
-	void sumOfLeftLeaves(TreeNode* root, TreeNode* pre, int& res) {
 		if (root == NULL) {
-			return;
+			return 0;
 		}
-		else if (pre == NULL) {
-			sumOfLeftLeaves(root->left, root, res);
-			sumOfLeftLeaves(root->right, root, res);
+		int l = sumOfLeftLeaves(root->left), r = sumOfLeftLeaves(root->right);
+		if (root->left != NULL && root->left->left == NULL && root->left->right == NULL) {
+			return root->left->val + l + r;
 		}
-		else if (root->left == NULL && root->right == NULL && pre->left == root) {
-			res += root->val;
-			return;
-		}
-		else {
-			sumOfLeftLeaves(root->left, root, res);
-			sumOfLeftLeaves(root->right, root, res);
-		}
-
+		return l + r;
 	}
 };
 /*
@@ -2367,12 +2347,12 @@ Example:
 
 root = [10,5,-3,3,2,null,11,3,-2,null,1], sum = 8
 
-10
-/  \
-5   -3
-/ \    \
-3   2   11
-/ \   \
+      10
+     /  \
+    5   -3
+   / \    \
+  3   2   11
+ / \   \
 3  -2   1
 
 Return 3. The paths that sum to 8 are:
@@ -2383,30 +2363,30 @@ Return 3. The paths that sum to 8 are:
 
 */
 /**
-* Definition for a binary tree node.
-* struct TreeNode {
-*     int val;
-*     TreeNode *left;
-*     TreeNode *right;
-*     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
-* };
-*/
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
 class Solution {
 public:
 	int pathSum(TreeNode* root, int sum) {
 		unordered_map<int, int> mapping;
 		mapping[0] = 1;
-		return pathSum(root, 0, sum, mapping);
+		return pathSum(root, sum, mapping, 0);
 	}
 private:
-	int pathSum(TreeNode* root, int sum, const int& target, unordered_map<int, int>& mapping) {
+	int pathSum(TreeNode* root, const int& target, unordered_map<int, int>& mapping, int sum) {
 		if (root == NULL) {
 			return 0;
 		}
 		sum += root->val;
-		int res = mapping.find(sum - target) != mapping.end() ? mapping[sum - target] : 0;
+		int res = mapping[sum - target];
 		mapping[sum]++;
-		res += pathSum(root->left, sum, target, mapping) + pathSum(root->right, sum, target, mapping);
+		res += pathSum(root->left, target, mapping, sum) + pathSum(root->right, target, mapping, sum);
 		mapping[sum]--;
 		return res;
 	}
@@ -2490,54 +2470,54 @@ Example:
 root = [5,3,6,2,4,null,7]
 key = 3
 
-5
-/ \
-3   6
-/ \   \
+    5
+   / \
+  3   6
+ / \   \
 2   4   7
 
 Given key to delete is 3. So we find the node with value 3 and delete it.
 
 One valid answer is [5,4,6,2,null,null,7], shown in the following BST.
 
-5
-/ \
-4   6
-/     \
+    5
+   / \
+  4   6
+ /     \
 2       7
 
 Another valid answer is [5,2,6,null,4,null,7].
 
-5
-/ \
-2   6
-\   \
-4   7
+    5
+   / \
+  2   6
+   \   \
+    4   7
 
 */
 /**
-* Definition for a binary tree node.
-* struct TreeNode {
-*     int val;
-*     TreeNode *left;
-*     TreeNode *right;
-*     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
-* };
-*/
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
 class Solution {
 public:
 	TreeNode* deleteNode(TreeNode* root, int key) {
 		if (root == NULL) {
 			return root;
 		}
-		else if (root->val > key) {
-			root->left = deleteNode(root->left, key);
-		}
 		else if (root->val < key) {
 			root->right = deleteNode(root->right, key);
 		}
+		else if (root->val > key) {
+			root->left = deleteNode(root->left, key);
+		}
 		else {
-			if (root->right == NULL || root->left == NULL) {
+			if (root->left == NULL || root->right == NULL) {
 				return root->left == NULL ? root->right : root->left;
 			}
 			else {

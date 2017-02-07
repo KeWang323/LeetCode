@@ -59,6 +59,33 @@ public:
 		return s.substr(left_max, len_max);
 	}
 };
+class Solution {
+public:
+	string longestPalindrome(string s) {
+		string t = "$#";
+		for (int i = 0; i < s.size(); ++i) {
+			t += s[i];
+			t += "#";
+		}
+		vector<int> p(t.size(), 0);
+		int mx = 0, id = 0, resLen = 0, resCenter = 0;
+		for (int i = 1; i < t.size(); i++) {
+			p[i] = mx > i ? min(p[2 * id - i], mx - i) : 1;
+			while (t[i + p[i]] == t[i - p[i]]) {
+				p[i]++;
+			}
+			if (mx < i + p[i]) {
+				mx = i + p[i];
+				id = i;
+			}
+			if (resLen < p[i]) {
+				resLen = p[i];
+				resCenter = i;
+			}
+		}
+		return s.substr((resCenter - resLen) / 2, resLen - 1);
+	}
+};
 /*
 
 6. ZigZag Conversion (Easy)
@@ -1028,6 +1055,43 @@ public:
 		}
 		s.resize(i);
 		reverse(s.begin(), s.end());
+	}
+};
+/*
+
+157. Read N Characters Given Read4 (Easy)
+
+The API: int read4(char *buf) reads 4 characters at a time from a file.
+
+The return value is the actual number of characters read. For example, it returns 3 if there is only 3 characters left in the file.
+
+By using the read4 API, implement the function int read(char *buf, int n) that reads n characters from the file.
+
+Note:
+The read function will only be called once for each test case.
+
+*/
+// Forward declaration of the read4 API.
+int read4(char *buf);
+
+class Solution {
+public:
+	/**
+	* @param buf Destination buffer
+	* @param n   Maximum number of characters to read
+	* @return    The number of characters read
+	*/
+	int read(char *buf, int n) {
+		int res = 0;
+		while (n > 0) {
+			int temp = min(read4(buf + res), n);
+			res += temp;
+			if (temp < 4) {
+				break;
+			}
+			n -= 4;
+		}
+		return res;
 	}
 };
 /*

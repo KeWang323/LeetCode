@@ -277,10 +277,13 @@ by one to see if T has its subsequence. In this scenario, how would you change y
 class Solution {
 public:
 	bool isSubsequence(string s, string t) {
-		int s_i = 0;
-		for (int t_i = 0; t_i < t.length() && s_i < s.length(); t_i++)
-			if (t[t_i] == s[s_i]) s_i++;
-		return s_i == s.length();
+		int i = 0;
+		for (int j = 0; j < t.size(); j++) {
+			if (s[i] == t[j]) {
+				i++;
+			}
+		}
+		return i == s.size();
 	}
 };
 /*

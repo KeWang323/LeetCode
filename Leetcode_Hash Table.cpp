@@ -1438,19 +1438,16 @@ One longest palindrome that can be built is "dccaccd", whose length is 7.
 class Solution {
 public:
 	int longestPalindrome(string s) {
-		int table[58] = { 0 };
-		int res = 0;
+		int t[256] = { 0 }, res = 0;
 		bool flag = false;
-		for (char cha : s) {
-			table[cha - 'A']++;
+		for (char& cha : s) {
+			t[cha]++;
 		}
-		for (auto i : table) {
-			res += i / 2 * 2;
-			if (i % 2 == 1) {
-				flag = true;
-			}
+		for (int num : t) {
+			res += num / 2 * 2;
+			flag |= num & 1;
 		}
-		return flag == true ? res + 1 : res;
+		return res + flag;
 	}
 };
 /*
@@ -1491,7 +1488,7 @@ The substring with start index = 2 is "ab", which is an anagram of "ab".
 class Solution {
 public:
 	vector<int> findAnagrams(string s, string p) {
-		if (s.length() < p.length()) {
+		if (s.size() < p.size()) {
 			return{};
 		}
 		vector<int> res;
@@ -1500,15 +1497,15 @@ public:
 			mapping[cha - 'a']++;
 		}
 		int cnt = p.size(), i = 0, j = 0;
-		while (j < s.length()) {
-			if (j - i == p.length() && mapping[s[i++] - 'a']++ >= 0) {
-				cnt++;
-			}
+		while (j < s.size()) {
 			if (--mapping[s[j++] - 'a'] >= 0) {
 				cnt--;
 			}
 			if (cnt == 0) {
 				res.push_back(i);
+			}
+			if (j - i == p.size() && mapping[s[i++] - 'a']++ >= 0) {
+				cnt++;
 			}
 		}
 		return res;

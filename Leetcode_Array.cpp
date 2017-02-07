@@ -2823,17 +2823,26 @@ Both numbers with value 2 are both considered as second maximum.
 class Solution {
 public:
 	int thirdMax(vector<int>& nums) {
-		set<int> s;
-		for (int i = 0; i < nums.size(); ++i) {
-			s.insert(nums[i]);
-			if (s.size() > 3) {
-				s.erase(s.begin());
+		int count = 0, max = INT_MIN, mid = INT_MIN, small = INT_MIN;
+		for (int num : nums) {
+			if (count > 0 && num == max || count > 1 && num == mid) {
+				continue;
+			}
+			count++;
+			if (num > max) {
+				small = mid;
+				mid = max;
+				max = num;
+			}
+			else if (num > mid) {
+				small = mid;
+				mid = num;
+			}
+			else if (num > small) {
+				small = num;
 			}
 		}
-		if (s.size() < 3) {
-			return *(--s.end());
-		}
-		return *s.begin();
+		return count < 3 ? max : small;
 	}
 };
 /*

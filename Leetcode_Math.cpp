@@ -1283,6 +1283,52 @@ public:
 };
 /*
 
+396. Rotate Function (Easy)
+
+Given an array of integers A and let n to be its length.
+
+Assume Bk to be an array obtained by rotating the array A k positions clock-wise, we define a "rotation function" F on A as follow:
+
+F(k) = 0 * Bk[0] + 1 * Bk[1] + ... + (n-1) * Bk[n-1].
+
+Calculate the maximum value of F(0), F(1), ..., F(n-1).
+
+Note:
+n is guaranteed to be less than 10^5.
+
+Example:
+
+A = [4, 3, 2, 6]
+
+F(0) = (0 * 4) + (1 * 3) + (2 * 2) + (3 * 6) = 0 + 3 + 4 + 18 = 25
+F(1) = (0 * 6) + (1 * 4) + (2 * 3) + (3 * 2) = 0 + 4 + 6 + 6 = 16
+F(2) = (0 * 2) + (1 * 6) + (2 * 4) + (3 * 3) = 0 + 6 + 8 + 9 = 23
+F(3) = (0 * 3) + (1 * 2) + (2 * 6) + (3 * 4) = 0 + 2 + 12 + 12 = 26
+
+So the maximum value of F(0), F(1), F(2), F(3) is F(3) = 26.
+
+*/
+class Solution {
+public:
+	int maxRotateFunction(vector<int>& A) {
+		if (A.empty()) {
+			return 0;
+		}
+		int sum = 0, res = INT_MIN, temp = 0;
+		for (int i = 0; i < A.size(); i++) {
+			sum += A[i];
+			temp += i* A[i];
+		}
+		res = temp;
+		for (int i = 1; i < A.size(); i++) {
+			temp += sum - A.size() * A[A.size() - i];
+			res = max(res, temp);
+		}
+		return res;
+	}
+};
+/*
+
 397. Integer Replacement (Easy)
 
 Given a positive integer n and you can do operations as follow:
@@ -1321,12 +1367,15 @@ public:
 		int res = 0;
 		unsigned m = n;
 		while (m > 3) {
-			//...?0 even
-			if (!(m & 1)) m >>= 1;
-			//...11
-			else if (m & 2) m++;
-			//...01
-			else m--;
+			if (!(m & 1)) {
+				m >>= 1;
+			}
+			else if (m & 2) {
+				m++;
+			}
+			else {
+				m--;
+			}
 			res++;
 		}
 		return res + m - 1;
@@ -1363,13 +1412,15 @@ The 11th digit of the sequence 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, ... is a 0, wh
 class Solution {
 public:
 	int findNthDigit(int n) {
-		int d = 1, base = 1;
-		while ((long long)9 * base * d - n < 0) {
-			n -= 9 * base * d++;
-			base *= 10;
+		int d = 1, len = 1;
+		while ((long long)9 * len * d - n < 0) {
+			n -= 9 * len * d++;
+			len *= 10;
 		}
-		int num = --n / d + base;
-		for (int i = 1; i < d - n % d; i++) num /= 10;
+		int num = --n / d + len;
+		for (int i = 1; i < d - n % d; i++) {
+			num /= 10;
+		}
 		return num % 10;
 	}
 };
@@ -1391,16 +1442,15 @@ class Solution {
 public:
 	string addStrings(string num1, string num2) {
 		string res;
-		int i = num1.length() - 1, j = num2.length() - 1;
-		long carry = 0;
+		int i = num1.size() - 1, j = num2.size() - 1, carry = 0;
 		while (i >= 0 || j >= 0 || carry > 0) {
 			if (i >= 0) {
-				carry = (num1[i--] - '0') + carry;
+				carry += num1[i--] - '0';
 			}
 			if (j >= 0) {
-				carry = (num2[j--] - '0') + carry;
+				carry += num2[j--] - '0';
 			}
-			res += to_string(carry % 10);
+			res += carry % 10 + '0';
 			carry /= 10;
 		}
 		reverse(res.begin(), res.end());
@@ -1443,19 +1493,82 @@ Because the 4th row is incomplete, we return 3.
 class Solution {
 public:
 	int arrangeCoins(int n) {
-		if (n == 0) {
-			return 0;
-		}
 		int l = 1, r = n;
 		while (l < r) {
 			long mid = l + (r - l + 1) / 2;
-			if (mid * (mid + 1) / 2.0 <= n) {
+			if (mid * (mid + 1) / 2 <= n) {
 				l = mid;
 			}
-			else if (mid * (mid + 1) / 2 > n) {
+			else {
 				r = mid - 1;
 			}
 		}
 		return r;
+	}
+};
+/*
+
+453. Minimum Moves to Equal Array Elements (Easy)
+
+Given a non-empty integer array of size n, find the minimum number of moves required to make all array elements equal, where a move is incrementing n - 1 elements by 1.
+
+Example:
+
+Input:
+[1,2,3]
+
+Output:
+3
+
+Explanation:
+Only three moves are needed (remember each move increments two elements):
+
+[1,2,3]  =>  [2,3,3]  =>  [3,4,3]  =>  [4,4,4]
+
+*/
+class Solution {
+public:
+	int minMoves(vector<int>& nums) {
+		int m = nums[0], res = 0;
+		for (int i = 1; i < nums.size(); i++) {
+			m = min(m, nums[i]);
+		}
+		for (int num : nums) {
+			res += num - m;
+		}
+		return res;
+	}
+};
+/*
+
+462. Minimum Moves to Equal Array Elements II (Medium)
+
+Given a non-empty integer array, find the minimum number of moves required to make all array elements equal, where a move is incrementing a selected element by 1 or decrementing a selected element by 1.
+
+You may assume the array's length is at most 10,000.
+
+Example:
+
+Input:
+[1,2,3]
+
+Output:
+2
+
+Explanation:
+Only two moves are needed (remember each move increments or decrements one element):
+
+[1,2,3]  =>  [2,2,3]  =>  [2,2,2]
+
+*/
+class Solution {
+public:
+	int minMoves2(vector<int>& nums) {
+		sort(nums.begin(), nums.end());
+		int res = 0, i = 0, j = nums.size() - 1;
+		while (i < j) {
+			res += nums[j--] - nums[i++];
+		}
+		return res;
 	}
 };

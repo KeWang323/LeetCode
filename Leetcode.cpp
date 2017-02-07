@@ -177,6 +177,33 @@ public:
 		return s.substr(left_max, len_max);
 	}
 };
+class Solution {
+public:
+	string longestPalindrome(string s) {
+		string t = "$#";
+		for (int i = 0; i < s.size(); ++i) {
+			t += s[i];
+			t += "#";
+		}
+		vector<int> p(t.size(), 0);
+		int mx = 0, id = 0, resLen = 0, resCenter = 0;
+		for (int i = 1; i < t.size(); i++) {
+			p[i] = mx > i ? min(p[2 * id - i], mx - i) : 1;
+			while (t[i + p[i]] == t[i - p[i]]) {
+				p[i]++;
+			}
+			if (mx < i + p[i]) {
+				mx = i + p[i];
+				id = i;
+			}
+			if (resLen < p[i]) {
+				resLen = p[i];
+				resCenter = i;
+			}
+		}
+		return s.substr((resCenter - resLen) / 2, resLen - 1);
+	}
+};
 /*
 
 6. ZigZag Conversion (Easy)
@@ -4381,23 +4408,15 @@ private:
 		if (root == NULL) {
 			return;
 		}
-		else if (root->left == NULL && root->right == NULL && sum == root->val) {
-			res_sub.push_back(root->val);
+		res_sub.push_back(root->val);
+		if (root->left == NULL && root->right == NULL && root->val == sum) {
 			res.push_back(res_sub);
 			res_sub.pop_back();
 			return;
 		}
-		if (root->left != NULL) {
-			res_sub.push_back(root->val);
-			pathSum(root->left, res, res_sub, sum - root->val);
-			res_sub.pop_back();
-		}
-		if (root->right != NULL) {
-			res_sub.push_back(root->val);
-			pathSum(root->right, res, res_sub, sum - root->val);
-			res_sub.pop_back();
-		}
-
+		pathSum(root->left, res, res_sub, sum - root->val);
+		pathSum(root->right, res, res_sub, sum - root->val);
+		res_sub.pop_back();
 	}
 };
 /*
@@ -6004,6 +6023,43 @@ public:
 		root->left = NULL;
 		root->right = NULL;
 		return node;
+	}
+};
+/*
+
+157. Read N Characters Given Read4 (Easy)
+
+The API: int read4(char *buf) reads 4 characters at a time from a file.
+
+The return value is the actual number of characters read. For example, it returns 3 if there is only 3 characters left in the file.
+
+By using the read4 API, implement the function int read(char *buf, int n) that reads n characters from the file.
+
+Note:
+The read function will only be called once for each test case.
+
+*/
+// Forward declaration of the read4 API.
+int read4(char *buf);
+
+class Solution {
+public:
+	/**
+	* @param buf Destination buffer
+	* @param n   Maximum number of characters to read
+	* @return    The number of characters read
+	*/
+	int read(char *buf, int n) {
+		int res = 0;
+		while (n > 0) {
+			int temp = min(read4(buf + res), n);
+			res += temp;
+			if (temp < 4) {
+				break;
+			}
+			n -= 4;
+		}
+		return res;
 	}
 };
 /*
@@ -12189,10 +12245,13 @@ by one to see if T has its subsequence. In this scenario, how would you change y
 class Solution {
 public:
 	bool isSubsequence(string s, string t) {
-		int s_i = 0;
-		for (int t_i = 0; t_i < t.length() && s_i < s.length(); t_i++)
-			if (t[t_i] == s[s_i]) s_i++;
-		return s_i == s.length();
+		int i = 0;
+		for (int j = 0; j < t.size(); j++) {
+			if (s[i] == t[j]) {
+				i++;
+			}
+		}
+		return i == s.size();
 	}
 };
 /*
@@ -12231,11 +12290,11 @@ public:
 		int sum = 0, res = INT_MIN, temp = 0;
 		for (int i = 0; i < A.size(); i++) {
 			sum += A[i];
-			temp += i * A[i];
+			temp += i* A[i];
 		}
 		res = temp;
 		for (int i = 1; i < A.size(); i++) {
-			temp = sum - A.size() * A[A.size() - i] + temp;
+			temp += sum - A.size() * A[A.size() - i];
 			res = max(res, temp);
 		}
 		return res;
@@ -12281,12 +12340,15 @@ public:
 		int res = 0;
 		unsigned m = n;
 		while (m > 3) {
-			//...?0 even
-			if (!(m & 1)) m >>= 1;
-			//...11
-			else if (m & 2) m++;
-			//...01
-			else m--;
+			if (!(m & 1)) {
+				m >>= 1;
+			}
+			else if (m & 2) {
+				m++;
+			}
+			else {
+				m--;
+			}
 			res++;
 		}
 		return res + m - 1;
@@ -12323,16 +12385,65 @@ The 11th digit of the sequence 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, ... is a 0, wh
 class Solution {
 public:
 	int findNthDigit(int n) {
-		int d = 1, base = 1;
-		while ((long long)9 * base * d - n < 0) {
-			n -= 9 * base * d++;
-			base *= 10;
+		int d = 1, len = 1;
+		while ((long long)9 * len * d - n < 0) {
+			n -= 9 * len * d++;
+			len *= 10;
 		}
-		int num = --n / d + base;
+		int num = --n / d + len;
 		for (int i = 1; i < d - n % d; i++) {
 			num /= 10;
 		}
 		return num % 10;
+	}
+};
+/*
+
+401. Binary Watch (Easy)
+
+A binary watch has 4 LEDs on the top which represent the hours (0-11), and the 6 LEDs on the bottom represent the minutes (0-59).
+
+Each LED represents a zero or one, with the least significant bit on the right.
+
+For example, the above binary watch reads "3:25".
+
+Given a non-negative integer n which represents the number of LEDs that are currently on, return all possible times the watch could represent.
+
+Example:
+
+Input: n = 1
+Return: ["1:00", "2:00", "4:00", "8:00", "0:01", "0:02", "0:04", "0:08", "0:16", "0:32"]
+Note:
+The order of output does not matter.
+The hour must not contain a leading zero, for example "01:00" is not valid, it should be "1:00".
+The minute must be consist of two digits and may contain a leading zero, for example "10:2" is not valid, it should be "10:02".
+
+*/
+class Solution {
+public:
+	vector<int> t = { 1,2,4,8,1,2,4,8,16,32 };
+	vector<string> readBinaryWatch(int num) {
+		vector<string> res;
+		readBinaryWatch(res, 0, 0, 0, num);
+		return res;
+	}
+private:
+	void readBinaryWatch(vector<string>& res, int h, int m, int index, int num) {
+		if (num == 0) {
+			res.push_back(to_string(h) + (m < 10 ? ":0" : ":") + to_string(m));
+		}
+		for (int i = index; i < 10; i++) {
+			if (i < 4 && h + t[i] < 12) {
+				h += t[i];
+				readBinaryWatch(res, h, m, i + 1, num - 1);
+				h -= t[i];
+			}
+			else if (i >= 4 && m + t[i] < 60) {
+				m += t[i];
+				readBinaryWatch(res, h, m, i + 1, num - 1);
+				m -= t[i];
+			}
+		}
 	}
 };
 /*
@@ -12343,49 +12454,35 @@ Find the sum of all left leaves in a given binary tree.
 
 Example:
 
-3
-/ \
-9  20
-/  \
-15   7
+    3
+   / \
+  9  20
+    /  \
+   15   7
 
 There are two left leaves in the binary tree, with values 9 and 15 respectively. Return 24.
 
 */
 /**
-* Definition for a binary tree node.
-* struct TreeNode {
-*     int val;
-*     TreeNode *left;
-*     TreeNode *right;
-*     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
-* };
-*/
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
 class Solution {
 public:
 	int sumOfLeftLeaves(TreeNode* root) {
-		int res = 0;
-		sumOfLeftLeaves(root, NULL, res);
-		return res;
-	}
-private:
-	void sumOfLeftLeaves(TreeNode* root, TreeNode* pre, int& res) {
 		if (root == NULL) {
-			return;
+			return 0;
 		}
-		else if (pre == NULL) {
-			sumOfLeftLeaves(root->left, root, res);
-			sumOfLeftLeaves(root->right, root, res);
+		int l = sumOfLeftLeaves(root->left), r = sumOfLeftLeaves(root->right);
+		if (root->left != NULL && root->left->left == NULL && root->left->right == NULL) {
+			return root->left->val + l + r;
 		}
-		else if (root->left == NULL && root->right == NULL && pre->left == root) {
-			res += root->val;
-			return;
-		}
-		else {
-			sumOfLeftLeaves(root->left, root, res);
-			sumOfLeftLeaves(root->right, root, res);
-		}
-
+		return l + r;
 	}
 };
 /*
@@ -12422,9 +12519,9 @@ public:
 		if (num == 0) {
 			return "0";
 		}
-		int cnt = 0;
 		string res;
-		while (num != 0 && cnt < 8) {
+		int cnt = 0;
+		while (num != 0 && cnt++ < 8) {
 			int temp = num & 15;
 			if (temp < 10) {
 				res += temp + '0';
@@ -12432,8 +12529,7 @@ public:
 			else {
 				res += temp - 10 + 'a';
 			}
-			num = num >> 4;
-			cnt++;
+			num >>= 4;
 		}
 		reverse(res.begin(), res.end());
 		return res;
@@ -12521,19 +12617,16 @@ One longest palindrome that can be built is "dccaccd", whose length is 7.
 class Solution {
 public:
 	int longestPalindrome(string s) {
-		int table[58] = { 0 };
-		int res = 0;
+		int t[256] = { 0 }, res = 0;
 		bool flag = false;
-		for (char cha : s) {
-			table[cha - 'A']++;
+		for (char& cha : s) {
+			t[cha]++;
 		}
-		for (auto i : table) {
-			res += i / 2 * 2;
-			if (i % 2 == 1) {
-				flag = true;
-			}
+		for (int num : t) {
+			res += num / 2 * 2;
+			flag |= num & 1;
 		}
-		return flag == true ? res + 1 : res;
+		return res + flag;
 	}
 };
 /*
@@ -12619,17 +12712,26 @@ Both numbers with value 2 are both considered as second maximum.
 class Solution {
 public:
 	int thirdMax(vector<int>& nums) {
-		set<int> s;
-		for (int i = 0; i < nums.size(); ++i) {
-			s.insert(nums[i]);
-			if (s.size() > 3) {
-				s.erase(s.begin());
+		int count = 0, max = INT_MIN, mid = INT_MIN, small = INT_MIN;
+		for (int num : nums) {
+			if (count > 0 && num == max || count > 1 && num == mid) {
+				continue;
+			}
+			count++;
+			if (num > max) {
+				small = mid;
+				mid = max;
+				max = num;
+			}
+			else if (num > mid) {
+				small = mid;
+				mid = num;
+			}
+			else if (num > small) {
+				small = num;
 			}
 		}
-		if (s.size() < 3) {
-			return *(--s.end());
-		}
-		return *s.begin();
+		return count < 3 ? max : small;
 	}
 };
 /*
@@ -12650,16 +12752,15 @@ class Solution {
 public:
 	string addStrings(string num1, string num2) {
 		string res;
-		int i = num1.length() - 1, j = num2.length() - 1;
-		long carry = 0;
+		int i = num1.size() - 1, j = num2.size() - 1, carry = 0;
 		while (i >= 0 || j >= 0 || carry > 0) {
 			if (i >= 0) {
-				carry = (num1[i--] - '0') + carry;
+				carry += num1[i--] - '0';
 			}
 			if (j >= 0) {
-				carry = (num2[j--] - '0') + carry;
+				carry += num2[j--] - '0';
 			}
-			res += to_string(carry % 10);
+			res += carry % 10 + '0';
 			carry /= 10;
 		}
 		reverse(res.begin(), res.end());
@@ -12703,10 +12804,10 @@ public:
 		t[0] = true;
 		for (int i = 0; i < nums.size(); i++) {
 			for (int j = sum; j >= nums[i]; j--) {
-				if (t[j]) {
+				if (t[j] == true) {
 					break;
 				}
-				t[j] = t[j] || t[j - nums[i]];
+				t[j] |= t[j - nums[i]];
 			}
 		}
 		return t[sum];
@@ -12876,12 +12977,12 @@ Example:
 
 root = [10,5,-3,3,2,null,11,3,-2,null,1], sum = 8
 
-10
-/  \
-5   -3
-/ \    \
-3   2   11
-/ \   \
+	  10
+	 /  \
+	5   -3
+   / \    \
+  3   2   11
+ / \   \
 3  -2   1
 
 Return 3. The paths that sum to 8 are:
@@ -12892,30 +12993,30 @@ Return 3. The paths that sum to 8 are:
 
 */
 /**
-* Definition for a binary tree node.
-* struct TreeNode {
-*     int val;
-*     TreeNode *left;
-*     TreeNode *right;
-*     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
-* };
-*/
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
 class Solution {
 public:
 	int pathSum(TreeNode* root, int sum) {
 		unordered_map<int, int> mapping;
 		mapping[0] = 1;
-		return pathSum(root, 0, sum, mapping);
+		return pathSum(root, sum, mapping, 0);
 	}
 private:
-	int pathSum(TreeNode* root, int sum, const int& target, unordered_map<int, int>& mapping) {
+	int pathSum(TreeNode* root, const int& target, unordered_map<int, int>& mapping, int sum) {
 		if (root == NULL) {
 			return 0;
 		}
 		sum += root->val;
-		int res = mapping.find(sum - target) != mapping.end() ? mapping[sum - target] : 0;
+		int res = mapping[sum - target];
 		mapping[sum]++;
-		res += pathSum(root->left, sum, target, mapping) + pathSum(root->right, sum, target, mapping);
+		res += pathSum(root->left, target, mapping, sum) + pathSum(root->right, target, mapping, sum);
 		mapping[sum]--;
 		return res;
 	}
@@ -12958,7 +13059,7 @@ The substring with start index = 2 is "ab", which is an anagram of "ab".
 class Solution {
 public:
 	vector<int> findAnagrams(string s, string p) {
-		if (s.length() < p.length()) {
+		if (s.size() < p.size()) {
 			return{};
 		}
 		vector<int> res;
@@ -12967,15 +13068,15 @@ public:
 			mapping[cha - 'a']++;
 		}
 		int cnt = p.size(), i = 0, j = 0;
-		while (j < s.length()) {
-			if (j - i == p.length() && mapping[s[i++] - 'a']++ >= 0) {
-				cnt++;
-			}
+		while (j < s.size()) {
 			if (--mapping[s[j++] - 'a'] >= 0) {
 				cnt--;
 			}
 			if (cnt == 0) {
 				res.push_back(i);
+			}
+			if (j - i == p.size() && mapping[s[i++] - 'a']++ >= 0) {
+				cnt++;
 			}
 		}
 		return res;
@@ -13017,16 +13118,13 @@ Because the 4th row is incomplete, we return 3.
 class Solution {
 public:
 	int arrangeCoins(int n) {
-		if (n == 0) {
-			return 0;
-		}
 		int l = 1, r = n;
 		while (l < r) {
 			long mid = l + (r - l + 1) / 2;
-			if (mid * (mid + 1) / 2.0 <= n) {
+			if (mid * (mid + 1) / 2 <= n) {
 				l = mid;
 			}
-			else if (mid * (mid + 1) / 2 > n) {
+			else {
 				r = mid - 1;
 			}
 		}
@@ -13286,54 +13384,54 @@ Example:
 root = [5,3,6,2,4,null,7]
 key = 3
 
-5
-/ \
-3   6
-/ \   \
+	5
+   / \
+  3   6
+ / \   \
 2   4   7
 
 Given key to delete is 3. So we find the node with value 3 and delete it.
 
 One valid answer is [5,4,6,2,null,null,7], shown in the following BST.
 
-5
-/ \
-4   6
-/     \
+	5
+   / \
+  4   6
+ /     \
 2       7
 
 Another valid answer is [5,2,6,null,4,null,7].
 
-5
-/ \
-2   6
-\   \
-4   7
+	5
+   / \
+  2   6
+   \   \
+	4   7
 
 */
 /**
-* Definition for a binary tree node.
-* struct TreeNode {
-*     int val;
-*     TreeNode *left;
-*     TreeNode *right;
-*     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
-* };
-*/
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
 class Solution {
 public:
 	TreeNode* deleteNode(TreeNode* root, int key) {
 		if (root == NULL) {
 			return root;
 		}
-		else if (root->val > key) {
-			root->left = deleteNode(root->left, key);
-		}
 		else if (root->val < key) {
 			root->right = deleteNode(root->right, key);
 		}
+		else if (root->val > key) {
+			root->left = deleteNode(root->left, key);
+		}
 		else {
-			if (root->right == NULL || root->left == NULL) {
+			if (root->left == NULL || root->right == NULL) {
 				return root->left == NULL ? root->right : root->left;
 			}
 			else {
@@ -13410,6 +13508,39 @@ public:
 			if (!bucket[i].empty()) {
 				res += bucket[i];
 			}
+		}
+		return res;
+	}
+};
+/*
+
+453. Minimum Moves to Equal Array Elements (Easy)
+
+Given a non-empty integer array of size n, find the minimum number of moves required to make all array elements equal, where a move is incrementing n - 1 elements by 1.
+
+Example:
+
+Input:
+[1,2,3]
+
+Output:
+3
+
+Explanation:
+Only three moves are needed (remember each move increments two elements):
+
+[1,2,3]  =>  [2,3,3]  =>  [3,4,3]  =>  [4,4,4]
+
+*/
+class Solution {
+public:
+	int minMoves(vector<int>& nums) {
+		int m = nums[0], res = 0;
+		for (int i = 1; i < nums.size(); i++) {
+			m = min(m, nums[i]);
+		}
+		for (int num : nums) {
+			res += num - m;
 		}
 		return res;
 	}
@@ -13499,6 +13630,39 @@ public:
 };
 /*
 
+462. Minimum Moves to Equal Array Elements II (Medium)
+
+Given a non-empty integer array, find the minimum number of moves required to make all array elements equal, where a move is incrementing a selected element by 1 or decrementing a selected element by 1.
+
+You may assume the array's length is at most 10,000.
+
+Example:
+
+Input:
+[1,2,3]
+
+Output:
+2
+
+Explanation:
+Only two moves are needed (remember each move increments or decrements one element):
+
+[1,2,3]  =>  [2,2,3]  =>  [2,2,2]
+
+*/
+class Solution {
+public:
+	int minMoves2(vector<int>& nums) {
+		sort(nums.begin(), nums.end());
+		int res = 0, i = 0, j = nums.size() - 1;
+		while (i < j) {
+			res += nums[j--] - nums[i++];
+		}
+		return res;
+	}
+};
+/*
+
 463. Island Perimeter (Easy)
 
 You are given a map in form of a two-dimensional integer grid where 1 represents land and 0 represents water. Grid cells are connected horizontally/vertically (not diagonally). The grid is completely surrounded by water, and there is exactly one island (i.e., one or more connected land cells). The island doesn't have "lakes" (water inside that isn't connected to the water around the island). One cell is a square with side length 1. The grid is rectangular, width and height don't exceed 100. Determine the perimeter of the island.
@@ -13562,25 +13726,64 @@ Explanation: You could form "10", but then you'd have nothing left. Better form 
 class Solution {
 public:
 	int findMaxForm(vector<string>& strs, int m, int n) {
-		vector<vector<int>> memo(m + 1, vector<int>(n + 1, 0));
-		int numZeroes, numOnes;
-		for (auto &s : strs) {
-			numZeroes = numOnes = 0;
-			for (auto c : s) {
-				if (c == '0') {
-					numZeroes++;
+		vector<vector<int>> t(m + 1, vector<int>(n + 1, 0));
+		for (string& s : strs) {
+			int nz = 0, no = 0;
+			for (char& cha : s) {
+				if (cha == '0') {
+					nz++;
 				}
-				else if (c == '1') {
-					numOnes++;
+				else {
+					no++;
 				}
 			}
-			for (int i = m; i >= numZeroes; i--) {
-				for (int j = n; j >= numOnes; j--) {
-					memo[i][j] = max(memo[i][j], memo[i - numZeroes][j - numOnes] + 1);
+			for (int i = m; i >= nz; i--) {
+				for (int j = n; j >= no; j--) {
+					t[i][j] = max(t[i][j], t[i - nz][j - no] + 1);
 				}
 			}
 		}
-		return memo[m][n];
+		return t.back().back();
+	}
+};
+/*
+
+475. Heaters (Easy)
+
+Winter is coming! Your first job during the contest is to design a standard heater with fixed warm radius to warm all the houses.
+
+Now, you are given positions of houses and heaters on a horizontal line, find out minimum radius of heaters so that all houses could be covered by those heaters.
+
+So, your input will be the positions of houses and heaters seperately, and your expected output will be the minimum radius standard of heaters.
+
+Note:
+Numbers of houses and heaters you are given are non-negative and will not exceed 25000.
+Positions of houses and heaters you are given are non-negative and will not exceed 10^9.
+As long as a house is in the heaters' warm radius range, it can be warmed.
+All the heaters follow your radius standard and the warm radius will the same.
+Example 1:
+Input: [1,2,3],[2]
+Output: 1
+Explanation: The only heater was placed in the position 2, and if we use the radius 1 standard, then all the houses can be warmed.
+Example 2:
+Input: [1,2,3,4],[1,4]
+Output: 1
+Explanation: The two heater was placed in the position 1 and 4. We need to use radius 1 standard, then all the houses can be warmed.
+
+*/
+class Solution {
+public:
+	int findRadius(vector<int>& houses, vector<int>& heaters) {
+		sort(houses.begin(), houses.end());
+		sort(heaters.begin(), heaters.end());
+		int i = 0, res = 0;
+		for (int house : houses) {
+			while (i < heaters.size() - 1 && heaters[i] + heaters[i + 1] <= house * 2) {
+				i++;
+			}
+			res = max(res, abs(heaters[i] - house));
+		}
+		return res;
 	}
 };
 /*

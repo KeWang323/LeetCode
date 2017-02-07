@@ -518,23 +518,15 @@ private:
 		if (root == NULL) {
 			return;
 		}
-		else if (root->left == NULL && root->right == NULL && sum == root->val) {
-			res_sub.push_back(root->val);
+		res_sub.push_back(root->val);
+		if (root->left == NULL && root->right == NULL && root->val == sum) {
 			res.push_back(res_sub);
 			res_sub.pop_back();
 			return;
 		}
-		if (root->left != NULL) {
-			res_sub.push_back(root->val);
-			pathSum(root->left, res, res_sub, sum - root->val);
-			res_sub.pop_back();
-		}
-		if (root->right != NULL) {
-			res_sub.push_back(root->val);
-			pathSum(root->right, res, res_sub, sum - root->val);
-			res_sub.pop_back();
-		}
-
+		pathSum(root->left, res, res_sub, sum - root->val);
+		pathSum(root->right, res, res_sub, sum - root->val);
+		res_sub.pop_back();
 	}
 };
 /*
