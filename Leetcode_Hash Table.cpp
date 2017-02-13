@@ -149,8 +149,8 @@ public:
 			return{};
 		}
 		unordered_map<string, int> mapping;
-		for (string str : words) {
-			mapping[str]++;
+		for (string word : words) {
+			mapping[word]++;
 		}
 		vector<int> res;
 		int wsize = words[0].size();
@@ -167,7 +167,7 @@ public:
 				else {
 					wcnt++;
 					mapping2[str]++;
-					while (mapping[str] < mapping2[str]) {
+					while (mapping2[str] > mapping[str]) {
 						mapping2[s.substr(slow, wsize)]--;
 						wcnt--;
 						slow += wsize;
@@ -190,7 +190,6 @@ Determine if a Sudoku is valid, according to: Sudoku Puzzles - The Rules.
 
 The Sudoku board could be partially filled, where empty cells are filled with the character '.'.
 
-
 A partially filled sudoku which is valid.
 
 Note:
@@ -200,46 +199,7 @@ A valid Sudoku board (partially filled) is not necessarily solvable. Only the fi
 class Solution {
 public:
 	bool isValidSudoku(vector<vector<char>>& board) {
-		for (int i = 0; i < 9; i++) {
-			unordered_map<char, bool> mapping1;
-			unordered_map<char, bool> mapping2;
-			unordered_map<char, bool> mapping3;
-			for (int j = 0; j < 9; j++) {
-				if (board[i][j] != '.') {
-					if (mapping1[board[i][j]] == true) {
-						return false;
-					}
-					else {
-						mapping1[board[i][j]] = true;
-					}
-				}
-				if (board[j][i] != '.') {
-					if (mapping2[board[j][i]] == true) {
-						return false;
-					}
-					else {
-						mapping2[board[j][i]] = true;
-					}
-				}
-				if (board[i / 3 * 3 + j / 3][i % 3 * 3 + j % 3] != '.') {
-					if (mapping3[board[i / 3 * 3 + j / 3][i % 3 * 3 + j % 3]] == true) {
-						return false;
-					}
-					else {
-						mapping3[board[i / 3 * 3 + j / 3][i % 3 * 3 + j % 3]] = true;
-					}
-				}
-			}
-		}
-		return true;
-	}
-};
-class Solution {
-public:
-	bool isValidSudoku(vector<vector<char>>& board) {
-		int mapping1[9][9] = { 0 };
-		int mapping2[9][9] = { 0 };
-		int mapping3[9][9] = { 0 };
+		int mapping1[9][9] = { 0 }, mapping2[9][9] = { 0 }, mapping3[9][9] = { 0 };
 		for (int i = 0; i < 9; i++) {
 			for (int j = 0; j < 9; j++) {
 				if (board[i][j] != '.') {
@@ -247,7 +207,66 @@ public:
 					if (mapping1[i][num] || mapping2[j][num] || mapping3[k][num]) {
 						return false;
 					}
-					mapping1[i][num] = mapping2[j][num] = mapping3[k][num] = 1;
+					mapping1[i][num] = 1;
+					mapping2[j][num] = 1;
+					mapping3[k][num] = 1;
+				}
+			}
+		}
+		return true;
+	}
+};
+/*
+
+37. Sudoku Solver (Hard)
+
+Write a program to solve a Sudoku puzzle by filling the empty cells.
+
+Empty cells are indicated by the character '.'.
+
+You may assume that there will be only one unique solution.
+
+*/
+class Solution {
+public:
+	void solveSudoku(vector<vector<char>>& board) {
+		solve(board, 0, 0);
+	}
+private:
+	bool solve(vector<vector<char>>& board, int row, int col) {
+		for (int i = row; i < 9; i++, col = 0) {
+			for (int j = col; j < 9; j++) {
+				if (board[i][j] == '.') {
+					for (char d = '1'; d <= '9'; d++) {
+						if (isValid(board, i, j, d)) {
+							board[i][j] = d;
+							if (solve(board, i, j + 1)) {
+								return true;
+							}
+							board[i][j] = '.';
+						}
+					}
+					return false;
+				}
+			}
+		}
+		return true;
+	}
+	bool isValid(vector<vector<char>>& board, int i, int j, char d) {
+		for (int row = 0; row < 9; row++) {
+			if (board[row][j] == d) {
+				return false;
+			}
+		}
+		for (int col = 0; col < 9; col++) {
+			if (board[i][col] == d) {
+				return false;
+			}
+		}
+		for (int row = (i / 3) * 3; row < (i / 3 + 1) * 3; row++) {
+			for (int col = (j / 3) * 3; col < (j / 3 + 1) * 3; col++) {
+				if (board[row][col] == d) {
+					return false;
 				}
 			}
 		}
@@ -313,31 +332,24 @@ If there are multiple such windows, you are guaranteed that there will always be
 class Solution {
 public:
 	string minWindow(string s, string t) {
-		unordered_map<char, int> mapping;
-		for (char cha : t) {
-			mapping[cha]++;
-		}
 		int i = 0, len = s.size() + 1;
-		int slow = 0, fast = 0, cnt = mapping.size();
+		vector<int> mapping(256, -len);
+		for (char cha : t) {
+			mapping[cha] = mapping[cha] > 0 ? mapping[cha] + 1 : 1;
+		}
+		int slow = 0, fast = 0, cnt = t.size();
 		while (fast < s.size()) {
-			if (mapping.find(s[fast]) != mapping.end()) {
-				if (--mapping[s[fast]] == 0) {
-					cnt--;
-				}
-				while (cnt == 0 && (mapping.find(s[slow]) == mapping.end() || mapping[s[slow]] < 0)) {
+			if (--mapping[s[fast++]] >= 0 && --cnt == 0) {
+				while (mapping[s[slow]] < -len || ++mapping[s[slow]] <= 0) {
 					slow++;
-					if (mapping.find(s[slow - 1]) != mapping.end()) {
-						mapping[s[slow - 1]]++;
-					}
 				}
-			}
-			if (cnt == 0) {
 				if (len > fast - slow) {
 					i = slow;
-					len = fast - slow + 1;
+					len = fast - slow;
 				}
+				cnt = 1;
+				slow++;
 			}
-			fast++;
 		}
 		return len == s.size() + 1 ? "" : s.substr(i, len);
 	}

@@ -128,6 +128,63 @@ private:
 };
 /*
 
+37. Sudoku Solver (Hard)
+
+Write a program to solve a Sudoku puzzle by filling the empty cells.
+
+Empty cells are indicated by the character '.'.
+
+You may assume that there will be only one unique solution.
+
+*/
+class Solution {
+public:
+	void solveSudoku(vector<vector<char>>& board) {
+		solve(board, 0, 0);
+	}
+private:
+	bool solve(vector<vector<char>>& board, int row, int col) {
+		for (int i = row; i < 9; i++, col = 0) {
+			for (int j = col; j < 9; j++) {
+				if (board[i][j] == '.') {
+					for (char d = '1'; d <= '9'; d++) {
+						if (isValid(board, i, j, d)) {
+							board[i][j] = d;
+							if (solve(board, i, j + 1)) {
+								return true;
+							}
+							board[i][j] = '.';
+						}
+					}
+					return false;
+				}
+			}
+		}
+		return true;
+	}
+	bool isValid(vector<vector<char>>& board, int i, int j, char d) {
+		for (int row = 0; row < 9; row++) {
+			if (board[row][j] == d) {
+				return false;
+			}
+		}
+		for (int col = 0; col < 9; col++) {
+			if (board[i][col] == d) {
+				return false;
+			}
+		}
+		for (int row = (i / 3) * 3; row < (i / 3 + 1) * 3; row++) {
+			for (int col = (j / 3) * 3; col < (j / 3 + 1) * 3; col++) {
+				if (board[row][col] == d) {
+					return false;
+				}
+			}
+		}
+		return true;
+	}
+};
+/*
+
 39. Combination Sum (Medium)
 
 Given a set of candidate numbers (C) and a target number (T), find all unique combinations in C where the candidate numbers sums to T.
@@ -608,9 +665,9 @@ For example,
 Given board =
 
 [
-  ['A','B','C','E'],
-  ['S','F','C','S'],
-  ['A','D','E','E']
+['A','B','C','E'],
+['S','F','C','S'],
+['A','D','E','E']
 ]
 word = "ABCCED", -> returns true,
 word = "SEE", -> returns true,
@@ -620,26 +677,30 @@ word = "ABCB", -> returns false.
 class Solution {
 public:
 	bool exist(vector<vector<char>>& board, string word) {
-		row = board.size();
-		col = board[0].size();
+		int row = board.size(), col = board[0].size();
 		for (int i = 0; i < row; i++) {
 			for (int j = 0; j < col; j++) {
-				if (search(board, word.c_str(), i, j)) return true;
+				if (search(board, word, i, j, 0)) {
+					return true;
+				}
 			}
 		}
 		return false;
 	}
 private:
-	int row, col;
-	bool search(vector<vector<char>>& board, const char* w, int i, int j) {
-		if (i < 0 || i >= row || j < 0 || j >= col || board[i][j] == '\0' || board[i][j] != *w) return false;
-		else if (*(w + 1) == '\0') return true;
-		else {
-			char t = board[i][j];
-			board[i][j] = '\0';
-			if (search(board, w + 1, i + 1, j) || search(board, w + 1, i - 1, j) || search(board, w + 1, i, j - 1) || search(board, w + 1, i, j + 1)) return true;
-			board[i][j] = t;
+	bool search(vector<vector<char>>& board, const string& word, int i, int j, int index) {
+		if (i < 0 || i >= board.size() || j < 0 || j >= board[0].size() || board[i][j] == '\0' || board[i][j] != word[index]) {
+			return false;
 		}
+		else if (index + 1 == word.size()) {
+			return true;
+		}
+		char temp = board[i][j];
+		board[i][j] = '\0';
+		if (search(board, word, i + 1, j, index + 1) || search(board, word, i - 1, j, index + 1) || search(board, word, i, j + 1, index + 1) || search(board, word, i, j - 1, index + 1)) {
+			return true;
+		}
+		board[i][j] = temp;
 		return false;
 	}
 };

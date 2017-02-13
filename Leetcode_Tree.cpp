@@ -1028,9 +1028,9 @@ Find the total sum of all root-to-leaf numbers.
 
 For example,
 
-  1
- / \
-2   3
+	1
+   / \
+  2   3
 The root-to-leaf path 1->2 represents the number 12.
 The root-to-leaf path 1->3 represents the number 13.
 
@@ -1038,43 +1038,37 @@ Return the sum = 12 + 13 = 25.
 
 */
 /**
-* Definition for a binary tree node.
-* struct TreeNode {
-*     int val;
-*     TreeNode *left;
-*     TreeNode *right;
-*     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
-* };
-*/
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
 class Solution {
 public:
 	int sumNumbers(TreeNode* root) {
-		vector<int> nums;
-		int num = 0;
-		sumNumber(root, nums, num);
-		num = 0;
-		for (int i : nums) {
-			num += i;
-		}
-		return num;
+		int res = 0, num = 0;
+		sumNumbers(root, res, num);
+		return res;
 	}
 private:
-	void sumNumber(TreeNode* root, vector<int>& nums, int& num) {
+	void sumNumbers(TreeNode* root, int& res, int& num) {
 		if (root == NULL) {
-			nums.push_back(0);
 			return;
 		}
-		num = 10 * num + root->val;
+		num = num * 10 + root->val;
 		if (root->left == NULL && root->right == NULL) {
-			nums.push_back(num);
+			res += num;
 			num /= 10;
 			return;
 		}
 		if (root->left != NULL) {
-			sumNumber(root->left, nums, num);
+			sumNumbers(root->left, res, num);
 		}
 		if (root->right != NULL) {
-			sumNumber(root->right, nums, num);
+			sumNumbers(root->right, res, num);
 		}
 		num /= 10;
 	}
@@ -2300,10 +2294,10 @@ Find the sum of all left leaves in a given binary tree.
 
 Example:
 
-    3
+	3
    / \
   9  20
-    /  \
+	/  \
    15   7
 
 There are two left leaves in the binary tree, with values 9 and 15 respectively. Return 24.
@@ -2347,9 +2341,9 @@ Example:
 
 root = [10,5,-3,3,2,null,11,3,-2,null,1], sum = 8
 
-      10
-     /  \
-    5   -3
+	  10
+	 /  \
+	5   -3
    / \    \
   3   2   11
  / \   \
@@ -2470,7 +2464,7 @@ Example:
 root = [5,3,6,2,4,null,7]
 key = 3
 
-    5
+	5
    / \
   3   6
  / \   \
@@ -2480,7 +2474,7 @@ Given key to delete is 3. So we find the node with value 3 and delete it.
 
 One valid answer is [5,4,6,2,null,null,7], shown in the following BST.
 
-    5
+	5
    / \
   4   6
  /     \
@@ -2488,11 +2482,11 @@ One valid answer is [5,4,6,2,null,null,7], shown in the following BST.
 
 Another valid answer is [5,2,6,null,4,null,7].
 
-    5
+	5
    / \
   2   6
    \   \
-    4   7
+	4   7
 
 */
 /**

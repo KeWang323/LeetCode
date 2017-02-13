@@ -614,6 +614,36 @@ private:
 };
 /*
 
+41. First Missing Positive (Hard)
+
+Given an unsorted integer array, find the first missing positive integer.
+
+For example,
+Given [1,2,0] return 3,
+and [3,4,-1,1] return 2.
+
+Your algorithm should run in O(n) time and uses constant space.
+
+*/
+class Solution {
+public:
+	int firstMissingPositive(vector<int>& nums) {
+		int n = nums.size();
+		for (int i = 0; i < n; i++) {
+			while (nums[i] > 0 && nums[i] <= n && nums[nums[i] - 1] != nums[i]) {
+				swap(nums[i], nums[nums[i] - 1]);
+			}
+		}
+		for (int i = 0; i < n; i++) {
+			if (nums[i] != i + 1) {
+				return i + 1;
+			}
+		}
+		return n + 1;
+	}
+};
+/*
+
 42. Trapping Rain Water (Hard)
 
 Given n non-negative integers representing an elevation map where the width of each bar is 1, compute how much water it is able to trap after raining.
@@ -1277,9 +1307,9 @@ For example,
 Given board =
 
 [
-  ['A','B','C','E'],
-  ['S','F','C','S'],
-  ['A','D','E','E']
+['A','B','C','E'],
+['S','F','C','S'],
+['A','D','E','E']
 ]
 word = "ABCCED", -> returns true,
 word = "SEE", -> returns true,
@@ -1289,27 +1319,30 @@ word = "ABCB", -> returns false.
 class Solution {
 public:
 	bool exist(vector<vector<char>>& board, string word) {
-		row = board.size();
-		col = board[0].size();
+		int row = board.size(), col = board[0].size();
 		for (int i = 0; i < row; i++) {
 			for (int j = 0; j < col; j++) {
-				if (search(board, word.c_str(), i, j)) return true;
+				if (search(board, word, i, j, 0)) {
+					return true;
+				}
 			}
 		}
 		return false;
 	}
 private:
-	int row, col;
-	bool search(vector<vector<char>>& board, const char* w, int i, int j) {
-		if (i < 0 || i >= row || j < 0 || j >= col || board[i][j] == '\0' || board[i][j] != *w) return false;
-		else if (*(w + 1) == '\0') return true;
-		else {
-			char t = board[i][j];
-			board[i][j] = '\0';
-			if (search(board, w + 1, i + 1, j) || search(board, w + 1, i - 1, j) || search(board, w + 1, i, j - 1) || search(board, w + 1, i, j + 1))
-				return true;
-			board[i][j] = t;
+	bool search(vector<vector<char>>& board, const string& word, int i, int j, int index) {
+		if (i < 0 || i >= board.size() || j < 0 || j >= board[0].size() || board[i][j] == '\0' || board[i][j] != word[index]) {
+			return false;
 		}
+		else if (index + 1 == word.size()) {
+			return true;
+		}
+		char temp = board[i][j];
+		board[i][j] = '\0';
+		if (search(board, word, i + 1, j, index + 1) || search(board, word, i - 1, j, index + 1) || search(board, word, i, j + 1, index + 1) || search(board, word, i, j - 1, index + 1)) {
+			return true;
+		}
+		board[i][j] = temp;
 		return false;
 	}
 };
@@ -1814,19 +1847,17 @@ public:
 		if (prices.size() < 2) {
 			return 0;
 		}
-		vector<int> pro(prices.size());
-		pro[0] = 0;
-		int buy = prices[0];
-		for (int i = 1; i < prices.size(); i++) {
-			pro[i] = max(pro[i - 1], prices[i] - buy);
+		vector<int> t(prices.size(), 0);
+		int buy = prices[0], sell = prices.back(), res = 0;
+		for (int i = 1; i < t.size(); i++) {
+			t[i] = max(t[i - 1], prices[i] - buy);
 			buy = min(buy, prices[i]);
 		}
-		int sell = prices.back(), best = 0;
-		for (int i = prices.size() - 2; i >= 0; i--) {
-			best = max(best, sell - prices[i] + pro[i]);
+		for (int i = t.size() - 2; i >= 0; i--) {
+			res = max(res, sell - prices[i] + t[i]);
 			sell = max(sell, prices[i]);
 		}
-		return best;
+		return res;
 	}
 };
 /*
@@ -1906,6 +1937,42 @@ public:
 		while (l < r) {
 			int mid = l + (r - l) / 2;
 			if (nums[mid] > nums[r]) {
+				l = mid + 1;
+			}
+			else {
+				r = mid;
+			}
+		}
+		return nums[l];
+	}
+};
+/*
+
+154. Find Minimum in Rotated Sorted Array II (Hard)
+
+Follow up for "Find Minimum in Rotated Sorted Array":
+What if duplicates are allowed?
+
+Would this affect the run-time complexity? How and why?
+Suppose an array sorted in ascending order is rotated at some pivot unknown to you beforehand.
+
+(i.e., 0 1 2 4 5 6 7 might become 4 5 6 7 0 1 2).
+
+Find the minimum element.
+
+The array may contain duplicates.
+
+*/
+class Solution {
+public:
+	int findMin(vector<int>& nums) {
+		int l = 0, r = nums.size() - 1;
+		while (l < r) {
+			int mid = l + (r - l) / 2;
+			if (nums[mid] == nums[r]) {
+				r--;
+			}
+			else if (nums[mid] > nums[r]) {
 				l = mid + 1;
 			}
 			else {

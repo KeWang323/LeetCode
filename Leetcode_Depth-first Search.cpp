@@ -766,9 +766,9 @@ Find the total sum of all root-to-leaf numbers.
 
 For example,
 
-1
-/ \
-2   3
+	1
+   / \
+  2   3
 The root-to-leaf path 1->2 represents the number 12.
 The root-to-leaf path 1->3 represents the number 13.
 
@@ -776,43 +776,37 @@ Return the sum = 12 + 13 = 25.
 
 */
 /**
-* Definition for a binary tree node.
-* struct TreeNode {
-*     int val;
-*     TreeNode *left;
-*     TreeNode *right;
-*     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
-* };
-*/
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
 class Solution {
 public:
 	int sumNumbers(TreeNode* root) {
-		vector<int> nums;
-		int num = 0;
-		sumNumber(root, nums, num);
-		num = 0;
-		for (int i : nums) {
-			num += i;
-		}
-		return num;
+		int res = 0, num = 0;
+		sumNumbers(root, res, num);
+		return res;
 	}
 private:
-	void sumNumber(TreeNode* root, vector<int>& nums, int& num) {
+	void sumNumbers(TreeNode* root, int& res, int& num) {
 		if (root == NULL) {
-			nums.push_back(0);
 			return;
 		}
-		num = 10 * num + root->val;
+		num = num * 10 + root->val;
 		if (root->left == NULL && root->right == NULL) {
-			nums.push_back(num);
+			res += num;
 			num /= 10;
 			return;
 		}
 		if (root->left != NULL) {
-			sumNumber(root->left, nums, num);
+			sumNumbers(root->left, res, num);
 		}
 		if (root->right != NULL) {
-			sumNumber(root->right, nums, num);
+			sumNumbers(root->right, res, num);
 		}
 		num /= 10;
 	}

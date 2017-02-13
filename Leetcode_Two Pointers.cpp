@@ -369,8 +369,8 @@ public:
 			return{};
 		}
 		unordered_map<string, int> mapping;
-		for (string str : words) {
-			mapping[str]++;
+		for (string word : words) {
+			mapping[word]++;
 		}
 		vector<int> res;
 		int wsize = words[0].size();
@@ -387,7 +387,7 @@ public:
 				else {
 					wcnt++;
 					mapping2[str]++;
-					while (mapping[str] < mapping2[str]) {
+					while (mapping2[str] > mapping[str]) {
 						mapping2[s.substr(slow, wsize)]--;
 						wcnt--;
 						slow += wsize;
@@ -564,31 +564,24 @@ If there are multiple such windows, you are guaranteed that there will always be
 class Solution {
 public:
 	string minWindow(string s, string t) {
-		unordered_map<char, int> mapping;
-		for (char cha : t) {
-			mapping[cha]++;
-		}
 		int i = 0, len = s.size() + 1;
-		int slow = 0, fast = 0, cnt = mapping.size();
+		vector<int> mapping(256, -len);
+		for (char cha : t) {
+			mapping[cha] = mapping[cha] > 0 ? mapping[cha] + 1 : 1;
+		}
+		int slow = 0, fast = 0, cnt = t.size();
 		while (fast < s.size()) {
-			if (mapping.find(s[fast]) != mapping.end()) {
-				if (--mapping[s[fast]] == 0) {
-					cnt--;
-				}
-				while (cnt == 0 && (mapping.find(s[slow]) == mapping.end() || mapping[s[slow]] < 0)) {
+			if (--mapping[s[fast++]] >= 0 && --cnt == 0) {
+				while (mapping[s[slow]] < -len || ++mapping[s[slow]] <= 0) {
 					slow++;
-					if (mapping.find(s[slow - 1]) != mapping.end()) {
-						mapping[s[slow - 1]]++;
-					}
 				}
-			}
-			if (cnt == 0) {
 				if (len > fast - slow) {
 					i = slow;
-					len = fast - slow + 1;
+					len = fast - slow;
 				}
+				cnt = 1;
+				slow++;
 			}
-			fast++;
 		}
 		return len == s.size() + 1 ? "" : s.substr(i, len);
 	}

@@ -472,8 +472,8 @@ public:
 			return{};
 		}
 		unordered_map<string, int> mapping;
-		for (string str : words) {
-			mapping[str]++;
+		for (string word : words) {
+			mapping[word]++;
 		}
 		vector<int> res;
 		int wsize = words[0].size();
@@ -490,7 +490,7 @@ public:
 				else {
 					wcnt++;
 					mapping2[str]++;
-					while (mapping[str] < mapping2[str]) {
+					while (mapping2[str] > mapping[str]) {
 						mapping2[s.substr(slow, wsize)]--;
 						wcnt--;
 						slow += wsize;
@@ -761,6 +761,55 @@ public:
 };
 /*
 
+68. Text Justification (Hard)
+
+Given an array of words and a length L, format the text such that each line has exactly L characters and is fully (left and right) justified.
+
+You should pack your words in a greedy approach; that is, pack as many words as you can in each line. Pad extra spaces ' ' when necessary so that each line has exactly L characters.
+
+Extra spaces between words should be distributed as evenly as possible. If the number of spaces on a line do not divide evenly between words, the empty slots on the left will be assigned more spaces than the slots on the right.
+
+For the last line of text, it should be left justified and no extra space is inserted between words.
+
+For example,
+words: ["This", "is", "an", "example", "of", "text", "justification."]
+L: 16.
+
+Return the formatted lines as:
+[
+   "This    is    an",
+   "example  of text",
+   "justification.  "
+]
+Note: Each word is guaranteed not to exceed L in length.
+
+*/
+class Solution {
+public:
+	vector<string> fullJustify(vector<string>& words, int maxWidth) {
+		vector<string> res;
+		for (int i = 0, k, l; i < words.size(); i += k) {
+			for (k = l = 0; i + k < words.size() && l + words[i + k].size() <= maxWidth - k; k++) {
+				l += words[i + k].size();
+			}
+			string temp = words[i];
+			for (int j = 0; j < k - 1; j++) {
+				if (i + k >= words.size()) {
+					temp += " ";
+				}
+				else {
+					temp += string((maxWidth - l) / (k - 1) + (j < (maxWidth - l) % (k - 1)), ' ');
+				}
+				temp += words[i + j + 1];
+			}
+			temp += string(maxWidth - temp.size(), ' ');
+			res.push_back(temp);
+		}
+		return res;
+	}
+};
+/*
+
 71. Simplify Path (Medium)
 
 Given an absolute path for a file (Unix-style), simplify it.
@@ -854,33 +903,95 @@ If there are multiple such windows, you are guaranteed that there will always be
 class Solution {
 public:
 	string minWindow(string s, string t) {
-		unordered_map<char, int> mapping;
-		for (char cha : t) {
-			mapping[cha]++;
-		}
 		int i = 0, len = s.size() + 1;
-		int slow = 0, fast = 0, cnt = mapping.size();
+		vector<int> mapping(256, -len);
+		for (char cha : t) {
+			mapping[cha] = mapping[cha] > 0 ? mapping[cha] + 1 : 1;
+		}
+		int slow = 0, fast = 0, cnt = t.size();
 		while (fast < s.size()) {
-			if (mapping.find(s[fast]) != mapping.end()) {
-				if (--mapping[s[fast]] == 0) {
-					cnt--;
-				}
-				while (cnt == 0 && (mapping.find(s[slow]) == mapping.end() || mapping[s[slow]] < 0)) {
+			if (--mapping[s[fast++]] >= 0 && --cnt == 0) {
+				while (mapping[s[slow]] < -len || ++mapping[s[slow]] <= 0) {
 					slow++;
-					if (mapping.find(s[slow - 1]) != mapping.end()) {
-						mapping[s[slow - 1]]++;
-					}
 				}
-			}
-			if (cnt == 0) {
 				if (len > fast - slow) {
 					i = slow;
-					len = fast - slow + 1;
+					len = fast - slow;
 				}
+				cnt = 1;
+				slow++;
 			}
-			fast++;
 		}
 		return len == s.size() + 1 ? "" : s.substr(i, len);
+	}
+};
+/*
+
+87. Scramble String (Hard)
+
+Given a string s1, we may represent it as a binary tree by partitioning it to two non-empty substrings recursively.
+
+Below is one possible representation of s1 = "great":
+
+	great
+   /    \
+  gr    eat
+ / \    /  \
+g   r  e   at
+		   / \
+		  a   t
+To scramble the string, we may choose any non-leaf node and swap its two children.
+
+For example, if we choose the node "gr" and swap its two children, it produces a scrambled string "rgeat".
+
+	rgeat
+   /    \
+  rg    eat
+ / \    /  \
+r   g  e   at
+		   / \
+		  a   t
+We say that "rgeat" is a scrambled string of "great".
+
+Similarly, if we continue to swap the children of nodes "eat" and "at", it produces a scrambled string "rgtae".
+
+	rgtae
+   /    \
+  rg    tae
+ / \    /  \
+r   g  ta  e
+	   / \
+	  t   a
+We say that "rgtae" is a scrambled string of "great".
+
+Given two strings s1 and s2 of the same length, determine if s2 is a scrambled string of s1.
+
+*/
+class Solution {
+public:
+	bool isScramble(string s1, string s2) {
+		if (s1 == s2) {
+			return true;
+		}
+		int t[26] = { 0 };
+		for (int i = 0; i < s1.size(); i++) {
+			t[s1[i] - 'a']++;
+			t[s2[i] - 'a']--;
+		}
+		for (int i = 0; i < s2.size(); i++) {
+			if (t[s2[i] - 'a'] < 0) {
+				return false;
+			}
+		}
+		for (int i = 1; i < s1.size(); i++) {
+			if (isScramble(s1.substr(0, i), s2.substr(0, i)) && isScramble(s1.substr(i), s2.substr(i))) {
+				return true;
+			}
+			if (isScramble(s1.substr(0, i), s2.substr(s1.size() - i)) && isScramble(s1.substr(i), s2.substr(0, s1.size() - i))) {
+				return true;
+			}
+		}
+		return false;
 	}
 };
 /*
@@ -959,6 +1070,110 @@ private:
 				restoreIpAddresses(s, res, res_sub + s.substr(index, 3) + ".", index + 3, n + 1);
 			}
 		}
+	}
+};
+/*
+
+97. Interleaving String (Hard)
+
+Given s1, s2, s3, find whether s3 is formed by the interleaving of s1 and s2.
+
+For example,
+Given:
+s1 = "aabcc",
+s2 = "dbbca",
+
+When s3 = "aadbbcbcac", return true.
+When s3 = "aadbbbaccc", return false.
+
+*/
+class Solution {
+public:
+	bool isInterleave(string s1, string s2, string s3) {
+		if (s1.size() + s2.size() != s3.size()) {
+			return false;
+		}
+		bool t[s1.size() + 1][s2.size() + 1] = { false };
+		for (int i = 0; i <= s1.size(); i++) {
+			for (int j = 0; j <= s2.size(); j++) {
+				if (i == 0 && j == 0) {
+					t[0][0] = true;
+				}
+				else if (i == 0) {
+					t[0][j] = t[0][j - 1] && s2[j - 1] == s3[j - 1];
+				}
+				else if (j == 0) {
+					t[i][0] = t[i - 1][0] && s1[i - 1] == s3[i - 1];
+				}
+				else {
+					t[i][j] = t[i - 1][j] && s1[i - 1] == s3[i + j - 1] || t[i][j - 1] && s2[j - 1] == s3[i + j - 1];
+				}
+			}
+		}
+		return t[s1.size()][s2.size()];
+	}
+};
+class Solution {
+public:
+	bool isInterleave(string s1, string s2, string s3) {
+		if (s1.size() + s2.size() != s3.size()) {
+			return false;
+		}
+		bool t[s2.size() + 1] = { false };
+		for (int i = 0; i <= s1.size(); i++) {
+			for (int j = 0; j <= s2.size(); j++) {
+				if (i == 0 && j == 0) {
+					t[0] = true;
+				}
+				else if (i == 0) {
+					t[j] = t[j - 1] && s2[j - 1] == s3[j - 1];
+				}
+				else if (j == 0) {
+					t[0] = t[0] && s1[i - 1] == s3[i - 1];
+				}
+				else {
+					t[j] = t[j] && s1[i - 1] == s3[i + j - 1] || t[j - 1] && s2[j - 1] == s3[i + j - 1];
+				}
+			}
+		}
+		return t[s2.size()];
+	}
+};
+/*
+
+115. Distinct Subsequences (Hard)
+
+Given a string S and a string T, count the number of distinct subsequences of T in S.
+
+A subsequence of a string is a new string which is formed from the original string by deleting some (can be none) of the characters without disturbing the relative positions of the remaining characters. (ie, "ACE" is a subsequence of "ABCDE" while "AEC" is not).
+
+Here is an example:
+S = "rabbbit", T = "rabbit"
+
+Return 3.
+
+*/
+class Solution {
+public:
+	int numDistinct(string s, string t) {
+		if (t.size() > s.size()) {
+			return 0;
+		}
+		vector<vector<int>> ta(t.size() + 1, vector<int>(s.size() + 1, 0));
+		for (int j = 0; j <= s.size(); j++) {
+			ta[0][j] = 1;
+		}
+		for (int i = 1; i <= t.size(); i++) {
+			for (int j = 1; j <= s.size(); j++) {
+				if (t[i - 1] == s[j - 1]) {
+					ta[i][j] = ta[i - 1][j - 1] + ta[i][j - 1];
+				}
+				else {
+					ta[i][j] = ta[i][j - 1];
+				}
+			}
+		}
+		return ta.back().back();
 	}
 };
 /*
@@ -1096,6 +1311,47 @@ public:
 };
 /*
 
+158. Read N Characters Given Read4 II - Call multiple times (Hard)
+
+The API: int read4(char *buf) reads 4 characters at a time from a file.
+
+The return value is the actual number of characters read. For example, it returns 3 if there is only 3 characters left in the file.
+
+By using the read4 API, implement the function int read(char *buf, int n) that reads n characters from the file.
+
+Note:
+The read function may be called multiple times.
+
+*/
+// Forward declaration of the read4 API.
+int read4(char *buf);
+
+class Solution {
+public:
+	/**
+	* @param buf Destination buffer
+	* @param n   Maximum number of characters to read
+	* @return    The number of characters read
+	*/
+	int read(char *buf, int n) {
+		int i = 0;
+		while (i < n) {
+			if (i4 >= n4) {
+				i4 = 0;
+				n4 = read4(buf4);
+				if (n4 == 0) {
+					break;
+				}
+			}
+			buf[i++] = buf4[i4++];
+		}
+		return i;
+	}
+	char buf4[4];
+	int i4 = 0, n4 = 0;
+};
+/*
+
 159. Longest Substring with At Most Two Distinct Characters (Hard)
 
 Given a string, find the length of the longest substring T that contains at most 2 distinct characters.
@@ -1126,6 +1382,42 @@ public:
 			res = max(f - sl, res);
 		}
 		return res;
+	}
+};
+/*
+
+161. One Edit Distance (Medium)
+
+Given two strings S and T, determine if they are both one edit distance apart.
+
+*/
+class Solution {
+public:
+	bool isOneEditDistance(string s, string t) {
+		if (s == t || abs(int(s.size() - t.size())) > 1) {
+			return false;
+		}
+		int i = 0, j = 0;
+		bool flag = false;
+		while (i < s.size() && j < t.size()) {
+			if (s[i] == t[j]) {
+				i++;
+				j++;
+			}
+			else {
+				if (flag == true) {
+					return false;
+				}
+				if (s.size() >= t.size()) {
+					i++;
+				}
+				if (s.size() <= t.size()) {
+					j++;
+				}
+				flag = true;
+			}
+		}
+		return true;
 	}
 };
 /*

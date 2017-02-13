@@ -1113,10 +1113,10 @@ If it is overflow, return MAX_INT.
 class Solution {
 public:
 	int divide(int dividend, int divisor) {
-		if (!dividend) {
+		if (dividend == 0) {
 			return 0;
 		}
-		if (!divisor || dividend == INT_MIN && divisor == -1) {
+		if (divisor == 0 || dividend == INT_MIN && divisor == -1) {
 			return INT_MAX;
 		}
 		int sign = (dividend > 0 ^ divisor > 0) ? -1 : 1;
@@ -1164,8 +1164,8 @@ public:
 			return{};
 		}
 		unordered_map<string, int> mapping;
-		for (string str : words) {
-			mapping[str]++;
+		for (string word : words) {
+			mapping[word]++;
 		}
 		vector<int> res;
 		int wsize = words[0].size();
@@ -1182,7 +1182,7 @@ public:
 				else {
 					wcnt++;
 					mapping2[str]++;
-					while (mapping[str] < mapping2[str]) {
+					while (mapping2[str] > mapping[str]) {
 						mapping2[s.substr(slow, wsize)]--;
 						wcnt--;
 						slow += wsize;
@@ -1417,7 +1417,6 @@ Determine if a Sudoku is valid, according to: Sudoku Puzzles - The Rules.
 
 The Sudoku board could be partially filled, where empty cells are filled with the character '.'.
 
-
 A partially filled sudoku which is valid.
 
 Note:
@@ -1427,46 +1426,7 @@ A valid Sudoku board (partially filled) is not necessarily solvable. Only the fi
 class Solution {
 public:
 	bool isValidSudoku(vector<vector<char>>& board) {
-		for (int i = 0; i < 9; i++) {
-			unordered_map<char, bool> mapping1;
-			unordered_map<char, bool> mapping2;
-			unordered_map<char, bool> mapping3;
-			for (int j = 0; j < 9; j++) {
-				if (board[i][j] != '.') {
-					if (mapping1[board[i][j]] == true) {
-						return false;
-					}
-					else {
-						mapping1[board[i][j]] = true;
-					}
-				}
-				if (board[j][i] != '.') {
-					if (mapping2[board[j][i]] == true) {
-						return false;
-					}
-					else {
-						mapping2[board[j][i]] = true;
-					}
-				}
-				if (board[i / 3 * 3 + j / 3][i % 3 * 3 + j % 3] != '.') {
-					if (mapping3[board[i / 3 * 3 + j / 3][i % 3 * 3 + j % 3]] == true) {
-						return false;
-					}
-					else {
-						mapping3[board[i / 3 * 3 + j / 3][i % 3 * 3 + j % 3]] = true;
-					}
-				}
-			}
-		}
-		return true;
-	}
-};
-class Solution {
-public:
-	bool isValidSudoku(vector<vector<char>>& board) {
-		int mapping1[9][9] = { 0 };
-		int mapping2[9][9] = { 0 };
-		int mapping3[9][9] = { 0 };
+		int mapping1[9][9] = { 0 }, mapping2[9][9] = { 0 }, mapping3[9][9] = { 0 };
 		for (int i = 0; i < 9; i++) {
 			for (int j = 0; j < 9; j++) {
 				if (board[i][j] != '.') {
@@ -1474,7 +1434,66 @@ public:
 					if (mapping1[i][num] || mapping2[j][num] || mapping3[k][num]) {
 						return false;
 					}
-					mapping1[i][num] = mapping2[j][num] = mapping3[k][num] = 1;
+					mapping1[i][num] = 1;
+					mapping2[j][num] = 1;
+					mapping3[k][num] = 1;
+				}
+			}
+		}
+		return true;
+	}
+};
+/*
+
+37. Sudoku Solver (Hard)
+
+Write a program to solve a Sudoku puzzle by filling the empty cells.
+
+Empty cells are indicated by the character '.'.
+
+You may assume that there will be only one unique solution.
+
+*/
+class Solution {
+public:
+	void solveSudoku(vector<vector<char>>& board) {
+		solve(board, 0, 0);
+	}
+private:
+	bool solve(vector<vector<char>>& board, int row, int col) {
+		for (int i = row; i < 9; i++, col = 0) {
+			for (int j = col; j < 9; j++) {
+				if (board[i][j] == '.') {
+					for (char d = '1'; d <= '9'; d++) {
+						if (isValid(board, i, j, d)) {
+							board[i][j] = d;
+							if (solve(board, i, j + 1)) {
+								return true;
+							}
+							board[i][j] = '.';
+						}
+					}
+					return false;
+				}
+			}
+		}
+		return true;
+	}
+	bool isValid(vector<vector<char>>& board, int i, int j, char d) {
+		for (int row = 0; row < 9; row++) {
+			if (board[row][j] == d) {
+				return false;
+			}
+		}
+		for (int col = 0; col < 9; col++) {
+			if (board[i][col] == d) {
+				return false;
+			}
+		}
+		for (int row = (i / 3) * 3; row < (i / 3 + 1) * 3; row++) {
+			for (int col = (j / 3) * 3; col < (j / 3 + 1) * 3; col++) {
+				if (board[row][col] == d) {
+					return false;
 				}
 			}
 		}
@@ -1605,6 +1624,36 @@ private:
 			}
 			res_sub.pop_back();
 		}
+	}
+};
+/*
+
+41. First Missing Positive (Hard)
+
+Given an unsorted integer array, find the first missing positive integer.
+
+For example,
+Given [1,2,0] return 3,
+and [3,4,-1,1] return 2.
+
+Your algorithm should run in O(n) time and uses constant space.
+
+*/
+class Solution {
+public:
+	int firstMissingPositive(vector<int>& nums) {
+		int n = nums.size();
+		for (int i = 0; i < n; i++) {
+			while (nums[i] > 0 && nums[i] <= n && nums[nums[i] - 1] != nums[i]) {
+				swap(nums[i], nums[nums[i] - 1]);
+			}
+		}
+		for (int i = 0; i < n; i++) {
+			if (nums[i] != i + 1) {
+				return i + 1;
+			}
+		}
+		return n + 1;
 	}
 };
 /*
@@ -2576,6 +2625,55 @@ public:
 };
 /*
 
+68. Text Justification (Hard)
+
+Given an array of words and a length L, format the text such that each line has exactly L characters and is fully (left and right) justified.
+
+You should pack your words in a greedy approach; that is, pack as many words as you can in each line. Pad extra spaces ' ' when necessary so that each line has exactly L characters.
+
+Extra spaces between words should be distributed as evenly as possible. If the number of spaces on a line do not divide evenly between words, the empty slots on the left will be assigned more spaces than the slots on the right.
+
+For the last line of text, it should be left justified and no extra space is inserted between words.
+
+For example,
+words: ["This", "is", "an", "example", "of", "text", "justification."]
+L: 16.
+
+Return the formatted lines as:
+[
+   "This    is    an",
+   "example  of text",
+   "justification.  "
+]
+Note: Each word is guaranteed not to exceed L in length.
+
+*/
+class Solution {
+public:
+	vector<string> fullJustify(vector<string>& words, int maxWidth) {
+		vector<string> res;
+		for (int i = 0, k, l; i < words.size(); i += k) {
+			for (k = l = 0; i + k < words.size() && l + words[i + k].size() <= maxWidth - k; k++) {
+				l += words[i + k].size();
+			}
+			string temp = words[i];
+			for (int j = 0; j < k - 1; j++) {
+				if (i + k >= words.size()) {
+					temp += " ";
+				}
+				else {
+					temp += string((maxWidth - l) / (k - 1) + (j < (maxWidth - l) % (k - 1)), ' ');
+				}
+				temp += words[i + j + 1];
+			}
+			temp += string(maxWidth - temp.size(), ' ');
+			res.push_back(temp);
+		}
+		return res;
+	}
+};
+/*
+
 69. Sqrt(x) (Medium)
 
 Implement int sqrt(int x).
@@ -2851,31 +2949,24 @@ If there are multiple such windows, you are guaranteed that there will always be
 class Solution {
 public:
 	string minWindow(string s, string t) {
-		unordered_map<char, int> mapping;
-		for (char cha : t) {
-			mapping[cha]++;
-		}
 		int i = 0, len = s.size() + 1;
-		int slow = 0, fast = 0, cnt = mapping.size();
+		vector<int> mapping(256, -len);
+		for (char cha : t) {
+			mapping[cha] = mapping[cha] > 0 ? mapping[cha] + 1 : 1;
+		}
+		int slow = 0, fast = 0, cnt = t.size();
 		while (fast < s.size()) {
-			if (mapping.find(s[fast]) != mapping.end()) {
-				if (--mapping[s[fast]] == 0) {
-					cnt--;
-				}
-				while (cnt == 0 && (mapping.find(s[slow]) == mapping.end() || mapping[s[slow]] < 0)) {
+			if (--mapping[s[fast++]] >= 0 && --cnt == 0) {
+				while (mapping[s[slow]] < -len || ++mapping[s[slow]] <= 0) {
 					slow++;
-					if (mapping.find(s[slow - 1]) != mapping.end()) {
-						mapping[s[slow - 1]]++;
-					}
 				}
-			}
-			if (cnt == 0) {
 				if (len > fast - slow) {
 					i = slow;
-					len = fast - slow + 1;
+					len = fast - slow;
 				}
+				cnt = 1;
+				slow++;
 			}
-			fast++;
 		}
 		return len == s.size() + 1 ? "" : s.substr(i, len);
 	}
@@ -2992,27 +3083,30 @@ word = "ABCB", -> returns false.
 class Solution {
 public:
 	bool exist(vector<vector<char>>& board, string word) {
-		row = board.size();
-		col = board[0].size();
+		int row = board.size(), col = board[0].size();
 		for (int i = 0; i < row; i++) {
 			for (int j = 0; j < col; j++) {
-				if (search(board, word.c_str(), i, j)) return true;
+				if (search(board, word, i, j, 0)) {
+					return true;
+				}
 			}
 		}
 		return false;
 	}
 private:
-	int row, col;
-	bool search(vector<vector<char>>& board, const char* w, int i, int j) {
-		if (i < 0 || i >= row || j < 0 || j >= col || board[i][j] == '\0' || board[i][j] != *w) return false;
-		else if (*(w + 1) == '\0') return true;
-		else {
-			char t = board[i][j];
-			board[i][j] = '\0';
-			if (search(board, w + 1, i + 1, j) || search(board, w + 1, i - 1, j) || search(board, w + 1, i, j - 1) || search(board, w + 1, i, j + 1))
-				return true;
-			board[i][j] = t;
+	bool search(vector<vector<char>>& board, const string& word, int i, int j, int index) {
+		if (i < 0 || i >= board.size() || j < 0 || j >= board[0].size() || board[i][j] == '\0' || board[i][j] != word[index]) {
+			return false;
 		}
+		else if (index + 1 == word.size()) {
+			return true;
+		}
+		char temp = board[i][j];
+		board[i][j] = '\0';
+		if (search(board, word, i + 1, j, index + 1) || search(board, word, i - 1, j, index + 1) || search(board, word, i, j + 1, index + 1) || search(board, word, i, j - 1, index + 1)) {
+			return true;
+		}
+		board[i][j] = temp;
 		return false;
 	}
 };
@@ -3326,6 +3420,75 @@ public:
 		l->next = NULL;
 		s->next = lh->next;
 		return sh->next;
+	}
+};
+/*
+
+87. Scramble String (Hard)
+
+Given a string s1, we may represent it as a binary tree by partitioning it to two non-empty substrings recursively.
+
+Below is one possible representation of s1 = "great":
+
+	great
+   /    \
+  gr    eat
+ / \    /  \
+g   r  e   at
+		   / \
+		  a   t
+To scramble the string, we may choose any non-leaf node and swap its two children.
+
+For example, if we choose the node "gr" and swap its two children, it produces a scrambled string "rgeat".
+
+	rgeat
+   /    \
+  rg    eat
+ / \    /  \
+r   g  e   at
+		   / \
+		  a   t
+We say that "rgeat" is a scrambled string of "great".
+
+Similarly, if we continue to swap the children of nodes "eat" and "at", it produces a scrambled string "rgtae".
+
+	rgtae
+   /    \
+  rg    tae
+ / \    /  \
+r   g  ta  e
+	   / \
+	  t   a
+We say that "rgtae" is a scrambled string of "great".
+
+Given two strings s1 and s2 of the same length, determine if s2 is a scrambled string of s1.
+
+*/
+class Solution {
+public:
+	bool isScramble(string s1, string s2) {
+		if (s1 == s2) {
+			return true;
+		}
+		int t[26] = { 0 };
+		for (int i = 0; i < s1.size(); i++) {
+			t[s1[i] - 'a']++;
+			t[s2[i] - 'a']--;
+		}
+		for (int i = 0; i < s2.size(); i++) {
+			if (t[s2[i] - 'a'] < 0) {
+				return false;
+			}
+		}
+		for (int i = 1; i < s1.size(); i++) {
+			if (isScramble(s1.substr(0, i), s2.substr(0, i)) && isScramble(s1.substr(i), s2.substr(i))) {
+				return true;
+			}
+			if (isScramble(s1.substr(0, i), s2.substr(s1.size() - i)) && isScramble(s1.substr(i), s2.substr(0, s1.size() - i))) {
+				return true;
+			}
+		}
+		return false;
 	}
 };
 /*
@@ -3698,6 +3861,73 @@ public:
 			}
 		}
 		return t[n];
+	}
+};
+/*
+
+97. Interleaving String (Hard)
+
+Given s1, s2, s3, find whether s3 is formed by the interleaving of s1 and s2.
+
+For example,
+Given:
+s1 = "aabcc",
+s2 = "dbbca",
+
+When s3 = "aadbbcbcac", return true.
+When s3 = "aadbbbaccc", return false.
+
+*/
+class Solution {
+public:
+	bool isInterleave(string s1, string s2, string s3) {
+		if (s1.size() + s2.size() != s3.size()) {
+			return false;
+		}
+		bool t[s1.size() + 1][s2.size() + 1] = { false };
+		for (int i = 0; i <= s1.size(); i++) {
+			for (int j = 0; j <= s2.size(); j++) {
+				if (i == 0 && j == 0) {
+					t[0][0] = true;
+				}
+				else if (i == 0) {
+					t[0][j] = t[0][j - 1] && s2[j - 1] == s3[j - 1];
+				}
+				else if (j == 0) {
+					t[i][0] = t[i - 1][0] && s1[i - 1] == s3[i - 1];
+				}
+				else {
+					t[i][j] = t[i - 1][j] && s1[i - 1] == s3[i + j - 1] || t[i][j - 1] && s2[j - 1] == s3[i + j - 1];
+				}
+			}
+		}
+		return t[s1.size()][s2.size()];
+	}
+};
+class Solution {
+public:
+	bool isInterleave(string s1, string s2, string s3) {
+		if (s1.size() + s2.size() != s3.size()) {
+			return false;
+		}
+		bool t[s2.size() + 1] = { false };
+		for (int i = 0; i <= s1.size(); i++) {
+			for (int j = 0; j <= s2.size(); j++) {
+				if (i == 0 && j == 0) {
+					t[0] = true;
+				}
+				else if (i == 0) {
+					t[j] = t[j - 1] && s2[j - 1] == s3[j - 1];
+				}
+				else if (j == 0) {
+					t[0] = t[0] && s1[i - 1] == s3[i - 1];
+				}
+				else {
+					t[j] = t[j] && s1[i - 1] == s3[i + j - 1] || t[j - 1] && s2[j - 1] == s3[i + j - 1];
+				}
+			}
+		}
+		return t[s2.size()];
 	}
 };
 /*
@@ -4477,6 +4707,43 @@ public:
 };
 /*
 
+115. Distinct Subsequences (Hard)
+
+Given a string S and a string T, count the number of distinct subsequences of T in S.
+
+A subsequence of a string is a new string which is formed from the original string by deleting some (can be none) of the characters without disturbing the relative positions of the remaining characters. (ie, "ACE" is a subsequence of "ABCDE" while "AEC" is not).
+
+Here is an example:
+S = "rabbbit", T = "rabbit"
+
+Return 3.
+
+*/
+class Solution {
+public:
+	int numDistinct(string s, string t) {
+		if (t.size() > s.size()) {
+			return 0;
+		}
+		vector<vector<int>> ta(t.size() + 1, vector<int>(s.size() + 1, 0));
+		for (int j = 0; j <= s.size(); j++) {
+			ta[0][j] = 1;
+		}
+		for (int i = 1; i <= t.size(); i++) {
+			for (int j = 1; j <= s.size(); j++) {
+				if (t[i - 1] == s[j - 1]) {
+					ta[i][j] = ta[i - 1][j - 1] + ta[i][j - 1];
+				}
+				else {
+					ta[i][j] = ta[i][j - 1];
+				}
+			}
+		}
+		return ta.back().back();
+	}
+};
+/*
+
 116. Populating Next Right Pointers in Each Node (Medium)
 
 Given a binary tree
@@ -4765,19 +5032,17 @@ public:
 		if (prices.size() < 2) {
 			return 0;
 		}
-		vector<int> pro(prices.size());
-		pro[0] = 0;
-		int buy = prices[0];
-		for (int i = 1; i < prices.size(); i++) {
-			pro[i] = max(pro[i - 1], prices[i] - buy);
+		vector<int> t(prices.size(), 0);
+		int buy = prices[0], sell = prices.back(), res = 0;
+		for (int i = 1; i < t.size(); i++) {
+			t[i] = max(t[i - 1], prices[i] - buy);
 			buy = min(buy, prices[i]);
 		}
-		int sell = prices.back(), best = 0;
-		for (int i = prices.size() - 2; i >= 0; i--) {
-			best = max(best, sell - prices[i] + pro[i]);
+		for (int i = t.size() - 2; i >= 0; i--) {
+			res = max(res, sell - prices[i] + t[i]);
 			sell = max(sell, prices[i]);
 		}
-		return best;
+		return res;
 	}
 };
 /*
@@ -4902,9 +5167,9 @@ Find the total sum of all root-to-leaf numbers.
 
 For example,
 
-1
-/ \
-2   3
+	1
+   / \
+  2   3
 The root-to-leaf path 1->2 represents the number 12.
 The root-to-leaf path 1->3 represents the number 13.
 
@@ -4912,43 +5177,37 @@ Return the sum = 12 + 13 = 25.
 
 */
 /**
-* Definition for a binary tree node.
-* struct TreeNode {
-*     int val;
-*     TreeNode *left;
-*     TreeNode *right;
-*     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
-* };
-*/
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
 class Solution {
 public:
 	int sumNumbers(TreeNode* root) {
-		vector<int> nums;
-		int num = 0;
-		sumNumber(root, nums, num);
-		num = 0;
-		for (int i : nums) {
-			num += i;
-		}
-		return num;
+		int res = 0, num = 0;
+		sumNumbers(root, res, num);
+		return res;
 	}
 private:
-	void sumNumber(TreeNode* root, vector<int>& nums, int& num) {
+	void sumNumbers(TreeNode* root, int& res, int& num) {
 		if (root == NULL) {
-			nums.push_back(0);
 			return;
 		}
-		num = 10 * num + root->val;
+		num = num * 10 + root->val;
 		if (root->left == NULL && root->right == NULL) {
-			nums.push_back(num);
+			res += num;
 			num /= 10;
 			return;
 		}
 		if (root->left != NULL) {
-			sumNumber(root->left, nums, num);
+			sumNumbers(root->left, res, num);
 		}
 		if (root->right != NULL) {
-			sumNumber(root->right, nums, num);
+			sumNumbers(root->right, res, num);
 		}
 		num /= 10;
 	}
@@ -5033,32 +5292,13 @@ public:
 		}
 		for (int j = 1; j < _size; j++) {
 			for (int i = j; i >= 0; i--) {
-				if (s[i] == s[j] && (j - i < 2 || t[i + 1][j - 1])) {
+				if (s[i] == s[j] && (j - i < 3 || t[i + 1][j - 1])) {
 					t[i][j] = true;
 					t2[j + 1] = min(t2[j + 1], 1 + t2[i]);
 				}
 			}
 		}
 		return t2.back();
-	}
-};
-class Solution {
-public:
-	int minCut(string s) {
-		int _size = s.size();
-		vector<int> t(_size + 1);
-		for (int i = 0; i <= _size; i++) {
-			t[i] = i - 1;
-		}
-		for (int i = 1; i < _size; i++) {
-			for (int j = 0; i - j >= 0 && i + j < _size && s[i - j] == s[i + j]; j++) {
-				t[i + j + 1] = min(t[i + j + 1], 1 + t[i - j]);
-			}
-			for (int j = 0; i - j - 1 >= 0 && i + j < _size && s[i - j - 1] == s[i + j]; j++) {
-				t[i + j + 1] = min(t[i + j + 1], 1 + t[i - j - 1]);
-			}
-		}
-		return t.back();
 	}
 };
 /*
@@ -5147,6 +5387,38 @@ public:
 			}
 		}
 		return rem < 0 ? -1 : index % gas.size();
+	}
+};
+/*
+
+135. Candy (Hard)
+
+There are N children standing in a line. Each child is assigned a rating value.
+
+You are giving candies to these children subjected to the following requirements:
+
+Each child must have at least one candy.
+Children with a higher rating get more candies than their neighbors.
+What is the minimum candies you must give?
+
+*/
+class Solution {
+public:
+	int candy(vector<int>& ratings) {
+		if (ratings.size() <= 1) {
+			return ratings.size();
+		}
+		vector<int> num(ratings.size(), 1);
+		for (int i = 1; i < ratings.size(); i++) {
+			if (ratings[i] > ratings[i - 1])
+				num[i] = num[i - 1] + 1;
+		}
+		for (int i = ratings.size() - 1; i > 0; i--) {
+			if (ratings[i - 1] > ratings[i]) {
+				num[i - 1] = max(num[i] + 1, num[i - 1]);
+			}
+		}
+		return accumulate(num.begin(), num.end(), 0);
 	}
 };
 /*
@@ -5641,26 +5913,18 @@ public:
 		if (head == NULL || head->next == NULL) {
 			return head;
 		}
-		ListNode *head_new = new ListNode(-1);
-		head_new->next = head;
-		while (head->next != NULL) {
-			ListNode *post = head->next;
-			if (post->val < head->val) {
-				head->next = post->next;
-				ListNode *prev = head_new;
-				ListNode *p = head_new->next;
-				while (p->val < post->val) {
-					prev = prev->next;
-					p = p->next;
-				}
-				prev->next = post;
-				post->next = p;
+		ListNode* dummy = new ListNode(-1), *p = dummy;
+		while (head != NULL) {
+			ListNode *next = head->next;
+			while (p->next != NULL && p->next->val < head->val) {
+				p = p->next;
 			}
-			else {
-				head = head->next;
-			}
+			head->next = p->next;
+			p->next = head;
+			p = dummy;
+			head = next;
 		}
-		return head_new->next;
+		return dummy->next;
 	}
 };
 /*
@@ -5922,6 +6186,42 @@ public:
 };
 /*
 
+154. Find Minimum in Rotated Sorted Array II (Hard)
+
+Follow up for "Find Minimum in Rotated Sorted Array":
+What if duplicates are allowed?
+
+Would this affect the run-time complexity? How and why?
+Suppose an array sorted in ascending order is rotated at some pivot unknown to you beforehand.
+
+(i.e., 0 1 2 4 5 6 7 might become 4 5 6 7 0 1 2).
+
+Find the minimum element.
+
+The array may contain duplicates.
+
+*/
+class Solution {
+public:
+	int findMin(vector<int>& nums) {
+		int l = 0, r = nums.size() - 1;
+		while (l < r) {
+			int mid = l + (r - l) / 2;
+			if (nums[mid] == nums[r]) {
+				r--;
+			}
+			else if (nums[mid] > nums[r]) {
+				l = mid + 1;
+			}
+			else {
+				r = mid;
+			}
+		}
+		return nums[l];
+	}
+};
+/*
+
 155. Min Stack (Easy)
 
 Design a stack that supports push, pop, top, and retrieving the minimum element in constant time.
@@ -6064,6 +6364,47 @@ public:
 };
 /*
 
+158. Read N Characters Given Read4 II - Call multiple times (Hard)
+
+The API: int read4(char *buf) reads 4 characters at a time from a file.
+
+The return value is the actual number of characters read. For example, it returns 3 if there is only 3 characters left in the file.
+
+By using the read4 API, implement the function int read(char *buf, int n) that reads n characters from the file.
+
+Note:
+The read function may be called multiple times.
+
+*/
+// Forward declaration of the read4 API.
+int read4(char *buf);
+
+class Solution {
+public:
+	/**
+	* @param buf Destination buffer
+	* @param n   Maximum number of characters to read
+	* @return    The number of characters read
+	*/
+	int read(char *buf, int n) {
+		int i = 0;
+		while (i < n) {
+			if (i4 >= n4) {
+				i4 = 0;
+				n4 = read4(buf4);
+				if (n4 == 0) {
+					break;
+				}
+			}
+			buf[i++] = buf4[i4++];
+		}
+		return i;
+	}
+	char buf4[4];
+	int i4 = 0, n4 = 0;
+};
+/*
+
 159. Longest Substring with At Most Two Distinct Characters (Hard)
 
 Given a string, find the length of the longest substring T that contains at most 2 distinct characters.
@@ -6150,6 +6491,42 @@ public:
 			}
 		}
 		return p1;
+	}
+};
+/*
+
+161. One Edit Distance (Medium)
+
+Given two strings S and T, determine if they are both one edit distance apart.
+
+*/
+class Solution {
+public:
+	bool isOneEditDistance(string s, string t) {
+		if (s == t || abs(int(s.size() - t.size())) > 1) {
+			return false;
+		}
+		int i = 0, j = 0;
+		bool flag = false;
+		while (i < s.size() && j < t.size()) {
+			if (s[i] == t[j]) {
+				i++;
+				j++;
+			}
+			else {
+				if (flag == true) {
+					return false;
+				}
+				if (s.size() >= t.size()) {
+					i++;
+				}
+				if (s.size() <= t.size()) {
+					j++;
+				}
+				flag = true;
+			}
+		}
+		return true;
 	}
 };
 /*
@@ -7166,6 +7543,68 @@ public:
 		return newhead;
 	}
 };
+/*
+
+208. Implement Trie (Prefix Tree) (Medium)
+
+Implement a trie with insert, search, and startsWith methods.
+
+Note:
+You may assume that all inputs are consist of lowercase letters a-z.
+
+*/
+class TrieNode {
+public:
+	TrieNode *next[26];
+	bool isWord;
+	TrieNode() :isWord(false), next({ NULL }) {}
+};
+class Trie {
+public:
+	/** Initialize your data structure here. */
+	Trie() {
+		root = new TrieNode();
+	}
+
+	/** Inserts a word into the trie. */
+	void insert(string word) {
+		TrieNode *p = root;
+		for (int i = 0; i < word.size(); i++) {
+			if (p->next[word[i] - 'a'] == NULL) {
+				p->next[word[i] - 'a'] = new TrieNode();
+			}
+			p = p->next[word[i] - 'a'];
+		}
+		p->isWord = true;
+	}
+
+	/** Returns if the word is in the trie. */
+	bool search(string word) {
+		TrieNode *p = find(word);
+		return p != NULL && p->isWord == true;
+	}
+
+	/** Returns if there is any word in the trie that starts with the given prefix. */
+	bool startsWith(string prefix) {
+		return find(prefix) != NULL;
+	}
+private:
+	TrieNode *root;
+	TrieNode* find(string word) {
+		TrieNode *p = root;
+		for (int i = 0; i < word.size() && p != NULL; i++) {
+			p = p->next[word[i] - 'a'];
+		}
+		return p;
+	}
+};
+/**
+* Your Trie object will be instantiated and called as such:
+* Trie obj = new Trie();
+* obj.insert(word);
+* bool param_2 = obj.search(word);
+* bool param_3 = obj.startsWith(prefix);
+*/
 /*
 
 209. Minimum Size Subarray Sum (Medium)
@@ -12454,10 +12893,10 @@ Find the sum of all left leaves in a given binary tree.
 
 Example:
 
-    3
+	3
    / \
   9  20
-    /  \
+	/  \
    15   7
 
 There are two left leaves in the binary tree, with values 9 and 15 respectively. Return 24.

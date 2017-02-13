@@ -360,6 +360,75 @@ private:
 };
 /*
 
+87. Scramble String (Hard)
+
+Given a string s1, we may represent it as a binary tree by partitioning it to two non-empty substrings recursively.
+
+Below is one possible representation of s1 = "great":
+
+	great
+   /    \
+  gr    eat
+ / \    /  \
+g   r  e   at
+		   / \
+		  a   t
+To scramble the string, we may choose any non-leaf node and swap its two children.
+
+For example, if we choose the node "gr" and swap its two children, it produces a scrambled string "rgeat".
+
+	rgeat
+   /    \
+  rg    eat
+ / \    /  \
+r   g  e   at
+		   / \
+		  a   t
+We say that "rgeat" is a scrambled string of "great".
+
+Similarly, if we continue to swap the children of nodes "eat" and "at", it produces a scrambled string "rgtae".
+
+	rgtae
+   /    \
+  rg    tae
+ / \    /  \
+r   g  ta  e
+	   / \
+	  t   a
+We say that "rgtae" is a scrambled string of "great".
+
+Given two strings s1 and s2 of the same length, determine if s2 is a scrambled string of s1.
+
+*/
+class Solution {
+public:
+	bool isScramble(string s1, string s2) {
+		if (s1 == s2) {
+			return true;
+		}
+		int t[26] = { 0 };
+		for (int i = 0; i < s1.size(); i++) {
+			t[s1[i] - 'a']++;
+			t[s2[i] - 'a']--;
+		}
+		for (int i = 0; i < s2.size(); i++) {
+			if (t[s2[i] - 'a'] < 0) {
+				return false;
+			}
+		}
+		for (int i = 1; i < s1.size(); i++) {
+			if (isScramble(s1.substr(0, i), s2.substr(0, i)) && isScramble(s1.substr(i), s2.substr(i))) {
+				return true;
+			}
+			if (isScramble(s1.substr(0, i), s2.substr(s1.size() - i)) && isScramble(s1.substr(i), s2.substr(0, s1.size() - i))) {
+				return true;
+			}
+		}
+		return false;
+	}
+};
+/*
+
 91. Decode Ways (Medium)
 
 A message containing letters from A-Z is being encoded to numbers using the following mapping:
@@ -474,6 +543,110 @@ public:
 };
 /*
 
+97. Interleaving String (Hard)
+
+Given s1, s2, s3, find whether s3 is formed by the interleaving of s1 and s2.
+
+For example,
+Given:
+s1 = "aabcc",
+s2 = "dbbca",
+
+When s3 = "aadbbcbcac", return true.
+When s3 = "aadbbbaccc", return false.
+
+*/
+class Solution {
+public:
+	bool isInterleave(string s1, string s2, string s3) {
+		if (s1.size() + s2.size() != s3.size()) {
+			return false;
+		}
+		bool t[s1.size() + 1][s2.size() + 1] = { false };
+		for (int i = 0; i <= s1.size(); i++) {
+			for (int j = 0; j <= s2.size(); j++) {
+				if (i == 0 && j == 0) {
+					t[0][0] = true;
+				}
+				else if (i == 0) {
+					t[0][j] = t[0][j - 1] && s2[j - 1] == s3[j - 1];
+				}
+				else if (j == 0) {
+					t[i][0] = t[i - 1][0] && s1[i - 1] == s3[i - 1];
+				}
+				else {
+					t[i][j] = t[i - 1][j] && s1[i - 1] == s3[i + j - 1] || t[i][j - 1] && s2[j - 1] == s3[i + j - 1];
+				}
+			}
+		}
+		return t[s1.size()][s2.size()];
+	}
+};
+class Solution {
+public:
+	bool isInterleave(string s1, string s2, string s3) {
+		if (s1.size() + s2.size() != s3.size()) {
+			return false;
+		}
+		bool t[s2.size() + 1] = { false };
+		for (int i = 0; i <= s1.size(); i++) {
+			for (int j = 0; j <= s2.size(); j++) {
+				if (i == 0 && j == 0) {
+					t[0] = true;
+				}
+				else if (i == 0) {
+					t[j] = t[j - 1] && s2[j - 1] == s3[j - 1];
+				}
+				else if (j == 0) {
+					t[0] = t[0] && s1[i - 1] == s3[i - 1];
+				}
+				else {
+					t[j] = t[j] && s1[i - 1] == s3[i + j - 1] || t[j - 1] && s2[j - 1] == s3[i + j - 1];
+				}
+			}
+		}
+		return t[s2.size()];
+	}
+};
+/*
+
+115. Distinct Subsequences (Hard)
+
+Given a string S and a string T, count the number of distinct subsequences of T in S.
+
+A subsequence of a string is a new string which is formed from the original string by deleting some (can be none) of the characters without disturbing the relative positions of the remaining characters. (ie, "ACE" is a subsequence of "ABCDE" while "AEC" is not).
+
+Here is an example:
+S = "rabbbit", T = "rabbit"
+
+Return 3.
+
+*/
+class Solution {
+public:
+	int numDistinct(string s, string t) {
+		if (t.size() > s.size()) {
+			return 0;
+		}
+		vector<vector<int>> ta(t.size() + 1, vector<int>(s.size() + 1, 0));
+		for (int j = 0; j <= s.size(); j++) {
+			ta[0][j] = 1;
+		}
+		for (int i = 1; i <= t.size(); i++) {
+			for (int j = 1; j <= s.size(); j++) {
+				if (t[i - 1] == s[j - 1]) {
+					ta[i][j] = ta[i - 1][j - 1] + ta[i][j - 1];
+				}
+				else {
+					ta[i][j] = ta[i][j - 1];
+				}
+			}
+		}
+		return ta.back().back();
+	}
+};
+/*
+
 120. Triangle (Medium)
 
 Given a triangle, find the minimum path sum from top to bottom. Each step you may move to adjacent numbers on the row below.
@@ -558,19 +731,17 @@ public:
 		if (prices.size() < 2) {
 			return 0;
 		}
-		vector<int> pro(prices.size());
-		pro[0] = 0;
-		int buy = prices[0];
-		for (int i = 1; i < prices.size(); i++) {
-			pro[i] = max(pro[i - 1], prices[i] - buy);
+		vector<int> t(prices.size(), 0);
+		int buy = prices[0], sell = prices.back(), res = 0;
+		for (int i = 1; i < t.size(); i++) {
+			t[i] = max(t[i - 1], prices[i] - buy);
 			buy = min(buy, prices[i]);
 		}
-		int sell = prices.back(), best = 0;
-		for (int i = prices.size() - 2; i >= 0; i--) {
-			best = max(best, sell - prices[i] + pro[i]);
+		for (int i = t.size() - 2; i >= 0; i--) {
+			res = max(res, sell - prices[i] + t[i]);
 			sell = max(sell, prices[i]);
 		}
-		return best;
+		return res;
 	}
 };
 /*
@@ -596,32 +767,13 @@ public:
 		}
 		for (int j = 1; j < _size; j++) {
 			for (int i = j; i >= 0; i--) {
-				if (s[i] == s[j] && (j - i < 2 || t[i + 1][j - 1])) {
+				if (s[i] == s[j] && (j - i < 3 || t[i + 1][j - 1])) {
 					t[i][j] = true;
 					t2[j + 1] = min(t2[j + 1], 1 + t2[i]);
 				}
 			}
 		}
 		return t2.back();
-	}
-};
-class Solution {
-public:
-	int minCut(string s) {
-		int _size = s.size();
-		vector<int> t(_size + 1);
-		for (int i = 0; i <= _size; i++) {
-			t[i] = i - 1;
-		}
-		for (int i = 1; i < _size; i++) {
-			for (int j = 0; i - j >= 0 && i + j < _size && s[i - j] == s[i + j]; j++) {
-				t[i + j + 1] = min(t[i + j + 1], 1 + t[i - j]);
-			}
-			for (int j = 0; i - j - 1 >= 0 && i + j < _size && s[i - j - 1] == s[i + j]; j++) {
-				t[i + j + 1] = min(t[i + j + 1], 1 + t[i - j - 1]);
-			}
-		}
-		return t.back();
 	}
 };
 /*

@@ -60,10 +60,10 @@ If it is overflow, return MAX_INT.
 class Solution {
 public:
 	int divide(int dividend, int divisor) {
-		if (!dividend) {
+		if (dividend == 0) {
 			return 0;
 		}
-		if (!divisor || dividend == INT_MIN && divisor == -1) {
+		if (divisor == 0 || dividend == INT_MIN && divisor == -1) {
 			return INT_MAX;
 		}
 		int sign = (dividend > 0 ^ divisor > 0) ? -1 : 1;
@@ -384,6 +384,42 @@ public:
 		while (l < r) {
 			int mid = l + (r - l) / 2;
 			if (nums[mid] > nums[r]) {
+				l = mid + 1;
+			}
+			else {
+				r = mid;
+			}
+		}
+		return nums[l];
+	}
+};
+/*
+
+154. Find Minimum in Rotated Sorted Array II (Hard)
+
+Follow up for "Find Minimum in Rotated Sorted Array":
+What if duplicates are allowed?
+
+Would this affect the run-time complexity? How and why?
+Suppose an array sorted in ascending order is rotated at some pivot unknown to you beforehand.
+
+(i.e., 0 1 2 4 5 6 7 might become 4 5 6 7 0 1 2).
+
+Find the minimum element.
+
+The array may contain duplicates.
+
+*/
+class Solution {
+public:
+	int findMin(vector<int>& nums) {
+		int l = 0, r = nums.size() - 1;
+		while (l < r) {
+			int mid = l + (r - l) / 2;
+			if (nums[mid] == nums[r]) {
+				r--;
+			}
+			else if (nums[mid] > nums[r]) {
 				l = mid + 1;
 			}
 			else {

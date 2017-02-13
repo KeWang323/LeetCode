@@ -236,10 +236,10 @@ If it is overflow, return MAX_INT.
 class Solution {
 public:
 	int divide(int dividend, int divisor) {
-		if (!dividend) {
+		if (dividend == 0) {
 			return 0;
 		}
-		if (!divisor || dividend == INT_MIN && divisor == -1) {
+		if (divisor == 0 || dividend == INT_MIN && divisor == -1) {
 			return INT_MAX;
 		}
 		int sign = (dividend > 0 ^ divisor > 0) ? -1 : 1;

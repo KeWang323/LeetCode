@@ -707,26 +707,18 @@ public:
 		if (head == NULL || head->next == NULL) {
 			return head;
 		}
-		ListNode *head_new = new ListNode(-1);
-		head_new->next = head;
-		while (head->next != NULL) {
-			ListNode *post = head->next;
-			if (post->val < head->val) {
-				head->next = post->next;
-				ListNode *prev = head_new;
-				ListNode *p = head_new->next;
-				while (p->val < post->val) {
-					prev = prev->next;
-					p = p->next;
-				}
-				prev->next = post;
-				post->next = p;
+		ListNode* dummy = new ListNode(-1), *p = dummy;
+		while (head != NULL) {
+			ListNode *next = head->next;
+			while (p->next != NULL && p->next->val < head->val) {
+				p = p->next;
 			}
-			else {
-				head = head->next;
-			}
+			head->next = p->next;
+			p->next = head;
+			p = dummy;
+			head = next;
 		}
-		return head_new->next;
+		return dummy->next;
 	}
 };
 /*
