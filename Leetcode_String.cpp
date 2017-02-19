@@ -835,15 +835,24 @@ public:
 		stringstream ss(path);
 		vector<string> pos;
 		while (getline(ss, token, '/')) {
-			if (token == "." || token == "") continue;
-			else if (token == "..") {
-				if (!pos.empty())  pos.pop_back();
+			if (token == "." || token == "") {
+				continue;
 			}
-			else pos.push_back(token);
+			else if (token == "..") {
+				if (!pos.empty()) {
+					pos.pop_back();
+				}
+			}
+			else {
+				pos.push_back(token);
+			}
 		}
-		if (pos.empty()) return "/";
-		for (string i : pos)
-			res = res + '/' + i;
+		if (pos.empty()) {
+			return "/";
+		}
+		for (string str : pos) {
+			res += '/' + str;
+		}
 		return res;
 	}
 };

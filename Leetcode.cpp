@@ -2751,15 +2751,24 @@ public:
 		stringstream ss(path);
 		vector<string> pos;
 		while (getline(ss, token, '/')) {
-			if (token == "." || token == "") continue;
-			else if (token == "..") {
-				if (!pos.empty())  pos.pop_back();
+			if (token == "." || token == "") {
+				continue;
 			}
-			else pos.push_back(token);
+			else if (token == "..") {
+				if (!pos.empty()) {
+					pos.pop_back();
+				}
+			}
+			else {
+				pos.push_back(token);
+			}
 		}
-		if (pos.empty()) return "/";
-		for (string i : pos)
-			res = res + '/' + i;
+		if (pos.empty()) {
+			return "/";
+		}
+		for (string str : pos) {
+			res += '/' + str;
+		}
 		return res;
 	}
 };
@@ -10711,6 +10720,37 @@ public:
 };
 /*
 
+320. Generalized Abbreviation (Medium)
+
+Write a function to generate the generalized abbreviations of a word.
+
+Example:
+Given word = "word", return the following list (order does not matter):
+["word", "1ord", "w1rd", "wo1d", "wor1", "2rd", "w2d", "wo2", "1o1d", "1or1", "w1r1", "1o2", "2r1", "3d", "w3", "4"]
+
+*/
+class Solution {
+public:
+	vector<string> generateAbbreviations(string word) {
+		vector<string> res;
+		generateAbbreviations(res, word, "", 0, 0);
+		return res;
+	}
+private:
+	void generateAbbreviations(vector<string>& res, string word, string cur, int index, int cnt) {
+		if (index == word.size()) {
+			if (cnt > 0) {
+				cur += to_string(cnt);
+			}
+			res.push_back(cur);
+			return;
+		}
+		generateAbbreviations(res, word, cur, index + 1, cnt + 1);
+		generateAbbreviations(res, word, cur + (cnt > 0 ? to_string(cnt) : "") + word.substr(index, 1), index + 1, 0);
+	}
+};
+/*
+
 322. Coin Change (Medium)
 
 You are given coins of different denominations and a total amount of money amount. Write a function to compute the fewest number of coins that you need to make up that amount. If that amount of money cannot be made up by any combination of the coins, return -1.
@@ -10981,27 +11021,29 @@ Given a binary tree, find the largest subtree which is a Binary Search Tree (BST
 Note:
 A subtree must include all of its descendants.
 Here's an example:
-10
-/ \
-5  15
-/ \   \
-1   8   7
+	10
+	/ \
+   5  15
+  / \   \
+ 1   8   7
 The Largest BST Subtree in this case is the highlighted one.
 The return value is the subtree's size, which is 3.
 Hint:
 
 You can recursively use algorithm similar to 98. Validate Binary Search Tree at each node of the tree, which will result in O(nlogn) time complexity.
+Follow up:
+Can you figure out ways to solve it with O(n) time complexity?
 
 */
 /**
-* Definition for a binary tree node.
-* struct TreeNode {
-*     int val;
-*     TreeNode *left;
-*     TreeNode *right;
-*     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
-* };
-*/
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
 class Solution {
 public:
 	int largestBSTSubtree(TreeNode* root) {
@@ -11010,21 +11052,18 @@ public:
 		return res;
 	}
 private:
-	vector<int> largestBSTSubtree(TreeNode* root, int& res) {
+	vector<int> largestBSTSubtree(TreeNode *root, int& res) {
 		if (root == NULL) {
 			return{ 0,0,0 };
 		}
-		else if (root->left == NULL && root->right == NULL) {
-			res = max(res, 1);
-			return{ 1, root->val, root->val };
-		}
 		vector<int> l = largestBSTSubtree(root->left, res), r = largestBSTSubtree(root->right, res);
-		if (l[0] != -1 && r[0] != -1) {
-			if ((l[0] == 0 || root->val > l[2]) && (r[0] == 0 || root->val < r[1])) {
-				res = max(res, l[0] + r[0] + 1);
-				int small = l[1] == 0 ? root->val : l[1], large = r[2] == 0 ? root->val : r[2];
-				return{ l[0] + r[0] + 1, small, large };
-			}
+		if (l[0] == -1 || r[0] == -1) {
+			return{ -1, 0, 0 };
+		}
+		if ((l[0] == 0 || root->val > l[2]) && (r[0] == 0 || root->val < r[1])) {
+			res = max(res, l[0] + r[0] + 1);
+			int small = l[1] == 0 ? root->val : l[1], large = r[2] == 0 ? root->val : r[2];
+			return{ l[0] + r[0] + 1, small, large };
 		}
 		return{ -1,0,0 };
 	}
@@ -11490,14 +11529,16 @@ The result can be in any order.
 class Solution {
 public:
 	vector<int> intersection(vector<int>& nums1, vector<int>& nums2) {
+		if (nums1.empty() || nums2.empty()) {
+			return{};
+		}
 		vector<int> result;
-		if (nums1.empty() || nums2.empty()) return result;
 		unordered_map<int, bool> mapping;
 		for (auto i : nums1) {
 			mapping[i] = true;
 		}
 		for (auto i : nums2) {
-			if (mapping[i]) {
+			if (mapping[i] == true) {
 				result.push_back(i);
 				mapping.erase(i);
 			}
@@ -11798,37 +11839,37 @@ Given a binary tree, collect a tree's nodes as if you were doing this: Collect a
 
 Example:
 Given binary tree
-1
-/ \
-2   3
-/ \
-4   5
+		  1
+		 / \
+		2   3
+	   / \
+	  4   5
 Returns [4, 5, 3], [2], [1].
 
 Explanation:
 1. Removing the leaves [4, 5, 3] would result in this tree:
 
-1
-/
-2
+		  1
+		 /
+		2
 2. Now removing the leaf [2] would result in this tree:
 
-1
+		  1
 3. Now removing the leaf [1] would result in the empty tree:
 
-[]
+		  []
 Returns [4, 5, 3], [2], [1].
 
 */
 /**
-* Definition for a binary tree node.
-* struct TreeNode {
-*     int val;
-*     TreeNode *left;
-*     TreeNode *right;
-*     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
-* };
-*/
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
 class Solution {
 public:
 	vector<vector<int>> findLeaves(TreeNode* root) {
@@ -11836,73 +11877,18 @@ public:
 		findLeaves(root, res);
 		return res;
 	}
-
+private:
 	int findLeaves(TreeNode* root, vector<vector<int>>& res) {
 		if (root == NULL) {
 			return 0;
 		}
-		int value = root->val, height = max(findLeaves(root->left, res), findLeaves(root->right, res)) + 1;
-		if (height > res.size()) {
-			vector<int> res_sub;
-			res_sub.push_back(value);
-			res.push_back(res_sub);
+		int l = findLeaves(root->left, res), r = findLeaves(root->right, res);
+		int height = max(l, r) + 1;
+		if (res.size() < height) {
+			res.push_back(vector<int>());
 		}
-		else {
-			res[height - 1].push_back(value);
-		}
+		res[height - 1].push_back(root->val);
 		return height;
-	}
-};
-/**
-* Definition for a binary tree node.
-* struct TreeNode {
-*     int val;
-*     TreeNode *left;
-*     TreeNode *right;
-*     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
-* };
-*/
-class Solution {
-public:
-	vector<vector<int>> findLeaves(TreeNode* root) {
-		if (root == NULL) {
-			return{};
-		}
-		vector<vector<int>> res;
-		while (root->right != NULL || root->left != NULL) {
-			vector<int> res_sub = helper(root);
-			res.push_back(res_sub);
-		}
-		res.push_back({ root->val });
-		return res;
-	}
-private:
-	vector<int> helper(TreeNode* root) {
-		if (root == NULL) {
-			return{};
-		}
-		vector<int> res_sub, l, r;
-		if (root->left != NULL && root->left->left == NULL && root->left->right == NULL) {
-			res_sub.push_back(root->left->val);
-			root->left = NULL;
-		}
-		else {
-			l = helper(root->left);
-		}
-		if (root->right != NULL && root->right->left == NULL && root->right->right == NULL) {
-			res_sub.push_back(root->right->val);
-			root->right = NULL;
-		}
-		else {
-			r = helper(root->right);
-		}
-		for (int i : l) {
-			res_sub.push_back(i);
-		}
-		for (int i : r) {
-			res_sub.push_back(i);
-		}
-		return res_sub;
 	}
 };
 /*
@@ -11928,13 +11914,18 @@ public:
 	bool isPerfectSquare(int num) {
 		int l = 1, r = num;
 		while (l < r - 1) {
-			int mid = (l + r) / 2;
-			if (mid * mid == num) return true;
-			else if (mid > num / mid) r = mid;
-			else l = mid;
+			int mid = l + (r - l) / 2;
+			if (mid * mid == num) {
+				return true;
+			}
+			else if (num / mid < mid) {
+				r = mid;
+			}
+			else {
+				l = mid;
+			}
 		}
-		if ((l * l == num) || (r * r == num))  return true;
-		return false;
+		return l * l == num || r * r == num;
 	}
 };
 /*
@@ -11989,7 +11980,9 @@ public:
 
 369. Plus One Linked List (Medium)
 
-Given a non-negative number represented as a singly linked list of digits, plus one to the number.
+Given a non-negative integer represented as non-empty a singly linked list of digits, plus one to the integer.
+
+You may assume the integer do not contain any leading zero, except the number 0 itself.
 
 The digits are stored such that the most significant digit is at the head of the list.
 
@@ -12012,37 +12005,22 @@ Output:
 class Solution {
 public:
 	ListNode* plusOne(ListNode* head) {
-		if (head == NULL) {
-			return head;
-		}
-		ListNode *newhead = reverse(head);
-		int carry = 1;
-		for (ListNode *p = newhead; p != NULL && carry != 0; p = p->next) {
-			int value = p->val + carry;
-			p->val = value % 10;
-			carry = value / 10;
-		}
-		head = reverse(newhead);
-		if (carry > 0) {
-			ListNode *p = new ListNode(1);
-			p->next = head;
-			return p;
+		int carry = helper(head);
+		if (carry != 0) {
+			ListNode* newhead = new ListNode(carry);
+			newhead->next = head;
+			return newhead;
 		}
 		return head;
 	}
 private:
-	ListNode* reverse(ListNode* head) {
-		if (head == NULL || head->next == NULL) {
-			return head;
+	int helper(ListNode* head) {
+		if (head == NULL) {
+			return 1;
 		}
-		ListNode *pre = NULL;
-		while (head != NULL) {
-			ListNode *post = head->next;
-			head->next = pre;
-			pre = head;
-			head = post;
-		}
-		return pre;
+		int val = head->val + helper(head->next);
+		head->val = val % 10;
+		return val / 10;
 	}
 };
 /*
@@ -12338,14 +12316,16 @@ What limitation we need to add to the question to allow negative numbers?
 class Solution {
 public:
 	int combinationSum4(vector<int>& nums, int target) {
-		vector<int> table(target + 1);
-		table[0] = 1;
+		int t[target + 1] = { 0 };
+		t[0] = 1;
 		for (int i = 1; i <= target; i++) {
-			for (int j : nums) {
-				if (i - j >= 0) table[i] += table[i - j];
+			for (int num : nums) {
+				if (i >= num) {
+					t[i] += t[i - num];
+				}
 			}
 		}
-		return table.back();
+		return t[target];
 	}
 };
 /*
@@ -12370,6 +12350,26 @@ Note:
 You may assume k is always valid, 1 ≤ k ≤ n2.
 
 */
+class Solution {
+public:
+	int kthSmallest(vector<vector<int>>& matrix, int k) {
+		int l = matrix[0][0], r = matrix.back().back();
+		while (l < r) {
+			int mid = l + (r - l) / 2;
+			int num = 0;
+			for (int i = 0; i < matrix.size(); i++) {
+				num += upper_bound(matrix[i].begin(), matrix[i].end(), mid) - matrix[i].begin();
+			}
+			if (num < k) {
+				l = mid + 1;
+			}
+			else {
+				r = mid;
+			}
+		}
+		return l;
+	}
+};
 class Comp {
 public:
 	bool operator()(pair<int, pair<int, int>> p1, pair<int, pair<int, int>> p2) {
@@ -13709,6 +13709,51 @@ public:
 };
 /*
 
+447. Number of Boomerangs (Easy)
+
+Given n points in the plane that are all pairwise distinct, a "boomerang" is a tuple of points (i, j, k) such that the distance between i and j equals the distance between i and k (the order of the tuple matters).
+
+Find the number of boomerangs. You may assume that n will be at most 500 and coordinates of points are all in the range [-10000, 10000] (inclusive).
+
+Example:
+Input:
+[[0,0],[1,0],[2,0]]
+
+Output:
+2
+
+Explanation:
+The two boomerangs are [[1,0],[0,0],[2,0]] and [[1,0],[2,0],[0,0]]
+
+*/
+class Solution {
+public:
+	int numberOfBoomerangs(vector<pair<int, int>>& points) {
+		int res = 0;
+		unordered_map<int, int> mapping;
+		for (int i = 0; i < points.size(); i++) {
+			for (int j = 0; j < points.size(); j++) {
+				if (i == j) {
+					continue;
+				}
+				int d = getDistance(points[i], points[j]);
+				mapping[d]++;
+			}
+			for (auto i = mapping.begin(); i != mapping.end(); i++) {
+				res += i->second * (i->second - 1);
+			}
+			mapping.clear();
+		}
+		return res;
+	}
+private:
+	int getDistance(pair<int, int> p1, pair<int, int> p2) {
+		int dx = p1.first - p2.first, dy = p1.second - p2.second;
+		return dx*dx + dy*dy;
+	}
+};
+/*
+
 448. Find All Numbers Disappeared in an Array (Easy)
 
 Given an array of integers where 1 ≤ a[i] ≤ n (n = size of array), some elements appear twice and others appear once.
@@ -14289,6 +14334,56 @@ public:
 };
 /*
 
+486. Predict the Winner (Medium)
+
+Given an array of scores that are non-negative integers. Player 1 picks one of the numbers from either end of the array followed by the player 2 and then player 1 and so on. Each time a player picks a number, that number will not be available for the next player. This continues until all the scores have been chosen. The player with the maximum score wins.
+
+Given an array of scores, predict whether player 1 is the winner. You can assume each player plays to maximize his score.
+
+Example 1:
+Input: [1, 5, 2]
+Output: False
+Explanation: Initially, player 1 can choose between 1 and 2.
+If he chooses 2 (or 1), then player 2 can choose from 1 (or 2) and 5. If player 2 chooses 5, then player 1 will be left with 1 (or 2).
+So, final score of player 1 is 1 + 2 = 3, and player 2 is 5.
+Hence, player 1 will never be the winner and you need to return False.
+Example 2:
+Input: [1, 5, 233, 7]
+Output: True
+Explanation: Player 1 first chooses 1. Then player 2 have to choose between 5 and 7. No matter which number player 2 choose, player 1 can choose 233.
+Finally, player 1 has more score (234) than player 2 (12), so you need to return True representing player1 can win.
+Note:
+1 <= length of the array <= 20.
+Any scores in the given array are non-negative integers and will not exceed 10,000,000.
+If the scores of both players are equal, then player 1 is still the winner.
+
+*/
+class Solution {
+public:
+	bool PredictTheWinner(vector<int>& nums) {
+		if (nums.size() & 1 == 0) {
+			return true;
+		}
+		vector<vector<int>> t(nums.size(), vector<int>(nums.size(), -1));
+		int myBest = PredictTheWinner(nums, t, 0, nums.size() - 1);
+		return 2 * myBest >= accumulate(nums.begin(), nums.end(), 0);
+	}
+private:
+	int PredictTheWinner(const vector<int>& nums, vector<vector<int>>& t, int i, int j) {
+		if (i > j) {
+			return 0;
+		}
+		else if (t[i][j] != -1) {
+			return t[i][j];
+		}
+		int pick_i = nums[i] + min(PredictTheWinner(nums, t, i + 1, j - 1), PredictTheWinner(nums, t, i + 2, j));
+		int pick_j = nums[j] + min(PredictTheWinner(nums, t, i + 1, j - 1), PredictTheWinner(nums, t, i, j - 2));
+		t[i][j] = max(pick_i, pick_j);
+		return t[i][j];
+	}
+};
+/*
+
 492. Construct the Rectangle (Easy)
 
 For a web developer, it is very important to know how to design a web page's size. So, given a specific rectangular web page’s area, your job by now is to design a rectangular web page, whose length L and width W satisfy the following requirements:
@@ -14317,5 +14412,110 @@ public:
 			w--;
 		}
 		return{ area / w, w };
+	}
+};
+/*
+
+501. Find Mode in Binary Search Tree (Easy)
+
+Given a binary search tree (BST) with duplicates, find all the mode(s) (the most frequently occurred element) in the given BST.
+
+Assume a BST is defined as follows:
+
+The left subtree of a node contains only nodes with keys less than or equal to the node's key.
+The right subtree of a node contains only nodes with keys greater than or equal to the node's key.
+Both the left and right subtrees must also be binary search trees.
+For example:
+Given BST [1,null,2,2],
+   1
+	\
+	 2
+	/
+   2
+return [2].
+
+Note: If a tree has more than one mode, you can return them in any order.
+
+Follow up: Could you do that without using any extra space? (Assume that the implicit stack space incurred due to recursion does not count).
+
+*/
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+class Solution {
+public:
+	vector<int> findMode(TreeNode* root) {
+		unordered_map<int, int> mapping;
+		vector<int> res;
+		int modevalue = findMode(root, mapping);
+		for (auto i = mapping.begin(); i != mapping.end(); i++) {
+			if (i->second == modevalue) {
+				res.push_back(i->first);
+			}
+		}
+		return res;
+	}
+private:
+	int findMode(TreeNode* root, unordered_map<int, int>& mapping) {
+		if (root == NULL) {
+			return 0;
+		}
+		mapping[root->val]++;
+		int l = findMode(root->left, mapping), r = findMode(root->right, mapping);
+		return max(mapping[root->val], max(l, r));
+	}
+};
+/*
+
+506. Relative Ranks (Easy)
+
+Given scores of N athletes, find their relative ranks and the people with the top three highest scores, who will be awarded medals: "Gold Medal", "Silver Medal" and "Bronze Medal".
+
+Example 1:
+Input: [5, 4, 3, 2, 1]
+Output: ["Gold Medal", "Silver Medal", "Bronze Medal", "4", "5"]
+Explanation: The first three athletes got the top three highest scores, so they got "Gold Medal", "Silver Medal" and "Bronze Medal".
+For the left two athletes, you just need to output their relative ranks according to their scores.
+Note:
+N is a positive integer and won't exceed 10,000.
+All the scores of athletes are guaranteed to be unique.
+
+*/
+class Comp {
+public:
+	bool operator()(pair<int, int> p1, pair<int, int> p2) {
+		return p1.first > p2.first;
+	}
+}comp;
+class Solution {
+public:
+	vector<string> findRelativeRanks(vector<int>& nums) {
+		vector<string> res(nums.size());
+		vector<pair<int, int>> v;
+		for (int i = 0; i < nums.size(); i++) {
+			v.push_back(make_pair(nums[i], i));
+		}
+		sort(v.begin(), v.end(), comp);
+		for (int i = 0; i < v.size(); i++) {
+			if (i == 0) {
+				res[v[0].second] = "Gold Medal";
+			}
+			else if (i == 1) {
+				res[v[1].second] = "Silver Medal";
+			}
+			else if (i == 2) {
+				res[v[2].second] = "Bronze Medal";
+			}
+			else {
+				res[v[i].second] = to_string(i + 1);
+			}
+		}
+		return res;
 	}
 };

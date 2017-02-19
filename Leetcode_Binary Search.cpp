@@ -969,14 +969,16 @@ The result can be in any order.
 class Solution {
 public:
 	vector<int> intersection(vector<int>& nums1, vector<int>& nums2) {
+		if (nums1.empty() || nums2.empty()) {
+			return{};
+		}
 		vector<int> result;
-		if (nums1.empty() || nums2.empty()) return result;
 		unordered_map<int, bool> mapping;
 		for (auto i : nums1) {
 			mapping[i] = true;
 		}
 		for (auto i : nums2) {
-			if (mapping[i]) {
+			if (mapping[i] == true) {
 				result.push_back(i);
 				mapping.erase(i);
 			}
@@ -1045,13 +1047,18 @@ public:
 	bool isPerfectSquare(int num) {
 		int l = 1, r = num;
 		while (l < r - 1) {
-			int mid = (l + r) / 2;
-			if (mid * mid == num) return true;
-			else if (mid > num / mid) r = mid;
-			else l = mid;
+			int mid = l + (r - l) / 2;
+			if (mid * mid == num) {
+				return true;
+			}
+			else if (num / mid < mid) {
+				r = mid;
+			}
+			else {
+				l = mid;
+			}
 		}
-		if ((l * l == num) || (r * r == num))  return true;
-		return false;
+		return l * l == num || r * r == num;
 	}
 };
 /*
@@ -1121,6 +1128,26 @@ Note:
 You may assume k is always valid, 1 ≤ k ≤ n2.
 
 */
+class Solution {
+public:
+	int kthSmallest(vector<vector<int>>& matrix, int k) {
+		int l = matrix[0][0], r = matrix.back().back();
+		while (l < r) {
+			int mid = l + (r - l) / 2;
+			int num = 0;
+			for (int i = 0; i < matrix.size(); i++) {
+				num += upper_bound(matrix[i].begin(), matrix[i].end(), mid) - matrix[i].begin();
+			}
+			if (num < k) {
+				l = mid + 1;
+			}
+			else {
+				r = mid;
+			}
+		}
+		return l;
+	}
+};
 class Comp {
 public:
 	bool operator()(pair<int, pair<int, int>> p1, pair<int, pair<int, int>> p2) {

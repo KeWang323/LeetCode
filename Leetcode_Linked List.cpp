@@ -1039,7 +1039,9 @@ public:
 
 369. Plus One Linked List (Medium)
 
-Given a non-negative number represented as a singly linked list of digits, plus one to the number.
+Given a non-negative integer represented as non-empty a singly linked list of digits, plus one to the integer.
+
+You may assume the integer do not contain any leading zero, except the number 0 itself.
 
 The digits are stored such that the most significant digit is at the head of the list.
 
@@ -1062,37 +1064,22 @@ Output:
 class Solution {
 public:
 	ListNode* plusOne(ListNode* head) {
-		if (head == NULL) {
-			return head;
-		}
-		ListNode *newhead = reverse(head);
-		int carry = 1;
-		for (ListNode *p = newhead; p != NULL && carry != 0; p = p->next) {
-			int value = p->val + carry;
-			p->val = value % 10;
-			carry = value / 10;
-		}
-		head = reverse(newhead);
-		if (carry > 0) {
-			ListNode *p = new ListNode(1);
-			p->next = head;
-			return p;
+		int carry = helper(head);
+		if (carry != 0) {
+			ListNode* newhead = new ListNode(carry);
+			newhead->next = head;
+			return newhead;
 		}
 		return head;
 	}
 private:
-	ListNode* reverse(ListNode* head) {
-		if (head == NULL || head->next == NULL) {
-			return head;
+	int helper(ListNode* head) {
+		if (head == NULL) {
+			return 1;
 		}
-		ListNode *pre = NULL;
-		while (head != NULL) {
-			ListNode *post = head->next;
-			head->next = pre;
-			pre = head;
-			head = post;
-		}
-		return pre;
+		int val = head->val + helper(head->next);
+		head->val = val % 10;
+		return val / 10;
 	}
 };
 /*

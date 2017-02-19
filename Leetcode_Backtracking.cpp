@@ -999,6 +999,37 @@ private:
 };
 /*
 
+320. Generalized Abbreviation (Medium)
+
+Write a function to generate the generalized abbreviations of a word.
+
+Example:
+Given word = "word", return the following list (order does not matter):
+["word", "1ord", "w1rd", "wo1d", "wor1", "2rd", "w2d", "wo2", "1o1d", "1or1", "w1r1", "1o2", "2r1", "3d", "w3", "4"]
+
+*/
+class Solution {
+public:
+	vector<string> generateAbbreviations(string word) {
+		vector<string> res;
+		generateAbbreviations(res, word, "", 0, 0);
+		return res;
+	}
+private:
+	void generateAbbreviations(vector<string>& res, string word, string cur, int index, int cnt) {
+		if (index == word.size()) {
+			if (cnt > 0) {
+				cur += to_string(cnt);
+			}
+			res.push_back(cur);
+			return;
+		}
+		generateAbbreviations(res, word, cur, index + 1, cnt + 1);
+		generateAbbreviations(res, word, cur + (cnt > 0 ? to_string(cnt) : "") + word.substr(index, 1), index + 1, 0);
+	}
+};
+/*
+
 357. Count Numbers with Unique Digits (Medium)
 
 Given a non-negative integer n, count all numbers with unique digits, x, where 0 ≤ x < 10n.

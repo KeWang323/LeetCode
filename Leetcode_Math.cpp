@@ -1187,13 +1187,18 @@ public:
 	bool isPerfectSquare(int num) {
 		int l = 1, r = num;
 		while (l < r - 1) {
-			int mid = (l + r) / 2;
-			if (mid * mid == num) return true;
-			else if (mid > num / mid) r = mid;
-			else l = mid;
+			int mid = l + (r - l) / 2;
+			if (mid * mid == num) {
+				return true;
+			}
+			else if (num / mid < mid) {
+				r = mid;
+			}
+			else {
+				l = mid;
+			}
 		}
-		if ((l * l == num) || (r * r == num))  return true;
-		return false;
+		return l * l == num || r * r == num;
 	}
 };
 /*

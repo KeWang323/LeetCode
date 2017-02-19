@@ -1232,14 +1232,16 @@ The result can be in any order.
 class Solution {
 public:
 	vector<int> intersection(vector<int>& nums1, vector<int>& nums2) {
+		if (nums1.empty() || nums2.empty()) {
+			return{};
+		}
 		vector<int> result;
-		if (nums1.empty() || nums2.empty()) return result;
 		unordered_map<int, bool> mapping;
 		for (auto i : nums1) {
 			mapping[i] = true;
 		}
 		for (auto i : nums2) {
-			if (mapping[i]) {
+			if (mapping[i] == true) {
 				result.push_back(i);
 				mapping.erase(i);
 			}
@@ -1521,6 +1523,51 @@ public:
 			}
 		}
 		return res;
+	}
+};
+/*
+
+447. Number of Boomerangs (Easy)
+
+Given n points in the plane that are all pairwise distinct, a "boomerang" is a tuple of points (i, j, k) such that the distance between i and j equals the distance between i and k (the order of the tuple matters).
+
+Find the number of boomerangs. You may assume that n will be at most 500 and coordinates of points are all in the range [-10000, 10000] (inclusive).
+
+Example:
+Input:
+[[0,0],[1,0],[2,0]]
+
+Output:
+2
+
+Explanation:
+The two boomerangs are [[1,0],[0,0],[2,0]] and [[1,0],[2,0],[0,0]]
+
+*/
+class Solution {
+public:
+	int numberOfBoomerangs(vector<pair<int, int>>& points) {
+		int res = 0;
+		unordered_map<int, int> mapping;
+		for (int i = 0; i < points.size(); i++) {
+			for (int j = 0; j < points.size(); j++) {
+				if (i == j) {
+					continue;
+				}
+				int d = getDistance(points[i], points[j]);
+				mapping[d]++;
+			}
+			for (auto i = mapping.begin(); i != mapping.end(); i++) {
+				res += i->second * (i->second - 1);
+			}
+			mapping.clear();
+		}
+		return res;
+	}
+private:
+	int getDistance(pair<int, int> p1, pair<int, int> p2) {
+		int dx = p1.first - p2.first, dy = p1.second - p2.second;
+		return dx*dx + dy*dy;
 	}
 };
 /*

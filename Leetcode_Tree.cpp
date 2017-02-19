@@ -2073,27 +2073,29 @@ Given a binary tree, find the largest subtree which is a Binary Search Tree (BST
 Note:
 A subtree must include all of its descendants.
 Here's an example:
-10
-/ \
-5  15
-/ \   \
-1   8   7
+	10
+	/ \
+   5  15
+  / \   \
+ 1   8   7
 The Largest BST Subtree in this case is the highlighted one.
 The return value is the subtree's size, which is 3.
 Hint:
 
 You can recursively use algorithm similar to 98. Validate Binary Search Tree at each node of the tree, which will result in O(nlogn) time complexity.
+Follow up:
+Can you figure out ways to solve it with O(n) time complexity?
 
 */
 /**
-* Definition for a binary tree node.
-* struct TreeNode {
-*     int val;
-*     TreeNode *left;
-*     TreeNode *right;
-*     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
-* };
-*/
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
 class Solution {
 public:
 	int largestBSTSubtree(TreeNode* root) {
@@ -2102,21 +2104,18 @@ public:
 		return res;
 	}
 private:
-	vector<int> largestBSTSubtree(TreeNode* root, int& res) {
+	vector<int> largestBSTSubtree(TreeNode *root, int& res) {
 		if (root == NULL) {
 			return{ 0,0,0 };
 		}
-		else if (root->left == NULL && root->right == NULL) {
-			res = max(res, 1);
-			return{ 1, root->val, root->val };
-		}
 		vector<int> l = largestBSTSubtree(root->left, res), r = largestBSTSubtree(root->right, res);
-		if (l[0] != -1 && r[0] != -1) {
-			if ((l[0] == 0 || root->val > l[2]) && (r[0] == 0 || root->val < r[1])) {
-				res = max(res, l[0] + r[0] + 1);
-				int small = l[1] == 0 ? root->val : l[1], large = r[2] == 0 ? root->val : r[2];
-				return{ l[0] + r[0] + 1, small, large };
-			}
+		if (l[0] == -1 || r[0] == -1) {
+			return{ -1, 0, 0 };
+		}
+		if ((l[0] == 0 || root->val > l[2]) && (r[0] == 0 || root->val < r[1])) {
+			res = max(res, l[0] + r[0] + 1);
+			int small = l[1] == 0 ? root->val : l[1], large = r[2] == 0 ? root->val : r[2];
+			return{ l[0] + r[0] + 1, small, large };
 		}
 		return{ -1,0,0 };
 	}
@@ -2179,37 +2178,37 @@ Given a binary tree, collect a tree's nodes as if you were doing this: Collect a
 
 Example:
 Given binary tree
-1
-/ \
-2   3
-/ \
-4   5
+		  1
+		 / \
+		2   3
+	   / \
+	  4   5
 Returns [4, 5, 3], [2], [1].
 
 Explanation:
 1. Removing the leaves [4, 5, 3] would result in this tree:
 
-1
-/
-2
+		  1
+		 /
+		2
 2. Now removing the leaf [2] would result in this tree:
 
-1
+		  1
 3. Now removing the leaf [1] would result in the empty tree:
 
-[]
+		  []
 Returns [4, 5, 3], [2], [1].
 
 */
 /**
-* Definition for a binary tree node.
-* struct TreeNode {
-*     int val;
-*     TreeNode *left;
-*     TreeNode *right;
-*     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
-* };
-*/
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
 class Solution {
 public:
 	vector<vector<int>> findLeaves(TreeNode* root) {
@@ -2217,73 +2216,18 @@ public:
 		findLeaves(root, res);
 		return res;
 	}
-
+private:
 	int findLeaves(TreeNode* root, vector<vector<int>>& res) {
 		if (root == NULL) {
 			return 0;
 		}
-		int value = root->val, height = max(findLeaves(root->left, res), findLeaves(root->right, res)) + 1;
-		if (height > res.size()) {
-			vector<int> res_sub;
-			res_sub.push_back(value);
-			res.push_back(res_sub);
+		int l = findLeaves(root->left, res), r = findLeaves(root->right, res);
+		int height = max(l, r) + 1;
+		if (res.size() < height) {
+			res.push_back(vector<int>());
 		}
-		else {
-			res[height - 1].push_back(value);
-		}
+		res[height - 1].push_back(root->val);
 		return height;
-	}
-};
-/**
-* Definition for a binary tree node.
-* struct TreeNode {
-*     int val;
-*     TreeNode *left;
-*     TreeNode *right;
-*     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
-* };
-*/
-class Solution {
-public:
-	vector<vector<int>> findLeaves(TreeNode* root) {
-		if (root == NULL) {
-			return{};
-		}
-		vector<vector<int>> res;
-		while (root->right != NULL || root->left != NULL) {
-			vector<int> res_sub = helper(root);
-			res.push_back(res_sub);
-		}
-		res.push_back({ root->val });
-		return res;
-	}
-private:
-	vector<int> helper(TreeNode* root) {
-		if (root == NULL) {
-			return{};
-		}
-		vector<int> res_sub, l, r;
-		if (root->left != NULL && root->left->left == NULL && root->left->right == NULL) {
-			res_sub.push_back(root->left->val);
-			root->left = NULL;
-		}
-		else {
-			l = helper(root->left);
-		}
-		if (root->right != NULL && root->right->left == NULL && root->right->right == NULL) {
-			res_sub.push_back(root->right->val);
-			root->right = NULL;
-		}
-		else {
-			r = helper(root->right);
-		}
-		for (int i : l) {
-			res_sub.push_back(i);
-		}
-		for (int i : r) {
-			res_sub.push_back(i);
-		}
-		return res_sub;
 	}
 };
 /*
@@ -2527,5 +2471,62 @@ private:
 			root = root->left;
 		}
 		return root->val;
+	}
+};
+/*
+
+501. Find Mode in Binary Search Tree (Easy)
+
+Given a binary search tree (BST) with duplicates, find all the mode(s) (the most frequently occurred element) in the given BST.
+
+Assume a BST is defined as follows:
+
+The left subtree of a node contains only nodes with keys less than or equal to the node's key.
+The right subtree of a node contains only nodes with keys greater than or equal to the node's key.
+Both the left and right subtrees must also be binary search trees.
+For example:
+Given BST [1,null,2,2],
+   1
+	\
+	 2
+	/
+   2
+return [2].
+
+Note: If a tree has more than one mode, you can return them in any order.
+
+Follow up: Could you do that without using any extra space? (Assume that the implicit stack space incurred due to recursion does not count).
+
+*/
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+class Solution {
+public:
+	vector<int> findMode(TreeNode* root) {
+		unordered_map<int, int> mapping;
+		vector<int> res;
+		int modevalue = findMode(root, mapping);
+		for (auto i = mapping.begin(); i != mapping.end(); i++) {
+			if (i->second == modevalue) {
+				res.push_back(i->first);
+			}
+		}
+		return res;
+	}
+private:
+	int findMode(TreeNode* root, unordered_map<int, int>& mapping) {
+		if (root == NULL) {
+			return 0;
+		}
+		mapping[root->val]++;
+		int l = findMode(root->left, mapping), r = findMode(root->right, mapping);
+		return max(mapping[root->val], max(l, r));
 	}
 };

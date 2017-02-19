@@ -554,14 +554,16 @@ The result can be in any order.
 class Solution {
 public:
 	vector<int> intersection(vector<int>& nums1, vector<int>& nums2) {
+		if (nums1.empty() || nums2.empty()) {
+			return{};
+		}
 		vector<int> result;
-		if (nums1.empty() || nums2.empty()) return result;
 		unordered_map<int, bool> mapping;
 		for (auto i : nums1) {
 			mapping[i] = true;
 		}
 		for (auto i : nums2) {
-			if (mapping[i]) {
+			if (mapping[i] == true) {
 				result.push_back(i);
 				mapping.erase(i);
 			}

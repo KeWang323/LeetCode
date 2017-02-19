@@ -1135,37 +1135,37 @@ Given a binary tree, collect a tree's nodes as if you were doing this: Collect a
 
 Example:
 Given binary tree
-1
-/ \
-2   3
-/ \
-4   5
+		  1
+		 / \
+		2   3
+	   / \
+	  4   5
 Returns [4, 5, 3], [2], [1].
 
 Explanation:
 1. Removing the leaves [4, 5, 3] would result in this tree:
 
-1
-/
-2
+		  1
+		 /
+		2
 2. Now removing the leaf [2] would result in this tree:
 
-1
+		  1
 3. Now removing the leaf [1] would result in the empty tree:
 
-[]
+		  []
 Returns [4, 5, 3], [2], [1].
 
 */
 /**
-* Definition for a binary tree node.
-* struct TreeNode {
-*     int val;
-*     TreeNode *left;
-*     TreeNode *right;
-*     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
-* };
-*/
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
 class Solution {
 public:
 	vector<vector<int>> findLeaves(TreeNode* root) {
@@ -1173,72 +1173,17 @@ public:
 		findLeaves(root, res);
 		return res;
 	}
-
+private:
 	int findLeaves(TreeNode* root, vector<vector<int>>& res) {
 		if (root == NULL) {
 			return 0;
 		}
-		int value = root->val, height = max(findLeaves(root->left, res), findLeaves(root->right, res)) + 1;
-		if (height > res.size()) {
-			vector<int> res_sub;
-			res_sub.push_back(value);
-			res.push_back(res_sub);
+		int l = findLeaves(root->left, res), r = findLeaves(root->right, res);
+		int height = max(l, r) + 1;
+		if (res.size() < height) {
+			res.push_back(vector<int>());
 		}
-		else {
-			res[height - 1].push_back(value);
-		}
+		res[height - 1].push_back(root->val);
 		return height;
-	}
-};
-/**
-* Definition for a binary tree node.
-* struct TreeNode {
-*     int val;
-*     TreeNode *left;
-*     TreeNode *right;
-*     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
-* };
-*/
-class Solution {
-public:
-	vector<vector<int>> findLeaves(TreeNode* root) {
-		if (root == NULL) {
-			return{};
-		}
-		vector<vector<int>> res;
-		while (root->right != NULL || root->left != NULL) {
-			vector<int> res_sub = helper(root);
-			res.push_back(res_sub);
-		}
-		res.push_back({ root->val });
-		return res;
-	}
-private:
-	vector<int> helper(TreeNode* root) {
-		if (root == NULL) {
-			return{};
-		}
-		vector<int> res_sub, l, r;
-		if (root->left != NULL && root->left->left == NULL && root->left->right == NULL) {
-			res_sub.push_back(root->left->val);
-			root->left = NULL;
-		}
-		else {
-			l = helper(root->left);
-		}
-		if (root->right != NULL && root->right->left == NULL && root->right->right == NULL) {
-			res_sub.push_back(root->right->val);
-			root->right = NULL;
-		}
-		else {
-			r = helper(root->right);
-		}
-		for (int i : l) {
-			res_sub.push_back(i);
-		}
-		for (int i : r) {
-			res_sub.push_back(i);
-		}
-		return res_sub;
 	}
 };
