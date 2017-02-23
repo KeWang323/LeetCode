@@ -320,6 +320,52 @@ public:
 };
 /*
 
+402. Remove K Digits (Medium)
+
+Given a non-negative integer num represented as a string, remove k digits from the number so that the new number is the smallest possible.
+
+Note:
+The length of num is less than 10002 and will be ¡Ý k.
+The given num does not contain any leading zero.
+Example 1:
+
+Input: num = "1432219", k = 3
+Output: "1219"
+Explanation: Remove the three digits 4, 3, and 2 to form the new number 1219 which is the smallest.
+Example 2:
+
+Input: num = "10200", k = 1
+Output: "200"
+Explanation: Remove the leading 1 and the number is 200. Note that the output must not contain leading zeroes.
+Example 3:
+
+Input: num = "10", k = 2
+Output: "0"
+Explanation: Remove all the digits from the number and it is left with nothing which is 0.
+
+*/
+class Solution {
+public:
+	string removeKdigits(string num, int k) {
+		int digits = num.size() - k;
+		string res(num.size(), ' ');
+		int top = 0;
+		for (int i = 0;i < num.size(); i++) {
+			while (top > 0 && res[top - 1] > num[i] && k > 0) {
+				top--;
+				k--;
+			}
+			res[top++] = num[i];
+		}
+		int index = 0;
+		while (index < digits && res[index] == '0') {
+			index++;
+		}
+		return index == digits ? "0" : res.substr(index, digits - index);
+	}
+};
+/*
+
 455. Assign Cookies (Easy)
 
 Assume you are an awesome parent and want to give your children some cookies. But, you should give each child at most one cookie. Each child i has a greed factor gi, which is the minimum size of a cookie that the child will be content with; and each cookie j has a size sj. If sj >= gi, we can assign the cookie j to the child i, and the child i will be content. Your goal is to maximize the number of your content children and output the maximum number.

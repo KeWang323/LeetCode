@@ -335,6 +335,69 @@ public:
 */
 /*
 
+373. Find K Pairs with Smallest Sums (Medium)
+
+You are given two integer arrays nums1 and nums2 sorted in ascending order and an integer k.
+
+Define a pair (u,v) which consists of one element from the first array and one element from the second array.
+
+Find the k pairs (u1,v1),(u2,v2) ...(uk,vk) with the smallest sums.
+
+Example 1:
+Given nums1 = [1,7,11], nums2 = [2,4,6],  k = 3
+
+Return: [1,2],[1,4],[1,6]
+
+The first 3 pairs are returned from the sequence:
+[1,2],[1,4],[1,6],[7,2],[7,4],[11,2],[7,6],[11,4],[11,6]
+Example 2:
+Given nums1 = [1,1,2], nums2 = [1,2,3],  k = 2
+
+Return: [1,1],[1,1]
+
+The first 2 pairs are returned from the sequence:
+[1,1],[1,1],[1,2],[2,1],[1,2],[2,2],[1,3],[1,3],[2,3]
+Example 3:
+Given nums1 = [1,2], nums2 = [3],  k = 3
+
+Return: [1,3],[2,3]
+
+All possible pairs are returned from the sequence:
+[1,3],[2,3]
+
+*/
+class Comp {
+public:
+	bool operator()(pair<int, int>& p1, pair<int, int>& p2) {
+		return p1.first + p1.second < p2.first + p2.second;
+	}
+};
+class Solution {
+public:
+	vector<pair<int, int>> kSmallestPairs(vector<int>& nums1, vector<int>& nums2, int k) {
+		vector<pair<int, int>> res;
+		priority_queue<pair<int, int>, vector<pair<int, int>>, Comp> pq;
+		int m = min((int)nums1.size(), k), n = min((int)nums2.size(), k);
+		for (int i = 0; i < m; i++) {
+			for (int j = 0; j < n; j++) {
+				if (pq.size() < k) {
+					pq.push(make_pair(nums1[i], nums2[j]));
+				}
+				else if (nums1[i] + nums2[j] < pq.top().first + pq.top().second) {
+					pq.push(make_pair(nums1[i], nums2[j]));
+					pq.pop();
+				}
+			}
+		}
+		while (!pq.empty()) {
+			res.push_back(pq.top());
+			pq.pop();
+		}
+		return res;
+	}
+};
+/*
+
 378. Kth Smallest Element in a Sorted Matrix (Medium)
 
 Given a n x n matrix where each of the rows and columns are sorted in ascending order, find the kth smallest element in the matrix.
@@ -410,6 +473,76 @@ public:
 			}
 		}
 		return 0;
+	}
+};
+/*
+
+407. Trapping Rain Water II (Hard)
+
+Given an m x n matrix of positive integers representing the height of each unit cell in a 2D elevation map, compute the volume of water it is able to trap after raining.
+
+Note:
+Both m and n are less than 110. The height of each unit cell is greater than 0 and is less than 20,000.
+
+Example:
+
+Given the following 3x6 height map:
+[
+  [1,4,3,1,3,2],
+  [3,2,1,3,2,4],
+  [2,3,3,2,3,1]
+]
+
+Return 4.
+
+*/
+class Cell {
+public:
+	int row, col, height;
+	Cell(int r, int c, int h) : row(r), col(c), height(h) {}
+};
+class Comp {
+public:
+	bool operator()(Cell* c1, Cell* c2) {
+		return c1->height > c2->height;
+	}
+};
+class Solution {
+public:
+	int trapRainWater(vector<vector<int>>& heightMap) {
+		if (heightMap.empty()) {
+			return 0;
+		}
+		int m = heightMap.size(), n = heightMap[0].size();
+		priority_queue<Cell*, vector<Cell*>, Comp> pq;
+		vector<vector<bool>> t(heightMap.size(), vector<bool>(heightMap[0].size(), false));
+		for (int i = 0; i < m; i++) {
+			t[i][0] = true;
+			t[i][n - 1] = true;
+			pq.push(new Cell(i, 0, heightMap[i][0]));
+			pq.push(new Cell(i, n - 1, heightMap[i][n - 1]));
+		}
+		for (int i = 1; i < n - 1; i++) {
+			t[0][i] = true;
+			t[m - 1][i] = true;
+			pq.push(new Cell(0, i, heightMap[0][i]));
+			pq.push(new Cell(m - 1, i, heightMap[m - 1][i]));
+		}
+		int res = 0;
+		vector<pair<int, int>> nei = { make_pair(-1, 0), make_pair(1, 0), make_pair(0, -1), make_pair(0, 1) };
+		while (!pq.empty()) {
+			Cell *c = pq.top();
+			pq.pop();
+			for (pair<int, int> p : nei) {
+				int row = c->row + p.first, col = c->col + p.second;
+				if (row >= 0 && row < m && col >= 0 && col < n && t[row][col] == false) {
+					t[row][col] = true;
+					res += max(0, c->height - heightMap[row][col]);
+					pq.push(new Cell(row, col, max(c->height, heightMap[row][col])));
+				}
+			}
+		}
+		return res;
 	}
 };
 /*

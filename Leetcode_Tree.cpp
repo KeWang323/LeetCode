@@ -1332,19 +1332,19 @@ class Solution {
 public:
 	vector<int> rightSideView(TreeNode *root) {
 		vector<int> res;
-		recursion(root, 1, res);
+		rightSideView(root, 1, res);
 		return res;
 	}
 private:
-	void recursion(TreeNode *root, int level, vector<int> &res) {
+	void rightSideView(TreeNode *root, int level, vector<int> &res) {
 		if (root == NULL) {
 			return;
 		}
 		if (res.size() < level) {
 			res.push_back(root->val);
 		}
-		recursion(root->right, level + 1, res);
-		recursion(root->left, level + 1, res);
+		rightSideView(root->right, level + 1, res);
+		rightSideView(root->left, level + 1, res);
 	}
 };
 /*
@@ -1944,24 +1944,24 @@ Design an algorithm to serialize and deserialize a binary tree. There is no rest
 
 For example, you may serialize the following tree
 
-1
-/ \
-2   3
-/ \
-4   5
+	1
+   / \
+  2   3
+	 / \
+	4   5
 as "[1,2,3,null,null,4,5]", just the same as how LeetCode OJ serializes a binary tree. You do not necessarily need to follow this format, so please be creative and come up with different approaches yourself.
 Note: Do not use class member/global/static variables to store states. Your serialize and deserialize algorithms should be stateless.
 
 */
 /**
-* Definition for a binary tree node.
-* struct TreeNode {
-*     int val;
-*     TreeNode *left;
-*     TreeNode *right;
-*     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
-* };
-*/
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
 class Codec {
 public:
 
@@ -1979,7 +1979,7 @@ public:
 	}
 private:
 	void serialize(TreeNode* root, ostringstream& out) {
-		if (root) {
+		if (root != NULL) {
 			out << root->val << ' ';
 			serialize(root->left, out);
 			serialize(root->right, out);
@@ -1991,8 +1991,9 @@ private:
 	TreeNode* deserialize(istringstream& in) {
 		string val;
 		in >> val;
-		if (val == "#")
-			return nullptr;
+		if (val == "#") {
+			return NULL;
+		}
 		TreeNode* root = new TreeNode(stoi(val));
 		root->left = deserialize(in);
 		root->right = deserialize(in);
@@ -2011,33 +2012,33 @@ Given a binary tree, find the length of the longest consecutive sequence path.
 The path refers to any sequence of nodes from some starting node to any node in the tree along the parent-child connections. The longest consecutive path need to be from parent to child (cannot be the reverse).
 
 For example,
-1
-\
-3
-/ \
-2   4
-\
-5
+   1
+	\
+	 3
+	/ \
+   2   4
+		\
+		 5
 Longest consecutive sequence path is 3-4-5, so return 3.
-2
-\
-3
-/
-2
-/
-1
+   2
+	\
+	 3
+	/
+   2
+  /
+ 1
 Longest consecutive sequence path is 2-3,not3-2-1, so return 2.
 
 */
 /**
-* Definition for a binary tree node.
-* struct TreeNode {
-*     int val;
-*     TreeNode *left;
-*     TreeNode *right;
-*     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
-* };
-*/
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
 class Solution {
 public:
 	int longestConsecutive(TreeNode* root) {
@@ -2053,7 +2054,7 @@ private:
 		if (root == NULL) {
 			return;
 		}
-		if (root->val == tar) {
+		else if (root->val == tar) {
 			cur++;
 		}
 		else {
@@ -2528,5 +2529,59 @@ private:
 		mapping[root->val]++;
 		int l = findMode(root->left, mapping), r = findMode(root->right, mapping);
 		return max(mapping[root->val], max(l, r));
+	}
+};
+/*
+
+515. Find Largest Value in Each Tree Row (Medium)
+
+You need to find the largest value in each row of a binary tree.
+
+Example:
+Input:
+
+		  1
+		 / \
+		3   2
+	   / \   \
+	  5   3   9
+
+Output: [1, 3, 9]
+
+*/
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+class Solution {
+public:
+	vector<int> largestValues(TreeNode* root) {
+		if (root == NULL) {
+			return{};
+		}
+		vector<int> res;
+		queue<TreeNode*> q;
+		q.push(root);
+		while (!q.empty()) {
+			int _size = q.size();
+			int temp;
+			for (int i = 0; i < _size; i++) {
+				temp = i == 0 ? q.front()->val : max(temp, q.front()->val);
+				if (q.front()->left != NULL) {
+					q.push(q.front()->left);
+				}
+				if (q.front()->right != NULL) {
+					q.push(q.front()->right);
+				}
+				q.pop();
+			}
+			res.push_back(temp);
+		}
+		return res;
 	}
 };

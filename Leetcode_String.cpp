@@ -1520,6 +1520,96 @@ public:
 };
 /*
 
+214. Shortest Palindrome (Hard)
+
+Given a string S, you are allowed to convert it to a palindrome by adding characters in front of it. Find and return the shortest palindrome you can find by performing this transformation.
+
+For example:
+
+Given "aacecaaa", return "aaacecaaa".
+
+Given "abcd", return "dcbabcd".
+
+*/
+class Solution {
+public:
+	string shortestPalindrome(string s) {
+		string rev = s;
+		reverse(rev.begin(), rev.end());
+		string l = s + "#" + rev;
+		vector<int> t(l.size(), 0);
+		for (int i = 1; i < l.size(); i++) {
+			int j = t[i - 1];
+			while (j > 0 && l[i] != l[j]) {
+				j = t[j - 1];
+			}
+			t[i] = (j += l[i] == l[j]);
+		}
+		return rev.substr(0, s.size() - t.back()) + s;
+	}
+};
+/*
+
+271. Encode and Decode Strings (medium)
+
+Design an algorithm to encode a list of strings to a string. The encoded string is then sent over the network and is decoded back to the original list of strings.
+
+Machine 1 (sender) has the function:
+
+string encode(vector<string> strs) {
+  // ... your code
+  return encoded_string;
+}
+Machine 2 (receiver) has the function:
+vector<string> decode(string s) {
+  //... your code
+  return strs;
+}
+So Machine 1 does:
+
+string encoded_string = encode(strs);
+and Machine 2 does:
+
+vector<string> strs2 = decode(encoded_string);
+strs2 in Machine 2 should be the same as strs in Machine 1.
+
+Implement the encode and decode methods.
+
+Note:
+The string may contain any possible characters out of 256 valid ascii characters. Your algorithm should be generalized enough to work on any possible characters.
+Do not use class member/global/static variables to store states. Your encode and decode algorithms should be stateless.
+Do not rely on any library method such as eval or serialize methods. You should implement your own encode/decode algorithm.
+
+*/
+class Codec {
+public:
+
+	// Encodes a list of strings to a single string.
+	string encode(vector<string>& strs) {
+		string res = "";
+		for (string str : strs) {
+			res += to_string(str.size()) + "/" + str;
+		}
+		return res;
+	}
+
+	// Decodes a single string to a list of strings.
+	vector<string> decode(string s) {
+		vector<string> res;
+		for (int i = 0; i < s.size(); i++) {
+			int j = s.find_first_of('/', i);
+			int len = stoi(s.substr(i, j - i));
+			res.push_back(s.substr(j + 1, len));
+			i = j + len;
+		}
+		return res;
+	}
+};
+// Your Codec object will be instantiated and called as such:
+// Codec codec;
+// codec.decode(codec.encode(strs));
+/*
+
 273. Integer to English Words (Hard)
 
 Convert a non-negative integer to its english words representation. Given input is guaranteed to be less than 231 - 1.
@@ -1591,9 +1681,9 @@ Write a function to compute all possible states of the string after one valid mo
 For example, given s = "++++", after one move, it may become one of the following states:
 
 [
-"--++",
-"+--+",
-"++--"
+  "--++",
+  "+--+",
+  "++--"
 ]
 If there is no valid move, return an empty list [].
 
@@ -1601,20 +1691,47 @@ If there is no valid move, return an empty list [].
 class Solution {
 public:
 	vector<string> generatePossibleNextMoves(string s) {
-		if (s.empty()) {
-			return{};
-		}
 		vector<string> res;
-		for (int i = 0; i < s.size() - 1; i++) {
+		for (int i = 0; i < (int)s.size() - 1; i++) {
 			if (s[i] == '+' && s[i + 1] == '+') {
-				s[i] = '-';
-				s[i + 1] = '-';
+				s[i] = s[i + 1] = '-';
 				res.push_back(s);
-				s[i] = '+';
-				s[i + 1] = '+';
+				s[i] = s[i + 1] = '+';
 			}
 		}
 		return res;
+	}
+};
+/*
+
+340. Longest Substring with At Most K Distinct Characters (Hard)
+
+Given a string, find the length of the longest substring T that contains at most k distinct characters.
+
+For example, Given s = “eceba” and k = 2,
+
+T is "ece" which its length is 3.
+
+*/
+class Solution {
+public:
+	int lengthOfLongestSubstringKDistinct(string s, int k) {
+		int  len = 0, i = 0, j = 0, num = 0;
+		vector<int> t(256, 0);
+		while (j < s.size()) {
+			if (t[s[j++]]++ == 0) {
+				num++;
+			}
+			while (num > k) {
+				if (--t[s[i++]] == 0) {
+					num--;
+				}
+			}
+			if (num <= k && j - i > len) {
+				len = j - i;
+			}
+		}
+		return len;
 	}
 };
 /*
@@ -1785,5 +1902,76 @@ public:
 			}
 		}
 		return res;
+	}
+};
+/*
+
+459. Repeated Substring Pattern (Easy)
+
+Given a non-empty string check if it can be constructed by taking a substring of it and appending multiple copies of the substring together. You may assume the given string consists of lowercase English letters only and its length will not exceed 10000.
+
+Example 1:
+Input: "abab"
+
+Output: True
+
+Explanation: It's the substring "ab" twice.
+Example 2:
+Input: "aba"
+
+Output: False
+Example 3:
+Input: "abcabcabcabc"
+
+Output: True
+
+Explanation: It's the substring "abc" four times. (And the substring "abcabc" twice.)
+
+*/
+class Solution {
+public:
+	bool repeatedSubstringPattern(string s) {
+		vector<int> t(s.size(), 0);
+		for (int i = 1; i < s.size(); i++) {
+			int j = t[i - 1];
+			while (j > 0 && s[i] != s[j]) {
+				j = t[j - 1];
+			}
+			t[i] = (j += s[i] == s[j]);
+		}
+		return t.back() && t.back() % (s.size() - t.back()) == 0;
+	}
+};
+/*
+
+520. Detect Capital (Easy)
+
+Given a word, you need to judge whether the usage of capitals in it is right or not.
+
+We define the usage of capitals in a word to be right when one of the following cases holds:
+
+All letters in this word are capitals, like "USA".
+All letters in this word are not capitals, like "leetcode".
+Only the first letter in this word is capital if it has more than one letter, like "Google".
+Otherwise, we define that this word doesn't use capitals in a right way.
+Example 1:
+Input: "USA"
+Output: True
+Example 2:
+Input: "FlaG"
+Output: False
+Note: The input will be a non-empty word consisting of uppercase and lowercase latin letters.
+
+*/
+class Solution {
+public:
+	bool detectCapitalUse(string word) {
+		int num = 0;
+		for (char cha : word) {
+			if (isupper(cha)) {
+				num++;
+			}
+		}
+		return num == 0 || num == word.size() || num == 1 && isupper(word[0]);
 	}
 };

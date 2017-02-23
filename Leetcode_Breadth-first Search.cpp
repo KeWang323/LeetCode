@@ -114,10 +114,10 @@ Given a binary tree, return the zigzag level order traversal of its nodes' value
 
 For example:
 Given binary tree [3,9,20,null,null,15,7],
-    3
+	3
    / \
   9  20
-    /  \
+	/  \
    15   7
 return its zigzag level order traversal as:
 [
@@ -187,10 +187,10 @@ Given a binary tree, return the bottom-up level order traversal of its nodes' va
 
 For example:
 Given binary tree [3,9,20,null,null,15,7],
-    3
+	3
    / \
   9  20
-    /  \
+	/  \
    15   7
 return its bottom-up level order traversal as:
 [
@@ -381,19 +381,19 @@ class Solution {
 public:
 	vector<int> rightSideView(TreeNode *root) {
 		vector<int> res;
-		recursion(root, 1, res);
+		rightSideView(root, 1, res);
 		return res;
 	}
 private:
-	void recursion(TreeNode *root, int level, vector<int> &res) {
+	void rightSideView(TreeNode *root, int level, vector<int> &res) {
 		if (root == NULL) {
 			return;
 		}
 		if (res.size() < level) {
 			res.push_back(root->val);
 		}
-		recursion(root->right, level + 1, res);
-		recursion(root->left, level + 1, res);
+		rightSideView(root->right, level + 1, res);
+		rightSideView(root->left, level + 1, res);
 	}
 };
 /*
@@ -462,5 +462,129 @@ private:
 				q.push(make_pair(i, j + 1));
 			}
 		}
+	}
+};
+/*
+
+407. Trapping Rain Water II (Hard)
+
+Given an m x n matrix of positive integers representing the height of each unit cell in a 2D elevation map, compute the volume of water it is able to trap after raining.
+
+Note:
+Both m and n are less than 110. The height of each unit cell is greater than 0 and is less than 20,000.
+
+Example:
+
+Given the following 3x6 height map:
+[
+  [1,4,3,1,3,2],
+  [3,2,1,3,2,4],
+  [2,3,3,2,3,1]
+]
+
+Return 4.
+
+*/
+class Cell {
+public:
+	int row, col, height;
+	Cell(int r, int c, int h) : row(r), col(c), height(h) {}
+};
+class Comp {
+public:
+	bool operator()(Cell* c1, Cell* c2) {
+		return c1->height > c2->height;
+	}
+};
+class Solution {
+public:
+	int trapRainWater(vector<vector<int>>& heightMap) {
+		if (heightMap.empty()) {
+			return 0;
+		}
+		int m = heightMap.size(), n = heightMap[0].size();
+		priority_queue<Cell*, vector<Cell*>, Comp> pq;
+		vector<vector<bool>> t(heightMap.size(), vector<bool>(heightMap[0].size(), false));
+		for (int i = 0; i < m; i++) {
+			t[i][0] = true;
+			t[i][n - 1] = true;
+			pq.push(new Cell(i, 0, heightMap[i][0]));
+			pq.push(new Cell(i, n - 1, heightMap[i][n - 1]));
+		}
+		for (int i = 1; i < n - 1; i++) {
+			t[0][i] = true;
+			t[m - 1][i] = true;
+			pq.push(new Cell(0, i, heightMap[0][i]));
+			pq.push(new Cell(m - 1, i, heightMap[m - 1][i]));
+		}
+		int res = 0;
+		vector<pair<int, int>> nei = { make_pair(-1, 0), make_pair(1, 0), make_pair(0, -1), make_pair(0, 1) };
+		while (!pq.empty()) {
+			Cell *c = pq.top();
+			pq.pop();
+			for (pair<int, int> p : nei) {
+				int row = c->row + p.first, col = c->col + p.second;
+				if (row >= 0 && row < m && col >= 0 && col < n && t[row][col] == false) {
+					t[row][col] = true;
+					res += max(0, c->height - heightMap[row][col]);
+					pq.push(new Cell(row, col, max(c->height, heightMap[row][col])));
+				}
+			}
+		}
+		return res;
+	}
+};
+/*
+
+515. Find Largest Value in Each Tree Row (Medium)
+
+You need to find the largest value in each row of a binary tree.
+
+Example:
+Input:
+
+		  1
+		 / \
+		3   2
+	   / \   \
+	  5   3   9
+
+Output: [1, 3, 9]
+
+*/
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+class Solution {
+public:
+	vector<int> largestValues(TreeNode* root) {
+		if (root == NULL) {
+			return{};
+		}
+		vector<int> res;
+		queue<TreeNode*> q;
+		q.push(root);
+		while (!q.empty()) {
+			int _size = q.size();
+			int temp;
+			for (int i = 0; i < _size; i++) {
+				temp = i == 0 ? q.front()->val : max(temp, q.front()->val);
+				if (q.front()->left != NULL) {
+					q.push(q.front()->left);
+				}
+				if (q.front()->right != NULL) {
+					q.push(q.front()->right);
+				}
+				q.pop();
+			}
+			res.push_back(temp);
+		}
+		return res;
 	}
 };

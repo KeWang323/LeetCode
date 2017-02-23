@@ -247,6 +247,139 @@ private:
 */
 /*
 
+225. Implement Stack using Queues (Easy)
+
+Implement the following operations of a stack using queues.
+
+push(x) -- Push element x onto stack.
+
+pop() -- Removes the element on top of the stack.
+
+top() -- Get the top element.
+
+empty() -- Return whether the stack is empty.
+
+Notes:
+
+You must use only standard operations of a queue -- which means only push to back, peek/pop from front, size, and is empty operations are valid.
+
+Depending on your language, queue may not be supported natively. You may simulate a queue by using a list or deque (double-ended queue), as long as you use only standard operations of a queue.
+
+You may assume that all operations are valid (for example, no pop or top operations will be called on an empty stack).
+
+*/
+class Stack {
+public:
+	queue<int> q1, q2;
+	// Push element x onto stack.
+	void push(int x) {
+		if (q1.empty()) {
+			q1.push(x);
+			while (!q2.empty()) {
+				q1.push(q2.front());
+				q2.pop();
+			}
+		}
+		else {
+			q2.push(x);
+			while (!q1.empty()) {
+				q2.push(q1.front());
+				q1.pop();
+			}
+		}
+	}
+
+	// Removes the element on top of the stack.
+	void pop() {
+		if (!q1.empty()) {
+			q1.pop();
+		}
+		if (!q2.empty()) {
+			q2.pop();
+		}
+	}
+
+	// Get the top element.
+	int top() {
+		if (!q1.empty()) {
+			return q1.front();
+		}
+		if (!q2.empty()) {
+			return q2.front();
+		}
+		return -1;
+	}
+
+	// Return whether the stack is empty.
+	bool empty() {
+		return q1.empty() && q2.empty();
+	}
+};
+/*
+
+232. Implement Queue using Stacks (Easy)
+
+Implement the following operations of a queue using stacks.
+
+push(x) -- Push element x to the back of queue.
+pop() -- Removes the element from in front of queue.
+peek() -- Get the front element.
+empty() -- Return whether the queue is empty.
+
+Notes:
+
+You must use only standard operations of a stack -- which means only push to top, peek/pop from top, size, and is empty operations are valid.
+Depending on your language, stack may not be supported natively. You may simulate a stack by using a list or deque (double-ended queue), as long as you use only standard operations of a stack.
+You may assume that all operations are valid (for example, no pop or peek operations will be called on an empty queue).
+
+*/
+class Queue {
+public:
+	stack<int> s1, s2;
+	// Push element x to the back of queue.
+	void push(int x) {
+		s1.push(x);
+	}
+
+	// Removes the element from in front of queue.
+	void pop(void) {
+		if (!s2.empty()) {
+			s2.pop();
+		}
+		else if (!s1.empty()) {
+			transfer(s1, s2);
+			s2.pop();
+		}
+	}
+
+	// Get the front element.
+	int peek(void) {
+		if (!s2.empty()) {
+			return s2.top();
+		}
+		else if (!s1.empty()) {
+			transfer(s1, s2);
+			return s2.top();
+		}
+		else {
+			return -1;
+		}
+	}
+
+	// Return whether the queue is empty.
+	bool empty(void) {
+		return s1.empty() && s2.empty();
+	}
+private:
+	void transfer(stack<int>& s1, stack<int>& s2) {
+		while (!s1.empty()) {
+			s2.push(s1.top());
+			s1.pop();
+		}
+	}
+};
+/*
+
 251. Flatten 2D Vector (Medium)
 
 Implement an iterator to flatten a 2d vector.
@@ -362,205 +495,61 @@ private:
 */
 /*
 
-297. Serialize and Deserialize Binary Tree (Hard)
+288. Unique Word Abbreviation (Medium)
 
-Serialization is the process of converting a data structure or object into a sequence of bits so that it can be stored in a file or memory buffer, or transmitted across a network connection link to be reconstructed later in the same or another computer environment.
+An abbreviation of a word follows the form <first letter><number><last letter>. Below are some examples of word abbreviations:
 
-Design an algorithm to serialize and deserialize a binary tree. There is no restriction on how your serialization/deserialization algorithm should work. You just need to ensure that a binary tree can be serialized to a string and this string can be deserialized to the original tree structure.
+a) it                      --> it    (no abbreviation)
 
-For example, you may serialize the following tree
+	 1
+b) d|o|g                   --> d1g
 
-1
-/ \
-2   3
-/ \
-4   5
-as "[1,2,3,null,null,4,5]", just the same as how LeetCode OJ serializes a binary tree. You do not necessarily need to follow this format, so please be creative and come up with different approaches yourself.
-Note: Do not use class member/global/static variables to store states. Your serialize and deserialize algorithms should be stateless.
+			  1    1  1
+	 1---5----0----5--8
+c) i|nternationalizatio|n  --> i18n
+
+			  1
+	 1---5----0
+d) l|ocalizatio|n          --> l10n
+Assume you have a dictionary and given a word, find whether its abbreviation is unique in the dictionary. A word's abbreviation is unique if no other word from the dictionary has the same abbreviation.
+
+Example:
+Given dictionary = [ "deer", "door", "cake", "card" ]
+
+isUnique("dear") ->
+false
+
+isUnique("cart") ->
+true
+
+isUnique("cane") ->
+false
+
+isUnique("make") ->
+true
 
 */
+class ValidWordAbbr {
+public:
+	ValidWordAbbr(vector<string> dictionary) {
+		for (string& str : dictionary) {
+			string abbr = str[0] + to_string(str.size()) + str.back();
+			mapping[abbr].insert(str);
+		}
+	}
+
+	bool isUnique(string word) {
+		string abbr = word[0] + to_string(word.size()) + word.back();
+		return mapping[abbr].count(word) == mapping[abbr].size();
+	}
+private:
+	unordered_map<string, unordered_set<string>> mapping;
+};
 /**
-* Definition for a binary tree node.
-* struct TreeNode {
-*     int val;
-*     TreeNode *left;
-*     TreeNode *right;
-*     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
-* };
+* Your ValidWordAbbr object will be instantiated and called as such:
+* ValidWordAbbr obj = new ValidWordAbbr(dictionary);
+* bool param_1 = obj.isUnique(word);
 */
-class Codec {
-public:
-
-	// Encodes a tree to a single string.
-	string serialize(TreeNode* root) {
-		ostringstream out;
-		serialize(root, out);
-		return out.str();
-	}
-
-	// Decodes your encoded data to tree.
-	TreeNode* deserialize(string data) {
-		istringstream in(data);
-		return deserialize(in);
-	}
-private:
-	void serialize(TreeNode* root, ostringstream& out) {
-		if (root) {
-			out << root->val << ' ';
-			serialize(root->left, out);
-			serialize(root->right, out);
-		}
-		else {
-			out << "# ";
-		}
-	}
-	TreeNode* deserialize(istringstream& in) {
-		string val;
-		in >> val;
-		if (val == "#")
-			return nullptr;
-		TreeNode* root = new TreeNode(stoi(val));
-		root->left = deserialize(in);
-		root->right = deserialize(in);
-		return root;
-	}
-};
-// Your Codec object will be instantiated and called as such:
-// Codec codec;
-// codec.deserialize(codec.serialize(root));
- /*
-
- 225. Implement Stack using Queues (Easy)
-
- Implement the following operations of a stack using queues.
-
- push(x) -- Push element x onto stack.
-
- pop() -- Removes the element on top of the stack.
-
- top() -- Get the top element.
-
- empty() -- Return whether the stack is empty.
-
- Notes:
-
- You must use only standard operations of a queue -- which means only push to back, peek/pop from front, size, and is empty operations are valid.
-
- Depending on your language, queue may not be supported natively. You may simulate a queue by using a list or deque (double-ended queue), as long as you use only standard operations of a queue.
-
- You may assume that all operations are valid (for example, no pop or top operations will be called on an empty stack).
-
- */
-class Stack {
-public:
-	queue<int> q1, q2;
-	// Push element x onto stack.
-	void push(int x) {
-		if (q1.empty()) {
-			q1.push(x);
-			while (!q2.empty()) {
-				q1.push(q2.front());
-				q2.pop();
-			}
-		}
-		else {
-			q2.push(x);
-			while (!q1.empty()) {
-				q2.push(q1.front());
-				q1.pop();
-			}
-		}
-	}
-
-	// Removes the element on top of the stack.
-	void pop() {
-		if (!q1.empty()) {
-			q1.pop();
-		}
-		if (!q2.empty()) {
-			q2.pop();
-		}
-	}
-
-	// Get the top element.
-	int top() {
-		if (!q1.empty()) {
-			return q1.front();
-		}
-		if (!q2.empty()) {
-			return q2.front();
-		}
-		return -1;
-	}
-
-	// Return whether the stack is empty.
-	bool empty() {
-		return q1.empty() && q2.empty();
-	}
-};
-/*
-
-232. Implement Queue using Stacks (Easy)
-
-Implement the following operations of a queue using stacks.
-
-push(x) -- Push element x to the back of queue.
-pop() -- Removes the element from in front of queue.
-peek() -- Get the front element.
-empty() -- Return whether the queue is empty.
-
-Notes:
-
-You must use only standard operations of a stack -- which means only push to top, peek/pop from top, size, and is empty operations are valid.
-Depending on your language, stack may not be supported natively. You may simulate a stack by using a list or deque (double-ended queue), as long as you use only standard operations of a stack.
-You may assume that all operations are valid (for example, no pop or peek operations will be called on an empty queue).
-
-*/
-class Queue {
-public:
-	stack<int> s1, s2;
-	// Push element x to the back of queue.
-	void push(int x) {
-		s1.push(x);
-	}
-
-	// Removes the element from in front of queue.
-	void pop(void) {
-		if (!s2.empty()) {
-			s2.pop();
-		}
-		else if (!s1.empty()) {
-			transfer(s1, s2);
-			s2.pop();
-		}
-	}
-
-	// Get the front element.
-	int peek(void) {
-		if (!s2.empty()) {
-			return s2.top();
-		}
-		else if (!s1.empty()) {
-			transfer(s1, s2);
-			return s2.top();
-		}
-		else {
-			return -1;
-		}
-	}
-
-	// Return whether the queue is empty.
-	bool empty(void) {
-		return s1.empty() && s2.empty();
-	}
-private:
-	void transfer(stack<int>& s1, stack<int>& s2) {
-		while (!s1.empty()) {
-			s2.push(s1.top());
-			s1.pop();
-		}
-	}
-};
 /*
 
 295. Find Median from Data Stream (Hard)
@@ -644,24 +633,24 @@ Design an algorithm to serialize and deserialize a binary tree. There is no rest
 
 For example, you may serialize the following tree
 
-1
-/ \
-2   3
-/ \
-4   5
+	1
+   / \
+  2   3
+	 / \
+	4   5
 as "[1,2,3,null,null,4,5]", just the same as how LeetCode OJ serializes a binary tree. You do not necessarily need to follow this format, so please be creative and come up with different approaches yourself.
 Note: Do not use class member/global/static variables to store states. Your serialize and deserialize algorithms should be stateless.
 
 */
 /**
-* Definition for a binary tree node.
-* struct TreeNode {
-*     int val;
-*     TreeNode *left;
-*     TreeNode *right;
-*     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
-* };
-*/
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
 class Codec {
 public:
 
@@ -679,7 +668,7 @@ public:
 	}
 private:
 	void serialize(TreeNode* root, ostringstream& out) {
-		if (root) {
+		if (root != NULL) {
 			out << root->val << ' ';
 			serialize(root->left, out);
 			serialize(root->right, out);
@@ -691,8 +680,9 @@ private:
 	TreeNode* deserialize(istringstream& in) {
 		string val;
 		in >> val;
-		if (val == "#")
-			return nullptr;
+		if (val == "#") {
+			return NULL;
+		}
 		TreeNode* root = new TreeNode(stoi(val));
 		root->left = deserialize(in);
 		root->right = deserialize(in);

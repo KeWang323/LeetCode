@@ -815,6 +815,58 @@ public:
 };
 /*
 
+140. Word Break II (Hard)
+
+Given a non-empty string s and a dictionary wordDict containing a list of non-empty words, add spaces in s to construct a sentence where each word is a valid dictionary word. You may assume the dictionary does not contain duplicate words.
+
+Return all such possible sentences.
+
+For example, given
+s = "catsanddog",
+dict = ["cat", "cats", "and", "sand", "dog"].
+
+A solution is ["cats and dog", "cat sand dog"].
+
+*/
+class Solution {
+public:
+	vector<string> wordBreak(string s, vector<string>& wordDict) {
+		unordered_set<string> set;
+		for (string str : wordDict) {
+			set.insert(str);
+		}
+		return wordBreak(s, set);
+	}
+private:
+	unordered_map<string, vector<string>> mapping;
+	vector<string> wordBreak(string s, unordered_set<string>& set) {
+		if (mapping.find(s) != mapping.end()) {
+			return mapping[s];
+		}
+		vector<string> result;
+		if (set.find(s) != set.end()) {
+			result.push_back(s);
+		}
+		for (int i = 1; i < s.size(); i++) {
+			string word = s.substr(i);
+			if (set.find(word) != set.end()) {
+				string rem = s.substr(0, i);
+				vector<string> prev = combine(wordBreak(rem, set), word);
+				result.insert(result.end(), prev.begin(), prev.end());
+			}
+		}
+		mapping[s] = result;
+		return result;
+	}
+	vector<string> combine(vector<string> prev, string word) {
+		for (int i = 0; i < prev.size(); i++) {
+			prev[i] += " " + word;
+		}
+		return prev;
+	}
+};
+/*
+
 152. Maximum Product Subarray (Medium)
 
 Find the contiguous subarray within an array (containing at least one number) which has the largest product.
@@ -970,13 +1022,15 @@ Given a list of non-negative integers representing the amount of money of each h
 class Solution {
 public:
 	int rob(vector<int>& nums) {
-		int _size = nums.size();
-		if (_size < 2) return _size ? nums[0] : 0;
-		return max(robber(nums, 0, _size - 2), robber(nums, 1, _size - 1));
+		if (nums.size() < 2) {
+			return nums.size() == 1 ? nums[0] : 0;
+		}
+		return max(rob(nums, 0, nums.size() - 2), rob(nums, 1, nums.size() - 1));
 	}
-	int robber(vector<int>& nums, int l, int r) {
-		int pre = 0, cur = 0;
-		for (int i = l; i <= r; i++) {
+private:
+	int rob(vector<int>& nums, int l, int r) {
+		int pre = 0, cur = nums[l];
+		for (int i = l + 1; i <= r; i++) {
 			int temp = max(pre + nums[i], cur);
 			pre = cur;
 			cur = temp;
@@ -1782,6 +1836,52 @@ public:
 };
 /*
 
+413. Arithmetic Slices (Medium)
+
+A sequence of number is called arithmetic if it consists of at least three elements and if the difference between any two consecutive elements is the same.
+
+For example, these are arithmetic sequence:
+
+1, 3, 5, 7, 9
+7, 7, 7, 7
+3, -1, -5, -9
+The following sequence is not arithmetic.
+
+1, 1, 2, 5, 7
+
+A zero-indexed array A consisting of N numbers is given. A slice of that array is any pair of integers (P, Q) such that 0 <= P < Q < N.
+
+A slice (P, Q) of array A is called arithmetic if the sequence:
+A[P], A[p + 1], ..., A[Q - 1], A[Q] is arithmetic. In particular, this means that P + 1 < Q.
+
+The function should return the number of arithmetic slices in the array A.
+
+
+Example:
+
+A = [1, 2, 3, 4]
+
+return: 3, for 3 arithmetic slices in A: [1, 2, 3], [2, 3, 4] and [1, 2, 3, 4] itself.
+
+*/
+class Solution {
+public:
+	int numberOfArithmeticSlices(vector<int>& A) {
+		int cur = 0, sum = 0;
+		for (int i = 2; i < A.size(); i++) {
+			if (A[i] - A[i - 1] == A[i - 1] - A[i - 2]) {
+				cur++;
+				sum += cur;
+			}
+			else {
+				cur = 0;
+			}
+		}
+		return sum;
+	}
+};
+/*
+
 416. Partition Equal Subset Sum (Medium)
 
 Given a non-empty array containing only positive integers, find if the array can be partitioned into two subsets such that the sum of elements in both subsets is equal.
@@ -1922,5 +2022,45 @@ private:
 		int pick_j = nums[j] + min(PredictTheWinner(nums, t, i + 1, j - 1), PredictTheWinner(nums, t, i, j - 2));
 		t[i][j] = max(pick_i, pick_j);
 		return t[i][j];
+	}
+};
+/*
+
+516. Longest Palindromic Subsequence (Medium)
+
+Given a string s, find the longest palindromic subsequence's length in s. You may assume that the maximum length of s is 1000.
+
+Example 1:
+Input:
+
+"bbbab"
+Output:
+4
+One possible longest palindromic subsequence is "bbbb".
+Example 2:
+Input:
+
+"cbbd"
+Output:
+2
+One possible longest palindromic subsequence is "bb".
+
+*/
+class Solution {
+public:
+	int longestPalindromeSubseq(string s) {
+		vector<vector<int>> t(s.size(), vector<int>(s.size(), 0));
+		for (int i = s.size() - 1; i >= 0; i--) {
+			t[i][i] = 1;
+			for (int j = i + 1; j < s.size(); j++) {
+				if (s[i] == s[j]) {
+					t[i][j] = t[i + 1][j - 1] + 2;
+				}
+				else {
+					t[i][j] = max(t[i + 1][j], t[i][j - 1]);
+				}
+			}
+		}
+		return t[0].back();
 	}
 };

@@ -1057,7 +1057,145 @@ public:
 	}
 };
 /**
- * Your NestedIterator object will be instantiated and called as such:
- * NestedIterator i(nestedList);
- * while (i.hasNext()) cout << i.next();
- */
+* Your NestedIterator object will be instantiated and called as such:
+* NestedIterator i(nestedList);
+* while (i.hasNext()) cout << i.next();
+*/
+/*
+
+394. Decode String (Medium)
+
+Given an encoded string, return it's decoded string.
+
+The encoding rule is: k[encoded_string], where the encoded_string inside the square brackets is being repeated exactly k times. Note that k is guaranteed to be a positive integer.
+
+You may assume that the input string is always valid; No extra white spaces, square brackets are well-formed, etc.
+
+Furthermore, you may assume that the original data does not contain any digits and that digits are only for those repeat numbers, k. For example, there won't be input like 3a or 2[4].
+
+Examples:
+
+s = "3[a]2[bc]", return "aaabcbc".
+s = "3[a2[c]]", return "accaccacc".
+s = "2[abc]3[cd]ef", return "abcabccdcdcdef".
+
+*/
+class Solution {
+public:
+	string decodeString(string s) {
+		string res;
+		int i = 0;
+		while (i < s.size()) {
+			if (isalpha(s[i])) {
+				res += s[i++];
+			}
+			else {
+				int num = 0;
+				while (isdigit(s[i])) {
+					num = num * 10 + s[i++] - '0';
+				}
+				int start = ++i;
+				for (int l = 1, r = 0; l != r; i++) {
+					l += s[i] == '[';
+					r += s[i] == ']';
+				}
+				string temp = decodeString(s.substr(start, i - start - 1));
+				for (int j = 0; j < num; j++) {
+					res += temp;
+				}
+			}
+		}
+		return res;
+	}
+};
+/*
+
+402. Remove K Digits (Medium)
+
+Given a non-negative integer num represented as a string, remove k digits from the number so that the new number is the smallest possible.
+
+Note:
+The length of num is less than 10002 and will be ¡Ý k.
+The given num does not contain any leading zero.
+Example 1:
+
+Input: num = "1432219", k = 3
+Output: "1219"
+Explanation: Remove the three digits 4, 3, and 2 to form the new number 1219 which is the smallest.
+Example 2:
+
+Input: num = "10200", k = 1
+Output: "200"
+Explanation: Remove the leading 1 and the number is 200. Note that the output must not contain leading zeroes.
+Example 3:
+
+Input: num = "10", k = 2
+Output: "0"
+Explanation: Remove all the digits from the number and it is left with nothing which is 0.
+
+*/
+class Solution {
+public:
+	string removeKdigits(string num, int k) {
+		int digits = num.size() - k;
+		string res(num.size(), ' ');
+		int top = 0;
+		for (int i = 0;i < num.size(); i++) {
+			while (top > 0 && res[top - 1] > num[i] && k > 0) {
+				top--;
+				k--;
+			}
+			res[top++] = num[i];
+		}
+		int index = 0;
+		while (index < digits && res[index] == '0') {
+			index++;
+		}
+		return index == digits ? "0" : res.substr(index, digits - index);
+	}
+};
+/*
+
+496. Next Greater Element I (Easy)
+
+You are given two arrays (without duplicates) nums1 and nums2 where nums1¡¯s elements are subset of nums2. Find all the next greater numbers for nums1's elements in the corresponding places of nums2.
+
+The Next Greater Number of a number x in nums1 is the first greater number to its right in nums2. If it does not exist, output -1 for this number.
+
+Example 1:
+Input: nums1 = [4,1,2], nums2 = [1,3,4,2].
+Output: [-1,3,-1]
+Explanation:
+	For number 4 in the first array, you cannot find the next greater number for it in the second array, so output -1.
+	For number 1 in the first array, the next greater number for it in the second array is 3.
+	For number 2 in the first array, there is no next greater number for it in the second array, so output -1.
+Example 2:
+Input: nums1 = [2,4], nums2 = [1,2,3,4].
+Output: [3,-1]
+Explanation:
+	For number 2 in the first array, the next greater number for it in the second array is 3.
+	For number 4 in the first array, there is no next greater number for it in the second array, so output -1.
+Note:
+All elements in nums1 and nums2 are unique.
+The length of both nums1 and nums2 would not exceed 1000.
+
+*/
+class Solution {
+public:
+	vector<int> nextGreaterElement(vector<int>& findNums, vector<int>& nums) {
+		vector<int> res(findNums.size());
+		unordered_map<int, int> mapping;
+		stack<int> sta;
+		for (const int& num : nums) {
+			while (!sta.empty() && sta.top() < num) {
+				mapping[sta.top()] = num;
+				sta.pop();
+			}
+			sta.push(num);
+		}
+		for (int i = 0; i < res.size(); i++) {
+			res[i] = mapping.find(findNums[i]) == mapping.end() ? -1 : mapping[findNums[i]];
+		}
+		return res;
+	}
+};

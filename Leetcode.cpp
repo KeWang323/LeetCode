@@ -5560,6 +5560,58 @@ public:
 };
 /*
 
+140. Word Break II (Hard)
+
+Given a non-empty string s and a dictionary wordDict containing a list of non-empty words, add spaces in s to construct a sentence where each word is a valid dictionary word. You may assume the dictionary does not contain duplicate words.
+
+Return all such possible sentences.
+
+For example, given
+s = "catsanddog",
+dict = ["cat", "cats", "and", "sand", "dog"].
+
+A solution is ["cats and dog", "cat sand dog"].
+
+*/
+class Solution {
+public:
+	vector<string> wordBreak(string s, vector<string>& wordDict) {
+		unordered_set<string> set;
+		for (string str : wordDict) {
+			set.insert(str);
+		}
+		return wordBreak(s, set);
+	}
+private:
+	unordered_map<string, vector<string>> mapping;
+	vector<string> wordBreak(string s, unordered_set<string>& set) {
+		if (mapping.find(s) != mapping.end()) {
+			return mapping[s];
+		}
+		vector<string> result;
+		if (set.find(s) != set.end()) {
+			result.push_back(s);
+		}
+		for (int i = 1; i < s.size(); i++) {
+			string word = s.substr(i);
+			if (set.find(word) != set.end()) {
+				string rem = s.substr(0, i);
+				vector<string> prev = combine(wordBreak(rem, set), word);
+				result.insert(result.end(), prev.begin(), prev.end());
+			}
+		}
+		mapping[s] = result;
+		return result;
+	}
+	vector<string> combine(vector<string> prev, string word) {
+		for (int i = 0; i < prev.size(); i++) {
+			prev[i] += " " + word;
+		}
+		return prev;
+	}
+};
+/*
+
 141. Linked List Cycle (Easy)
 
 Given a linked list, determine if it has a cycle in it.
@@ -7260,19 +7312,19 @@ class Solution {
 public:
 	vector<int> rightSideView(TreeNode *root) {
 		vector<int> res;
-		recursion(root, 1, res);
+		rightSideView(root, 1, res);
 		return res;
 	}
 private:
-	void recursion(TreeNode *root, int level, vector<int> &res) {
+	void rightSideView(TreeNode *root, int level, vector<int> &res) {
 		if (root == NULL) {
 			return;
 		}
 		if (res.size() < level) {
 			res.push_back(root->val);
 		}
-		recursion(root->right, level + 1, res);
-		recursion(root->left, level + 1, res);
+		rightSideView(root->right, level + 1, res);
+		rightSideView(root->left, level + 1, res);
 	}
 };
 /*
@@ -7661,18 +7713,50 @@ Given a list of non-negative integers representing the amount of money of each h
 class Solution {
 public:
 	int rob(vector<int>& nums) {
-		int _size = nums.size();
-		if (_size < 2) return _size ? nums[0] : 0;
-		return max(robber(nums, 0, _size - 2), robber(nums, 1, _size - 1));
+		if (nums.size() < 2) {
+			return nums.size() == 1 ? nums[0] : 0;
+		}
+		return max(rob(nums, 0, nums.size() - 2), rob(nums, 1, nums.size() - 1));
 	}
-	int robber(vector<int>& nums, int l, int r) {
-		int pre = 0, cur = 0;
-		for (int i = l; i <= r; i++) {
+private:
+	int rob(vector<int>& nums, int l, int r) {
+		int pre = 0, cur = nums[l];
+		for (int i = l + 1; i <= r; i++) {
 			int temp = max(pre + nums[i], cur);
 			pre = cur;
 			cur = temp;
 		}
 		return cur;
+	}
+};
+/*
+
+214. Shortest Palindrome (Hard)
+
+Given a string S, you are allowed to convert it to a palindrome by adding characters in front of it. Find and return the shortest palindrome you can find by performing this transformation.
+
+For example:
+
+Given "aacecaaa", return "aaacecaaa".
+
+Given "abcd", return "dcbabcd".
+
+*/
+class Solution {
+public:
+	string shortestPalindrome(string s) {
+		string rev = s;
+		reverse(rev.begin(), rev.end());
+		string l = s + "#" + rev;
+		vector<int> t(l.size(), 0);
+		for (int i = 1; i < l.size(); i++) {
+			int j = t[i - 1];
+			while (j > 0 && l[i] != l[j]) {
+				j = t[j - 1];
+			}
+			t[i] = (j += l[i] == l[j]);
+		}
+		return rev.substr(0, s.size() - t.back()) + s;
 	}
 };
 /*
@@ -9239,7 +9323,7 @@ public:
 };
 /*
 
-267. Palindrome Permutation I (Medium)
+267. Palindrome Permutation II (Medium)
 
 Given a string s, return all the palindromic permutations (without duplicates) of it. Return an empty list if no palindromic permutation could be form.
 
@@ -9258,48 +9342,40 @@ To generate all distinct permutations of a (half of) string, use a similar appro
 class Solution {
 public:
 	vector<string> generatePalindromes(string s) {
-		unordered_map<char, int> mapping;
+		int t[256] = { 0 };
 		for (char cha : s) {
-			mapping[cha]++;
+			t[cha]++;
 		}
-		string str;
-		string c = "";
+		string str, c;
 		bool odd = false;
-		for (auto i = mapping.begin(); i != mapping.end(); i++) {
-			if (i->second % 2) {
-				if (odd) {
+		for (int i = 0; i < 256; i++) {
+			if (t[i] & 1) {
+				if (odd == true) {
 					return{};
 				}
-				c.push_back(i->first);
+				c = (char)i;
 				odd = true;
 			}
-			int temp = i->second / 2;
-			while (temp > 0) {
-				str += i->first;
-				temp--;
-			}
+			str += string(t[i] / 2, (char)i);
 		}
 		vector<string> res;
-		helper(res, str, 0);
-		for (int i = 0; i < res.size(); i++) {
-			string temp = res[i];
-			reverse(temp.begin(), temp.end());
-			res[i] += c + temp;
-		}
+		helper(res, str, 0, c);
 		return res;
 	}
 private:
-	void helper(vector<string>& res, string& str, int index) {
+	void helper(vector<string>& res, string& str, int index, const string& c) {
 		if (index == str.size()) {
-			res.push_back(str);
+			string temp = str;
+			reverse(temp.begin(), temp.end());
+			res.push_back(str + c + temp);
 			return;
 		}
-		set<char> s;
+		unordered_set<char> s;
 		for (int i = index; i < str.size(); i++) {
-			if (i == index || s.find(str[i]) == s.end()) {
+			if (s.find(str[i]) == s.end()) {
 				s.insert(str[i]);
 				swap(str[i], str[index]);
-				helper(res, str, index + 1);
+				helper(res, str, index + 1, c);
 				swap(str[i], str[index]);
 			}
 		}
@@ -9369,6 +9445,66 @@ public:
 		return res;
 	}
 };
+/*
+
+271. Encode and Decode Strings (medium)
+
+Design an algorithm to encode a list of strings to a string. The encoded string is then sent over the network and is decoded back to the original list of strings.
+
+Machine 1 (sender) has the function:
+
+string encode(vector<string> strs) {
+  // ... your code
+  return encoded_string;
+}
+Machine 2 (receiver) has the function:
+vector<string> decode(string s) {
+  //... your code
+  return strs;
+}
+So Machine 1 does:
+
+string encoded_string = encode(strs);
+and Machine 2 does:
+
+vector<string> strs2 = decode(encoded_string);
+strs2 in Machine 2 should be the same as strs in Machine 1.
+
+Implement the encode and decode methods.
+
+Note:
+The string may contain any possible characters out of 256 valid ascii characters. Your algorithm should be generalized enough to work on any possible characters.
+Do not use class member/global/static variables to store states. Your encode and decode algorithms should be stateless.
+Do not rely on any library method such as eval or serialize methods. You should implement your own encode/decode algorithm.
+
+*/
+class Codec {
+public:
+
+	// Encodes a list of strings to a single string.
+	string encode(vector<string>& strs) {
+		string res = "";
+		for (string str : strs) {
+			res += to_string(str.size()) + "/" + str;
+		}
+		return res;
+	}
+
+	// Decodes a single string to a list of strings.
+	vector<string> decode(string s) {
+		vector<string> res;
+		for (int i = 0; i < s.size(); i++) {
+			int j = s.find_first_of('/', i);
+			int len = stoi(s.substr(i, j - i));
+			res.push_back(s.substr(j + 1, len));
+			i = j + len;
+		}
+		return res;
+	}
+};
+// Your Codec object will be instantiated and called as such:
+// Codec codec;
+// codec.decode(codec.encode(strs));
 /*
 
 272. Closest Binary Search Tree Value II (Hard)
@@ -9979,6 +10115,63 @@ public:
 };
 /*
 
+288. Unique Word Abbreviation (Medium)
+
+An abbreviation of a word follows the form <first letter><number><last letter>. Below are some examples of word abbreviations:
+
+a) it                      --> it    (no abbreviation)
+
+	 1
+b) d|o|g                   --> d1g
+
+			  1    1  1
+	 1---5----0----5--8
+c) i|nternationalizatio|n  --> i18n
+
+			  1
+	 1---5----0
+d) l|ocalizatio|n          --> l10n
+Assume you have a dictionary and given a word, find whether its abbreviation is unique in the dictionary. A word's abbreviation is unique if no other word from the dictionary has the same abbreviation.
+
+Example:
+Given dictionary = [ "deer", "door", "cake", "card" ]
+
+isUnique("dear") ->
+false
+
+isUnique("cart") ->
+true
+
+isUnique("cane") ->
+false
+
+isUnique("make") ->
+true
+
+*/
+class ValidWordAbbr {
+public:
+	ValidWordAbbr(vector<string> dictionary) {
+		for (string& str : dictionary) {
+			string abbr = str[0] + to_string(str.size()) + str.back();
+			mapping[abbr].insert(str);
+		}
+	}
+
+	bool isUnique(string word) {
+		string abbr = word[0] + to_string(word.size()) + word.back();
+		return mapping[abbr].count(word) == mapping[abbr].size();
+	}
+private:
+	unordered_map<string, unordered_set<string>> mapping;
+};
+/**
+* Your ValidWordAbbr object will be instantiated and called as such:
+* ValidWordAbbr obj = new ValidWordAbbr(dictionary);
+* bool param_1 = obj.isUnique(word);
+*/
+/*
+
 289. Game of Life (Medium)
 
 According to the Wikipedia's article: "The Game of Life, also known simply as Life,
@@ -10102,9 +10295,9 @@ Write a function to compute all possible states of the string after one valid mo
 For example, given s = "++++", after one move, it may become one of the following states:
 
 [
-"--++",
-"+--+",
-"++--"
+  "--++",
+  "+--+",
+  "++--"
 ]
 If there is no valid move, return an empty list [].
 
@@ -10112,20 +10305,44 @@ If there is no valid move, return an empty list [].
 class Solution {
 public:
 	vector<string> generatePossibleNextMoves(string s) {
-		if (s.empty()) {
-			return{};
-		}
 		vector<string> res;
-		for (int i = 0; i < s.size() - 1; i++) {
+		for (int i = 0; i < (int)s.size() - 1; i++) {
 			if (s[i] == '+' && s[i + 1] == '+') {
-				s[i] = '-';
-				s[i + 1] = '-';
+				s[i] = s[i + 1] = '-';
 				res.push_back(s);
-				s[i] = '+';
-				s[i + 1] = '+';
+				s[i] = s[i + 1] = '+';
 			}
 		}
 		return res;
+	}
+};
+/*
+
+294. Flip Game II (Medium)
+
+You are playing the following Flip Game with your friend: Given a string that contains only these two characters: + and -, you and your friend take turns to flip two consecutive "++" into "--". The game ends when a person can no longer make a move and therefore the other person will be the winner.
+
+Write a function to determine if the starting player can guarantee a win.
+
+For example, given s = "++++", return true. The starting player can guarantee a win by flipping the middle "++" to become "+--+".
+
+Follow up:
+Derive your algorithm's runtime complexity.
+
+*/
+class Solution {
+public:
+	bool canWin(string s) {
+		for (int i = 0; i < (int)s.size() - 1; i++) {
+			if (s[i] == '+' && s[i + 1] == '+') {
+				s[i] = s[i + 1] = '-';
+				if (canWin(s) == false) {
+					return true;
+				}
+				s[i] = s[i + 1] = '+';
+			}
+		}
+		return false;
 	}
 };
 /*
@@ -10211,24 +10428,24 @@ Design an algorithm to serialize and deserialize a binary tree. There is no rest
 
 For example, you may serialize the following tree
 
-1
-/ \
-2   3
-/ \
-4   5
+	1
+   / \
+  2   3
+	 / \
+	4   5
 as "[1,2,3,null,null,4,5]", just the same as how LeetCode OJ serializes a binary tree. You do not necessarily need to follow this format, so please be creative and come up with different approaches yourself.
 Note: Do not use class member/global/static variables to store states. Your serialize and deserialize algorithms should be stateless.
 
 */
 /**
-* Definition for a binary tree node.
-* struct TreeNode {
-*     int val;
-*     TreeNode *left;
-*     TreeNode *right;
-*     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
-* };
-*/
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
 class Codec {
 public:
 
@@ -10246,7 +10463,7 @@ public:
 	}
 private:
 	void serialize(TreeNode* root, ostringstream& out) {
-		if (root) {
+		if (root != NULL) {
 			out << root->val << ' ';
 			serialize(root->left, out);
 			serialize(root->right, out);
@@ -10258,8 +10475,9 @@ private:
 	TreeNode* deserialize(istringstream& in) {
 		string val;
 		in >> val;
-		if (val == "#")
-			return nullptr;
+		if (val == "#") {
+			return NULL;
+		}
 		TreeNode* root = new TreeNode(stoi(val));
 		root->left = deserialize(in);
 		root->right = deserialize(in);
@@ -10278,33 +10496,33 @@ Given a binary tree, find the length of the longest consecutive sequence path.
 The path refers to any sequence of nodes from some starting node to any node in the tree along the parent-child connections. The longest consecutive path need to be from parent to child (cannot be the reverse).
 
 For example,
-1
-\
-3
-/ \
-2   4
-\
-5
+   1
+	\
+	 3
+	/ \
+   2   4
+		\
+		 5
 Longest consecutive sequence path is 3-4-5, so return 3.
-2
-\
-3
-/
-2
-/
-1
+   2
+	\
+	 3
+	/
+   2
+  /
+ 1
 Longest consecutive sequence path is 2-3,not3-2-1, so return 2.
 
 */
 /**
-* Definition for a binary tree node.
-* struct TreeNode {
-*     int val;
-*     TreeNode *left;
-*     TreeNode *right;
-*     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
-* };
-*/
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
 class Solution {
 public:
 	int longestConsecutive(TreeNode* root) {
@@ -10320,7 +10538,7 @@ private:
 		if (root == NULL) {
 			return;
 		}
-		if (root->val == tar) {
+		else if (root->val == tar) {
 			cur++;
 		}
 		else {
@@ -11267,6 +11485,38 @@ private:
 };
 /*
 
+340. Longest Substring with At Most K Distinct Characters (Hard)
+
+Given a string, find the length of the longest substring T that contains at most k distinct characters.
+
+For example, Given s = “eceba” and k = 2,
+
+T is "ece" which its length is 3.
+
+*/
+class Solution {
+public:
+	int lengthOfLongestSubstringKDistinct(string s, int k) {
+		int  len = 0, i = 0, j = 0, num = 0;
+		vector<int> t(256, 0);
+		while (j < s.size()) {
+			if (t[s[j++]]++ == 0) {
+				num++;
+			}
+			while (num > k) {
+				if (--t[s[i++]] == 0) {
+					num--;
+				}
+			}
+			if (num <= k && j - i > len) {
+				len = j - i;
+			}
+		}
+		return len;
+	}
+};
+/*
+
 341. Flatten Nested List Iterator (Medium)
 
 Given a nested list of integers, implement an iterator to flatten it.
@@ -12145,6 +12395,69 @@ public:
 };
 /*
 
+373. Find K Pairs with Smallest Sums (Medium)
+
+You are given two integer arrays nums1 and nums2 sorted in ascending order and an integer k.
+
+Define a pair (u,v) which consists of one element from the first array and one element from the second array.
+
+Find the k pairs (u1,v1),(u2,v2) ...(uk,vk) with the smallest sums.
+
+Example 1:
+Given nums1 = [1,7,11], nums2 = [2,4,6],  k = 3
+
+Return: [1,2],[1,4],[1,6]
+
+The first 3 pairs are returned from the sequence:
+[1,2],[1,4],[1,6],[7,2],[7,4],[11,2],[7,6],[11,4],[11,6]
+Example 2:
+Given nums1 = [1,1,2], nums2 = [1,2,3],  k = 2
+
+Return: [1,1],[1,1]
+
+The first 2 pairs are returned from the sequence:
+[1,1],[1,1],[1,2],[2,1],[1,2],[2,2],[1,3],[1,3],[2,3]
+Example 3:
+Given nums1 = [1,2], nums2 = [3],  k = 3
+
+Return: [1,3],[2,3]
+
+All possible pairs are returned from the sequence:
+[1,3],[2,3]
+
+*/
+class Comp {
+public:
+	bool operator()(pair<int, int>& p1, pair<int, int>& p2) {
+		return p1.first + p1.second < p2.first + p2.second;
+	}
+};
+class Solution {
+public:
+	vector<pair<int, int>> kSmallestPairs(vector<int>& nums1, vector<int>& nums2, int k) {
+		vector<pair<int, int>> res;
+		priority_queue<pair<int, int>, vector<pair<int, int>>, Comp> pq;
+		int m = min((int)nums1.size(), k), n = min((int)nums2.size(), k);
+		for (int i = 0; i < m; i++) {
+			for (int j = 0; j < n; j++) {
+				if (pq.size() < k) {
+					pq.push(make_pair(nums1[i], nums2[j]));
+				}
+				else if (nums1[i] + nums2[j] < pq.top().first + pq.top().second) {
+					pq.push(make_pair(nums1[i], nums2[j]));
+					pq.pop();
+				}
+			}
+		}
+		while (!pq.empty()) {
+			res.push_back(pq.top());
+			pq.pop();
+		}
+		return res;
+	}
+};
+/*
+
 374. Guess Number Higher or Lower (Easy)
 
 We are playing the Guess Game. The game is as follows:
@@ -12695,6 +13008,53 @@ public:
 };
 /*
 
+394. Decode String (Medium)
+
+Given an encoded string, return it's decoded string.
+
+The encoding rule is: k[encoded_string], where the encoded_string inside the square brackets is being repeated exactly k times. Note that k is guaranteed to be a positive integer.
+
+You may assume that the input string is always valid; No extra white spaces, square brackets are well-formed, etc.
+
+Furthermore, you may assume that the original data does not contain any digits and that digits are only for those repeat numbers, k. For example, there won't be input like 3a or 2[4].
+
+Examples:
+
+s = "3[a]2[bc]", return "aaabcbc".
+s = "3[a2[c]]", return "accaccacc".
+s = "2[abc]3[cd]ef", return "abcabccdcdcdef".
+
+*/
+class Solution {
+public:
+	string decodeString(string s) {
+		string res;
+		int i = 0;
+		while (i < s.size()) {
+			if (isalpha(s[i])) {
+				res += s[i++];
+			}
+			else {
+				int num = 0;
+				while (isdigit(s[i])) {
+					num = num * 10 + s[i++] - '0';
+				}
+				int start = ++i;
+				for (int l = 1, r = 0; l != r; i++) {
+					l += s[i] == '[';
+					r += s[i] == ']';
+				}
+				string temp = decodeString(s.substr(start, i - start - 1));
+				for (int j = 0; j < num; j++) {
+					res += temp;
+				}
+			}
+		}
+		return res;
+	}
+};
+/*
+
 396. Rotate Function (Easy)
 
 Given an array of integers A and let n to be its length.
@@ -12887,6 +13247,52 @@ private:
 };
 /*
 
+402. Remove K Digits (Medium)
+
+Given a non-negative integer num represented as a string, remove k digits from the number so that the new number is the smallest possible.
+
+Note:
+The length of num is less than 10002 and will be ≥ k.
+The given num does not contain any leading zero.
+Example 1:
+
+Input: num = "1432219", k = 3
+Output: "1219"
+Explanation: Remove the three digits 4, 3, and 2 to form the new number 1219 which is the smallest.
+Example 2:
+
+Input: num = "10200", k = 1
+Output: "200"
+Explanation: Remove the leading 1 and the number is 200. Note that the output must not contain leading zeroes.
+Example 3:
+
+Input: num = "10", k = 2
+Output: "0"
+Explanation: Remove all the digits from the number and it is left with nothing which is 0.
+
+*/
+class Solution {
+public:
+	string removeKdigits(string num, int k) {
+		int digits = num.size() - k;
+		string res(num.size(), ' ');
+		int top = 0;
+		for (int i = 0;i < num.size(); i++) {
+			while (top > 0 && res[top - 1] > num[i] && k > 0) {
+				top--;
+				k--;
+			}
+			res[top++] = num[i];
+		}
+		int index = 0;
+		while (index < digits && res[index] == '0') {
+			index++;
+		}
+		return index == digits ? "0" : res.substr(index, digits - index);
+	}
+};
+/*
+
 404. Sum of Left Leaves (Easy)
 
 Find the sum of all left leaves in a given binary tree.
@@ -12971,6 +13377,76 @@ public:
 			num >>= 4;
 		}
 		reverse(res.begin(), res.end());
+		return res;
+	}
+};
+/*
+
+407. Trapping Rain Water II (Hard)
+
+Given an m x n matrix of positive integers representing the height of each unit cell in a 2D elevation map, compute the volume of water it is able to trap after raining.
+
+Note:
+Both m and n are less than 110. The height of each unit cell is greater than 0 and is less than 20,000.
+
+Example:
+
+Given the following 3x6 height map:
+[
+  [1,4,3,1,3,2],
+  [3,2,1,3,2,4],
+  [2,3,3,2,3,1]
+]
+
+Return 4.
+
+*/
+class Cell {
+public:
+	int row, col, height;
+	Cell(int r, int c, int h) : row(r), col(c), height(h) {}
+};
+class Comp {
+public:
+	bool operator()(Cell* c1, Cell* c2) {
+		return c1->height > c2->height;
+	}
+};
+class Solution {
+public:
+	int trapRainWater(vector<vector<int>>& heightMap) {
+		if (heightMap.empty()) {
+			return 0;
+		}
+		int m = heightMap.size(), n = heightMap[0].size();
+		priority_queue<Cell*, vector<Cell*>, Comp> pq;
+		vector<vector<bool>> t(heightMap.size(), vector<bool>(heightMap[0].size(), false));
+		for (int i = 0; i < m; i++) {
+			t[i][0] = true;
+			t[i][n - 1] = true;
+			pq.push(new Cell(i, 0, heightMap[i][0]));
+			pq.push(new Cell(i, n - 1, heightMap[i][n - 1]));
+		}
+		for (int i = 1; i < n - 1; i++) {
+			t[0][i] = true;
+			t[m - 1][i] = true;
+			pq.push(new Cell(0, i, heightMap[0][i]));
+			pq.push(new Cell(m - 1, i, heightMap[m - 1][i]));
+		}
+		int res = 0;
+		vector<pair<int, int>> nei = { make_pair(-1, 0), make_pair(1, 0), make_pair(0, -1), make_pair(0, 1) };
+		while (!pq.empty()) {
+			Cell *c = pq.top();
+			pq.pop();
+			for (pair<int, int> p : nei) {
+				int row = c->row + p.first, col = c->col + p.second;
+				if (row >= 0 && row < m && col >= 0 && col < n && t[row][col] == false) {
+					t[row][col] = true;
+					res += max(0, c->height - heightMap[row][col]);
+					pq.push(new Cell(row, col, max(c->height, heightMap[row][col])));
+				}
+			}
+		}
 		return res;
 	}
 };
@@ -13119,6 +13595,52 @@ public:
 			}
 		}
 		return res;
+	}
+};
+/*
+
+413. Arithmetic Slices (Medium)
+
+A sequence of number is called arithmetic if it consists of at least three elements and if the difference between any two consecutive elements is the same.
+
+For example, these are arithmetic sequence:
+
+1, 3, 5, 7, 9
+7, 7, 7, 7
+3, -1, -5, -9
+The following sequence is not arithmetic.
+
+1, 1, 2, 5, 7
+
+A zero-indexed array A consisting of N numbers is given. A slice of that array is any pair of integers (P, Q) such that 0 <= P < Q < N.
+
+A slice (P, Q) of array A is called arithmetic if the sequence:
+A[P], A[p + 1], ..., A[Q - 1], A[Q] is arithmetic. In particular, this means that P + 1 < Q.
+
+The function should return the number of arithmetic slices in the array A.
+
+
+Example:
+
+A = [1, 2, 3, 4]
+
+return: 3, for 3 arithmetic slices in A: [1, 2, 3], [2, 3, 4] and [1, 2, 3, 4] itself.
+
+*/
+class Solution {
+public:
+	int numberOfArithmeticSlices(vector<int>& A) {
+		int cur = 0, sum = 0;
+		for (int i = 2; i < A.size(); i++) {
+			if (A[i] - A[i - 1] == A[i - 1] - A[i - 2]) {
+				cur++;
+				sum += cur;
+			}
+			else {
+				cur = 0;
+			}
+		}
+		return sum;
 	}
 };
 /*
@@ -14077,6 +14599,44 @@ public:
 };
 /*
 
+459. Repeated Substring Pattern (Easy)
+
+Given a non-empty string check if it can be constructed by taking a substring of it and appending multiple copies of the substring together. You may assume the given string consists of lowercase English letters only and its length will not exceed 10000.
+
+Example 1:
+Input: "abab"
+
+Output: True
+
+Explanation: It's the substring "ab" twice.
+Example 2:
+Input: "aba"
+
+Output: False
+Example 3:
+Input: "abcabcabcabc"
+
+Output: True
+
+Explanation: It's the substring "abc" four times. (And the substring "abcabc" twice.)
+
+*/
+class Solution {
+public:
+	bool repeatedSubstringPattern(string s) {
+		vector<int> t(s.size(), 0);
+		for (int i = 1; i < s.size(); i++) {
+			int j = t[i - 1];
+			while (j > 0 && s[i] != s[j]) {
+				j = t[j - 1];
+			}
+			t[i] = (j += s[i] == s[j]);
+		}
+		return t.back() && t.back() % (s.size() - t.back()) == 0;
+	}
+};
+/*
+
 461. Hamming Distance (Easy)
 
 The Hamming distance between two integers is the number of positions at which the corresponding bits are different.
@@ -14416,6 +14976,115 @@ public:
 };
 /*
 
+496. Next Greater Element I (Easy)
+
+You are given two arrays (without duplicates) nums1 and nums2 where nums1’s elements are subset of nums2. Find all the next greater numbers for nums1's elements in the corresponding places of nums2.
+
+The Next Greater Number of a number x in nums1 is the first greater number to its right in nums2. If it does not exist, output -1 for this number.
+
+Example 1:
+Input: nums1 = [4,1,2], nums2 = [1,3,4,2].
+Output: [-1,3,-1]
+Explanation:
+	For number 4 in the first array, you cannot find the next greater number for it in the second array, so output -1.
+	For number 1 in the first array, the next greater number for it in the second array is 3.
+	For number 2 in the first array, there is no next greater number for it in the second array, so output -1.
+Example 2:
+Input: nums1 = [2,4], nums2 = [1,2,3,4].
+Output: [3,-1]
+Explanation:
+	For number 2 in the first array, the next greater number for it in the second array is 3.
+	For number 4 in the first array, there is no next greater number for it in the second array, so output -1.
+Note:
+All elements in nums1 and nums2 are unique.
+The length of both nums1 and nums2 would not exceed 1000.
+
+*/
+class Solution {
+public:
+	vector<int> nextGreaterElement(vector<int>& findNums, vector<int>& nums) {
+		vector<int> res(findNums.size());
+		unordered_map<int, int> mapping;
+		stack<int> sta;
+		for (const int& num : nums) {
+			while (!sta.empty() && sta.top() < num) {
+				mapping[sta.top()] = num;
+				sta.pop();
+			}
+			sta.push(num);
+		}
+		for (int i = 0; i < res.size(); i++) {
+			res[i] = mapping.find(findNums[i]) == mapping.end() ? -1 : mapping[findNums[i]];
+		}
+		return res;
+	}
+};
+/*
+
+498. Diagonal Traverse (Medium)
+
+Given a matrix of M x N elements (M rows, N columns), return all elements of the matrix in diagonal order as shown in the below image.
+
+Example:
+Input:
+[
+ [ 1, 2, 3 ],
+ [ 4, 5, 6 ],
+ [ 7, 8, 9 ]
+]
+Output:  [1,2,4,7,5,3,6,8,9]
+Explanation:
+
+Note:
+The total number of elements of the given matrix will not exceed 10,000.
+
+*/
+class Solution {
+public:
+	vector<int> findDiagonalOrder(vector<vector<int>>& matrix) {
+		if (matrix.empty()) {
+			return{};
+		}
+		vector<int> res;
+		int m = matrix.size(), n = matrix[0].size();
+		int i = 0, j = 0;
+		bool up = true;
+		while (i < m && j < n) {
+			res.push_back(matrix[i][j]);
+			if (up) {
+				if (j == n - 1) {
+					i++;
+					up = false;
+				}
+				else if (i == 0) {
+					j++;
+					up = false;
+				}
+				else {
+					i--;
+					j++;
+				}
+			}
+			else {
+				if (i == m - 1) {
+					j++;
+					up = true;
+				}
+				else if (j == 0) {
+					i++;
+					up = true;
+				}
+				else {
+					i++;
+					j--;
+				}
+			}
+		}
+		return res;
+	}
+};
+/*
+
 501. Find Mode in Binary Search Tree (Easy)
 
 Given a binary search tree (BST) with duplicates, find all the mode(s) (the most frequently occurred element) in the given BST.
@@ -14473,6 +15142,38 @@ private:
 };
 /*
 
+504. Base 7 (Easy)
+
+Given an integer, return its base 7 string representation.
+
+Example 1:
+Input: 100
+Output: "202"
+Example 2:
+Input: -7
+Output: "-10"
+Note: The input will be in range of [-1e7, 1e7].
+
+*/
+class Solution {
+public:
+	string convertToBase7(int num) {
+		if (num == 0) {
+			return "0";
+		}
+		string res = "";
+		bool sign = num < 0;
+		num = abs(num);
+		while (num != 0) {
+			res += num % 7 + '0';
+			num /= 7;
+		}
+		reverse(res.begin(), res.end());
+		return sign ? "-" + res : res;
+	}
+};
+/*
+
 506. Relative Ranks (Easy)
 
 Given scores of N athletes, find their relative ranks and the people with the top three highest scores, who will be awarded medals: "Gold Medal", "Silver Medal" and "Bronze Medal".
@@ -14517,5 +15218,132 @@ public:
 			}
 		}
 		return res;
+	}
+};
+/*
+
+515. Find Largest Value in Each Tree Row (Medium)
+
+You need to find the largest value in each row of a binary tree.
+
+Example:
+Input:
+
+		  1
+		 / \
+		3   2
+	   / \   \
+	  5   3   9
+
+Output: [1, 3, 9]
+
+*/
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+class Solution {
+public:
+	vector<int> largestValues(TreeNode* root) {
+		if (root == NULL) {
+			return{};
+		}
+		vector<int> res;
+		queue<TreeNode*> q;
+		q.push(root);
+		while (!q.empty()) {
+			int _size = q.size();
+			int temp;
+			for (int i = 0; i < _size; i++) {
+				temp = i == 0 ? q.front()->val : max(temp, q.front()->val);
+				if (q.front()->left != NULL) {
+					q.push(q.front()->left);
+				}
+				if (q.front()->right != NULL) {
+					q.push(q.front()->right);
+				}
+				q.pop();
+			}
+			res.push_back(temp);
+		}
+		return res;
+	}
+};
+/*
+
+516. Longest Palindromic Subsequence (Medium)
+
+Given a string s, find the longest palindromic subsequence's length in s. You may assume that the maximum length of s is 1000.
+
+Example 1:
+Input:
+
+"bbbab"
+Output:
+4
+One possible longest palindromic subsequence is "bbbb".
+Example 2:
+Input:
+
+"cbbd"
+Output:
+2
+One possible longest palindromic subsequence is "bb".
+
+*/
+class Solution {
+public:
+	int longestPalindromeSubseq(string s) {
+		vector<vector<int>> t(s.size(), vector<int>(s.size(), 0));
+		for (int i = s.size() - 1; i >= 0; i--) {
+			t[i][i] = 1;
+			for (int j = i + 1; j < s.size(); j++) {
+				if (s[i] == s[j]) {
+					t[i][j] = t[i + 1][j - 1] + 2;
+				}
+				else {
+					t[i][j] = max(t[i + 1][j], t[i][j - 1]);
+				}
+			}
+		}
+		return t[0].back();
+	}
+};
+/*
+
+520. Detect Capital (Easy)
+
+Given a word, you need to judge whether the usage of capitals in it is right or not.
+
+We define the usage of capitals in a word to be right when one of the following cases holds:
+
+All letters in this word are capitals, like "USA".
+All letters in this word are not capitals, like "leetcode".
+Only the first letter in this word is capital if it has more than one letter, like "Google".
+Otherwise, we define that this word doesn't use capitals in a right way.
+Example 1:
+Input: "USA"
+Output: True
+Example 2:
+Input: "FlaG"
+Output: False
+Note: The input will be a non-empty word consisting of uppercase and lowercase latin letters.
+
+*/
+class Solution {
+public:
+	bool detectCapitalUse(string word) {
+		int num = 0;
+		for (char cha : word) {
+			if (isupper(cha)) {
+				num++;
+			}
+		}
+		return num == 0 || num == word.size() || num == 1 && isupper(word[0]);
 	}
 };

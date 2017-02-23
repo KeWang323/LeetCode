@@ -887,6 +887,58 @@ private:
 };
 /*
 
+140. Word Break II (Hard)
+
+Given a non-empty string s and a dictionary wordDict containing a list of non-empty words, add spaces in s to construct a sentence where each word is a valid dictionary word. You may assume the dictionary does not contain duplicate words.
+
+Return all such possible sentences.
+
+For example, given
+s = "catsanddog",
+dict = ["cat", "cats", "and", "sand", "dog"].
+
+A solution is ["cats and dog", "cat sand dog"].
+
+*/
+class Solution {
+public:
+	vector<string> wordBreak(string s, vector<string>& wordDict) {
+		unordered_set<string> set;
+		for (string str : wordDict) {
+			set.insert(str);
+		}
+		return wordBreak(s, set);
+	}
+private:
+	unordered_map<string, vector<string>> mapping;
+	vector<string> wordBreak(string s, unordered_set<string>& set) {
+		if (mapping.find(s) != mapping.end()) {
+			return mapping[s];
+		}
+		vector<string> result;
+		if (set.find(s) != set.end()) {
+			result.push_back(s);
+		}
+		for (int i = 1; i < s.size(); i++) {
+			string word = s.substr(i);
+			if (set.find(word) != set.end()) {
+				string rem = s.substr(0, i);
+				vector<string> prev = combine(wordBreak(rem, set), word);
+				result.insert(result.end(), prev.begin(), prev.end());
+			}
+		}
+		mapping[s] = result;
+		return result;
+	}
+	vector<string> combine(vector<string> prev, string word) {
+		for (int i = 0; i < prev.size(); i++) {
+			prev[i] += " " + word;
+		}
+		return prev;
+	}
+};
+/*
+
 216. Combination Sum III (Medium)
 
 Find all possible combinations of k numbers that add up to a number n, given that only numbers from 1 to 9 can be used and each combination should be a unique set of numbers.
@@ -931,7 +983,7 @@ private:
 };
 /*
 
-267. Palindrome Permutation I (Medium)
+267. Palindrome Permutation II (Medium)
 
 Given a string s, return all the palindromic permutations (without duplicates) of it. Return an empty list if no palindromic permutation could be form.
 
@@ -950,51 +1002,72 @@ To generate all distinct permutations of a (half of) string, use a similar appro
 class Solution {
 public:
 	vector<string> generatePalindromes(string s) {
-		unordered_map<char, int> mapping;
+		int t[256] = { 0 };
 		for (char cha : s) {
-			mapping[cha]++;
+			t[cha]++;
 		}
-		string str;
-		string c = "";
+		string str, c;
 		bool odd = false;
-		for (auto i = mapping.begin(); i != mapping.end(); i++) {
-			if (i->second % 2) {
-				if (odd) {
+		for (int i = 0; i < 256; i++) {
+			if (t[i] & 1) {
+				if (odd == true) {
 					return{};
 				}
-				c.push_back(i->first);
+				c = (char)i;
 				odd = true;
 			}
-			int temp = i->second / 2;
-			while (temp > 0) {
-				str += i->first;
-				temp--;
-			}
+			str += string(t[i] / 2, (char)i);
 		}
 		vector<string> res;
-		helper(res, str, 0);
-		for (int i = 0; i < res.size(); i++) {
-			string temp = res[i];
-			reverse(temp.begin(), temp.end());
-			res[i] += c + temp;
-		}
+		helper(res, str, 0, c);
 		return res;
 	}
 private:
-	void helper(vector<string>& res, string& str, int index) {
+	void helper(vector<string>& res, string& str, int index, const string& c) {
 		if (index == str.size()) {
-			res.push_back(str);
+			string temp = str;
+			reverse(temp.begin(), temp.end());
+			res.push_back(str + c + temp);
 			return;
 		}
-		set<char> s;
+		unordered_set<char> s;
 		for (int i = index; i < str.size(); i++) {
-			if (i == index || s.find(str[i]) == s.end()) {
+			if (s.find(str[i]) == s.end()) {
 				s.insert(str[i]);
 				swap(str[i], str[index]);
-				helper(res, str, index + 1);
+				helper(res, str, index + 1, c);
 				swap(str[i], str[index]);
 			}
 		}
+	}
+};
+/*
+
+294. Flip Game II (Medium)
+
+You are playing the following Flip Game with your friend: Given a string that contains only these two characters: + and -, you and your friend take turns to flip two consecutive "++" into "--". The game ends when a person can no longer make a move and therefore the other person will be the winner.
+
+Write a function to determine if the starting player can guarantee a win.
+
+For example, given s = "++++", return true. The starting player can guarantee a win by flipping the middle "++" to become "+--+".
+
+Follow up:
+Derive your algorithm's runtime complexity.
+
+*/
+class Solution {
+public:
+	bool canWin(string s) {
+		for (int i = 0; i < (int)s.size() - 1; i++) {
+			if (s[i] == '+' && s[i + 1] == '+') {
+				s[i] = s[i + 1] = '-';
+				if (canWin(s) == false) {
+					return true;
+				}
+				s[i] = s[i + 1] = '+';
+			}
+		}
+		return false;
 	}
 };
 /*

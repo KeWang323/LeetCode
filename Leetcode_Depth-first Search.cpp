@@ -900,19 +900,19 @@ class Solution {
 public:
 	vector<int> rightSideView(TreeNode *root) {
 		vector<int> res;
-		recursion(root, 1, res);
+		rightSideView(root, 1, res);
 		return res;
 	}
 private:
-	void recursion(TreeNode *root, int level, vector<int> &res) {
+	void rightSideView(TreeNode *root, int level, vector<int> &res) {
 		if (root == NULL) {
 			return;
 		}
 		if (res.size() < level) {
 			res.push_back(root->val);
 		}
-		recursion(root->right, level + 1, res);
-		recursion(root->left, level + 1, res);
+		rightSideView(root->right, level + 1, res);
+		rightSideView(root->left, level + 1, res);
 	}
 };
 /*
@@ -1185,5 +1185,106 @@ private:
 		}
 		res[height - 1].push_back(root->val);
 		return height;
+	}
+};
+/*
+
+394. Decode String (Medium)
+
+Given an encoded string, return it's decoded string.
+
+The encoding rule is: k[encoded_string], where the encoded_string inside the square brackets is being repeated exactly k times. Note that k is guaranteed to be a positive integer.
+
+You may assume that the input string is always valid; No extra white spaces, square brackets are well-formed, etc.
+
+Furthermore, you may assume that the original data does not contain any digits and that digits are only for those repeat numbers, k. For example, there won't be input like 3a or 2[4].
+
+Examples:
+
+s = "3[a]2[bc]", return "aaabcbc".
+s = "3[a2[c]]", return "accaccacc".
+s = "2[abc]3[cd]ef", return "abcabccdcdcdef".
+
+*/
+class Solution {
+public:
+	string decodeString(string s) {
+		string res;
+		int i = 0;
+		while (i < s.size()) {
+			if (isalpha(s[i])) {
+				res += s[i++];
+			}
+			else {
+				int num = 0;
+				while (isdigit(s[i])) {
+					num = num * 10 + s[i++] - '0';
+				}
+				int start = ++i;
+				for (int l = 1, r = 0; l != r; i++) {
+					l += s[i] == '[';
+					r += s[i] == ']';
+				}
+				string temp = decodeString(s.substr(start, i - start - 1));
+				for (int j = 0; j < num; j++) {
+					res += temp;
+				}
+			}
+		}
+		return res;
+	}
+};
+/*
+
+515. Find Largest Value in Each Tree Row (Medium)
+
+You need to find the largest value in each row of a binary tree.
+
+Example:
+Input:
+
+		  1
+		 / \
+		3   2
+	   / \   \
+	  5   3   9
+
+Output: [1, 3, 9]
+
+*/
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+class Solution {
+public:
+	vector<int> largestValues(TreeNode* root) {
+		if (root == NULL) {
+			return{};
+		}
+		vector<int> res;
+		queue<TreeNode*> q;
+		q.push(root);
+		while (!q.empty()) {
+			int _size = q.size();
+			int temp;
+			for (int i = 0; i < _size; i++) {
+				temp = i == 0 ? q.front()->val : max(temp, q.front()->val);
+				if (q.front()->left != NULL) {
+					q.push(q.front()->left);
+				}
+				if (q.front()->right != NULL) {
+					q.push(q.front()->right);
+				}
+				q.pop();
+			}
+			res.push_back(temp);
+		}
+		return res;
 	}
 };

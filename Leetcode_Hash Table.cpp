@@ -1007,6 +1007,63 @@ public:
 };
 /*
 
+288. Unique Word Abbreviation (Medium)
+
+An abbreviation of a word follows the form <first letter><number><last letter>. Below are some examples of word abbreviations:
+
+a) it                      --> it    (no abbreviation)
+
+	 1
+b) d|o|g                   --> d1g
+
+			  1    1  1
+	 1---5----0----5--8
+c) i|nternationalizatio|n  --> i18n
+
+			  1
+	 1---5----0
+d) l|ocalizatio|n          --> l10n
+Assume you have a dictionary and given a word, find whether its abbreviation is unique in the dictionary. A word's abbreviation is unique if no other word from the dictionary has the same abbreviation.
+
+Example:
+Given dictionary = [ "deer", "door", "cake", "card" ]
+
+isUnique("dear") ->
+false
+
+isUnique("cart") ->
+true
+
+isUnique("cane") ->
+false
+
+isUnique("make") ->
+true
+
+*/
+class ValidWordAbbr {
+public:
+	ValidWordAbbr(vector<string> dictionary) {
+		for (string& str : dictionary) {
+			string abbr = str[0] + to_string(str.size()) + str.back();
+			mapping[abbr].insert(str);
+		}
+	}
+
+	bool isUnique(string word) {
+		string abbr = word[0] + to_string(word.size()) + word.back();
+		return mapping[abbr].count(word) == mapping[abbr].size();
+	}
+private:
+	unordered_map<string, unordered_set<string>> mapping;
+};
+/**
+* Your ValidWordAbbr object will be instantiated and called as such:
+* ValidWordAbbr obj = new ValidWordAbbr(dictionary);
+* bool param_1 = obj.isUnique(word);
+*/
+/*
+
 290. Word Pattern (Easy)
 
 Given a pattern and a string str, find if str follows the same pattern.
@@ -1168,6 +1225,38 @@ public:
 			}
 			if (mapping.find(sum) == mapping.end()) {
 				mapping[sum] = i;
+			}
+		}
+		return len;
+	}
+};
+/*
+
+340. Longest Substring with At Most K Distinct Characters (Hard)
+
+Given a string, find the length of the longest substring T that contains at most k distinct characters.
+
+For example, Given s = “eceba” and k = 2,
+
+T is "ece" which its length is 3.
+
+*/
+class Solution {
+public:
+	int lengthOfLongestSubstringKDistinct(string s, int k) {
+		int  len = 0, i = 0, j = 0, num = 0;
+		vector<int> t(256, 0);
+		while (j < s.size()) {
+			if (t[s[j++]]++ == 0) {
+				num++;
+			}
+			while (num > k) {
+				if (--t[s[i++]] == 0) {
+					num--;
+				}
+			}
+			if (num <= k && j - i > len) {
+				len = j - i;
 			}
 		}
 		return len;
