@@ -6903,6 +6903,50 @@ public:
 };
 /*
 
+170. Two Sum III - Data structure design (Easy)
+
+Design and implement a TwoSum class. It should support the following operations: add and find.
+
+add - Add the number to an internal data structure.
+find - Find if there exists any pair of numbers which sum is equal to the value.
+
+For example,
+add(1); add(3); add(5);
+find(4) -> true
+find(7) -> false
+
+*/
+class TwoSum {
+public:
+	/** Initialize your data structure here. */
+	unordered_map<int, int> mapping;
+	TwoSum() {
+		mapping.clear();
+	}
+
+	/** Add the number to an internal data structure.. */
+	void add(int number) {
+		mapping[number]++;
+	}
+
+	/** Find if there exists any pair of numbers which sum is equal to the value. */
+	bool find(int value) {
+		for (auto i = mapping.begin(); i != mapping.end(); i++) {
+			if (mapping.find(value - i->first) != mapping.end() && (i->first != value - i->first || mapping[i->first] > 1)) {
+				return true;
+			}
+		}
+		return false;
+	}
+};
+/**
+* Your TwoSum object will be instantiated and called as such:
+* TwoSum obj = new TwoSum();
+* obj.add(number);
+* bool param_2 = obj.find(value);
+*/
+/*
+
 171. Excel Sheet Column Number (Easy)
 
 Related to question Excel Sheet Column Title
@@ -7275,12 +7319,13 @@ public:
 		if (nums.empty()) {
 			return 0;
 		}
-		vector<int> t(nums.size(), 0);
-		t[0] = nums[0];
+		int pre = 0, res = nums[0];
 		for (int i = 1; i < nums.size(); i++) {
-			t[i] = max(t[i - 1], nums[i] + t[i - 2]);
+			int temp = res;
+			res = max(res, nums[i] + pre);
+			pre = temp;
 		}
-		return t.back();
+		return res;
 	}
 };
 /*
@@ -8593,6 +8638,58 @@ public:
 };
 /*
 
+239. Sliding Window Maximum (Hard)
+
+Given an array nums, there is a sliding window of size k which is moving from the very left of the array to the very right. You can only see the k numbers in the window. Each time the sliding window moves right by one position.
+
+For example,
+Given nums = [1,3,-1,-3,5,3,6,7], and k = 3.
+
+Window position                Max
+---------------               -----
+[1  3  -1] -3  5  3  6  7       3
+ 1 [3  -1  -3] 5  3  6  7       3
+ 1  3 [-1  -3  5] 3  6  7       5
+ 1  3  -1 [-3  5  3] 6  7       5
+ 1  3  -1  -3 [5  3  6] 7       6
+ 1  3  -1  -3  5 [3  6  7]      7
+Therefore, return the max sliding window as [3,3,5,5,6,7].
+
+Note:
+You may assume k is always valid, ie: 1 ≤ k ≤ input array's size for non-empty array.
+
+Follow up:
+Could you solve it in linear time?
+
+Hint:
+
+How about using a data structure such as deque (double-ended queue)?
+The queue size need not be the same as the window’s size.
+Remove redundant elements and the queue should store only elements that need to be considered.
+
+*/
+class Solution {
+public:
+	vector<int> maxSlidingWindow(vector<int>& nums, int k) {
+		deque<int> dq;
+		vector<int> res;
+		for (int i = 0; i < nums.size(); i++) {
+			while (!dq.empty() && nums[dq.back()] <= nums[i]) {
+				dq.pop_back();
+			}
+			while (!dq.empty() && i - dq.front() >= k) {
+				dq.pop_front();
+			}
+			dq.push_back(i);
+			if (i >= k - 1) {
+				res.push_back(nums[dq.front()]);
+			}
+		}
+		return res;
+	}
+};
+/*
+
 240. Search a 2D Matrix II (Medium)
 
 Write an efficient algorithm that searches for a value in an m x n matrix. This matrix has the following properties:
@@ -8777,6 +8874,48 @@ private:
 		return false;
 	}
 };
+/*
+
+244. Shortest Word Distance II (Medium)
+
+his is a follow up of Shortest Word Distance. The only difference is now you are given the list of words and your method will be called repeatedly many times with different parameters. How would you optimize it?
+
+Design a class which receives a list of words in the constructor, and implements a method that takes two words word1 and word2 and return the shortest distance between these two words in the list.
+
+For example,
+Assume that words = ["practice", "makes", "perfect", "coding", "makes"].
+
+Given word1 = “coding”, word2 = “practice”, return 3.
+Given word1 = "makes", word2 = "coding", return 1.
+
+Note:
+You may assume that word1 does not equal to word2, and word1 and word2 are both in the list.
+
+*/
+class WordDistance {
+public:
+	WordDistance(vector<string> words) {
+		for (int i = 0; i < words.size(); i++) {
+			mapping[words[i]].push_back(i);
+		}
+	}
+
+	int shortest(string word1, string word2) {
+		int i = 0, j = 0, res = INT_MAX;
+		while (i < mapping[word1].size() && j < mapping[word2].size()) {
+			res = min(res, abs(mapping[word1][i] - mapping[word2][j]));
+			mapping[word1][i] < mapping[word2][j] ? i++ : j++;
+		}
+		return res;
+	}
+private:
+	unordered_map<string, vector<int>> mapping;
+};
+/**
+* Your WordDistance object will be instantiated and called as such:
+* WordDistance obj = new WordDistance(words);
+* int param_1 = obj.shortest(word1,word2);
+*/
 /*
 
 245. Shortest Word Distance III (Medium)
@@ -13155,6 +13294,70 @@ public:
 };
 /*
 
+399. Evaluate Division (Medium)
+
+Equations are given in the format A / B = k, where A and B are variables represented as strings, and k is a real number (floating point number). Given some queries, return the answers. If the answer does not exist, return -1.0.
+
+Example:
+Given a / b = 2.0, b / c = 3.0.
+queries are: a / c = ?, b / a = ?, a / e = ?, a / a = ?, x / x = ? .
+return [6.0, 0.5, -1.0, 1.0, -1.0 ].
+
+The input is: vector<pair<string, string>> equations, vector<double>& values, vector<pair<string, string>> queries , where equations.size() == values.size(), and the values are positive. This represents the equations. Return vector<double>.
+
+According to the example above:
+
+equations = [ ["a", "b"], ["b", "c"] ],
+values = [2.0, 3.0],
+queries = [ ["a", "c"], ["b", "a"], ["a", "e"], ["a", "a"], ["x", "x"] ].
+The input is always valid. You may assume that evaluating the queries will result in no division by zero and there is no contradiction.
+
+*/
+class Solution {
+public:
+	vector<double> calcEquation(vector<pair<string, string>> equations, vector<double>& values, vector<pair<string, string>> queries) {
+		unordered_map<string, unordered_map<string, double>> pairs;
+		for (int i = 0; i < equations.size(); i++) {
+			pairs[equations[i].first][equations[i].second] = values[i];
+			pairs[equations[i].second][equations[i].first] = 1 / values[i];
+		}
+		vector<double> res(queries.size());
+		for (int i = 0; i < queries.size(); i++) {
+			if (pairs.count(queries[i].first) && pairs.count(queries[i].second)) {
+				if (queries[i].first == queries[i].second) {
+					res[i] = 1.0;
+				}
+				else {
+					unordered_set<string> visited;
+					res[i] = dfs(queries[i].first, queries[i].second, pairs, visited, 1.0);
+				}
+			}
+			else {
+				res[i] = -1.0;
+			}
+		}
+		return res;
+	}
+private:
+	double dfs(const string& start, const string& end, unordered_map<string, unordered_map<string, double>> pairs, unordered_set<string>& visited, double value) {
+		if (pairs[start].find(end) != pairs[start].end()) {
+			return value * pairs[start][end];
+		}
+		for (pair<string, double> p : pairs[start]) {
+			string str = p.first;
+			if (visited.find(str) == visited.end()) {
+				visited.insert(str);
+				double cur = dfs(str, end, pairs, visited, value * p.second);
+				if (cur != -1.0) {
+					return cur;
+				}
+			}
+		}
+		return -1.0;
+	}
+};
+/*
+
 400. Nth Digit (Easy)
 
 Find the nth digit of the infinite integer sequence 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, ...
@@ -15085,6 +15288,59 @@ public:
 };
 /*
 
+500. Keyboard Row (Easy)
+
+Given a List of words, return the words that can be typed using letters of alphabet on only one row's of American keyboard like the image below.
+
+American keyboard
+
+Example 1:
+Input: ["Hello", "Alaska", "Dad", "Peace"]
+Output: ["Alaska", "Dad"]
+Note:
+You may use one character in the keyboard more than once.
+You may assume the input string will only contain letters of alphabet.
+
+*/
+class Solution {
+public:
+	vector<string> findWords(vector<string>& words) {
+		vector<string> keyboard = { "qwertyuiop", "asdfghjkl", "zxcvbnm" };
+		vector<string> res;
+		for (string word : words) {
+			int num;
+			for (int i = 0; i < 3; i++) {
+				if (keyboard[i].find(tolower(word[0])) != string::npos) {
+					num = i;
+					break;
+				}
+			}
+			for (int i = 1; i <= word.size(); i++) {
+				if (i == word.size()) {
+					res.push_back(word);
+				}
+				else if (num == 0) {
+					if (keyboard[1].find(tolower(word[i])) != string::npos || keyboard[2].find(tolower(word[i])) != string::npos) {
+						break;
+					}
+				}
+				else if (num == 1) {
+					if (keyboard[0].find(tolower(word[i])) != string::npos || keyboard[2].find(tolower(word[i])) != string::npos) {
+						break;
+					}
+				}
+				else {
+					if (keyboard[0].find(tolower(word[i])) != string::npos || keyboard[1].find(tolower(word[i])) != string::npos) {
+						break;
+					}
+				}
+			}
+		}
+		return res;
+	}
+};
+/*
+
 501. Find Mode in Binary Search Tree (Easy)
 
 Given a binary search tree (BST) with duplicates, find all the mode(s) (the most frequently occurred element) in the given BST.
@@ -15218,6 +15474,124 @@ public:
 			}
 		}
 		return res;
+	}
+};
+/*
+
+508. Most Frequent Subtree Sum (Medium)
+
+Given the root of a tree, you are asked to find the most frequent subtree sum. The subtree sum of a node is defined as the sum of all the node values formed by the subtree rooted at that node (including the node itself). So what is the most frequent subtree sum value? If there is a tie, return all the values with the highest frequency in any order.
+
+Examples 1
+Input:
+
+  5
+ /  \
+2   -3
+return [2, -3, 4], since all the values happen only once, return all of them in any order.
+Examples 2
+Input:
+
+  5
+ /  \
+2   -5
+return [2], since 2 happens twice, however -5 only occur once.
+Note: You may assume the sum of values in any subtree is in the range of 32-bit signed integer.
+
+*/
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+class Solution {
+public:
+	vector<int> findFrequentTreeSum(TreeNode* root) {
+		unordered_map<int, int> mapping;
+		int maxCount = 0;
+		findFrequentTreeSum(root, mapping, maxCount);
+		vector<int> res;
+		for (const auto& i : mapping) {
+			if (i.second == maxCount) {
+				res.push_back(i.first);
+			}
+		}
+		return res;
+	}
+private:
+	int findFrequentTreeSum(TreeNode *root, unordered_map<int, int> &mapping, int& maxCount) {
+		if (root == NULL) {
+			return 0;
+		}
+		int sum = root->val;
+		sum += findFrequentTreeSum(root->left, mapping, maxCount) + findFrequentTreeSum(root->right, mapping, maxCount);
+		mapping[sum]++;
+		maxCount = max(maxCount, mapping[sum]);
+		return sum;
+	}
+};
+/*
+
+513. Find Bottom Left Tree Value (Medium)
+
+Given a binary tree, find the leftmost value in the last row of the tree.
+
+Example 1:
+Input:
+
+	2
+   / \
+  1   3
+
+Output:
+1
+Example 2:
+Input:
+
+		1
+	   / \
+	  2   3
+	 /   / \
+	4   5   6
+	   /
+	  7
+
+Output:
+7
+Note: You may assume the tree (i.e., the given root node) is not NULL.
+
+*/
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+class Solution {
+public:
+	int findBottomLeftValue(TreeNode* root) {
+		int res, maxlevel = 0;
+		findBottomLeftValue(root, res, 1, maxlevel);
+		return res;
+	}
+private:
+	void findBottomLeftValue(TreeNode* root, int& res, int cur, int& maxlevel) {
+		if (root == NULL) {
+			return;
+		}
+		findBottomLeftValue(root->left, res, cur + 1, maxlevel);
+		if (cur > maxlevel) {
+			res = root->val;
+			maxlevel = cur;
+		}
+		findBottomLeftValue(root->right, res, cur + 1, maxlevel);
 	}
 };
 /*

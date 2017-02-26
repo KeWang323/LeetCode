@@ -669,6 +669,50 @@ public:
 };
 /*
 
+170. Two Sum III - Data structure design (Easy)
+
+Design and implement a TwoSum class. It should support the following operations: add and find.
+
+add - Add the number to an internal data structure.
+find - Find if there exists any pair of numbers which sum is equal to the value.
+
+For example,
+add(1); add(3); add(5);
+find(4) -> true
+find(7) -> false
+
+*/
+class TwoSum {
+public:
+	/** Initialize your data structure here. */
+	unordered_map<int, int> mapping;
+	TwoSum() {
+		mapping.clear();
+	}
+
+	/** Add the number to an internal data structure.. */
+	void add(int number) {
+		mapping[number]++;
+	}
+
+	/** Find if there exists any pair of numbers which sum is equal to the value. */
+	bool find(int value) {
+		for (auto i = mapping.begin(); i != mapping.end(); i++) {
+			if (mapping.find(value - i->first) != mapping.end() && (i->first != value - i->first || mapping[i->first] > 1)) {
+				return true;
+			}
+		}
+		return false;
+	}
+};
+/**
+* Your TwoSum object will be instantiated and called as such:
+* TwoSum obj = new TwoSum();
+* obj.add(number);
+* bool param_2 = obj.find(value);
+*/
+/*
+
 187. Repeated DNA Sequences (Medium)
 
 All DNA is composed of a series of nucleotides abbreviated as A, C, G, and T, for example: "ACGAATTCCG". When studying DNA, it is sometimes useful to identify repeated sequences within the DNA.
@@ -882,6 +926,48 @@ public:
 		return true;
 	}
 };
+/*
+
+244. Shortest Word Distance II (Medium)
+
+his is a follow up of Shortest Word Distance. The only difference is now you are given the list of words and your method will be called repeatedly many times with different parameters. How would you optimize it?
+
+Design a class which receives a list of words in the constructor, and implements a method that takes two words word1 and word2 and return the shortest distance between these two words in the list.
+
+For example,
+Assume that words = ["practice", "makes", "perfect", "coding", "makes"].
+
+Given word1 = “coding”, word2 = “practice”, return 3.
+Given word1 = "makes", word2 = "coding", return 1.
+
+Note:
+You may assume that word1 does not equal to word2, and word1 and word2 are both in the list.
+
+*/
+class WordDistance {
+public:
+	WordDistance(vector<string> words) {
+		for (int i = 0; i < words.size(); i++) {
+			mapping[words[i]].push_back(i);
+		}
+	}
+
+	int shortest(string word1, string word2) {
+		int i = 0, j = 0, res = INT_MAX;
+		while (i < mapping[word1].size() && j < mapping[word2].size()) {
+			res = min(res, abs(mapping[word1][i] - mapping[word2][j]));
+			mapping[word1][i] < mapping[word2][j] ? i++ : j++;
+		}
+		return res;
+	}
+private:
+	unordered_map<string, vector<int>> mapping;
+};
+/**
+* Your WordDistance object will be instantiated and called as such:
+* WordDistance obj = new WordDistance(words);
+* int param_1 = obj.shortest(word1,word2);
+*/
 /*
 
 246. Strobogrammatic Number (Easy)
@@ -1817,3 +1903,114 @@ private:
 * Logger obj = new Logger();
 * bool param_1 = obj.shouldPrintMessage(timestamp,message);
 */
+/*
+
+500. Keyboard Row (Easy)
+
+Given a List of words, return the words that can be typed using letters of alphabet on only one row's of American keyboard like the image below.
+
+American keyboard
+
+Example 1:
+Input: ["Hello", "Alaska", "Dad", "Peace"]
+Output: ["Alaska", "Dad"]
+Note:
+You may use one character in the keyboard more than once.
+You may assume the input string will only contain letters of alphabet.
+
+*/
+class Solution {
+public:
+	vector<string> findWords(vector<string>& words) {
+		vector<string> keyboard = { "qwertyuiop", "asdfghjkl", "zxcvbnm" };
+		vector<string> res;
+		for (string word : words) {
+			int num;
+			for (int i = 0; i < 3; i++) {
+				if (keyboard[i].find(tolower(word[0])) != string::npos) {
+					num = i;
+					break;
+				}
+			}
+			for (int i = 1; i <= word.size(); i++) {
+				if (i == word.size()) {
+					res.push_back(word);
+				}
+				else if (num == 0) {
+					if (keyboard[1].find(tolower(word[i])) != string::npos || keyboard[2].find(tolower(word[i])) != string::npos) {
+						break;
+					}
+				}
+				else if (num == 1) {
+					if (keyboard[0].find(tolower(word[i])) != string::npos || keyboard[2].find(tolower(word[i])) != string::npos) {
+						break;
+					}
+				}
+				else {
+					if (keyboard[0].find(tolower(word[i])) != string::npos || keyboard[1].find(tolower(word[i])) != string::npos) {
+						break;
+					}
+				}
+			}
+		}
+		return res;
+	}
+};
+/*
+
+508. Most Frequent Subtree Sum (Medium)
+
+Given the root of a tree, you are asked to find the most frequent subtree sum. The subtree sum of a node is defined as the sum of all the node values formed by the subtree rooted at that node (including the node itself). So what is the most frequent subtree sum value? If there is a tie, return all the values with the highest frequency in any order.
+
+Examples 1
+Input:
+
+  5
+ /  \
+2   -3
+return [2, -3, 4], since all the values happen only once, return all of them in any order.
+Examples 2
+Input:
+
+  5
+ /  \
+2   -5
+return [2], since 2 happens twice, however -5 only occur once.
+Note: You may assume the sum of values in any subtree is in the range of 32-bit signed integer.
+
+*/
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+class Solution {
+public:
+	vector<int> findFrequentTreeSum(TreeNode* root) {
+		unordered_map<int, int> mapping;
+		int maxCount = 0;
+		findFrequentTreeSum(root, mapping, maxCount);
+		vector<int> res;
+		for (const auto& i : mapping) {
+			if (i.second == maxCount) {
+				res.push_back(i.first);
+			}
+		}
+		return res;
+	}
+private:
+	int findFrequentTreeSum(TreeNode *root, unordered_map<int, int> &mapping, int& maxCount) {
+		if (root == NULL) {
+			return 0;
+		}
+		int sum = root->val;
+		sum += findFrequentTreeSum(root->left, mapping, maxCount) + findFrequentTreeSum(root->right, mapping, maxCount);
+		mapping[sum]++;
+		maxCount = max(maxCount, mapping[sum]);
+		return sum;
+	}
+};

@@ -2533,6 +2533,124 @@ private:
 };
 /*
 
+508. Most Frequent Subtree Sum (Medium)
+
+Given the root of a tree, you are asked to find the most frequent subtree sum. The subtree sum of a node is defined as the sum of all the node values formed by the subtree rooted at that node (including the node itself). So what is the most frequent subtree sum value? If there is a tie, return all the values with the highest frequency in any order.
+
+Examples 1
+Input:
+
+  5
+ /  \
+2   -3
+return [2, -3, 4], since all the values happen only once, return all of them in any order.
+Examples 2
+Input:
+
+  5
+ /  \
+2   -5
+return [2], since 2 happens twice, however -5 only occur once.
+Note: You may assume the sum of values in any subtree is in the range of 32-bit signed integer.
+
+*/
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+class Solution {
+public:
+	vector<int> findFrequentTreeSum(TreeNode* root) {
+		unordered_map<int, int> mapping;
+		int maxCount = 0;
+		findFrequentTreeSum(root, mapping, maxCount);
+		vector<int> res;
+		for (const auto& i : mapping) {
+			if (i.second == maxCount) {
+				res.push_back(i.first);
+			}
+		}
+		return res;
+	}
+private:
+	int findFrequentTreeSum(TreeNode *root, unordered_map<int, int> &mapping, int& maxCount) {
+		if (root == NULL) {
+			return 0;
+		}
+		int sum = root->val;
+		sum += findFrequentTreeSum(root->left, mapping, maxCount) + findFrequentTreeSum(root->right, mapping, maxCount);
+		mapping[sum]++;
+		maxCount = max(maxCount, mapping[sum]);
+		return sum;
+	}
+};
+/*
+
+513. Find Bottom Left Tree Value (Medium)
+
+Given a binary tree, find the leftmost value in the last row of the tree.
+
+Example 1:
+Input:
+
+	2
+   / \
+  1   3
+
+Output:
+1
+Example 2:
+Input:
+
+		1
+	   / \
+	  2   3
+	 /   / \
+	4   5   6
+	   /
+	  7
+
+Output:
+7
+Note: You may assume the tree (i.e., the given root node) is not NULL.
+
+*/
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+class Solution {
+public:
+	int findBottomLeftValue(TreeNode* root) {
+		int res, maxlevel = 0;
+		findBottomLeftValue(root, res, 1, maxlevel);
+		return res;
+	}
+private:
+	void findBottomLeftValue(TreeNode* root, int& res, int cur, int& maxlevel) {
+		if (root == NULL) {
+			return;
+		}
+		findBottomLeftValue(root->left, res, cur + 1, maxlevel);
+		if (cur > maxlevel) {
+			res = root->val;
+			maxlevel = cur;
+		}
+		findBottomLeftValue(root->right, res, cur + 1, maxlevel);
+	}
+};
+/*
+
 515. Find Largest Value in Each Tree Row (Medium)
 
 You need to find the largest value in each row of a binary tree.
