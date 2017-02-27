@@ -366,6 +366,41 @@ public:
 };
 /*
 
+406. Queue Reconstruction by Height (Medium)
+
+Suppose you have a random list of people standing in a queue. Each person is described by a pair of integers (h, k), where h is the height of the person and k is the number of people in front of this person who have a height greater than or equal to h. Write an algorithm to reconstruct the queue.
+
+Note:
+The number of people is less than 1,100.
+
+Example
+
+Input:
+[[7,0], [4,4], [7,1], [5,0], [6,1], [5,2]]
+
+Output:
+[[5,0], [7,0], [5,2], [6,1], [4,4], [7,1]]
+
+*/
+class Comp {
+public:
+	bool operator()(pair<int, int> p1, pair<int, int> p2) {
+		return p1.first > p2.first || p1.first == p2.first && p1.second < p2.second;
+	}
+}comp;
+class Solution {
+public:
+	vector<pair<int, int>> reconstructQueue(vector<pair<int, int>>& people) {
+		sort(people.begin(), people.end(), comp);
+		vector<pair<int, int>> res;
+		for (pair<int, int> p : people) {
+			res.insert(res.begin() + p.second, p);
+		}
+		return res;
+	}
+};
+/*
+
 455. Assign Cookies (Easy)
 
 Assume you are an awesome parent and want to give your children some cookies. But, you should give each child at most one cookie. Each child i has a greed factor gi, which is the minimum size of a cookie that the child will be content with; and each cookie j has a size sj. If sj >= gi, we can assign the cookie j to the child i, and the child i will be content. Your goal is to maximize the number of your content children and output the maximum number.

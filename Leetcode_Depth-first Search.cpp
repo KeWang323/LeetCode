@@ -1028,6 +1028,97 @@ public:
 };
 /*
 
+261. Graph Valid Tree (medium)
+
+Given n nodes labeled from 0 to n - 1 and a list of undirected edges (each edge is a pair of nodes), write a function to check whether these edges make up a valid tree.
+
+For example:
+
+Given n = 5 and edges = [[0, 1], [0, 2], [0, 3], [1, 4]], return true.
+
+Given n = 5 and edges = [[0, 1], [1, 2], [2, 3], [1, 3], [1, 4]], return false.
+
+Hint:
+
+Given n = 5 and edges = [[0, 1], [1, 2], [3, 4]], what should your return? Is this case a valid tree?
+According to the definition of tree on Wikipedia: ¡°a tree is an undirected graph in which any two vertices are connected by exactly one path. In other words, any connected graph without simple cycles is a tree.¡±
+Note: you can assume that no duplicate edges will appear in edges. Since all edges are undirected, [0, 1] is the same as [1, 0] and thus will not appear together in edges.
+
+*/
+class Solution {
+public:
+	bool validTree(int n, vector<pair<int, int>>& edges) {
+		vector<int> t(n);
+		for (int i = 0; i < n; i++) {
+			t[i] = i;
+		}
+		for (pair<int, int> p : edges) {
+			int node1 = find(t, p.first), node2 = find(t, p.second);
+			if (node1 == node2) {
+				return false;
+			}
+			t[node1] = node2;
+		}
+		return edges.size() == n - 1;
+	}
+private:
+	int find(vector<int> t, int id) {
+		while (t[id] != id) {
+			t[id] = t[t[id]];
+			id = t[id];
+		}
+		return id;
+	}
+};
+/*
+
+323. Number of Connected Components in an Undirected Graph (Medium)
+
+Given n nodes labeled from 0 to n - 1 and a list of undirected edges (each edge is a pair of nodes), write a function to find the number of connected components in an undirected graph.
+
+Example 1:
+	 0          3
+	 |          |
+	 1 --- 2    4
+Given n = 5 and edges = [[0, 1], [1, 2], [3, 4]], return 2.
+
+Example 2:
+	 0           4
+	 |           |
+	 1 --- 2 --- 3
+Given n = 5 and edges = [[0, 1], [1, 2], [2, 3], [3, 4]], return 1.
+
+Note:
+You can assume that no duplicate edges will appear in edges. Since all edges are undirected, [0, 1] is the same as [1, 0] and thus will not appear together in edges.
+
+*/
+class Solution {
+public:
+	int countComponents(int n, vector<pair<int, int>>& edges) {
+		vector<int> t(n);
+		for (int i = 0; i < n; i++) {
+			t[i] = i;
+		}
+		for (pair<int, int> p : edges) {
+			int root1 = find(t, p.first), root2 = find(t, p.second);
+			if (root1 != root2) {
+				t[root1] = root2;
+				n--;
+			}
+		}
+		return n;
+	}
+private:
+	int find(vector<int> t, int id) {
+		while (t[id] != id) {
+			t[id] = t[t[id]];
+			id = t[id];
+		}
+		return id;
+	}
+};
+/*
+
 337. House Robber III (Medium)
 
 The thief has found himself a new place for his thievery again. There is only one entrance to this area, called the "root." Besides the root, each house has one and only one parent house. After a tour, the smart thief realized that "all houses in this place forms a binary tree". It will automatically contact the police if two directly-linked houses were broken into on the same night.
@@ -1125,6 +1216,74 @@ private:
 			}
 		}
 		return res;
+	}
+};
+/*
+
+364. Nested List Weight Sum II (Medium)
+
+Given a nested list of integers, return the sum of all integers in the list weighted by their depth.
+
+Each element is either an integer, or a list -- whose elements may also be integers or other lists.
+
+Different from the previous question where weight is increasing from root to leaf, now the weight is defined from bottom up. i.e., the leaf level integers have weight 1, and the root level integers have the largest weight.
+
+Example 1:
+Given the list [[1,1],2,[1,1]], return 8. (four 1's at depth 1, one 2 at depth 2)
+
+Example 2:
+Given the list [1,[4,[6]]], return 17. (one 1 at depth 3, one 4 at depth 2, and one 6 at depth 1; 1*3 + 4*2 + 6*1 = 17)
+
+*/
+/**
+ * // This is the interface that allows for creating nested lists.
+ * // You should not implement it, or speculate about its implementation
+ * class NestedInteger {
+ *   public:
+ *     // Constructor initializes an empty nested list.
+ *     NestedInteger();
+ *
+ *     // Constructor initializes a single integer.
+ *     NestedInteger(int value);
+ *
+ *     // Return true if this NestedInteger holds a single integer, rather than a nested list.
+ *     bool isInteger() const;
+ *
+ *     // Return the single integer that this NestedInteger holds, if it holds a single integer
+ *     // The result is undefined if this NestedInteger holds a nested list
+ *     int getInteger() const;
+ *
+ *     // Set this NestedInteger to hold a single integer.
+ *     void setInteger(int value);
+ *
+ *     // Set this NestedInteger to hold a nested list and adds a nested integer to it.
+ *     void add(const NestedInteger &ni);
+ *
+ *     // Return the nested list that this NestedInteger holds, if it holds a nested list
+ *     // The result is undefined if this NestedInteger holds a single integer
+ *     const vector<NestedInteger> &getList() const;
+ * };
+ */
+class Solution {
+public:
+	int depthSumInverse(vector<NestedInteger>& nestedList) {
+		int unweighted = 0, weighted = 0;
+		while (!nestedList.empty()) {
+			vector<NestedInteger> nextLevel;
+			for (NestedInteger ni : nestedList) {
+				if (ni.isInteger()) {
+					unweighted += ni.getInteger();
+				}
+				else {
+					for (NestedInteger ni : ni.getList()) {
+						nextLevel.push_back(ni);
+					}
+				}
+			}
+			weighted += unweighted;
+			nestedList = nextLevel;
+		}
+		return weighted;
 	}
 };
 /*

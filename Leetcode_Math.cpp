@@ -995,6 +995,40 @@ public:
 };
 /*
 
+313. Super Ugly Number (Medium)
+
+Write a program to find the nth super ugly number.
+
+Super ugly numbers are positive numbers whose all prime factors are in the given prime list primes of size k. For example, [1, 2, 4, 7, 8, 13, 14, 16, 19, 26, 28, 32] is the sequence of the first 12 super ugly numbers given primes = [2, 7, 13, 19] of size 4.
+
+Note:
+(1) 1 is a super ugly number for any given primes.
+(2) The given numbers in primes are in ascending order.
+(3) 0 < k ≤ 100, 0 < n ≤ 106, 0 < primes[i] < 1000.
+(4) The nth super ugly number is guaranteed to fit in a 32-bit signed integer.
+
+*/
+class Solution {
+public:
+	int nthSuperUglyNumber(int n, vector<int>& primes) {
+		vector<int> index(primes.size(), 0);
+		vector<int> t(n, INT_MAX);
+		t[0] = 1;
+		for (int i = 1; i < n; i++) {
+			for (int j = 0; j < index.size(); j++) {
+				t[i] = min(t[i], primes[j] * t[index[j]]);
+			}
+			for (int j = 0; j < index.size(); j++) {
+				if (t[i] % primes[j] == 0) {
+					index[j]++;
+				}
+			}
+		}
+		return t.back();
+	}
+};
+/*
+
 319. Bulb Switcher (Medium)
 
 There are n bulbs that are initially off. You first turn on all the bulbs. Then, you turn off every second bulb. On the third round, you toggle every third bulb (turning on if it's off or turning off if it's on). For the ith round, you toggle every i bulb. For the nth round, you only toggle the last bulb. Find how many bulbs are on after n rounds.
@@ -1162,6 +1196,48 @@ public:
 			res += pre;
 		}
 		return res;
+	}
+};
+/*
+
+356. Line Reflection (Medium)
+
+Given n points on a 2D plane, find if there is such a line parallel to y-axis that reflect the given points.
+
+Example 1:
+Given points = [[1,1],[-1,1]], return true.
+
+Example 2:
+Given points = [[1,1],[-1,-1]], return false.
+
+Follow up:
+Could you do better than O(n2)?
+
+Hint:
+
+Find the smallest and largest x-value for all points.
+If there is a line then it should be at y = (minX + maxX) / 2.
+For each point, make sure that it has a reflected point in the opposite side.
+
+*/
+class Solution {
+public:
+	bool isReflected(vector<pair<int, int>>& points) {
+		int r = INT_MIN, l = INT_MAX;
+		unordered_set<string> s;
+		for (pair<int, int>& p : points) {
+			r = max(r, p.first);
+			l = min(l, p.first);
+			s.insert(to_string(p.first) + "a" + to_string(p.second));
+		}
+		int sum = l + r;
+		for (pair<int, int>& p : points) {
+			string str = to_string(sum - p.first) + "a" + to_string(p.second);
+			if (s.find(str) == s.end()) {
+				return false;
+			}
+		}
+		return true;
 	}
 };
 /*

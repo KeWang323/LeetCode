@@ -9358,6 +9358,50 @@ public:
 };
 /*
 
+261. Graph Valid Tree (medium)
+
+Given n nodes labeled from 0 to n - 1 and a list of undirected edges (each edge is a pair of nodes), write a function to check whether these edges make up a valid tree.
+
+For example:
+
+Given n = 5 and edges = [[0, 1], [0, 2], [0, 3], [1, 4]], return true.
+
+Given n = 5 and edges = [[0, 1], [1, 2], [2, 3], [1, 3], [1, 4]], return false.
+
+Hint:
+
+Given n = 5 and edges = [[0, 1], [1, 2], [3, 4]], what should your return? Is this case a valid tree?
+According to the definition of tree on Wikipedia: “a tree is an undirected graph in which any two vertices are connected by exactly one path. In other words, any connected graph without simple cycles is a tree.”
+Note: you can assume that no duplicate edges will appear in edges. Since all edges are undirected, [0, 1] is the same as [1, 0] and thus will not appear together in edges.
+
+*/
+class Solution {
+public:
+	bool validTree(int n, vector<pair<int, int>>& edges) {
+		vector<int> t(n);
+		for (int i = 0; i < n; i++) {
+			t[i] = i;
+		}
+		for (pair<int, int> p : edges) {
+			int node1 = find(t, p.first), node2 = find(t, p.second);
+			if (node1 == node2) {
+				return false;
+			}
+			t[node1] = node2;
+		}
+		return edges.size() == n - 1;
+	}
+private:
+	int find(vector<int> t, int id) {
+		while (t[id] != id) {
+			t[id] = t[t[id]];
+			id = t[id];
+		}
+		return id;
+	}
+};
+/*
+
 263. Ugly Number (Easy)
 
 Write a program to check whether a given number is an ugly number.
@@ -10157,6 +10201,67 @@ public:
 				swap(nums[i++], nums[j]);
 			}
 		}
+	}
+};
+/*
+
+284. Peeking Iterator (Medium)
+
+Given an Iterator class interface with methods: next() and hasNext(), design and implement a PeekingIterator that support the peek() operation -- it essentially peek() at the element that will be returned by the next call to next().
+
+Here is an example. Assume that the iterator is initialized to the beginning of the list: [1, 2, 3].
+
+Call next() gets you 1, the first element in the list.
+
+Now you call peek() and it returns 2, the next element. Calling next() after that still return 2.
+
+You call next() the final time and it returns 3, the last element. Calling hasNext() after that should return false.
+
+Hint:
+
+Think of "looking ahead". You want to cache the next element.
+Is one variable sufficient? Why or why not?
+Test your design with call order of peek() before next() vs next() before peek().
+For a clean implementation, check out Google's guava library source code.
+Follow up: How would you extend your design to be generic and work with all types, not just integer?
+
+*/
+// Below is the interface for Iterator, which is already defined for you.
+// **DO NOT** modify the interface for Iterator.
+class Iterator {
+	struct Data;
+	Data* data;
+public:
+	Iterator(const vector<int>& nums);
+	Iterator(const Iterator& iter);
+	virtual ~Iterator();
+	// Returns the next element in the iteration.
+	int next();
+	// Returns true if the iteration has more elements.
+	bool hasNext() const;
+};
+class PeekingIterator : public Iterator {
+public:
+	PeekingIterator(const vector<int>& nums) : Iterator(nums) {
+		// Initialize any member here.
+		// **DO NOT** save a copy of nums and manipulate it directly.
+		// You should only use the Iterator interface methods.
+
+	}
+
+	// Returns the next element in the iteration without advancing the iterator.
+	int peek() {
+		return Iterator(*this).next();
+	}
+
+	// hasNext() and next() should behave the same as in the Iterator interface.
+	// Override them if needed.
+	int next() {
+		return Iterator::next();
+	}
+
+	bool hasNext() const {
+		return Iterator::hasNext();
 	}
 };
 /*
@@ -10968,6 +11073,40 @@ public:
 };
 /*
 
+313. Super Ugly Number (Medium)
+
+Write a program to find the nth super ugly number.
+
+Super ugly numbers are positive numbers whose all prime factors are in the given prime list primes of size k. For example, [1, 2, 4, 7, 8, 13, 14, 16, 19, 26, 28, 32] is the sequence of the first 12 super ugly numbers given primes = [2, 7, 13, 19] of size 4.
+
+Note:
+(1) 1 is a super ugly number for any given primes.
+(2) The given numbers in primes are in ascending order.
+(3) 0 < k ≤ 100, 0 < n ≤ 106, 0 < primes[i] < 1000.
+(4) The nth super ugly number is guaranteed to fit in a 32-bit signed integer.
+
+*/
+class Solution {
+public:
+	int nthSuperUglyNumber(int n, vector<int>& primes) {
+		vector<int> index(primes.size(), 0);
+		vector<int> t(n, INT_MAX);
+		t[0] = 1;
+		for (int i = 1; i < n; i++) {
+			for (int j = 0; j < index.size(); j++) {
+				t[i] = min(t[i], primes[j] * t[index[j]]);
+			}
+			for (int j = 0; j < index.size(); j++) {
+				if (t[i] % primes[j] == 0) {
+					index[j]++;
+				}
+			}
+		}
+		return t.back();
+	}
+};
+/*
+
 316. Remove Duplicate Letters (Hard)
 
 Given a string which contains only lowercase letters, remove duplicate letters so that every letter appear once and only once. You must make sure your result is the smallest in lexicographical order among all possible results.
@@ -11165,6 +11304,53 @@ public:
 			return cand;
 		}
 		return -1;
+	}
+};
+/*
+
+323. Number of Connected Components in an Undirected Graph (Medium)
+
+Given n nodes labeled from 0 to n - 1 and a list of undirected edges (each edge is a pair of nodes), write a function to find the number of connected components in an undirected graph.
+
+Example 1:
+	 0          3
+	 |          |
+	 1 --- 2    4
+Given n = 5 and edges = [[0, 1], [1, 2], [3, 4]], return 2.
+
+Example 2:
+	 0           4
+	 |           |
+	 1 --- 2 --- 3
+Given n = 5 and edges = [[0, 1], [1, 2], [2, 3], [3, 4]], return 1.
+
+Note:
+You can assume that no duplicate edges will appear in edges. Since all edges are undirected, [0, 1] is the same as [1, 0] and thus will not appear together in edges.
+
+*/
+class Solution {
+public:
+	int countComponents(int n, vector<pair<int, int>>& edges) {
+		vector<int> t(n);
+		for (int i = 0; i < n; i++) {
+			t[i] = i;
+		}
+		for (pair<int, int> p : edges) {
+			int root1 = find(t, p.first), root2 = find(t, p.second);
+			if (root1 != root2) {
+				t[root1] = root2;
+				n--;
+			}
+		}
+		return n;
+	}
+private:
+	int find(vector<int> t, int id) {
+		while (t[id] != id) {
+			t[id] = t[t[id]];
+			id = t[id];
+		}
+		return id;
 	}
 };
 /*
@@ -12078,6 +12264,48 @@ public:
 */
 /*
 
+356. Line Reflection (Medium)
+
+Given n points on a 2D plane, find if there is such a line parallel to y-axis that reflect the given points.
+
+Example 1:
+Given points = [[1,1],[-1,1]], return true.
+
+Example 2:
+Given points = [[1,1],[-1,-1]], return false.
+
+Follow up:
+Could you do better than O(n2)?
+
+Hint:
+
+Find the smallest and largest x-value for all points.
+If there is a line then it should be at y = (minX + maxX) / 2.
+For each point, make sure that it has a reflected point in the opposite side.
+
+*/
+class Solution {
+public:
+	bool isReflected(vector<pair<int, int>>& points) {
+		int r = INT_MIN, l = INT_MAX;
+		unordered_set<string> s;
+		for (pair<int, int>& p : points) {
+			r = max(r, p.first);
+			l = min(l, p.first);
+			s.insert(to_string(p.first) + "a" + to_string(p.second));
+		}
+		int sum = l + r;
+		for (pair<int, int>& p : points) {
+			string str = to_string(sum - p.first) + "a" + to_string(p.second);
+			if (s.find(str) == s.end()) {
+				return false;
+			}
+		}
+		return true;
+	}
+};
+/*
+
 357. Count Numbers with Unique Digits (Medium)
 
 Given a non-negative integer n, count all numbers with unique digits, x, where 0 ≤ x < 10n.
@@ -12218,6 +12446,149 @@ public:
 			}
 		}
 		return res;
+	}
+};
+/*
+
+362. Design Hit Counter (Medium)
+
+Design a hit counter which counts the number of hits received in the past 5 minutes.
+
+Each function accepts a timestamp parameter (in seconds granularity) and you may assume that calls are being made to the system in chronological order (ie, the timestamp is monotonically increasing). You may assume that the earliest timestamp starts at 1.
+
+It is possible that several hits arrive roughly at the same time.
+
+Example:
+HitCounter counter = new HitCounter();
+
+// hit at timestamp 1.
+counter.hit(1);
+
+// hit at timestamp 2.
+counter.hit(2);
+
+// hit at timestamp 3.
+counter.hit(3);
+
+// get hits at timestamp 4, should return 3.
+counter.getHits(4);
+
+// hit at timestamp 300.
+counter.hit(300);
+
+// get hits at timestamp 300, should return 4.
+counter.getHits(300);
+
+// get hits at timestamp 301, should return 3.
+counter.getHits(301);
+Follow up:
+What if the number of hits per second could be very large? Does your design scale?
+
+*/
+class HitCounter {
+public:
+	/** Initialize your data structure here. */
+	HitCounter() {
+		num = 0;
+	}
+
+	/** Record a hit.
+	@param timestamp - The current timestamp (in seconds granularity). */
+	void hit(int timestamp) {
+		num++;
+		if (!q.empty() && q.back().first == timestamp) {
+			q.back().second++;
+		}
+		else {
+			q.push(make_pair(timestamp, 1));
+		}
+	}
+
+	/** Return the number of hits in the past 5 minutes.
+	@param timestamp - The current timestamp (in seconds granularity). */
+	int getHits(int timestamp) {
+		while (!q.empty() && timestamp - q.front().first >= 300) {
+			num -= q.front().second;
+			q.pop();
+		}
+		return num;
+	}
+private:
+	queue<pair<int, int>> q;
+	int num;
+};
+/**
+* Your HitCounter object will be instantiated and called as such:
+* HitCounter obj = new HitCounter();
+* obj.hit(timestamp);
+* int param_2 = obj.getHits(timestamp);
+*/
+/*
+
+364. Nested List Weight Sum II (Medium)
+
+Given a nested list of integers, return the sum of all integers in the list weighted by their depth.
+
+Each element is either an integer, or a list -- whose elements may also be integers or other lists.
+
+Different from the previous question where weight is increasing from root to leaf, now the weight is defined from bottom up. i.e., the leaf level integers have weight 1, and the root level integers have the largest weight.
+
+Example 1:
+Given the list [[1,1],2,[1,1]], return 8. (four 1's at depth 1, one 2 at depth 2)
+
+Example 2:
+Given the list [1,[4,[6]]], return 17. (one 1 at depth 3, one 4 at depth 2, and one 6 at depth 1; 1*3 + 4*2 + 6*1 = 17)
+
+*/
+/**
+ * // This is the interface that allows for creating nested lists.
+ * // You should not implement it, or speculate about its implementation
+ * class NestedInteger {
+ *   public:
+ *     // Constructor initializes an empty nested list.
+ *     NestedInteger();
+ *
+ *     // Constructor initializes a single integer.
+ *     NestedInteger(int value);
+ *
+ *     // Return true if this NestedInteger holds a single integer, rather than a nested list.
+ *     bool isInteger() const;
+ *
+ *     // Return the single integer that this NestedInteger holds, if it holds a single integer
+ *     // The result is undefined if this NestedInteger holds a nested list
+ *     int getInteger() const;
+ *
+ *     // Set this NestedInteger to hold a single integer.
+ *     void setInteger(int value);
+ *
+ *     // Set this NestedInteger to hold a nested list and adds a nested integer to it.
+ *     void add(const NestedInteger &ni);
+ *
+ *     // Return the nested list that this NestedInteger holds, if it holds a nested list
+ *     // The result is undefined if this NestedInteger holds a single integer
+ *     const vector<NestedInteger> &getList() const;
+ * };
+ */
+class Solution {
+public:
+	int depthSumInverse(vector<NestedInteger>& nestedList) {
+		int unweighted = 0, weighted = 0;
+		while (!nestedList.empty()) {
+			vector<NestedInteger> nextLevel;
+			for (NestedInteger ni : nestedList) {
+				if (ni.isInteger()) {
+					unweighted += ni.getInteger();
+				}
+				else {
+					for (NestedInteger ni : ni.getList()) {
+						nextLevel.push_back(ni);
+					}
+				}
+			}
+			weighted += unweighted;
+			nestedList = nextLevel;
+		}
+		return weighted;
 	}
 };
 /*
@@ -12861,6 +13232,144 @@ public:
 };
 /*
 
+380. Insert Delete GetRandom O(1) (Medium)
+
+Design a data structure that supports all following operations in average O(1) time.
+
+insert(val): Inserts an item val to the set if not already present.
+remove(val): Removes an item val from the set if present.
+getRandom: Returns a random element from current set of elements. Each element must have the same probability of being returned.
+Example:
+
+// Init an empty set.
+RandomizedSet randomSet = new RandomizedSet();
+
+// Inserts 1 to the set. Returns true as 1 was inserted successfully.
+randomSet.insert(1);
+
+// Returns false as 2 does not exist in the set.
+randomSet.remove(2);
+
+// Inserts 2 to the set, returns true. Set now contains [1,2].
+randomSet.insert(2);
+
+// getRandom should return either 1 or 2 randomly.
+randomSet.getRandom();
+
+// Removes 1 from the set, returns true. Set now contains [2].
+randomSet.remove(1);
+
+// 2 was already in the set, so return false.
+randomSet.insert(2);
+
+// Since 2 is the only number in the set, getRandom always return 2.
+randomSet.getRandom();
+
+*/
+class RandomizedSet {
+public:
+	/** Initialize your data structure here. */
+	RandomizedSet() {
+
+	}
+
+	/** Inserts a value to the set. Returns true if the set did not already contain the specified element. */
+	bool insert(int val) {
+		if (mapping.find(val) == mapping.end()) {
+			mapping[val] = t.size();
+			t.push_back(val);
+			return true;
+		}
+		return false;
+	}
+
+	/** Removes a value from the set. Returns true if the set contained the specified element. */
+	bool remove(int val) {
+		if (mapping.find(val) != mapping.end()) {
+			mapping[t.back()] = mapping[val];
+			t[mapping[val]] = t.back();
+			t.pop_back();
+			mapping.erase(val);
+			return true;
+		}
+		return false;
+	}
+
+	/** Get a random element from the set. */
+	int getRandom() {
+		return t[rand() % t.size()];
+	}
+private:
+	unordered_map<int, int> mapping;
+	vector<int> t;
+};
+/**
+* Your RandomizedSet object will be instantiated and called as such:
+* RandomizedSet obj = new RandomizedSet();
+* bool param_1 = obj.insert(val);
+* bool param_2 = obj.remove(val);
+* int param_3 = obj.getRandom();
+*/
+/*
+
+382. Linked List Random Node (Medium)
+
+Given a singly linked list, return a random node's value from the linked list. Each node must have the same probability of being chosen.
+
+Follow up:
+What if the linked list is extremely large and its length is unknown to you? Could you solve this efficiently without using extra space?
+
+Example:
+
+// Init a singly linked list [1,2,3].
+ListNode head = new ListNode(1);
+head.next = new ListNode(2);
+head.next.next = new ListNode(3);
+Solution solution = new Solution(head);
+
+// getRandom() should return either 1, 2, or 3 randomly. Each element should have equal probability of returning.
+solution.getRandom();
+
+*/
+/**
+* Definition for singly-linked list.
+* struct ListNode {
+*     int val;
+*     ListNode *next;
+*     ListNode(int x) : val(x), next(NULL) {}
+* };
+*/
+class Solution {
+public:
+	/** @param head The linked list's head.
+	Note that the head is guaranteed to be not null, so it contains at least one node. */
+	Solution(ListNode* head) {
+		p = head;
+	}
+
+	/** Returns a random node's value. */
+	int getRandom() {
+		ListNode* q = p;
+		int res, num = 1;
+		while (q != NULL) {
+			if (num == rand() % num + 1) {
+				res = q->val;
+			}
+			num++;
+			q = q->next;
+		}
+		return res;
+	}
+private:
+	ListNode* p = NULL;
+};
+/**
+* Your Solution object will be instantiated and called as such:
+* Solution obj = new Solution(head);
+* int param_1 = obj.getRandom();
+*/
+/*
+
 383. Ransom Note (Easy)
 
 
@@ -13294,6 +13803,54 @@ public:
 };
 /*
 
+398. Random Pick Index (medium)
+
+Given an array of integers with possible duplicates, randomly output the index of a given target number. You can assume that the given target number must exist in the array.
+
+Note:
+The array size can be very large. Solution that uses too much extra space will not pass the judge.
+
+Example:
+
+int[] nums = new int[] {1,2,3,3,3};
+Solution solution = new Solution(nums);
+
+// pick(3) should return either index 2, 3, or 4 randomly. Each index should have equal probability of returning.
+solution.pick(3);
+
+// pick(1) should return 0. Since in the array only nums[0] is equal to 1.
+solution.pick(1);
+
+*/
+class Solution {
+public:
+	Solution(vector<int> nums) {
+		t = nums;
+	}
+
+	int pick(int target) {
+		int cnt = 0, res = -1;
+		for (int i = 0; i < t.size(); i++) {
+			if (t[i] != target) {
+				continue;
+			}
+			cnt++;
+			if (cnt == rand() % cnt + 1) {
+				res = i;
+			}
+		}
+		return res;
+	}
+private:
+	vector<int> t;
+};
+/**
+* Your Solution object will be instantiated and called as such:
+* Solution obj = new Solution(nums);
+* int param_1 = obj.pick(target);
+*/
+/*
+
 399. Evaluate Division (Medium)
 
 Equations are given in the format A / B = k, where A and B are variables represented as strings, and k is a real number (floating point number). Given some queries, return the answers. If the answer does not exist, return -1.0.
@@ -13580,6 +14137,41 @@ public:
 			num >>= 4;
 		}
 		reverse(res.begin(), res.end());
+		return res;
+	}
+};
+/*
+
+406. Queue Reconstruction by Height (Medium)
+
+Suppose you have a random list of people standing in a queue. Each person is described by a pair of integers (h, k), where h is the height of the person and k is the number of people in front of this person who have a height greater than or equal to h. Write an algorithm to reconstruct the queue.
+
+Note:
+The number of people is less than 1,100.
+
+Example
+
+Input:
+[[7,0], [4,4], [7,1], [5,0], [6,1], [5,2]]
+
+Output:
+[[5,0], [7,0], [5,2], [6,1], [4,4], [7,1]]
+
+*/
+class Comp {
+public:
+	bool operator()(pair<int, int> p1, pair<int, int> p2) {
+		return p1.first > p2.first || p1.first == p2.first && p1.second < p2.second;
+	}
+}comp;
+class Solution {
+public:
+	vector<pair<int, int>> reconstructQueue(vector<pair<int, int>>& people) {
+		sort(people.begin(), people.end(), comp);
+		vector<pair<int, int>> res;
+		for (pair<int, int> p : people) {
+			res.insert(res.begin() + p.second, p);
+		}
 		return res;
 	}
 };
@@ -15064,6 +15656,126 @@ public:
 };
 /*
 
+477. Total Hamming Distance (Medium)
+
+The Hamming distance between two integers is the number of positions at which the corresponding bits are different.
+
+Now your job is to find the total Hamming distance between all pairs of the given numbers.
+
+Example:
+Input: 4, 14, 2
+
+Output: 6
+
+Explanation: In binary representation, the 4 is 0100, 14 is 1110, and 2 is 0010 (just
+showing the four bits relevant in this case). So the answer will be:
+HammingDistance(4, 14) + HammingDistance(4, 2) + HammingDistance(14, 2) = 2 + 2 + 2 = 6.
+Note:
+Elements of the given array are in the range of 0 to 10^9
+Length of the array will not exceed 10^4.
+
+*/
+class Solution {
+public:
+	int totalHammingDistance(vector<int>& nums) {
+		int res = 0, n = nums.size();
+		for (int j = 0;j < 32;j++) {
+			int bitCount = 0;
+			for (int i = 0;i < n;i++) {
+				bitCount += (nums[i] >> j) & 1;
+			}
+			res += bitCount * (n - bitCount);
+		}
+		return res;
+	}
+};
+/*
+
+481. Magical String (Medium)
+
+A magical string S consists of only '1' and '2' and obeys the following rules:
+
+The string S is magical because concatenating the number of contiguous occurrences of characters '1' and '2' generates the string S itself.
+
+The first few elements of string S is the following: S = "1221121221221121122……"
+
+If we group the consecutive '1's and '2's in S, it will be:
+
+1 22 11 2 1 22 1 22 11 2 11 22 ......
+
+and the occurrences of '1's or '2's in each group are:
+
+1 2	2 1 1 2 1 2 2 1 2 2 ......
+
+You can see that the occurrence sequence above is the S itself.
+
+Given an integer N as input, return the number of '1's in the first N number in the magical string S.
+
+Note: N will not exceed 100,000.
+
+Example 1:
+Input: 6
+Output: 3
+Explanation: The first 6 elements of magical string S is "12211" and it contains three 1's, so return 3.
+
+*/
+class Solution {
+public:
+	int magicalString(int n) {
+		string s = "122";
+		int i = 2;
+		while (s.size() < n) {
+			s += string(s[i++] - '0', s.back() ^ 3);
+		}
+		return count(s.begin(), s.begin() + n, '1');
+	}
+};
+/*
+
+482. License Key Formatting (Medium)
+
+Now you are given a string S, which represents a software license key which we would like to format. The string S is composed of alphanumerical characters and dashes. The dashes split the alphanumerical characters within the string into groups. (i.e. if there are M dashes, the string is split into M+1 groups). The dashes in the given string are possibly misplaced.
+
+We want each group of characters to be of length K (except for possibly the first group, which could be shorter, but still must contain at least one character). To satisfy this requirement, we will reinsert dashes. Additionally, all the lower case letters in the string must be converted to upper case.
+
+So, you are given a non-empty string S, representing a license key to format, and an integer K. And you need to return the license key formatted according to the description above.
+
+Example 1:
+Input: S = "2-4A0r7-4k", K = 4
+
+Output: "24A0-R74K"
+
+Explanation: The string S has been split into two parts, each part has 4 characters.
+Example 2:
+Input: S = "2-4A0r7-4k", K = 3
+
+Output: "24-A0R-74K"
+
+Explanation: The string S has been split into three parts, each part has 3 characters except the first part as it could be shorter as said above.
+Note:
+The length of string S will not exceed 12,000, and K is a positive integer.
+String S consists only of alphanumerical characters (a-z and/or A-Z and/or 0-9) and dashes(-).
+String S is non-empty.
+
+*/
+class Solution {
+public:
+	string licenseKeyFormatting(string S, int K) {
+		string res = "";
+		for (int i = S.size() - 1; i >= 0; i--) {
+			if (S[i] != '-') {
+				if (res.size() % (K + 1) - K == 0) {
+					res += '-';
+				}
+				res += toupper(S[i]);
+			}
+		}
+		reverse(res.begin(), res.end());
+		return res;
+	}
+};
+/*
+
 485. Max Consecutive Ones (Easy)
 
 Given a binary array, find the maximum number of consecutive 1s in this array.
@@ -15143,6 +15855,47 @@ private:
 		int pick_j = nums[j] + min(PredictTheWinner(nums, t, i + 1, j - 1), PredictTheWinner(nums, t, i, j - 2));
 		t[i][j] = max(pick_i, pick_j);
 		return t[i][j];
+	}
+};
+/*
+
+487. Max Consecutive Ones II (Medium)
+
+Given a binary array, find the maximum number of consecutive 1s in this array if you can flip at most one 0.
+
+Example 1:
+Input: [1,0,1,1,0]
+Output: 4
+Explanation: Flip the first zero will get the the maximum number of consecutive 1s.
+	After flipping, the maximum number of consecutive 1s is 4.
+Note:
+
+The input array will only contain 0 and 1.
+The length of input array is a positive integer and will not exceed 10,000
+Follow up:
+What if the input numbers come in one by one as an infinite stream? In other words, you can't store all numbers coming from the stream as it's too large to hold in memory. Could you solve it efficiently?
+
+*/
+class Solution {
+public:
+	int findMaxConsecutiveOnes(vector<int>& nums) {
+		int res = 0, l = 0, r = 0;
+		bool one = false;
+		while (r < nums.size()) {
+			if (nums[r] == 0 && one == true) {
+				while (nums[l] != 0) {
+					l++;
+				}
+				one = false;
+				l++;
+			}
+			res = max(res, r - l + 1);
+			if (nums[r] == 0) {
+				one = true;
+			}
+			r++;
+		}
+		return res;
 	}
 };
 /*

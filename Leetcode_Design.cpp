@@ -1049,3 +1049,158 @@ private:
 * Logger obj = new Logger();
 * bool param_1 = obj.shouldPrintMessage(timestamp,message);
 */
+/*
+
+362. Design Hit Counter (Medium)
+
+Design a hit counter which counts the number of hits received in the past 5 minutes.
+
+Each function accepts a timestamp parameter (in seconds granularity) and you may assume that calls are being made to the system in chronological order (ie, the timestamp is monotonically increasing). You may assume that the earliest timestamp starts at 1.
+
+It is possible that several hits arrive roughly at the same time.
+
+Example:
+HitCounter counter = new HitCounter();
+
+// hit at timestamp 1.
+counter.hit(1);
+
+// hit at timestamp 2.
+counter.hit(2);
+
+// hit at timestamp 3.
+counter.hit(3);
+
+// get hits at timestamp 4, should return 3.
+counter.getHits(4);
+
+// hit at timestamp 300.
+counter.hit(300);
+
+// get hits at timestamp 300, should return 4.
+counter.getHits(300);
+
+// get hits at timestamp 301, should return 3.
+counter.getHits(301);
+Follow up:
+What if the number of hits per second could be very large? Does your design scale?
+
+*/
+class HitCounter {
+public:
+	/** Initialize your data structure here. */
+	HitCounter() {
+		num = 0;
+	}
+
+	/** Record a hit.
+	@param timestamp - The current timestamp (in seconds granularity). */
+	void hit(int timestamp) {
+		num++;
+		if (!q.empty() && q.back().first == timestamp) {
+			q.back().second++;
+		}
+		else {
+			q.push(make_pair(timestamp, 1));
+		}
+	}
+
+	/** Return the number of hits in the past 5 minutes.
+	@param timestamp - The current timestamp (in seconds granularity). */
+	int getHits(int timestamp) {
+		while (!q.empty() && timestamp - q.front().first >= 300) {
+			num -= q.front().second;
+			q.pop();
+		}
+		return num;
+	}
+private:
+	queue<pair<int, int>> q;
+	int num;
+};
+/**
+* Your HitCounter object will be instantiated and called as such:
+* HitCounter obj = new HitCounter();
+* obj.hit(timestamp);
+* int param_2 = obj.getHits(timestamp);
+*/
+/*
+
+380. Insert Delete GetRandom O(1) (Medium)
+
+Design a data structure that supports all following operations in average O(1) time.
+
+insert(val): Inserts an item val to the set if not already present.
+remove(val): Removes an item val from the set if present.
+getRandom: Returns a random element from current set of elements. Each element must have the same probability of being returned.
+Example:
+
+// Init an empty set.
+RandomizedSet randomSet = new RandomizedSet();
+
+// Inserts 1 to the set. Returns true as 1 was inserted successfully.
+randomSet.insert(1);
+
+// Returns false as 2 does not exist in the set.
+randomSet.remove(2);
+
+// Inserts 2 to the set, returns true. Set now contains [1,2].
+randomSet.insert(2);
+
+// getRandom should return either 1 or 2 randomly.
+randomSet.getRandom();
+
+// Removes 1 from the set, returns true. Set now contains [2].
+randomSet.remove(1);
+
+// 2 was already in the set, so return false.
+randomSet.insert(2);
+
+// Since 2 is the only number in the set, getRandom always return 2.
+randomSet.getRandom();
+
+*/
+class RandomizedSet {
+public:
+	/** Initialize your data structure here. */
+	RandomizedSet() {
+
+	}
+
+	/** Inserts a value to the set. Returns true if the set did not already contain the specified element. */
+	bool insert(int val) {
+		if (mapping.find(val) == mapping.end()) {
+			mapping[val] = t.size();
+			t.push_back(val);
+			return true;
+		}
+		return false;
+	}
+
+	/** Removes a value from the set. Returns true if the set contained the specified element. */
+	bool remove(int val) {
+		if (mapping.find(val) != mapping.end()) {
+			mapping[t.back()] = mapping[val];
+			t[mapping[val]] = t.back();
+			t.pop_back();
+			mapping.erase(val);
+			return true;
+		}
+		return false;
+	}
+
+	/** Get a random element from the set. */
+	int getRandom() {
+		return t[rand() % t.size()];
+	}
+private:
+	unordered_map<int, int> mapping;
+	vector<int> t;
+};
+/**
+* Your RandomizedSet object will be instantiated and called as such:
+* RandomizedSet obj = new RandomizedSet();
+* bool param_1 = obj.insert(val);
+* bool param_2 = obj.remove(val);
+* int param_3 = obj.getRandom();
+*/
