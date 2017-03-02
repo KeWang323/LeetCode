@@ -985,16 +985,57 @@ public:
 		if (num.empty()) {
 			return false;
 		}
-		unordered_map <char, char> mapping = { {'0', '0'}, {'1', '1'}, { '6', '9'}, {'8', '8'}, {'9', '6'} };
+		unordered_map<char, char> mapping = { { '0', '0' },{ '1', '1' },{ '6', '9' },{ '8', '8' },{ '9', '6' } };
 		int i = 0, j = num.size() - 1;
 		while (i <= j) {
-			if (mapping[num[i]] != num[j]) {
+			if (mapping[num[i++]] != num[j--]) {
 				return false;
 			}
-			i++;
-			j--;
 		}
 		return true;
+	}
+};
+/*
+
+249. Group Shifted Strings (Medium)
+
+Given a string, we can "shift" each of its letter to its successive letter, for example: "abc" -> "bcd". We can keep "shifting" which forms the sequence:
+
+"abc" -> "bcd" -> ... -> "xyz"
+Given a list of strings which contains only lowercase alphabets, group all strings that belong to the same shifting sequence.
+
+For example, given: ["abc", "bcd", "acef", "xyz", "az", "ba", "a", "z"],
+A solution is:
+
+[
+  ["abc","bcd","xyz"],
+  ["az","ba"],
+  ["acef"],
+  ["a","z"]
+]
+
+*/
+class Solution {
+public:
+	vector<vector<string>> groupStrings(vector<string>& strings) {
+		vector<vector<string>> res;
+		unordered_map<string, vector<string>> mapping;
+		for (string str : strings) {
+			int offset = str[0] - 'a';
+			string key = "";
+			for (int i = 0; i < str.size(); i++) {
+				char c = str[i] - offset;
+				if (c < 'a') {
+					c += 26;
+				}
+				key += c;
+			}
+			mapping[key].push_back(str);
+		}
+		for (auto i = mapping.begin(); i != mapping.end(); i++) {
+			res.push_back(i->second);
+		}
+		return res;
 	}
 };
 /*
@@ -1273,6 +1314,103 @@ public:
 					}
 				}
 			}
+		}
+		return res;
+	}
+};
+/*
+
+314. Binary Tree Vertical Order Traversal (Medium)
+
+Given a binary tree, return the vertical order traversal of its nodes' values. (ie, from top to bottom, column by column).
+
+If two nodes are in the same row and column, the order should be from left to right.
+
+Examples:
+
+Given binary tree [3,9,20,null,null,15,7],
+   3
+  /\
+ /  \
+ 9  20
+	/\
+   /  \
+  15   7
+return its vertical order traversal as:
+[
+  [9],
+  [3,15],
+  [20],
+  [7]
+]
+Given binary tree [3,9,8,4,0,1,7],
+	 3
+	/\
+   /  \
+   9   8
+  /\  /\
+ /  \/  \
+ 4  01   7
+return its vertical order traversal as:
+[
+  [4],
+  [9],
+  [3,0,1],
+  [8],
+  [7]
+]
+Given binary tree [3,9,8,4,0,1,7,null,null,null,2,5] (0's right child is 2 and 1's left child is 5),
+	 3
+	/\
+   /  \
+   9   8
+  /\  /\
+ /  \/  \
+ 4  01   7
+	/\
+   /  \
+   5   2
+return its vertical order traversal as:
+[
+  [4],
+  [9,5],
+  [3,0,1],
+  [8,2],
+  [7]
+]
+
+*/
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+class Solution {
+public:
+	vector<vector<int>> verticalOrder(TreeNode* root) {
+		if (root == NULL) {
+			return{};
+		}
+		vector<vector<int>> res;
+		map<int, vector<int>> mapping;
+		queue<pair<TreeNode*, int>> q;
+		q.push({ root,0 });
+		while (!q.empty()) {
+			mapping[q.front().second].push_back(q.front().first->val);
+			if (q.front().first->left) {
+				q.push({ q.front().first->left,q.front().second - 1 });
+			}
+			if (q.front().first->right) {
+				q.push({ q.front().first->right,q.front().second + 1 });
+			}
+			q.pop();
+		}
+		for (auto i = mapping.begin(); i != mapping.end(); i++) {
+			res.push_back(i->second);
 		}
 		return res;
 	}
@@ -1607,42 +1745,42 @@ public:
 		return true;
 	}
 };
- /*
+/*
 
- 380. Insert Delete GetRandom O(1) (Medium)
+380. Insert Delete GetRandom O(1) (Medium)
 
- Design a data structure that supports all following operations in average O(1) time.
+Design a data structure that supports all following operations in average O(1) time.
 
- insert(val): Inserts an item val to the set if not already present.
- remove(val): Removes an item val from the set if present.
- getRandom: Returns a random element from current set of elements. Each element must have the same probability of being returned.
- Example:
+insert(val): Inserts an item val to the set if not already present.
+remove(val): Removes an item val from the set if present.
+getRandom: Returns a random element from current set of elements. Each element must have the same probability of being returned.
+Example:
 
- // Init an empty set.
- RandomizedSet randomSet = new RandomizedSet();
+// Init an empty set.
+RandomizedSet randomSet = new RandomizedSet();
 
- // Inserts 1 to the set. Returns true as 1 was inserted successfully.
- randomSet.insert(1);
+// Inserts 1 to the set. Returns true as 1 was inserted successfully.
+randomSet.insert(1);
 
- // Returns false as 2 does not exist in the set.
- randomSet.remove(2);
+// Returns false as 2 does not exist in the set.
+randomSet.remove(2);
 
- // Inserts 2 to the set, returns true. Set now contains [1,2].
- randomSet.insert(2);
+// Inserts 2 to the set, returns true. Set now contains [1,2].
+randomSet.insert(2);
 
- // getRandom should return either 1 or 2 randomly.
- randomSet.getRandom();
+// getRandom should return either 1 or 2 randomly.
+randomSet.getRandom();
 
- // Removes 1 from the set, returns true. Set now contains [2].
- randomSet.remove(1);
+// Removes 1 from the set, returns true. Set now contains [2].
+randomSet.remove(1);
 
- // 2 was already in the set, so return false.
- randomSet.insert(2);
+// 2 was already in the set, so return false.
+randomSet.insert(2);
 
- // Since 2 is the only number in the set, getRandom always return 2.
- randomSet.getRandom();
+// Since 2 is the only number in the set, getRandom always return 2.
+randomSet.getRandom();
 
- */
+*/
 class RandomizedSet {
 public:
 	/** Initialize your data structure here. */
@@ -1687,29 +1825,29 @@ private:
 * bool param_2 = obj.remove(val);
 * int param_3 = obj.getRandom();
 */
- /*
+/*
 
- 389. Find the Difference (Easy)
+389. Find the Difference (Easy)
 
- Given two strings s and t which consist of only lowercase letters.
+Given two strings s and t which consist of only lowercase letters.
 
- String t is generated by random shuffling string s and then add one more letter at a random position.
+String t is generated by random shuffling string s and then add one more letter at a random position.
 
- Find the letter that was added in t.
+Find the letter that was added in t.
 
- Example:
+Example:
 
- Input:
- s = "abcd"
- t = "abcde"
+Input:
+s = "abcd"
+t = "abcde"
 
- Output:
- e
+Output:
+e
 
- Explanation:
- 'e' is the letter that was added.
+Explanation:
+'e' is the letter that was added.
 
- */
+*/
 class Solution {
 public:
 	char findTheDifference(string s, string t) {

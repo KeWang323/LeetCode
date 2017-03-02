@@ -776,16 +776,56 @@ public:
 		if (num.empty()) {
 			return false;
 		}
-		unordered_map <char, char> mapping = { {'0', '0'}, {'1', '1'}, { '6', '9'}, {'8', '8'}, {'9', '6'} };
+		unordered_map<char, char> mapping = { { '0', '0' },{ '1', '1' },{ '6', '9' },{ '8', '8' },{ '9', '6' } };
 		int i = 0, j = num.size() - 1;
 		while (i <= j) {
-			if (mapping[num[i]] != num[j]) {
+			if (mapping[num[i++]] != num[j--]) {
 				return false;
 			}
-			i++;
-			j--;
 		}
 		return true;
+	}
+};
+/*
+
+247. Strobogrammatic Number II (Medium)
+
+A strobogrammatic number is a number that looks the same when rotated 180 degrees (looked at upside down).
+
+Find all strobogrammatic numbers that are of length = n.
+
+For example,
+Given n = 2, return ["11","69","88","96"].
+
+Hint:
+
+Try to use recursion and notice that it should recurse with n - 2 instead of n - 1.
+
+*/
+class Solution {
+public:
+	vector<string> findStrobogrammatic(int n) {
+		return findStrobogrammatic(n, n);
+	}
+private:
+	vector<string> findStrobogrammatic(int n, const int& m) {
+		if (n == 0) {
+			return{ "" };
+		}
+		if (n == 1) {
+			return{ "0", "1", "8" };
+		}
+		vector<string> res_sub = findStrobogrammatic(n - 2, m), res;
+		for (string s : res_sub) {
+			if (n != m) {
+				res.push_back("0" + s + "0");
+			}
+			res.push_back("1" + s + "1");
+			res.push_back("6" + s + "9");
+			res.push_back("8" + s + "8");
+			res.push_back("9" + s + "6");
+		}
+		return res;
 	}
 };
 /*
@@ -1238,6 +1278,61 @@ public:
 			}
 		}
 		return true;
+	}
+};
+/*
+
+360. Sort Transformed Array (Medium)
+
+Given a sorted array of integers nums and integer values a, b and c. Apply a function of the form f(x) = ax2 + bx + c to each element x in the array.
+
+The returned array must be in sorted order.
+
+Expected time complexity: O(n)
+
+Example:
+nums = [-4, -2, 2, 4], a = 1, b = 3, c = 5,
+
+Result: [3, 9, 15, 33]
+
+nums = [-4, -2, 2, 4], a = -1, b = 3, c = 5
+
+Result: [-23, -5, 1, 7]
+
+*/
+class Solution {
+public:
+	vector<int> sortTransformedArray(vector<int>& nums, int a, int b, int c) {
+		vector<int> res(nums.size());
+		int i = 0, j = nums.size() - 1, index = a >= 0 ? nums.size() - 1 : 0;
+		while (i <= j) {
+			int l = quad(nums[i], a, b, c), r = quad(nums[j], a, b, c);
+			if (a >= 0) {
+				if (l >= r) {
+					res[index--] = l;
+					i++;
+				}
+				else {
+					res[index--] = r;
+					j--;
+				}
+			}
+			else {
+				if (l >= r) {
+					res[index++] = r;
+					j--;
+				}
+				else {
+					res[index++] = l;
+					i++;
+				}
+			}
+		}
+		return res;
+	}
+private:
+	int quad(const int& x, const int& a, const int& b, const int& c) {
+		return a * x * x + b * x + c;
 	}
 };
 /*

@@ -8995,16 +8995,99 @@ public:
 		if (num.empty()) {
 			return false;
 		}
-		unordered_map <char, char> mapping = { {'0', '0'}, {'1', '1'}, { '6', '9'}, {'8', '8'}, {'9', '6'} };
+		unordered_map<char, char> mapping = { { '0', '0' },{ '1', '1' },{ '6', '9' },{ '8', '8' },{ '9', '6' } };
 		int i = 0, j = num.size() - 1;
 		while (i <= j) {
-			if (mapping[num[i]] != num[j]) {
+			if (mapping[num[i++]] != num[j--]) {
 				return false;
 			}
-			i++;
-			j--;
 		}
 		return true;
+	}
+};
+/*
+
+247. Strobogrammatic Number II (Medium)
+
+A strobogrammatic number is a number that looks the same when rotated 180 degrees (looked at upside down).
+
+Find all strobogrammatic numbers that are of length = n.
+
+For example,
+Given n = 2, return ["11","69","88","96"].
+
+Hint:
+
+Try to use recursion and notice that it should recurse with n - 2 instead of n - 1.
+
+*/
+class Solution {
+public:
+	vector<string> findStrobogrammatic(int n) {
+		return findStrobogrammatic(n, n);
+	}
+private:
+	vector<string> findStrobogrammatic(int n, const int& m) {
+		if (n == 0) {
+			return{ "" };
+		}
+		if (n == 1) {
+			return{ "0", "1", "8" };
+		}
+		vector<string> res_sub = findStrobogrammatic(n - 2, m), res;
+		for (string s : res_sub) {
+			if (n != m) {
+				res.push_back("0" + s + "0");
+			}
+			res.push_back("1" + s + "1");
+			res.push_back("6" + s + "9");
+			res.push_back("8" + s + "8");
+			res.push_back("9" + s + "6");
+		}
+		return res;
+	}
+};
+/*
+
+249. Group Shifted Strings (Medium)
+
+Given a string, we can "shift" each of its letter to its successive letter, for example: "abc" -> "bcd". We can keep "shifting" which forms the sequence:
+
+"abc" -> "bcd" -> ... -> "xyz"
+Given a list of strings which contains only lowercase alphabets, group all strings that belong to the same shifting sequence.
+
+For example, given: ["abc", "bcd", "acef", "xyz", "az", "ba", "a", "z"],
+A solution is:
+
+[
+  ["abc","bcd","xyz"],
+  ["az","ba"],
+  ["acef"],
+  ["a","z"]
+]
+
+*/
+class Solution {
+public:
+	vector<vector<string>> groupStrings(vector<string>& strings) {
+		vector<vector<string>> res;
+		unordered_map<string, vector<string>> mapping;
+		for (string str : strings) {
+			int offset = str[0] - 'a';
+			string key = "";
+			for (int i = 0; i < str.size(); i++) {
+				char c = str[i] - offset;
+				if (c < 'a') {
+					c += 26;
+				}
+				key += c;
+			}
+			mapping[key].push_back(str);
+		}
+		for (auto i = mapping.begin(); i != mapping.end(); i++) {
+			res.push_back(i->second);
+		}
+		return res;
 	}
 };
 /*
@@ -9153,6 +9236,73 @@ public:
 			}
 		}
 		return true;
+	}
+};
+/*
+
+254. Factor Combinations (Medium)
+
+Numbers can be regarded as product of its factors. For example,
+
+8 = 2 x 2 x 2;
+  = 2 x 4.
+Write a function that takes an integer n and return all possible combinations of its factors.
+
+Note:
+You may assume that n is always positive.
+Factors should be greater than 1 and less than n.
+Examples:
+input: 1
+output:
+[]
+input: 37
+output:
+[]
+input: 12
+output:
+[
+  [2, 6],
+  [2, 2, 3],
+  [3, 4]
+]
+input: 32
+output:
+[
+  [2, 16],
+  [2, 2, 8],
+  [2, 2, 2, 4],
+  [2, 2, 2, 2, 2],
+  [2, 4, 4],
+  [4, 8]
+]
+
+*/
+class Solution {
+public:
+	vector<vector<int>> getFactors(int n) {
+		vector<vector<int>> res;
+		vector<int> res_sub;
+		getFactors(2, n, res, res_sub, sqrt(n));
+		return res;
+	}
+private:
+	void getFactors(int start, int n, vector<vector<int>>& res, vector<int>& res_sub, int upper) {
+		if (n == 1) {
+			if (res_sub.size() > 1) {
+				res.push_back(res_sub);
+			}
+			return;
+		}
+		for (int i = start; i <= n; i++) {
+			if (i > upper) {
+				i = n;
+			}
+			if (n % i == 0) {
+				res_sub.push_back(i);
+				getFactors(i, n / i, res, res_sub, sqrt(n / i));
+				res_sub.pop_back();
+			}
+		}
 	}
 };
 /*
@@ -11107,6 +11257,165 @@ public:
 };
 /*
 
+314. Binary Tree Vertical Order Traversal (Medium)
+
+Given a binary tree, return the vertical order traversal of its nodes' values. (ie, from top to bottom, column by column).
+
+If two nodes are in the same row and column, the order should be from left to right.
+
+Examples:
+
+Given binary tree [3,9,20,null,null,15,7],
+   3
+  /\
+ /  \
+ 9  20
+	/\
+   /  \
+  15   7
+return its vertical order traversal as:
+[
+  [9],
+  [3,15],
+  [20],
+  [7]
+]
+Given binary tree [3,9,8,4,0,1,7],
+	 3
+	/\
+   /  \
+   9   8
+  /\  /\
+ /  \/  \
+ 4  01   7
+return its vertical order traversal as:
+[
+  [4],
+  [9],
+  [3,0,1],
+  [8],
+  [7]
+]
+Given binary tree [3,9,8,4,0,1,7,null,null,null,2,5] (0's right child is 2 and 1's left child is 5),
+	 3
+	/\
+   /  \
+   9   8
+  /\  /\
+ /  \/  \
+ 4  01   7
+	/\
+   /  \
+   5   2
+return its vertical order traversal as:
+[
+  [4],
+  [9,5],
+  [3,0,1],
+  [8,2],
+  [7]
+]
+
+*/
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+class Solution {
+public:
+	vector<vector<int>> verticalOrder(TreeNode* root) {
+		if (root == NULL) {
+			return{};
+		}
+		vector<vector<int>> res;
+		map<int, vector<int>> mapping;
+		queue<pair<TreeNode*, int>> q;
+		q.push({ root,0 });
+		while (!q.empty()) {
+			mapping[q.front().second].push_back(q.front().first->val);
+			if (q.front().first->left) {
+				q.push({ q.front().first->left,q.front().second - 1 });
+			}
+			if (q.front().first->right) {
+				q.push({ q.front().first->right,q.front().second + 1 });
+			}
+			q.pop();
+		}
+		for (auto i = mapping.begin(); i != mapping.end(); i++) {
+			res.push_back(i->second);
+		}
+		return res;
+	}
+};
+/*
+
+315. Count of Smaller Numbers After Self (Hard)
+
+You are given an integer array nums and you have to return a new counts array. The counts array has the property where counts[i] is the number of smaller elements to the right of nums[i].
+
+Example:
+
+Given nums = [5, 2, 6, 1]
+
+To the right of 5 there are 2 smaller elements (2 and 1).
+To the right of 2 there is only 1 smaller element (1).
+To the right of 6 there is 1 smaller element (1).
+To the right of 1 there is 0 smaller element.
+Return the array [2, 1, 1, 0].
+
+*/
+class Solution {
+public:
+	vector<int> countSmaller(vector<int>& nums) {
+		vector<int> index(nums.size()), count(nums.size(), 0);
+		for (int i = 0; i < index.size(); i++) {
+			index[i] = i;
+		}
+		mergesort(nums, index, 0, nums.size() - 1, count);
+		return count;
+	}
+private:
+	void mergesort(const vector<int>& nums, vector<int>& index, int l, int r, vector<int>& count) {
+		if (r <= l) {
+			return;
+		}
+		int mid = l + (r - l) / 2;
+		mergesort(nums, index, l, mid, count);
+		mergesort(nums, index, mid + 1, r, count);
+		merge(nums, index, l, r, mid, count);
+	}
+	void merge(const vector<int>& nums, vector<int>& index, int l, int r, int mid, vector<int>& count) {
+		int i = l, j = mid + 1, rightcount = 0, k = 0;
+		vector<int> newindex(r - l + 1);
+		while (i <= mid && j <= r) {
+			if (nums[index[j]] < nums[index[i]]) {
+				newindex[k++] = index[j++];
+				rightcount++;
+			}
+			else {
+				newindex[k++] = index[i];
+				count[index[i++]] += rightcount;
+			}
+		}
+		while (i <= mid) {
+			newindex[k++] = index[i];
+			count[index[i++]] += rightcount;
+		}
+		while (j <= r) {
+			newindex[k++] = index[j++];
+		}
+		for (int i = l; i <= r; i++) {
+			index[i] = newindex[i - l];
+		}
+	}
+};
+/*
+
 316. Remove Duplicate Letters (Hard)
 
 Given a string which contains only lowercase letters, remove duplicate letters so that every letter appear once and only once. You must make sure your result is the smallest in lexicographical order among all possible results.
@@ -12399,6 +12708,61 @@ private:
 */
 /*
 
+360. Sort Transformed Array (Medium)
+
+Given a sorted array of integers nums and integer values a, b and c. Apply a function of the form f(x) = ax2 + bx + c to each element x in the array.
+
+The returned array must be in sorted order.
+
+Expected time complexity: O(n)
+
+Example:
+nums = [-4, -2, 2, 4], a = 1, b = 3, c = 5,
+
+Result: [3, 9, 15, 33]
+
+nums = [-4, -2, 2, 4], a = -1, b = 3, c = 5
+
+Result: [-23, -5, 1, 7]
+
+*/
+class Solution {
+public:
+	vector<int> sortTransformedArray(vector<int>& nums, int a, int b, int c) {
+		vector<int> res(nums.size());
+		int i = 0, j = nums.size() - 1, index = a >= 0 ? nums.size() - 1 : 0;
+		while (i <= j) {
+			int l = quad(nums[i], a, b, c), r = quad(nums[j], a, b, c);
+			if (a >= 0) {
+				if (l >= r) {
+					res[index--] = l;
+					i++;
+				}
+				else {
+					res[index--] = r;
+					j--;
+				}
+			}
+			else {
+				if (l >= r) {
+					res[index++] = r;
+					j--;
+				}
+				else {
+					res[index++] = l;
+					i++;
+				}
+			}
+		}
+		return res;
+	}
+private:
+	int quad(const int& x, const int& a, const int& b, const int& c) {
+		return a * x * x + b * x + c;
+	}
+};
+/*
+
  361. Bomb Enemy (Medium)
 
  Given a 2D grid, each cell is either a wall 'W', an enemy 'E' or empty '0' (the number zero), return the maximum enemies you can kill using one bomb.
@@ -13230,6 +13594,90 @@ public:
 		return 0;
 	}
 };
+/*
+
+379. Design Phone Directory (Medium)
+
+Design a Phone Directory which supports the following operations:
+
+get: Provide a number which is not assigned to anyone.
+check: Check if a number is available or not.
+release: Recycle or release a number.
+Example:
+
+// Init a phone directory containing a total of 3 numbers: 0, 1, and 2.
+PhoneDirectory directory = new PhoneDirectory(3);
+
+// It can return any available phone number. Here we assume it returns 0.
+directory.get();
+
+// Assume it returns 1.
+directory.get();
+
+// The number 2 is available, so return true.
+directory.check(2);
+
+// It returns 2, the only number that is left.
+directory.get();
+
+// The number 2 is no longer available, so return false.
+directory.check(2);
+
+// Release number 2 back to the pool.
+directory.release(2);
+
+// Number 2 is available again, return true.
+directory.check(2);
+
+*/
+class PhoneDirectory {
+public:
+	queue<int> q;
+	unordered_set<int> s;
+	int max;
+	/** Initialize your data structure here
+	@param maxNumbers - The maximum numbers that can be stored in the phone directory. */
+	PhoneDirectory(int maxNumbers) {
+		for (int i = 0; i < maxNumbers; i++) {
+			q.push(i);
+			max = maxNumbers;
+		}
+	}
+
+	/** Provide a number which is not assigned to anyone.
+	@return - Return an available number. Return -1 if none is available. */
+	int get() {
+		if (q.empty()) {
+			return -1;
+		}
+		int res = q.front();
+		q.pop();
+		s.insert(res);
+		return res;
+	}
+
+	/** Check if a number is available or not. */
+	bool check(int number) {
+		if (number >= max || number < 0) {
+			return false;
+		}
+		return s.find(number) == s.end();
+	}
+
+	/** Recycle or release a number. */
+	void release(int number) {
+		if (s.find(number) != s.end())
+			q.push(number);
+		s.erase(number);
+	}
+};
+/**
+* Your PhoneDirectory object will be instantiated and called as such:
+* PhoneDirectory obj = new PhoneDirectory(maxNumbers);
+* int param_1 = obj.get();
+* bool param_2 = obj.check(number);
+* obj.release(number);
+*/
 /*
 
 380. Insert Delete GetRandom O(1) (Medium)
@@ -16472,5 +16920,59 @@ public:
 			}
 		}
 		return num == 0 || num == word.size() || num == 1 && isupper(word[0]);
+	}
+};
+/*
+
+530. Minimum Absolute Difference in BST (Easy)
+
+Given a binary search tree with non-negative values, find the minimum absolute difference between values of any two nodes.
+
+Example:
+
+Input:
+
+   1
+	\
+	 3
+	/
+   2
+
+Output:
+1
+
+Explanation:
+The minimum absolute difference is 1, which is the difference between 2 and 1 (or between 2 and 3).
+Note: There are at least two nodes in this BST.
+
+*/
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+class Solution {
+public:
+	int getMinimumDifference(TreeNode* root) {
+		TreeNode* pre = NULL;
+		int res = INT_MAX;
+		getMinimumDifference(root, res, pre);
+		return res;
+	}
+private:
+	void getMinimumDifference(TreeNode* root, int& res, TreeNode*& pre) {
+		if (root == NULL) {
+			return;
+		}
+		getMinimumDifference(root->left, res, pre);
+		if (pre != NULL) {
+			res = min(res, root->val - pre->val);
+		}
+		pre = root;
+		getMinimumDifference(root->right, res, pre);
 	}
 };

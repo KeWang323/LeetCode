@@ -1550,6 +1550,49 @@ public:
 };
 /*
 
+249. Group Shifted Strings (Medium)
+
+Given a string, we can "shift" each of its letter to its successive letter, for example: "abc" -> "bcd". We can keep "shifting" which forms the sequence:
+
+"abc" -> "bcd" -> ... -> "xyz"
+Given a list of strings which contains only lowercase alphabets, group all strings that belong to the same shifting sequence.
+
+For example, given: ["abc", "bcd", "acef", "xyz", "az", "ba", "a", "z"],
+A solution is:
+
+[
+  ["abc","bcd","xyz"],
+  ["az","ba"],
+  ["acef"],
+  ["a","z"]
+]
+
+*/
+class Solution {
+public:
+	vector<vector<string>> groupStrings(vector<string>& strings) {
+		vector<vector<string>> res;
+		unordered_map<string, vector<string>> mapping;
+		for (string str : strings) {
+			int offset = str[0] - 'a';
+			string key = "";
+			for (int i = 0; i < str.size(); i++) {
+				char c = str[i] - offset;
+				if (c < 'a') {
+					c += 26;
+				}
+				key += c;
+			}
+			mapping[key].push_back(str);
+		}
+		for (auto i = mapping.begin(); i != mapping.end(); i++) {
+			res.push_back(i->second);
+		}
+		return res;
+	}
+};
+/*
+
 271. Encode and Decode Strings (medium)
 
 Design an algorithm to encode a list of strings to a string. The encoded string is then sent over the network and is decoded back to the original list of strings.

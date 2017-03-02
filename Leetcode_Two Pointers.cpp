@@ -1202,6 +1202,61 @@ public:
 };
 /*
 
+360. Sort Transformed Array (Medium)
+
+Given a sorted array of integers nums and integer values a, b and c. Apply a function of the form f(x) = ax2 + bx + c to each element x in the array.
+
+The returned array must be in sorted order.
+
+Expected time complexity: O(n)
+
+Example:
+nums = [-4, -2, 2, 4], a = 1, b = 3, c = 5,
+
+Result: [3, 9, 15, 33]
+
+nums = [-4, -2, 2, 4], a = -1, b = 3, c = 5
+
+Result: [-23, -5, 1, 7]
+
+*/
+class Solution {
+public:
+	vector<int> sortTransformedArray(vector<int>& nums, int a, int b, int c) {
+		vector<int> res(nums.size());
+		int i = 0, j = nums.size() - 1, index = a >= 0 ? nums.size() - 1 : 0;
+		while (i <= j) {
+			int l = quad(nums[i], a, b, c), r = quad(nums[j], a, b, c);
+			if (a >= 0) {
+				if (l >= r) {
+					res[index--] = l;
+					i++;
+				}
+				else {
+					res[index--] = r;
+					j--;
+				}
+			}
+			else {
+				if (l >= r) {
+					res[index++] = r;
+					j--;
+				}
+				else {
+					res[index++] = l;
+					i++;
+				}
+			}
+		}
+		return res;
+	}
+private:
+	int quad(const int& x, const int& a, const int& b, const int& c) {
+		return a * x * x + b * x + c;
+	}
+};
+/*
+
 487. Max Consecutive Ones II (Medium)
 
 Given a binary array, find the maximum number of consecutive 1s in this array if you can flip at most one 0.

@@ -983,6 +983,73 @@ private:
 };
 /*
 
+254. Factor Combinations (Medium)
+
+Numbers can be regarded as product of its factors. For example,
+
+8 = 2 x 2 x 2;
+  = 2 x 4.
+Write a function that takes an integer n and return all possible combinations of its factors.
+
+Note:
+You may assume that n is always positive.
+Factors should be greater than 1 and less than n.
+Examples:
+input: 1
+output:
+[]
+input: 37
+output:
+[]
+input: 12
+output:
+[
+  [2, 6],
+  [2, 2, 3],
+  [3, 4]
+]
+input: 32
+output:
+[
+  [2, 16],
+  [2, 2, 8],
+  [2, 2, 2, 4],
+  [2, 2, 2, 2, 2],
+  [2, 4, 4],
+  [4, 8]
+]
+
+*/
+class Solution {
+public:
+	vector<vector<int>> getFactors(int n) {
+		vector<vector<int>> res;
+		vector<int> res_sub;
+		getFactors(2, n, res, res_sub, sqrt(n));
+		return res;
+	}
+private:
+	void getFactors(int start, int n, vector<vector<int>>& res, vector<int>& res_sub, int upper) {
+		if (n == 1) {
+			if (res_sub.size() > 1) {
+				res.push_back(res_sub);
+			}
+			return;
+		}
+		for (int i = start; i <= n; i++) {
+			if (i > upper) {
+				i = n;
+			}
+			if (n % i == 0) {
+				res_sub.push_back(i);
+				getFactors(i, n / i, res, res_sub, sqrt(n / i));
+				res_sub.pop_back();
+			}
+		}
+	}
+};
+/*
+
 267. Palindrome Permutation II (Medium)
 
 Given a string s, return all the palindromic permutations (without duplicates) of it. Return an empty list if no palindromic permutation could be form.
