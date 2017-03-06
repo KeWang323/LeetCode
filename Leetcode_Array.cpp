@@ -405,9 +405,6 @@ You may assume no duplicate exists in the array.
 class Solution {
 public:
 	int search(vector<int>& nums, int target) {
-		if (nums.empty()) {
-			return -1;
-		}
 		int l = 0, r = nums.size() - 1;
 		while (l <= r) {
 			int mid = l + (r - l) / 2;
@@ -3088,6 +3085,166 @@ public:
 			}
 			else {
 				cur = 0;
+			}
+		}
+		return res;
+	}
+};
+/*
+
+531. Lonely Pixel I (Medium)
+
+Given a picture consisting of black and white pixels, find the number of black lonely pixels.
+
+The picture is represented by a 2D char array consisting of 'B' and 'W', which means black and white pixels respectively.
+
+A black lonely pixel is character 'B' that located at a specific position where the same row and same column don't have any other black pixels.
+
+Example:
+Input: 
+[['W', 'W', 'B'],
+ ['W', 'B', 'W'],
+ ['B', 'W', 'W']]
+
+Output: 3
+Explanation: All the three 'B's are black lonely pixels.
+Note:
+The range of width and height of the input 2D array is [1,500].
+
+*/
+class Solution {
+public:
+	int findLonelyPixel(vector<vector<char>>& picture) {
+		vector<int> row(picture.size(), 0), col(picture[0].size(), 0);
+		for (int i = 0; i < picture.size(); i++) {
+			for (int j = 0; j < picture[0].size(); j++) {
+				if (picture[i][j] == 'B') {
+					row[i]++;
+					col[j]++;
+				}
+			}
+		}
+		int res = 0;
+		for (int i = 0; i < picture.size(); i++) {
+			for (int j = 0; j < picture[0].size(); j++) {
+				if (picture[i][j] == 'B' && row[i] == 1 && col[j] == 1) {
+					res++;
+				}
+			}
+		}
+		return res;
+	}
+};
+/*
+
+532. K-diff Pairs in an Array (Easy)
+
+Given an array of integers and an integer k, you need to find the number of unique k-diff pairs in the array. Here a k-diff pair is defined as an integer pair (i, j), where i and j are both numbers in the array and their absolute difference is k.
+
+Example 1:
+Input: [3, 1, 4, 1, 5], k = 2
+Output: 2
+Explanation: There are two 2-diff pairs in the array, (1, 3) and (3, 5).
+Although we have two 1s in the input, we should only return the number of unique pairs.
+Example 2:
+Input:[1, 2, 3, 4, 5], k = 1
+Output: 4
+Explanation: There are four 1-diff pairs in the array, (1, 2), (2, 3), (3, 4) and (4, 5).
+Example 3:
+Input: [1, 3, 1, 5, 4], k = 0
+Output: 1
+Explanation: There is one 0-diff pair in the array, (1, 1).
+Note:
+The pairs (i, j) and (j, i) count as the same pair.
+The length of the array won't exceed 10,000.
+All the integers in the given input belong to the range: [-1e7, 1e7].
+
+*/
+class Solution {
+public:
+	int findPairs(vector<int>& nums, int k) {
+		if (nums.empty() || k < 0) {
+			return 0;
+		}
+		unordered_map<int, int> mapping;
+		int res = 0;
+		for (int num : nums) {
+			mapping[num]++;
+		}
+		for (auto i = mapping.begin(); i != mapping.end(); i++) {
+			if (k == 0) {
+				res += i->second > 1;
+			}
+			else {
+				res += mapping.find(i->first + k) != mapping.end();
+			}
+		}
+		return res;
+	}
+};
+/*
+
+533. Lonely Pixel II (Medium)
+
+Given a picture consisting of black and white pixels, and a positive integer N, find the number of black pixels located at some specific row R and column C that align with all the following rules:
+
+Row R and column C both contain exactly N black pixels.
+For all rows that have a black pixel at column C, they should be exactly the same as row R
+The picture is represented by a 2D char array consisting of 'B' and 'W', which means black and white pixels respectively.
+
+Example:
+Input:
+[['W', 'B', 'W', 'B', 'B', 'W'],
+ ['W', 'B', 'W', 'B', 'B', 'W'],
+ ['W', 'B', 'W', 'B', 'B', 'W'],
+ ['W', 'W', 'B', 'W', 'B', 'W']]
+
+N = 3
+Output: 6
+Explanation: All the bold 'B' are the black pixels we need (all 'B's at column 1 and 3).
+		0    1    2    3    4    5         column index
+0    [['W', 'B', 'W', 'B', 'B', 'W'],
+1     ['W', 'B', 'W', 'B', 'B', 'W'],
+2     ['W', 'B', 'W', 'B', 'B', 'W'],
+3     ['W', 'W', 'B', 'W', 'B', 'W']]
+row index
+
+Take 'B' at row R = 0 and column C = 1 as an example:
+Rule 1, row R = 0 and column C = 1 both have exactly N = 3 black pixels.
+Rule 2, the rows have black pixel at column C = 1 are row 0, row 1 and row 2. They are exactly the same as row R = 0.
+
+Note:
+The range of width and height of the input 2D array is [1,200].
+
+*/
+class Solution {
+public:
+	int findBlackPixel(vector<vector<char>>& picture, int N) {
+		if (picture.empty()) {
+			return 0;
+		}
+		int m = picture.size(), n = picture[0].size();
+		vector<int> rows(m, 0), cols(n, 0);
+		unordered_map<string, int> um;
+		vector<string> srows;
+		for (int i = 0; i < m; i++) {
+			string s;
+			for (int j = 0; j < n; j++) {
+				if (picture[i][j] == 'B') {
+					rows[i]++;
+					cols[j]++;
+				}
+				s.push_back(picture[i][j]);
+			}
+			um[s]++;
+			srows.push_back(s);
+		}
+		int res = 0;
+		for (int i = 0; i < m; i++) {
+			for (int j = 0; j < n; j++) {
+				if (picture[i][j] == 'B' && rows[i] == N && cols[j] == N && um[srows[i]] == N) {
+					res++;
+				}
 			}
 		}
 		return res;

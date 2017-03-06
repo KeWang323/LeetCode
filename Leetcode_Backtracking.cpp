@@ -163,13 +163,8 @@ private:
 		return true;
 	}
 	bool isValid(vector<vector<char>>& board, int i, int j, char d) {
-		for (int row = 0; row < 9; row++) {
-			if (board[row][j] == d) {
-				return false;
-			}
-		}
-		for (int col = 0; col < 9; col++) {
-			if (board[i][col] == d) {
+		for (int k = 0; k < 9; k++) {
+			if (board[k][j] == d || board[i][k] == d) {
 				return false;
 			}
 		}
@@ -484,42 +479,25 @@ Now, instead outputting board configurations, return the total number of distinc
 class Solution {
 public:
 	int totalNQueens(int n) {
-		int res;
-		vector<int> res_sub;
-		unordered_map<int, bool> v;
-		unordered_map<int, bool> u;
-		unordered_map<int, bool> d;
-		solve(res, res_sub, n, v, u, d);
-		return res;
+		vector<bool> col(n, true), anti(2 * n - 1, true), main(2 * n - 1, true);
+		vector<int> row(n, 0);
+		int count = 0;
+		dfs(0, row, col, main, anti, count);
+		return count;
 	}
-private:
-	void solve(int& res, vector<int>& res_sub, int size, unordered_map<int, bool>& v, unordered_map<int, bool>& u, unordered_map<int, bool>& d) {
-		if (res_sub.size() == size) {
-			res++;
+	void dfs(int i, vector<int> &row, vector<bool> &col, vector<bool>& main, vector<bool> &anti, int &count) {
+		if (i == row.size()) {
+			count++;
 			return;
 		}
-		for (int i = 0; i < size; i++) {
-			if (valid(res_sub.size(), v, u, d, i)) {
-				res_sub.push_back(i);
-				solve(res, res_sub, size, v, u, d);
-				res_sub.pop_back();
-				back(res_sub.size(), v, u, d, i);
+		for (int j = 0; j < col.size(); j++) {
+			if (col[j] && main[i + j] && anti[i + col.size() - 1 - j]) {
+				row[i] = j;
+				col[j] = main[i + j] = anti[i + col.size() - 1 - j] = false;
+				dfs(i + 1, row, col, main, anti, count);
+				col[j] = main[i + j] = anti[i + col.size() - 1 - j] = true;
 			}
 		}
-	}
-	bool valid(int col, unordered_map<int, bool>& v, unordered_map<int, bool>& u, unordered_map<int, bool>& d, int row) {
-		if (v[row] == false && u[row - col] == false && d[row + col] == false) {
-			v[row] = true;
-			u[row - col] = true;
-			d[row + col] = true;
-			return true;
-		}
-		return false;
-	}
-	void back(int col, unordered_map<int, bool>& v, unordered_map<int, bool>& u, unordered_map<int, bool>& d, int row) {
-		v[row] = false;
-		u[row - col] = false;
-		d[row + col] = false;
 	}
 };
 /*

@@ -534,12 +534,11 @@ public:
 		int glo = 0, cur = 0;
 		for (int i = 0; i < s.size(); i++) {
 			if (t[i] == true) {
-				cur++;
+				glo = max(glo, ++cur);
 			}
 			else {
 				cur = 0;
 			}
-			glo = max(glo, cur);
 		}
 		return glo;
 	}
@@ -912,15 +911,14 @@ If there are multiple such windows, you are guaranteed that there will always be
 class Solution {
 public:
 	string minWindow(string s, string t) {
-		int i = 0, len = s.size() + 1;
-		vector<int> mapping(256, -len);
+		vector<int> mapping(256, 0);
 		for (char cha : t) {
-			mapping[cha] = mapping[cha] > 0 ? mapping[cha] + 1 : 1;
+			mapping[cha]++;
 		}
-		int slow = 0, fast = 0, cnt = t.size();
+		int slow = 0, fast = 0, cnt = t.size(), len = s.size() + 1, i;
 		while (fast < s.size()) {
 			if (--mapping[s[fast++]] >= 0 && --cnt == 0) {
-				while (mapping[s[slow]] < -len || ++mapping[s[slow]] <= 0) {
+				while (mapping[s[slow]]++ < 0) {
 					slow++;
 				}
 				if (len > fast - slow) {

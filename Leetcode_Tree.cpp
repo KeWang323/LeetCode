@@ -214,9 +214,7 @@ private:
 			if (first == NULL) {
 				first = pre;
 			}
-			if (first != NULL) {
-				second = root;
-			}
+			second = root;
 		}
 		pre = root;
 		inOrder(root->right, first, second, pre);

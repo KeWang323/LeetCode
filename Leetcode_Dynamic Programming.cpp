@@ -73,12 +73,11 @@ public:
 		int glo = 0, cur = 0;
 		for (int i = 0; i < s.size(); i++) {
 			if (t[i] == true) {
-				cur++;
+				glo = max(glo, ++cur);
 			}
 			else {
 				cur = 0;
 			}
-			glo = max(glo, cur);
 		}
 		return glo;
 	}

@@ -1267,12 +1267,11 @@ public:
 		int glo = 0, cur = 0;
 		for (int i = 0; i < s.size(); i++) {
 			if (t[i] == true) {
-				cur++;
+				glo = max(glo, ++cur);
 			}
 			else {
 				cur = 0;
 			}
-			glo = max(glo, cur);
 		}
 		return glo;
 	}
@@ -1293,9 +1292,6 @@ You may assume no duplicate exists in the array.
 class Solution {
 public:
 	int search(vector<int>& nums, int target) {
-		if (nums.empty()) {
-			return -1;
-		}
 		int l = 0, r = nums.size() - 1;
 		while (l <= r) {
 			int mid = l + (r - l) / 2;
@@ -1480,13 +1476,8 @@ private:
 		return true;
 	}
 	bool isValid(vector<vector<char>>& board, int i, int j, char d) {
-		for (int row = 0; row < 9; row++) {
-			if (board[row][j] == d) {
-				return false;
-			}
-		}
-		for (int col = 0; col < 9; col++) {
-			if (board[i][col] == d) {
+		for (int k = 0; k < 9; k++) {
+			if (board[k][j] == d || board[i][k] == d) {
 				return false;
 			}
 		}
@@ -2054,42 +2045,25 @@ Now, instead outputting board configurations, return the total number of distinc
 class Solution {
 public:
 	int totalNQueens(int n) {
-		int res;
-		vector<int> res_sub;
-		unordered_map<int, bool> v;
-		unordered_map<int, bool> u;
-		unordered_map<int, bool> d;
-		solve(res, res_sub, n, v, u, d);
-		return res;
+		vector<bool> col(n, true), anti(2 * n - 1, true), main(2 * n - 1, true);
+		vector<int> row(n, 0);
+		int count = 0;
+		dfs(0, row, col, main, anti, count);
+		return count;
 	}
-private:
-	void solve(int& res, vector<int>& res_sub, int size, unordered_map<int, bool>& v, unordered_map<int, bool>& u, unordered_map<int, bool>& d) {
-		if (res_sub.size() == size) {
-			res++;
+	void dfs(int i, vector<int> &row, vector<bool> &col, vector<bool>& main, vector<bool> &anti, int &count) {
+		if (i == row.size()) {
+			count++;
 			return;
 		}
-		for (int i = 0; i < size; i++) {
-			if (valid(res_sub.size(), v, u, d, i)) {
-				res_sub.push_back(i);
-				solve(res, res_sub, size, v, u, d);
-				res_sub.pop_back();
-				back(res_sub.size(), v, u, d, i);
+		for (int j = 0; j < col.size(); j++) {
+			if (col[j] && main[i + j] && anti[i + col.size() - 1 - j]) {
+				row[i] = j;
+				col[j] = main[i + j] = anti[i + col.size() - 1 - j] = false;
+				dfs(i + 1, row, col, main, anti, count);
+				col[j] = main[i + j] = anti[i + col.size() - 1 - j] = true;
 			}
 		}
-	}
-	bool valid(int col, unordered_map<int, bool>& v, unordered_map<int, bool>& u, unordered_map<int, bool>& d, int row) {
-		if (v[row] == false && u[row - col] == false && d[row + col] == false) {
-			v[row] = true;
-			u[row - col] = true;
-			d[row + col] = true;
-			return true;
-		}
-		return false;
-	}
-	void back(int col, unordered_map<int, bool>& v, unordered_map<int, bool>& u, unordered_map<int, bool>& d, int row) {
-		v[row] = false;
-		u[row - col] = false;
-		d[row + col] = false;
 	}
 };
 /*
@@ -2958,15 +2932,14 @@ If there are multiple such windows, you are guaranteed that there will always be
 class Solution {
 public:
 	string minWindow(string s, string t) {
-		int i = 0, len = s.size() + 1;
-		vector<int> mapping(256, -len);
+		vector<int> mapping(256, 0);
 		for (char cha : t) {
-			mapping[cha] = mapping[cha] > 0 ? mapping[cha] + 1 : 1;
+			mapping[cha]++;
 		}
-		int slow = 0, fast = 0, cnt = t.size();
+		int slow = 0, fast = 0, cnt = t.size(), len = s.size() + 1, i;
 		while (fast < s.size()) {
 			if (--mapping[s[fast++]] >= 0 && --cnt == 0) {
-				while (mapping[s[slow]] < -len || ++mapping[s[slow]] <= 0) {
+				while (mapping[s[slow]]++ < 0) {
 					slow++;
 				}
 				if (len > fast - slow) {
@@ -4031,9 +4004,7 @@ private:
 			if (first == NULL) {
 				first = pre;
 			}
-			if (first != NULL) {
-				second = root;
-			}
+			second = root;
 		}
 		pre = root;
 		inOrder(root->right, first, second, pre);
@@ -10475,6 +10446,63 @@ private:
 };
 /*
 
+286. Walls and Gates (Medium)
+
+You are given a m x n 2D grid initialized with these three possible values.
+
+-1 - A wall or an obstacle.
+0 - A gate.
+INF - Infinity means an empty room. We use the value 231 - 1 = 2147483647 to represent INF as you may assume that the distance to a gate is less than 2147483647.
+Fill each empty room with the distance to its nearest gate. If it is impossible to reach a gate, it should be filled with INF.
+
+For example, given the 2D grid:
+INF  -1  0  INF
+INF INF INF  -1
+INF  -1 INF  -1
+  0  -1 INF INF
+After running your function, the 2D grid should be:
+  3  -1   0   1
+  2   2   1  -1
+  1  -1   2  -1
+  0  -1   3   4
+
+*/
+class Solution {
+public:
+	void wallsAndGates(vector<vector<int>>& rooms) {
+		if (rooms.empty()) {
+			return;
+		}
+		for (int i = 0; i < rooms.size(); i++) {
+			for (int j = 0; j < rooms[0].size(); j++) {
+				if (rooms[i][j] == 0) {
+					bfs(rooms, i, j);
+				}
+			}
+		}
+		return;
+	}
+private:
+	vector<int> dir = { 0,1, 0, -1, 0 };
+	void bfs(vector<vector<int>>& rooms, int i, int j) {
+		queue<pair<int, int>> q;
+		q.push({ i, j });
+		while (!q.empty()) {
+			int x = q.front().first, y = q.front().second;
+			int step = rooms[x][y] + 1;
+			q.pop();
+			for (int k = 0; k < 4; k++) {
+				int xx = x + dir[k], yy = y + dir[k + 1];
+				if (xx >= 0 && xx < rooms.size() && yy >= 0 && yy < rooms[0].size() && rooms[xx][yy] > step) {
+					rooms[xx][yy] = step;
+					q.push({ xx, yy });
+				}
+			}
+		}
+	}
+};
+/*
+
 287. Find the Duplicate Number (Hard)
 
 Given an array nums containing n + 1 integers where each integer is between 1 and n (inclusive), prove that at least one duplicate number must exist. Assume that there is only one duplicate number, find the duplicate one.
@@ -15019,6 +15047,86 @@ public:
 };
 /*
 
+417. Pacific Atlantic Water Flow (Medium)
+
+Given an m x n matrix of non-negative integers representing the height of each unit cell in a continent, the "Pacific ocean" touches the left and top edges of the matrix and the "Atlantic ocean" touches the right and bottom edges.
+
+Water can only flow in four directions (up, down, left, or right) from a cell to another one with height equal or lower.
+
+Find the list of grid coordinates where water can flow to both the Pacific and Atlantic ocean.
+
+Note:
+The order of returned grid coordinates does not matter.
+Both m and n are less than 150.
+Example:
+
+Given the following 5x5 matrix:
+
+  Pacific ~   ~   ~   ~   ~
+	   ~  1   2   2   3  (5) *
+	   ~  3   2   3  (4) (4) *
+	   ~  2   4  (5)  3   1  *
+	   ~ (6) (7)  1   4   5  *
+	   ~ (5)  1   1   2   4  *
+		  *   *   *   *   * Atlantic
+
+Return:
+
+[[0, 4], [1, 3], [1, 4], [2, 2], [3, 0], [3, 1], [4, 0]] (positions with parentheses in above matrix).
+
+*/
+class Solution {
+public:
+	vector<pair<int, int>> pacificAtlantic(vector<vector<int>>& matrix) {
+		if (matrix.empty()) {
+			return{};
+		}
+		vector<pair<int, int>> res;
+		int m = matrix.size(), n = matrix[0].size();
+		vector<vector<bool>> tp(m, vector<bool>(n, false)), ta(m, vector<bool>(n, false));
+		queue<pair<int, int>> P, A;
+		for (int i = 0; i < m; i++) {
+			P.push({ i,0 });
+			tp[i][0] = true;
+			A.push({ i, n - 1 });
+			ta[i].back() = true;
+		}
+		for (int j = 0; j < n; j++) {
+			P.push({ 0, j });
+			tp[0][j] = true;
+			A.push({ m - 1, j });
+			ta[m - 1][j] = true;
+		}
+		bfs(matrix, P, tp, m, n);
+		bfs(matrix, A, ta, m, n);
+		for (int i = 0; i < m; i++) {
+			for (int j = 0; j < n; j++) {
+				if (tp[i][j] && ta[i][j]) {
+					res.push_back({ i,j });
+				}
+			}
+		}
+		return res;
+	}
+private:
+	vector<int> dir = { 0, 1, 0, -1, 0 };
+	void bfs(const vector<vector<int>>& matrix, queue<pair<int, int>>& q, vector<vector<bool>>& t, const int& m, const int& n) {
+		while (!q.empty()) {
+			pair<int, int> cell = q.front();
+			q.pop();
+			for (int i = 0; i < dir.size() - 1; i++) {
+				int x = cell.first + dir[i], y = cell.second + dir[i + 1];
+				if (x < 0 || x >= m || y < 0 || y >= n || t[x][y] || matrix[x][y] < matrix[cell.first][cell.second]) {
+					continue;
+				}
+				t[x][y] = true;
+				q.push({ x, y });
+			}
+		}
+	}
+};
+/*
+
 419. Battleships in a Board (Medium)
 
 Given an 2D board, count how many different battleships are in it. The battleships are represented with 'X's, empty slots are represented with '.'s. You may assume the following rules:
@@ -15987,6 +16095,51 @@ public:
 };
 /*
 
+469. Convex Polygon (Medium)
+
+Given a list of points that form a polygon when joined sequentially, find if this polygon is convex (Convex polygon definition).
+
+Note:
+
+There are at least 3 and at most 10,000 points.
+Coordinates are in the range -10,000 to 10,000.
+You may assume the polygon formed by given points is always a simple polygon (Simple polygon definition). In other words, we ensure that exactly two edges intersect at each vertex, and that edges otherwise don't intersect each other.
+Example 1:
+
+[[0,0],[0,1],[1,1],[1,0]]
+
+Answer: True
+
+Explanation:
+Example 2:
+
+[[0,0],[0,10],[10,10],[10,0],[5,5]]
+
+Answer: False
+
+Explanation:
+
+*/
+class Solution {
+public:
+	bool isConvex(vector<vector<int>>& points) {
+		for (long i = 0, n = points.size(), prev = 0, cur; i < n; ++i) {
+			if (cur = det2({ points[i], points[(i + 1) % n], points[(i + 2) % n] })) {
+				if (cur*prev < 0) {
+					return false;
+				}
+				prev = cur;
+			}
+		}
+		return true;
+	}
+private:
+	long det2(const vector<vector<int>>& A) {
+		return (A[1][0] - A[0][0])*(A[2][1] - A[0][1]) - (A[1][1] - A[0][1])*(A[2][0] - A[0][0]);
+	}
+};
+/*
+
 474. Ones and Zeroes (Medium)
 
 In the computer world, use restricted resource you have to generate maximum benefit is what we always want to pursue.
@@ -16224,6 +16377,54 @@ public:
 };
 /*
 
+484. Find Permutation (Medium)
+
+By now, you are given a secret signature consisting of character 'D' and 'I'. 'D' represents a decreasing relationship between two numbers, 'I' represents an increasing relationship between two numbers. And our secret signature was constructed by a special integer array, which contains uniquely all the different number from 1 to n (n is the length of the secret signature plus 1). For example, the secret signature "DI" can be constructed by array [2,1,3] or [3,1,2], but won't be constructed by array [3,2,4] or [2,1,3,4], which are both illegal constructing special string that can't represent the "DI" secret signature.
+
+On the other hand, now your job is to find the lexicographically smallest permutation of [1, 2, ... n] could refer to the given secret signature in the input.
+
+Example 1:
+Input: "I"
+Output: [1,2]
+Explanation: [1,2] is the only legal initial spectial string can construct secret signature "I", where the number 1 and 2 construct an increasing relationship.
+Example 2:
+Input: "DI"
+Output: [2,1,3]
+Explanation: Both [2,1,3] and [3,1,2] can construct the secret signature "DI",
+but since we want to find the one with the smallest lexicographical permutation, you need to output [2,1,3]
+Note:
+
+The input string will only contain the character 'D' and 'I'.
+The length of input string is a positive integer and will not exceed 10,000
+
+*/
+class Solution {
+public:
+	vector<int> findPermutation(string s) {
+		vector<int> res(s.size() + 1);
+		for (int i = 0; i < res.size(); i++) {
+			res[i] = i + 1;
+		}
+		for (int j = 0; j < s.size(); j++) {
+			if (s[j] == 'D') {
+				int i = j;
+				while (j < s.size() && s[j] == 'D') {
+					j++;
+				}
+				reverse(res, i, j);
+			}
+		}
+		return res;
+	}
+private:
+	void reverse(vector<int>& res, int i, int j) {
+		while (i < j) {
+			swap(res[i++], res[j--]);
+		}
+	}
+};
+/*
+
 485. Max Consecutive Ones (Easy)
 
 Given a binary array, find the maximum number of consecutive 1s in this array.
@@ -16345,6 +16546,86 @@ public:
 		}
 		return res;
 	}
+};
+/*
+
+490. The Maze (Medium)
+
+There is a ball in a maze with empty spaces and walls. The ball can go through empty spaces by rolling up, down, left or right, but it won't stop rolling until hitting a wall. When the ball stops, it could choose the next direction.
+
+Given the ball's start position, the destination and the maze, determine whether the ball could stop at the destination.
+
+The maze is represented by a binary 2D array. 1 means the wall and 0 means the empty space. You may assume that the borders of the maze are all walls. The start and destination coordinates are represented by row and column indexes.
+
+Example 1
+
+Input 1: a maze represented by a 2D array
+
+0 0 1 0 0
+0 0 0 0 0
+0 0 0 1 0
+1 1 0 1 1
+0 0 0 0 0
+
+Input 2: start coordinate (rowStart, colStart) = (0, 4)
+Input 3: destination coordinate (rowDest, colDest) = (4, 4)
+
+Output: true
+Explanation: One possible way is : left -> down -> left -> down -> right -> down -> right.
+
+Example 2
+
+Input 1: a maze represented by a 2D array
+
+0 0 1 0 0
+0 0 0 0 0
+0 0 0 1 0
+1 1 0 1 1
+0 0 0 0 0
+
+Input 2: start coordinate (rowStart, colStart) = (0, 4)
+Input 3: destination coordinate (rowDest, colDest) = (3, 2)
+
+Output: false
+Explanation: There is no way for the ball to stop at the destination.
+
+Note:
+There is only one ball and one destination in the maze.
+Both the ball and the destination exist on an empty space, and they will not be at the same position initially.
+The given maze does not contain border (like the red rectangle in the example pictures), but you could assume the border of the maze are all walls.
+The maze contains at least 2 empty spaces, and both the width and height of the maze won't exceed 100.
+
+*/
+class Solution {
+public:
+	bool hasPath(vector<vector<int>>& maze, vector<int>& start, vector<int>& destination) {
+		queue<pair<int, int>> q;
+		int m = maze.size(), n = maze[0].size();
+		vector<vector<bool>> visited(m, vector<bool>(n, false));
+		q.push({ start[0], start[1] });
+		visited[start[0]][start[1]] = true;
+		while (!q.empty()) {
+			pair<int, int> p = q.front();
+			q.pop();
+			for (int k = 0; k < 4; k++) {
+				int i = p.first, j = p.second;
+				while (i + dir[k] >= 0 && i + dir[k] < m && j + dir[k + 1] >= 0 && j + dir[k + 1] < n && maze[i + dir[k]][j + dir[k + 1]] != 1) {
+					i += dir[k];
+					j += dir[k + 1];
+				}
+				if (visited[i][j] == false) {
+					if (i == destination[0] && j == destination[1]) {
+						return true;
+					}
+					visited[i][j] = true;
+					q.push({ i, j });
+				}
+			}
+		}
+		return false;
+	}
+private:
+	vector<int> dir = { 0, 1, 0, -1, 0 };
 };
 /*
 
@@ -16489,6 +16770,104 @@ public:
 };
 /*
 
+499. The Maze III (Hard)
+
+There is a ball in a maze with empty spaces and walls. The ball can go through empty spaces by rolling up (u), down (d), left (l) or right (r), but it won't stop rolling until hitting a wall. When the ball stops, it could choose the next direction. There is also a hole in this maze. The ball will drop into the hole if it rolls on to the hole.
+
+Given the ball position, the hole position and the maze, find out how the ball could drop into the hole by moving the shortest distance. The distance is defined by the number of empty spaces traveled by the ball from the start position (excluded) to the hole (included). Output the moving directions by using 'u', 'd', 'l' and 'r'. Since there could be several different shortest ways, you should output the lexicographically smallest way. If the ball cannot reach the hole, output "impossible".
+
+The maze is represented by a binary 2D array. 1 means the wall and 0 means the empty space. You may assume that the borders of the maze are all walls. The ball and the hole coordinates are represented by row and column indexes.
+
+Example 1
+
+Input 1: a maze represented by a 2D array
+
+0 0 0 0 0
+1 1 0 0 1
+0 0 0 0 0
+0 1 0 0 1
+0 1 0 0 0
+
+Input 2: ball coordinate (rowBall, colBall) = (4, 3)
+Input 3: hole coordinate (rowHole, colHole) = (0, 1)
+
+Output: "lul"
+Explanation: There are two shortest ways for the ball to drop into the hole.
+The first way is left -> up -> left, represented by "lul".
+The second way is up -> left, represented by 'ul'.
+Both ways have shortest distance 6, but the first way is lexicographically smaller because 'l' < 'u'. So the output is "lul".
+
+Example 2
+
+Input 1: a maze represented by a 2D array
+
+0 0 0 0 0
+1 1 0 0 1
+0 0 0 0 0
+0 1 0 0 1
+0 1 0 0 0
+
+Input 2: ball coordinate (rowBall, colBall) = (4, 3)
+Input 3: hole coordinate (rowHole, colHole) = (3, 0)
+Output: "impossible"
+Explanation: The ball cannot reach the hole.
+
+Note:
+There is only one ball and one hole in the maze.
+Both the ball and hole exist on an empty space, and they will not be at the same position initially.
+The given maze does not contain border (like the red rectangle in the example pictures), but you could assume the border of the maze are all walls.
+The maze contains at least 2 empty spaces, and the width and the height of the maze won't exceed 30.
+
+*/
+class Solution {
+public:
+	string findShortestWay(vector<vector<int>>& maze, vector<int>& ball, vector<int>& hole) {
+		queue<pair<int, int>> q;
+		int m = maze.size(), n = maze[0].size();
+		vector<vector<pair<int, string>>> visited(m, vector<pair<int, string>>(n, make_pair(INT_MAX, "impossible")));
+		q.push({ ball[0], ball[1] });
+		visited[ball[0]][ball[1]] = { 0,"" };
+		while (!q.empty()) {
+			pair<int, int> p = q.front();
+			q.pop();
+			for (int k = 0; k < 4; k++) {
+				int i = p.first, j = p.second;
+				string res = visited[i][j].second;
+				res += s[k];
+				int step = 0;
+				while (i + dir[k].first >= 0 && i + dir[k].first < m && j + dir[k].second >= 0 && j + dir[k].second < n && maze[i + dir[k].first][j + dir[k].second] != 1) {
+					i += dir[k].first;
+					j += dir[k].second;
+					step++;
+					if (i == hole[0] && j == hole[1]) {
+						if (visited[p.first][p.second].first + step < visited[i][j].first) {
+							visited[i][j].first = visited[p.first][p.second].first + step;
+							visited[i][j].second = res;
+						}
+						else if (visited[p.first][p.second].first + step == visited[i][j].first) {
+							visited[i][j].second = res < visited[i][j].second ? res : visited[i][j].second;
+						}
+					}
+				}
+				if (visited[p.first][p.second].first + step < visited[i][j].first) {
+					visited[i][j].first = visited[p.first][p.second].first + step;
+					visited[i][j].second = res;
+					q.push({ i, j });
+				}
+				else if (visited[p.first][p.second].first + step == visited[i][j].first && res < visited[i][j].second) {
+					visited[i][j].second = res;
+					q.push({ i, j });
+				}
+			}
+		}
+		return visited[hole[0]][hole[1]].second;
+	}
+private:
+	vector<pair<int, int>> dir = { { 0, 1 },{ 1,0 },{ 0,-1 },{ -1, 0 } };
+	vector<string> s = { "r", "d", "l", "u" };
+};
+/*
+
 500. Keyboard Row (Easy)
 
 Given a List of words, return the words that can be typed using letters of alphabet on only one row's of American keyboard like the image below.
@@ -16628,6 +17007,85 @@ public:
 		reverse(res.begin(), res.end());
 		return sign ? "-" + res : res;
 	}
+};
+/*
+
+505. The Maze II (Medium)
+
+There is a ball in a maze with empty spaces and walls. The ball can go through empty spaces by rolling up, down, left or right, but it won't stop rolling until hitting a wall. When the ball stops, it could choose the next direction.
+
+Given the ball's start position, the destination and the maze, find the shortest distance for the ball to stop at the destination. The distance is defined by the number of empty spaces traveled by the ball from the start position (excluded) to the destination (included). If the ball cannot stop at the destination, return -1.
+
+The maze is represented by a binary 2D array. 1 means the wall and 0 means the empty space. You may assume that the borders of the maze are all walls. The start and destination coordinates are represented by row and column indexes.
+
+Example 1
+
+Input 1: a maze represented by a 2D array
+
+0 0 1 0 0
+0 0 0 0 0
+0 0 0 1 0
+1 1 0 1 1
+0 0 0 0 0
+
+Input 2: start coordinate (rowStart, colStart) = (0, 4)
+Input 3: destination coordinate (rowDest, colDest) = (4, 4)
+
+Output: 12
+Explanation: One shortest way is : left -> down -> left -> down -> right -> down -> right.
+			 The total distance is 1 + 1 + 3 + 1 + 2 + 2 + 2 = 12.
+
+Example 2
+
+Input 1: a maze represented by a 2D array
+
+0 0 1 0 0
+0 0 0 0 0
+0 0 0 1 0
+1 1 0 1 1
+0 0 0 0 0
+
+Input 2: start coordinate (rowStart, colStart) = (0, 4)
+Input 3: destination coordinate (rowDest, colDest) = (3, 2)
+
+Output: -1
+Explanation: There is no way for the ball to stop at the destination.
+
+Note:
+There is only one ball and one destination in the maze.
+Both the ball and the destination exist on an empty space, and they will not be at the same position initially.
+The given maze does not contain border (like the red rectangle in the example pictures), but you could assume the border of the maze are all walls.
+The maze contains at least 2 empty spaces, and both the width and height of the maze won't exceed 100.
+
+*/
+class Solution {
+public:
+	int shortestDistance(vector<vector<int>>& maze, vector<int>& start, vector<int>& destination) {
+		queue<pair<int, int>> q;
+		int m = maze.size(), n = maze[0].size();
+		vector<vector<int>> visited(m, vector<int>(n, INT_MAX));
+		q.push({ start[0], start[1] });
+		visited[start[0]][start[1]] = 0;
+		while (!q.empty()) {
+			pair<int, int> p = q.front();
+			q.pop();
+			for (int k = 0; k < 4; k++) {
+				int i = p.first, j = p.second;
+				while (i + dir[k] >= 0 && i + dir[k] < m && j + dir[k + 1] >= 0 && j + dir[k + 1] < n && maze[i + dir[k]][j + dir[k + 1]] != 1) {
+					i += dir[k];
+					j += dir[k + 1];
+				}
+				int step = max(abs(i - p.first), abs(j - p.second));
+				if (visited[p.first][p.second] + step < visited[i][j]) {
+					visited[i][j] = visited[p.first][p.second] + step;
+					q.push({ i, j });
+				}
+			}
+		}
+		return visited[destination[0]][destination[1]] == INT_MAX ? -1 : visited[destination[0]][destination[1]];
+	}
+private:
+	vector<int> dir = { 0, 1, 0, -1, 0 };
 };
 /*
 
@@ -16976,3 +17434,198 @@ private:
 		getMinimumDifference(root->right, res, pre);
 	}
 };
+/*
+
+531. Lonely Pixel I (Medium)
+
+Given a picture consisting of black and white pixels, find the number of black lonely pixels.
+
+The picture is represented by a 2D char array consisting of 'B' and 'W', which means black and white pixels respectively.
+
+A black lonely pixel is character 'B' that located at a specific position where the same row and same column don't have any other black pixels.
+
+Example:
+Input:
+[['W', 'W', 'B'],
+ ['W', 'B', 'W'],
+ ['B', 'W', 'W']]
+
+Output: 3
+Explanation: All the three 'B's are black lonely pixels.
+Note:
+The range of width and height of the input 2D array is [1,500].
+
+*/
+class Solution {
+public:
+	int findLonelyPixel(vector<vector<char>>& picture) {
+		vector<int> row(picture.size(), 0), col(picture[0].size(), 0);
+		for (int i = 0; i < picture.size(); i++) {
+			for (int j = 0; j < picture[0].size(); j++) {
+				if (picture[i][j] == 'B') {
+					row[i]++;
+					col[j]++;
+				}
+			}
+		}
+		int res = 0;
+		for (int i = 0; i < picture.size(); i++) {
+			for (int j = 0; j < picture[0].size(); j++) {
+				if (picture[i][j] == 'B' && row[i] == 1 && col[j] == 1) {
+					res++;
+				}
+			}
+		}
+		return res;
+	}
+};
+/*
+
+532. K-diff Pairs in an Array (Easy)
+
+Given an array of integers and an integer k, you need to find the number of unique k-diff pairs in the array. Here a k-diff pair is defined as an integer pair (i, j), where i and j are both numbers in the array and their absolute difference is k.
+
+Example 1:
+Input: [3, 1, 4, 1, 5], k = 2
+Output: 2
+Explanation: There are two 2-diff pairs in the array, (1, 3) and (3, 5).
+Although we have two 1s in the input, we should only return the number of unique pairs.
+Example 2:
+Input:[1, 2, 3, 4, 5], k = 1
+Output: 4
+Explanation: There are four 1-diff pairs in the array, (1, 2), (2, 3), (3, 4) and (4, 5).
+Example 3:
+Input: [1, 3, 1, 5, 4], k = 0
+Output: 1
+Explanation: There is one 0-diff pair in the array, (1, 1).
+Note:
+The pairs (i, j) and (j, i) count as the same pair.
+The length of the array won't exceed 10,000.
+All the integers in the given input belong to the range: [-1e7, 1e7].
+
+*/
+class Solution {
+public:
+	int findPairs(vector<int>& nums, int k) {
+		if (nums.empty() || k < 0) {
+			return 0;
+		}
+		unordered_map<int, int> mapping;
+		int res = 0;
+		for (int num : nums) {
+			mapping[num]++;
+		}
+		for (auto i = mapping.begin(); i != mapping.end(); i++) {
+			if (k == 0) {
+				res += i->second > 1;
+			}
+			else {
+				res += mapping.find(i->first + k) != mapping.end();
+			}
+		}
+		return res;
+	}
+};
+/*
+
+533. Lonely Pixel II (Medium)
+
+Given a picture consisting of black and white pixels, and a positive integer N, find the number of black pixels located at some specific row R and column C that align with all the following rules:
+
+Row R and column C both contain exactly N black pixels.
+For all rows that have a black pixel at column C, they should be exactly the same as row R
+The picture is represented by a 2D char array consisting of 'B' and 'W', which means black and white pixels respectively.
+
+Example:
+Input:
+[['W', 'B', 'W', 'B', 'B', 'W'],
+ ['W', 'B', 'W', 'B', 'B', 'W'],
+ ['W', 'B', 'W', 'B', 'B', 'W'],
+ ['W', 'W', 'B', 'W', 'B', 'W']]
+
+N = 3
+Output: 6
+Explanation: All the bold 'B' are the black pixels we need (all 'B's at column 1 and 3).
+		0    1    2    3    4    5         column index
+0    [['W', 'B', 'W', 'B', 'B', 'W'],
+1     ['W', 'B', 'W', 'B', 'B', 'W'],
+2     ['W', 'B', 'W', 'B', 'B', 'W'],
+3     ['W', 'W', 'B', 'W', 'B', 'W']]
+row index
+
+Take 'B' at row R = 0 and column C = 1 as an example:
+Rule 1, row R = 0 and column C = 1 both have exactly N = 3 black pixels.
+Rule 2, the rows have black pixel at column C = 1 are row 0, row 1 and row 2. They are exactly the same as row R = 0.
+
+Note:
+The range of width and height of the input 2D array is [1,200].
+
+*/
+class Solution {
+public:
+	int findBlackPixel(vector<vector<char>>& picture, int N) {
+		if (picture.empty()) {
+			return 0;
+		}
+		int m = picture.size(), n = picture[0].size();
+		vector<int> rows(m, 0), cols(n, 0);
+		unordered_map<string, int> um;
+		vector<string> srows;
+		for (int i = 0; i < m; i++) {
+			string s;
+			for (int j = 0; j < n; j++) {
+				if (picture[i][j] == 'B') {
+					rows[i]++;
+					cols[j]++;
+				}
+				s.push_back(picture[i][j]);
+			}
+			um[s]++;
+			srows.push_back(s);
+		}
+		int res = 0;
+		for (int i = 0; i < m; i++) {
+			for (int j = 0; j < n; j++) {
+				if (picture[i][j] == 'B' && rows[i] == N && cols[j] == N && um[srows[i]] == N) {
+					res++;
+				}
+			}
+		}
+		return res;
+	}
+};
+/*
+
+535. Encode and Decode TinyURL (Medium)
+
+TinyURL is a URL shortening service where you enter a URL such as https://leetcode.com/problems/design-tinyurl and it returns a short URL such as http://tinyurl.com/4e9iAk.
+
+Design the encode and decode methods for the TinyURL service. There is no restriction on how your encode/decode algorithm should work. You just need to ensure that a URL can be encoded to a tiny URL and the tiny URL can be decoded to the original URL.
+
+*/
+class Solution {
+public:
+	string s = "1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+	unordered_map<string, string> lts, stl;
+	// Encodes a URL to a shortened URL.
+	string encode(string longUrl) {
+		if (lts.find(longUrl) != lts.end()) {
+			return lts[longUrl];
+		}
+		string res = "http://tinyurl.com/";
+		for (int i = 0; i < 6; i++) {
+			res.push_back(s[rand() % 62]);
+		}
+		lts[longUrl] = res;
+		stl[res] = longUrl;
+		return res;
+	}
+
+	// Decodes a shortened URL to its original URL.
+	string decode(string shortUrl) {
+		return stl[shortUrl];
+	}
+};
+// Your Solution object will be instantiated and called as such:
+// Solution solution;
+// solution.decode(solution.encode(url));

@@ -510,6 +510,63 @@ private:
 };
 /*
 
+286. Walls and Gates (Medium)
+
+You are given a m x n 2D grid initialized with these three possible values.
+
+-1 - A wall or an obstacle.
+0 - A gate.
+INF - Infinity means an empty room. We use the value 231 - 1 = 2147483647 to represent INF as you may assume that the distance to a gate is less than 2147483647.
+Fill each empty room with the distance to its nearest gate. If it is impossible to reach a gate, it should be filled with INF.
+
+For example, given the 2D grid:
+INF  -1  0  INF
+INF INF INF  -1
+INF  -1 INF  -1
+  0  -1 INF INF
+After running your function, the 2D grid should be:
+  3  -1   0   1
+  2   2   1  -1
+  1  -1   2  -1
+  0  -1   3   4
+
+*/
+class Solution {
+public:
+	void wallsAndGates(vector<vector<int>>& rooms) {
+		if (rooms.empty()) {
+			return;
+		}
+		for (int i = 0; i < rooms.size(); i++) {
+			for (int j = 0; j < rooms[0].size(); j++) {
+				if (rooms[i][j] == 0) {
+					bfs(rooms, i, j);
+				}
+			}
+		}
+		return;
+	}
+private:
+	vector<int> dir = { 0,1, 0, -1, 0 };
+	void bfs(vector<vector<int>>& rooms, int i, int j) {
+		queue<pair<int, int>> q;
+		q.push({ i, j });
+		while (!q.empty()) {
+			int x = q.front().first, y = q.front().second;
+			int step = rooms[x][y] + 1;
+			q.pop();
+			for (int k = 0; k < 4; k++) {
+				int xx = x + dir[k], yy = y + dir[k + 1];
+				if (xx >= 0 && xx < rooms.size() && yy >= 0 && yy < rooms[0].size() && rooms[xx][yy] > step) {
+					rooms[xx][yy] = step;
+					q.push({ xx, yy });
+				}
+			}
+		}
+	}
+};
+/*
+
 323. Number of Connected Components in an Undirected Graph (Medium)
 
 Given n nodes labeled from 0 to n - 1 and a list of undirected edges (each edge is a pair of nodes), write a function to find the number of connected components in an undirected graph.
@@ -624,6 +681,343 @@ public:
 		}
 		return res;
 	}
+};
+/*
+
+417. Pacific Atlantic Water Flow (Medium)
+
+Given an m x n matrix of non-negative integers representing the height of each unit cell in a continent, the "Pacific ocean" touches the left and top edges of the matrix and the "Atlantic ocean" touches the right and bottom edges.
+
+Water can only flow in four directions (up, down, left, or right) from a cell to another one with height equal or lower.
+
+Find the list of grid coordinates where water can flow to both the Pacific and Atlantic ocean.
+
+Note:
+The order of returned grid coordinates does not matter.
+Both m and n are less than 150.
+Example:
+
+Given the following 5x5 matrix:
+
+  Pacific ~   ~   ~   ~   ~
+	   ~  1   2   2   3  (5) *
+	   ~  3   2   3  (4) (4) *
+	   ~  2   4  (5)  3   1  *
+	   ~ (6) (7)  1   4   5  *
+	   ~ (5)  1   1   2   4  *
+		  *   *   *   *   * Atlantic
+
+Return:
+
+[[0, 4], [1, 3], [1, 4], [2, 2], [3, 0], [3, 1], [4, 0]] (positions with parentheses in above matrix).
+
+*/
+class Solution {
+public:
+	vector<pair<int, int>> pacificAtlantic(vector<vector<int>>& matrix) {
+		if (matrix.empty()) {
+			return{};
+		}
+		vector<pair<int, int>> res;
+		int m = matrix.size(), n = matrix[0].size();
+		vector<vector<bool>> tp(m, vector<bool>(n, false)), ta(m, vector<bool>(n, false));
+		queue<pair<int, int>> P, A;
+		for (int i = 0; i < m; i++) {
+			P.push({ i,0 });
+			tp[i][0] = true;
+			A.push({ i, n - 1 });
+			ta[i].back() = true;
+		}
+		for (int j = 0; j < n; j++) {
+			P.push({ 0, j });
+			tp[0][j] = true;
+			A.push({ m - 1, j });
+			ta[m - 1][j] = true;
+		}
+		bfs(matrix, P, tp, m, n);
+		bfs(matrix, A, ta, m, n);
+		for (int i = 0; i < m; i++) {
+			for (int j = 0; j < n; j++) {
+				if (tp[i][j] && ta[i][j]) {
+					res.push_back({ i,j });
+				}
+			}
+		}
+		return res;
+	}
+private:
+	vector<int> dir = { 0, 1, 0, -1, 0 };
+	void bfs(const vector<vector<int>>& matrix, queue<pair<int, int>>& q, vector<vector<bool>>& t, const int& m, const int& n) {
+		while (!q.empty()) {
+			pair<int, int> cell = q.front();
+			q.pop();
+			for (int i = 0; i < dir.size() - 1; i++) {
+				int x = cell.first + dir[i], y = cell.second + dir[i + 1];
+				if (x < 0 || x >= m || y < 0 || y >= n || t[x][y] || matrix[x][y] < matrix[cell.first][cell.second]) {
+					continue;
+				}
+				t[x][y] = true;
+				q.push({ x, y });
+			}
+		}
+	}
+};
+/*
+
+490. The Maze (Medium)
+
+There is a ball in a maze with empty spaces and walls. The ball can go through empty spaces by rolling up, down, left or right, but it won't stop rolling until hitting a wall. When the ball stops, it could choose the next direction.
+
+Given the ball's start position, the destination and the maze, determine whether the ball could stop at the destination.
+
+The maze is represented by a binary 2D array. 1 means the wall and 0 means the empty space. You may assume that the borders of the maze are all walls. The start and destination coordinates are represented by row and column indexes.
+
+Example 1
+
+Input 1: a maze represented by a 2D array
+
+0 0 1 0 0
+0 0 0 0 0
+0 0 0 1 0
+1 1 0 1 1
+0 0 0 0 0
+
+Input 2: start coordinate (rowStart, colStart) = (0, 4)
+Input 3: destination coordinate (rowDest, colDest) = (4, 4)
+
+Output: true
+Explanation: One possible way is : left -> down -> left -> down -> right -> down -> right.
+
+Example 2
+
+Input 1: a maze represented by a 2D array
+
+0 0 1 0 0
+0 0 0 0 0
+0 0 0 1 0
+1 1 0 1 1
+0 0 0 0 0
+
+Input 2: start coordinate (rowStart, colStart) = (0, 4)
+Input 3: destination coordinate (rowDest, colDest) = (3, 2)
+
+Output: false
+Explanation: There is no way for the ball to stop at the destination.
+
+Note:
+There is only one ball and one destination in the maze.
+Both the ball and the destination exist on an empty space, and they will not be at the same position initially.
+The given maze does not contain border (like the red rectangle in the example pictures), but you could assume the border of the maze are all walls.
+The maze contains at least 2 empty spaces, and both the width and height of the maze won't exceed 100.
+
+*/
+class Solution {
+public:
+	bool hasPath(vector<vector<int>>& maze, vector<int>& start, vector<int>& destination) {
+		queue<pair<int, int>> q;
+		int m = maze.size(), n = maze[0].size();
+		vector<vector<bool>> visited(m, vector<bool>(n, false));
+		q.push({ start[0], start[1] });
+		visited[start[0]][start[1]] = true;
+		while (!q.empty()) {
+			pair<int, int> p = q.front();
+			q.pop();
+			for (int k = 0; k < 4; k++) {
+				int i = p.first, j = p.second;
+				while (i + dir[k] >= 0 && i + dir[k] < m && j + dir[k + 1] >= 0 && j + dir[k + 1] < n && maze[i + dir[k]][j + dir[k + 1]] != 1) {
+					i += dir[k];
+					j += dir[k + 1];
+				}
+				if (visited[i][j] == false) {
+					if (i == destination[0] && j == destination[1]) {
+						return true;
+					}
+					visited[i][j] = true;
+					q.push({ i, j });
+				}
+			}
+		}
+		return false;
+	}
+private:
+	vector<int> dir = { 0, 1, 0, -1, 0 };
+};
+/*
+
+505. The Maze II (Medium)
+
+There is a ball in a maze with empty spaces and walls. The ball can go through empty spaces by rolling up, down, left or right, but it won't stop rolling until hitting a wall. When the ball stops, it could choose the next direction.
+
+Given the ball's start position, the destination and the maze, find the shortest distance for the ball to stop at the destination. The distance is defined by the number of empty spaces traveled by the ball from the start position (excluded) to the destination (included). If the ball cannot stop at the destination, return -1.
+
+The maze is represented by a binary 2D array. 1 means the wall and 0 means the empty space. You may assume that the borders of the maze are all walls. The start and destination coordinates are represented by row and column indexes.
+
+Example 1
+
+Input 1: a maze represented by a 2D array
+
+0 0 1 0 0
+0 0 0 0 0
+0 0 0 1 0
+1 1 0 1 1
+0 0 0 0 0
+
+Input 2: start coordinate (rowStart, colStart) = (0, 4)
+Input 3: destination coordinate (rowDest, colDest) = (4, 4)
+
+Output: 12
+Explanation: One shortest way is : left -> down -> left -> down -> right -> down -> right.
+			 The total distance is 1 + 1 + 3 + 1 + 2 + 2 + 2 = 12.
+
+Example 2
+
+Input 1: a maze represented by a 2D array
+
+0 0 1 0 0
+0 0 0 0 0
+0 0 0 1 0
+1 1 0 1 1
+0 0 0 0 0
+
+Input 2: start coordinate (rowStart, colStart) = (0, 4)
+Input 3: destination coordinate (rowDest, colDest) = (3, 2)
+
+Output: -1
+Explanation: There is no way for the ball to stop at the destination.
+
+Note:
+There is only one ball and one destination in the maze.
+Both the ball and the destination exist on an empty space, and they will not be at the same position initially.
+The given maze does not contain border (like the red rectangle in the example pictures), but you could assume the border of the maze are all walls.
+The maze contains at least 2 empty spaces, and both the width and height of the maze won't exceed 100.
+
+*/
+class Solution {
+public:
+	int shortestDistance(vector<vector<int>>& maze, vector<int>& start, vector<int>& destination) {
+		queue<pair<int, int>> q;
+		int m = maze.size(), n = maze[0].size();
+		vector<vector<int>> visited(m, vector<int>(n, INT_MAX));
+		q.push({ start[0], start[1] });
+		visited[start[0]][start[1]] = 0;
+		while (!q.empty()) {
+			pair<int, int> p = q.front();
+			q.pop();
+			for (int k = 0; k < 4; k++) {
+				int i = p.first, j = p.second;
+				while (i + dir[k] >= 0 && i + dir[k] < m && j + dir[k + 1] >= 0 && j + dir[k + 1] < n && maze[i + dir[k]][j + dir[k + 1]] != 1) {
+					i += dir[k];
+					j += dir[k + 1];
+				}
+				int step = max(abs(i - p.first), abs(j - p.second));
+				if (visited[p.first][p.second] + step < visited[i][j]) {
+					visited[i][j] = visited[p.first][p.second] + step;
+					q.push({ i, j });
+				}
+			}
+		}
+		return visited[destination[0]][destination[1]] == INT_MAX ? -1 : visited[destination[0]][destination[1]];
+	}
+private:
+	vector<int> dir = { 0, 1, 0, -1, 0 };
+};
+/*
+
+499. The Maze III (Hard)
+
+There is a ball in a maze with empty spaces and walls. The ball can go through empty spaces by rolling up (u), down (d), left (l) or right (r), but it won't stop rolling until hitting a wall. When the ball stops, it could choose the next direction. There is also a hole in this maze. The ball will drop into the hole if it rolls on to the hole.
+
+Given the ball position, the hole position and the maze, find out how the ball could drop into the hole by moving the shortest distance. The distance is defined by the number of empty spaces traveled by the ball from the start position (excluded) to the hole (included). Output the moving directions by using 'u', 'd', 'l' and 'r'. Since there could be several different shortest ways, you should output the lexicographically smallest way. If the ball cannot reach the hole, output "impossible".
+
+The maze is represented by a binary 2D array. 1 means the wall and 0 means the empty space. You may assume that the borders of the maze are all walls. The ball and the hole coordinates are represented by row and column indexes.
+
+Example 1
+
+Input 1: a maze represented by a 2D array
+
+0 0 0 0 0
+1 1 0 0 1
+0 0 0 0 0
+0 1 0 0 1
+0 1 0 0 0
+
+Input 2: ball coordinate (rowBall, colBall) = (4, 3)
+Input 3: hole coordinate (rowHole, colHole) = (0, 1)
+
+Output: "lul"
+Explanation: There are two shortest ways for the ball to drop into the hole.
+The first way is left -> up -> left, represented by "lul".
+The second way is up -> left, represented by 'ul'.
+Both ways have shortest distance 6, but the first way is lexicographically smaller because 'l' < 'u'. So the output is "lul".
+
+Example 2
+
+Input 1: a maze represented by a 2D array
+
+0 0 0 0 0
+1 1 0 0 1
+0 0 0 0 0
+0 1 0 0 1
+0 1 0 0 0
+
+Input 2: ball coordinate (rowBall, colBall) = (4, 3)
+Input 3: hole coordinate (rowHole, colHole) = (3, 0)
+Output: "impossible"
+Explanation: The ball cannot reach the hole.
+
+Note:
+There is only one ball and one hole in the maze.
+Both the ball and hole exist on an empty space, and they will not be at the same position initially.
+The given maze does not contain border (like the red rectangle in the example pictures), but you could assume the border of the maze are all walls.
+The maze contains at least 2 empty spaces, and the width and the height of the maze won't exceed 30.
+
+*/
+class Solution {
+public:
+	string findShortestWay(vector<vector<int>>& maze, vector<int>& ball, vector<int>& hole) {
+		queue<pair<int, int>> q;
+		int m = maze.size(), n = maze[0].size();
+		vector<vector<pair<int, string>>> visited(m, vector<pair<int, string>>(n, make_pair(INT_MAX, "impossible")));
+		q.push({ ball[0], ball[1] });
+		visited[ball[0]][ball[1]] = { 0,"" };
+		while (!q.empty()) {
+			pair<int, int> p = q.front();
+			q.pop();
+			for (int k = 0; k < 4; k++) {
+				int i = p.first, j = p.second;
+				string res = visited[i][j].second;
+				res += s[k];
+				int step = 0;
+				while (i + dir[k].first >= 0 && i + dir[k].first < m && j + dir[k].second >= 0 && j + dir[k].second < n && maze[i + dir[k].first][j + dir[k].second] != 1) {
+					i += dir[k].first;
+					j += dir[k].second;
+					step++;
+					if (i == hole[0] && j == hole[1]) {
+						if (visited[p.first][p.second].first + step < visited[i][j].first) {
+							visited[i][j].first = visited[p.first][p.second].first + step;
+							visited[i][j].second = res;
+						}
+						else if (visited[p.first][p.second].first + step == visited[i][j].first) {
+							visited[i][j].second = res < visited[i][j].second ? res : visited[i][j].second;
+						}
+					}
+				}
+				if (visited[p.first][p.second].first + step < visited[i][j].first) {
+					visited[i][j].first = visited[p.first][p.second].first + step;
+					visited[i][j].second = res;
+					q.push({ i, j });
+				}
+				else if (visited[p.first][p.second].first + step == visited[i][j].first && res < visited[i][j].second) {
+					visited[i][j].second = res;
+					q.push({ i, j });
+				}
+			}
+		}
+		return visited[hole[0]][hole[1]].second;
+	}
+private:
+	vector<pair<int, int>> dir = { { 0, 1 },{ 1,0 },{ 0,-1 },{ -1, 0 } };
+	vector<string> s = { "r", "d", "l", "u" };
 };
 /*
 

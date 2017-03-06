@@ -253,13 +253,8 @@ private:
 		return true;
 	}
 	bool isValid(vector<vector<char>>& board, int i, int j, char d) {
-		for (int row = 0; row < 9; row++) {
-			if (board[row][j] == d) {
-				return false;
-			}
-		}
-		for (int col = 0; col < 9; col++) {
-			if (board[i][col] == d) {
+		for (int k = 0; k < 9; k++) {
+			if (board[k][j] == d || board[i][k] == d) {
 				return false;
 			}
 		}
@@ -332,15 +327,14 @@ If there are multiple such windows, you are guaranteed that there will always be
 class Solution {
 public:
 	string minWindow(string s, string t) {
-		int i = 0, len = s.size() + 1;
-		vector<int> mapping(256, -len);
+		vector<int> mapping(256, 0);
 		for (char cha : t) {
-			mapping[cha] = mapping[cha] > 0 ? mapping[cha] + 1 : 1;
+			mapping[cha]++;
 		}
-		int slow = 0, fast = 0, cnt = t.size();
+		int slow = 0, fast = 0, cnt = t.size(), len = s.size() + 1, i;
 		while (fast < s.size()) {
 			if (--mapping[s[fast++]] >= 0 && --cnt == 0) {
-				while (mapping[s[slow]] < -len || ++mapping[s[slow]] <= 0) {
+				while (mapping[s[slow]]++ < 0) {
 					slow++;
 				}
 				if (len > fast - slow) {
