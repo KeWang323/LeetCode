@@ -4796,53 +4796,56 @@ Note:
 You may only use constant extra space.
 For example,
 Given the following binary tree,
-1
-/  \
-2    3
-/ \    \
-4   5    7
+		 1
+	   /  \
+	  2    3
+	 / \    \
+	4   5    7
 After calling your function, the tree should look like:
-1 -> NULL
-/  \
-2 -> 3 -> NULL
-/ \    \
-4-> 5 -> 7 -> NULL
+		 1 -> NULL
+	   /  \
+	  2 -> 3 -> NULL
+	 / \    \
+	4-> 5 -> 7 -> NULL
 
 */
 /**
-* Definition for binary tree with next pointer.
-* struct TreeLinkNode {
-*  int val;
-*  TreeLinkNode *left, *right, *next;
-*  TreeLinkNode(int x) : val(x), left(NULL), right(NULL), next(NULL) {}
-* };
-*/
+ * Definition for binary tree with next pointer.
+ * struct TreeLinkNode {
+ *  int val;
+ *  TreeLinkNode *left, *right, *next;
+ *  TreeLinkNode(int x) : val(x), left(NULL), right(NULL), next(NULL) {}
+ * };
+ */
 class Solution {
 public:
 	void connect(TreeLinkNode *root) {
-		if (root == NULL) {
-			return;
-		}
-		queue<TreeLinkNode*> q;
-		q.push(root);
-		while (!q.empty()) {
-			int _size = q.size();
-			for (int i = 0; i < _size; i++) {
-				TreeLinkNode* node = q.front();
-				q.pop();
-				if (i < _size - 1) {
-					node->next = q.front();
+		TreeLinkNode *head = NULL, *prev = NULL, *cur = root;
+		while (cur != NULL) {
+			while (cur != NULL) {
+				if (cur->left != NULL) {
+					if (prev == NULL) {
+						head = cur->left;
+					}
+					else {
+						prev->next = cur->left;
+					}
+					prev = cur->left;
 				}
-				else {
-					node->next = NULL;
+				if (cur->right != NULL) {
+					if (prev == NULL) {
+						head = cur->right;
+					}
+					else {
+						prev->next = cur->right;
+					}
+					prev = cur->right;
 				}
-				if (node->left != NULL) {
-					q.push(node->left);
-				}
-				if (node->right != NULL) {
-					q.push(node->right);
-				}
+				cur = cur->next;
 			}
+			cur = head;
+			head = NULL;
+			prev = NULL;
 		}
 	}
 };
@@ -5454,35 +5457,31 @@ Return a deep copy of the list.
 
 */
 /**
-* Definition for singly-linked list with a random pointer.
-* struct RandomListNode {
-*     int label;
-*     RandomListNode *next, *random;
-*     RandomListNode(int x) : label(x), next(NULL), random(NULL) {}
-* };
-*/
+ * Definition for singly-linked list with a random pointer.
+ * struct RandomListNode {
+ *     int label;
+ *     RandomListNode *next, *random;
+ *     RandomListNode(int x) : label(x), next(NULL), random(NULL) {}
+ * };
+ */
 class Solution {
 public:
 	RandomListNode *copyRandomList(RandomListNode *head) {
 		if (head == NULL) {
 			return NULL;
 		}
-		unordered_map<RandomListNode*, RandomListNode*> mapping;
-		RandomListNode *newhead = new RandomListNode(head->label);
-		RandomListNode *cur = newhead;
-		mapping[head] = newhead;
+		RandomListNode *newhead = new RandomListNode(head->label), *cur = newhead;
+		unordered_map<RandomListNode*, RandomListNode*> mapping = { {head, newhead} };
 		while (head != NULL) {
 			if (head->next != NULL) {
 				if (mapping.find(head->next) == mapping.end()) {
-					RandomListNode *node = new RandomListNode(head->next->label);
-					mapping[head->next] = node;
+					mapping[head->next] = new RandomListNode(head->next->label);;
 				}
 				cur->next = mapping[head->next];
 			}
 			if (head->random != NULL) {
 				if (mapping.find(head->random) == mapping.end()) {
-					RandomListNode *node = new RandomListNode(head->random->label);
-					mapping[head->random] = node;
+					mapping[head->random] = new RandomListNode(head->random->label);
 				}
 				cur->random = mapping[head->random];
 			}
@@ -5870,7 +5869,7 @@ public:
 };
 class LRUCache {
 public:
-	unordered_map<int, KeyValue*> mapping;//map key the the previous node
+	unordered_map<int, KeyValue*> mapping;//map key value to the previous node
 	KeyValue *head, *tail;
 	int capacity, size;
 	LRUCache(int capacity) : capacity(capacity), size(0) {
@@ -6032,28 +6031,35 @@ public:
 		if (points.size() < 3) {
 			return points.size();
 		}
+		unordered_map<int, unordered_map<int, int>> mapping;
 		int res = 0;
 		for (int i = 0; i < points.size(); i++) {
+			mapping.clear();
 			int p0_num = 1, k_max = 0;
-			unordered_map<double, int> mapping;
 			for (int j = i + 1; j < points.size(); j++) {
-				if (points[i].x == points[j].x && points[i].y == points[j].y) {
+				int x = points[i].x - points[j].x, y = points[i].y - points[j].y;
+				if (x == 0 && y == 0) {
 					p0_num++;
+					continue;
 				}
-				else {
-					double k;
-					if (points[i].x == points[j].x) {
-						k = INT_MAX;
-					}
-					else {
-						k = double(points[i].y - points[j].y) / double(points[i].x - points[j].x);
-					}
-					k_max = max(k_max, ++mapping[k]);
+				int gcd = generateGCD(x, y);
+				if (gcd != 0) {
+					x /= gcd;
+					y /= gcd;
 				}
+				mapping[x][y]++;
+				k_max = max(k_max, mapping[x][y]);
 			}
 			res = max(res, k_max + p0_num);
 		}
 		return res;
+	}
+private:
+	int generateGCD(int a, int b) {
+		if (b == 0) {
+			return a;
+		}
+		return generateGCD(b, a%b);
 	}
 };
 /*
@@ -6321,17 +6327,17 @@ Given a binary tree where all the right nodes are either leaf nodes with a sibli
 
 For example:
 Given a binary tree {1,2,3,4,5},
-1
-/ \
-2   3
-/ \
+    1
+   / \
+  2   3
+ / \
 4   5
 return the root of the binary tree [4,5,2,#,#,3,1].
-4
-/ \
-5   2
-/ \
-3   1
+   4
+  / \
+ 5   2
+    / \
+   3   1  
 
 */
 /**
@@ -6452,15 +6458,14 @@ public:
 		if (s.size() < 3) {
 			return s.size();
 		}
-		vector<int> t(256, 0);
+		int t[256] = { 0 };
 		int sl = 0, f = 0, res = 0, cnt = 0;
 		while (f < s.size()) {
 			if (++t[s[f++]] == 1) {
 				cnt++;
 			}
 			while (cnt > 2) {
-				--t[s[sl++]];
-				if (t[s[sl - 1]] == 0) {
+				if (--t[s[sl++]] == 0) {
 					cnt--;
 				}
 			}

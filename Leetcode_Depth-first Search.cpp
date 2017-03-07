@@ -657,53 +657,56 @@ Note:
 You may only use constant extra space.
 For example,
 Given the following binary tree,
-1
-/  \
-2    3
-/ \    \
-4   5    7
+		 1
+	   /  \
+	  2    3
+	 / \    \
+	4   5    7
 After calling your function, the tree should look like:
-1 -> NULL
-/  \
-2 -> 3 -> NULL
-/ \    \
-4-> 5 -> 7 -> NULL
+		 1 -> NULL
+	   /  \
+	  2 -> 3 -> NULL
+	 / \    \
+	4-> 5 -> 7 -> NULL
 
 */
 /**
-* Definition for binary tree with next pointer.
-* struct TreeLinkNode {
-*  int val;
-*  TreeLinkNode *left, *right, *next;
-*  TreeLinkNode(int x) : val(x), left(NULL), right(NULL), next(NULL) {}
-* };
-*/
+ * Definition for binary tree with next pointer.
+ * struct TreeLinkNode {
+ *  int val;
+ *  TreeLinkNode *left, *right, *next;
+ *  TreeLinkNode(int x) : val(x), left(NULL), right(NULL), next(NULL) {}
+ * };
+ */
 class Solution {
 public:
 	void connect(TreeLinkNode *root) {
-		if (root == NULL) {
-			return;
-		}
-		queue<TreeLinkNode*> q;
-		q.push(root);
-		while (!q.empty()) {
-			int _size = q.size();
-			for (int i = 0; i < _size; i++) {
-				TreeLinkNode* node = q.front();
-				q.pop();
-				if (i < _size - 1) {
-					node->next = q.front();
+		TreeLinkNode *head = NULL, *prev = NULL, *cur = root;
+		while (cur != NULL) {
+			while (cur != NULL) {
+				if (cur->left != NULL) {
+					if (prev == NULL) {
+						head = cur->left;
+					}
+					else {
+						prev->next = cur->left;
+					}
+					prev = cur->left;
 				}
-				else {
-					node->next = NULL;
+				if (cur->right != NULL) {
+					if (prev == NULL) {
+						head = cur->right;
+					}
+					else {
+						prev->next = cur->right;
+					}
+					prev = cur->right;
 				}
-				if (node->left != NULL) {
-					q.push(node->left);
-				}
-				if (node->right != NULL) {
-					q.push(node->right);
-				}
+				cur = cur->next;
 			}
+			cur = head;
+			head = NULL;
+			prev = NULL;
 		}
 	}
 };

@@ -511,35 +511,31 @@ Return a deep copy of the list.
 
 */
 /**
-* Definition for singly-linked list with a random pointer.
-* struct RandomListNode {
-*     int label;
-*     RandomListNode *next, *random;
-*     RandomListNode(int x) : label(x), next(NULL), random(NULL) {}
-* };
-*/
+ * Definition for singly-linked list with a random pointer.
+ * struct RandomListNode {
+ *     int label;
+ *     RandomListNode *next, *random;
+ *     RandomListNode(int x) : label(x), next(NULL), random(NULL) {}
+ * };
+ */
 class Solution {
 public:
 	RandomListNode *copyRandomList(RandomListNode *head) {
 		if (head == NULL) {
 			return NULL;
 		}
-		unordered_map<RandomListNode*, RandomListNode*> mapping;
-		RandomListNode *newhead = new RandomListNode(head->label);
-		RandomListNode *cur = newhead;
-		mapping[head] = newhead;
+		RandomListNode *newhead = new RandomListNode(head->label), *cur = newhead;
+		unordered_map<RandomListNode*, RandomListNode*> mapping = { {head, newhead} };
 		while (head != NULL) {
 			if (head->next != NULL) {
 				if (mapping.find(head->next) == mapping.end()) {
-					RandomListNode *node = new RandomListNode(head->next->label);
-					mapping[head->next] = node;
+					mapping[head->next] = new RandomListNode(head->next->label);;
 				}
 				cur->next = mapping[head->next];
 			}
 			if (head->random != NULL) {
 				if (mapping.find(head->random) == mapping.end()) {
-					RandomListNode *node = new RandomListNode(head->random->label);
-					mapping[head->random] = node;
+					mapping[head->random] = new RandomListNode(head->random->label);
 				}
 				cur->random = mapping[head->random];
 			}

@@ -1374,15 +1374,14 @@ public:
 		if (s.size() < 3) {
 			return s.size();
 		}
-		vector<int> t(256, 0);
+		int t[256] = { 0 };
 		int sl = 0, f = 0, res = 0, cnt = 0;
 		while (f < s.size()) {
 			if (++t[s[f++]] == 1) {
 				cnt++;
 			}
 			while (cnt > 2) {
-				--t[s[sl++]];
-				if (t[s[sl - 1]] == 0) {
+				if (--t[s[sl++]] == 0) {
 					cnt--;
 				}
 			}

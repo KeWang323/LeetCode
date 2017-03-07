@@ -491,35 +491,31 @@ Return a deep copy of the list.
 
 */
 /**
-* Definition for singly-linked list with a random pointer.
-* struct RandomListNode {
-*     int label;
-*     RandomListNode *next, *random;
-*     RandomListNode(int x) : label(x), next(NULL), random(NULL) {}
-* };
-*/
+ * Definition for singly-linked list with a random pointer.
+ * struct RandomListNode {
+ *     int label;
+ *     RandomListNode *next, *random;
+ *     RandomListNode(int x) : label(x), next(NULL), random(NULL) {}
+ * };
+ */
 class Solution {
 public:
 	RandomListNode *copyRandomList(RandomListNode *head) {
 		if (head == NULL) {
 			return NULL;
 		}
-		unordered_map<RandomListNode*, RandomListNode*> mapping;
-		RandomListNode *newhead = new RandomListNode(head->label);
-		RandomListNode *cur = newhead;
-		mapping[head] = newhead;
+		RandomListNode *newhead = new RandomListNode(head->label), *cur = newhead;
+		unordered_map<RandomListNode*, RandomListNode*> mapping = { {head, newhead} };
 		while (head != NULL) {
 			if (head->next != NULL) {
 				if (mapping.find(head->next) == mapping.end()) {
-					RandomListNode *node = new RandomListNode(head->next->label);
-					mapping[head->next] = node;
+					mapping[head->next] = new RandomListNode(head->next->label);;
 				}
 				cur->next = mapping[head->next];
 			}
 			if (head->random != NULL) {
 				if (mapping.find(head->random) == mapping.end()) {
-					RandomListNode *node = new RandomListNode(head->random->label);
-					mapping[head->random] = node;
+					mapping[head->random] = new RandomListNode(head->random->label);
 				}
 				cur->random = mapping[head->random];
 			}
@@ -537,42 +533,49 @@ Given n points on a 2D plane, find the maximum number of points that lie on the 
 
 */
 /**
- * Definition for a point.
- * struct Point {
- *     int x;
- *     int y;
- *     Point() : x(0), y(0) {}
- *     Point(int a, int b) : x(a), y(b) {}
- * };
- */
+* Definition for a point.
+* struct Point {
+*     int x;
+*     int y;
+*     Point() : x(0), y(0) {}
+*     Point(int a, int b) : x(a), y(b) {}
+* };
+*/
 class Solution {
 public:
 	int maxPoints(vector<Point>& points) {
 		if (points.size() < 3) {
 			return points.size();
 		}
+		unordered_map<int, unordered_map<int, int>> mapping;
 		int res = 0;
 		for (int i = 0; i < points.size(); i++) {
+			mapping.clear();
 			int p0_num = 1, k_max = 0;
-			unordered_map<double, int> mapping;
 			for (int j = i + 1; j < points.size(); j++) {
-				if (points[i].x == points[j].x && points[i].y == points[j].y) {
+				int x = points[i].x - points[j].x, y = points[i].y - points[j].y;
+				if (x == 0 && y == 0) {
 					p0_num++;
+					continue;
 				}
-				else {
-					double k;
-					if (points[i].x == points[j].x) {
-						k = INT_MAX;
-					}
-					else {
-						k = double(points[i].y - points[j].y) / double(points[i].x - points[j].x);
-					}
-					k_max = max(k_max, ++mapping[k]);
+				int gcd = generateGCD(x, y);
+				if (gcd != 0) {
+					x /= gcd;
+					y /= gcd;
 				}
+				mapping[x][y]++;
+				k_max = max(k_max, mapping[x][y]);
 			}
 			res = max(res, k_max + p0_num);
 		}
 		return res;
+	}
+private:
+	int generateGCD(int a, int b) {
+		if (b == 0) {
+			return a;
+		}
+		return generateGCD(b, a%b);
 	}
 };
 /*
@@ -592,15 +595,14 @@ public:
 		if (s.size() < 3) {
 			return s.size();
 		}
-		vector<int> t(256, 0);
+		int t[256] = { 0 };
 		int sl = 0, f = 0, res = 0, cnt = 0;
 		while (f < s.size()) {
 			if (++t[s[f++]] == 1) {
 				cnt++;
 			}
 			while (cnt > 2) {
-				--t[s[sl++]];
-				if (t[s[sl - 1]] == 0) {
+				if (--t[s[sl++]] == 0) {
 					cnt--;
 				}
 			}
